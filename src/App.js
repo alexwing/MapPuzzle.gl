@@ -31,15 +31,15 @@ class Main extends Component {
     colorHeight: 14,
     color: [255, 0, 0],
     colorStroke: [0, 0, 0],
-    pieceSelected: "All",
+    pieceSelected: null,
     info: null,
     viewState: VIEW_STATES[0],
-    continents: [],
+    pieces: [],
     height: window.innerHeight
   }
   componentDidMount() {
     Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(the_geom) as poly, ST_Extent(the_geom) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
-      this.setState({ continents: response.rows }) 
+      this.setState({ pieces: response.rows }) 
     )
   }
   componentDidUpdate() {
@@ -53,7 +53,7 @@ class Main extends Component {
     if (this.state.pieceSelected !== val.target.parentNode.id) {
       this.setState({ pieceSelected: val.target.parentNode.id })
     } else {
-      this.setState({ pieceSelected: "All" })
+      this.setState({ pieceSelected: null })
     }
   }
   onSelectMapHandler = (val) => {
@@ -61,7 +61,7 @@ class Main extends Component {
 
     switch (val.target.id) {
       default:
-        this.setState({ viewState: VIEW_STATES[0], continent: "All" });
+        this.setState({ viewState: VIEW_STATES[0], piece: null });
         break;
     }
   }
@@ -84,10 +84,10 @@ class Main extends Component {
           color={this.state.color}
           colorStroke={this.state.colorStroke}
           colorHeight={this.state.colorHeight}
-          continent={this.state.pieceSelected}
+          piece={this.state.pieceSelected}
           onHoverInfo={this.onHoverInfoHandler}
           viewState={this.state.viewState}
-          continents={this.state.continents}
+          pieces={this.state.pieces}
           onDataLoaded={this.onDataLoadedHandler}
         />
         <MenuTop name="MapPuzzle.gl" onSelectMap={this.onSelectMapHandler} />
@@ -97,7 +97,7 @@ class Main extends Component {
               <ToolsPanel name="Countries"
                 pieceSelected={this.state.pieceSelected} onPieceSelected={this.onPieceSelectedHandler}
                 info={this.state.info}
-                continents={this.state.continents}
+                pieces={this.state.pieces}
                 height={this.state.height}
               />
             </Col>

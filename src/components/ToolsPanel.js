@@ -10,7 +10,7 @@ import {  ST_ExtentToVieport } from '../components/Utils.js';
 class ToolsPanel extends Component {
   render() {
 
-    const { height, name, pieceSelected, info, continents,onPieceSelected } = this.props;
+    const { height, name, pieceSelected, info, pieces,onPieceSelected } = this.props;
 
     const Legend = (
       <Table striped bordered hover size="sm" className="legend">
@@ -24,7 +24,7 @@ class ToolsPanel extends Component {
 
             </td>
           </tr>
-          {continents.map(c => (
+          {pieces.map(c => (
             <tr key={c.cartodb_id} onClick={onPieceSelected} id={c.name} className={c.name === pieceSelected ? "table-primary" : ""}>
               <td width="80%">{c.formal_en ? c.formal_en :  c.name }</td>
               <td width="20%" align="right">

@@ -9,12 +9,12 @@ export default class DeckMap extends Component {
 
   render() {
     const {onHoverInfo,onDataLoaded,viewState } = this.props;
-    /*function getContinentCondition(continent) {
-      return continent !== 'All' ? `WHERE continent='${continent}'` : '';
+    /*function getpieceCondition(piece) {
+      return piece !== 'All' ? `WHERE piece='${piece}'` : '';
     }*/
     const layers = [ 
     new CartoSQLLayer({
-   //   data: `SELECT *, (pop_est* 100 / (SELECT SUM(pop_est) FROM public.ne_50m_admin_0_countries)) as percent FROM public.ne_50m_admin_0_countries ${getContinentCondition(this.props.continent)}`,
+   //   data: `SELECT *, (pop_est* 100 / (SELECT SUM(pop_est) FROM public.ne_50m_admin_0_countries)) as percent FROM public.ne_50m_admin_0_countries ${getpieceCondition(this.props.piece)}`,
       data: `SELECT *, (pop_est* 100 / (SELECT SUM(pop_est) FROM public.ne_50m_admin_0_countries)) as percent, ST_AsSVG(the_geom) as poly  FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 `,
       pointRadiusMinPixels: 6,
       getLineColor: this.props.colorStroke,
@@ -27,8 +27,8 @@ export default class DeckMap extends Component {
         getLineColor: this.props.colorStroke,
         getFillColor: (object) => LightenDarkenColor(this.props.color,(object.properties.percent/ (this.props.colorHeight/10)))
       },
-      onHover: info => onHoverInfo(info),
-      onDataLoad: onDataLoaded()
+      onHover: info => onHoverInfo(info)
+     
 
     })
   
