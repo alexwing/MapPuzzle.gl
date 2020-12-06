@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { CartoSQLLayer } from '@deck.gl/carto';
-
 import { StaticMap } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
 import {AlphaColor} from './Utils.js';
@@ -8,7 +7,7 @@ import {AlphaColor} from './Utils.js';
 export default class DeckMap extends Component {
 
   render() {
-    const {onHoverInfo,viewState,founds } = this.props;
+    const {onClickMap} = this.props;
     /*function getpieceCondition(piece) {
       return piece !== 'All' ? `WHERE piece='${piece}'` : '';
     }*/
@@ -18,18 +17,16 @@ export default class DeckMap extends Component {
       data: `SELECT *, ST_AsSVG(the_geom) as poly  FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 `,
       pointRadiusMinPixels: 6,
       getLineColor: this.props.colorStroke,
-      getFillColor: (object) =>  AlphaColor(this.props.color,founds.includes(object.properties.cartodb_id)?150:0),
+      getFillColor: (object) =>  AlphaColor(this.props.color,this.props.founds.includes(object.properties.cartodb_id)?150:0),
       opacity:1,
       pickable: true,
       lineWidthMinPixels: this.props.lineWidth,
       updateTriggers: {
         lineWidthMinPixels: this.props.lineWidth,
         getLineColor: this.props.colorStroke,
-        getFillColor: (object) =>  AlphaColor(this.props.color,founds.includes(object.properties.cartodb_id)? 150:0),
+        getFillColor: (object) =>  AlphaColor(this.props.color,this.props.founds.includes(object.properties.cartodb_id)? 150:0),
       },
-      onClick: info => onHoverInfo(info)
-     
-
+      onClick: info => onClickMap(info)
     })
   
   ];
@@ -37,9 +34,8 @@ export default class DeckMap extends Component {
       <DeckGL
         width="100%"
         height="100%"
-        initialViewState={viewState}
+        initialViewState={this.props.viewState}
         controller={true}
-        //   effects= {postProcessEffect}
         layers={[layers]}
       >    
         <StaticMap

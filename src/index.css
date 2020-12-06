@@ -40,3 +40,34 @@ table.legend td, table.legend th {
 .form-group {
   margin-bottom: 0px !important;
 }
+
+.score {
+  padding-right: 15px;
+  padding-left: 15px;
+  box-shadow: rgba(0, 0, 0, 0.15) 3px 3px 3px;
+}
+.score .alert{
+  padding:0px;
+  margin: 0px;
+  border: 0px;
+  border-radius: 0px;
+}
+.score .alert-heading.h4 ,.score .mb-0{
+  font-size: 15px !important;
+  font-weight: bolder;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+  margin-bottom: 0px
+}
+
+.score hr{
+  margin: 0px;
+}
+
+.score .col-lg-4{
+  padding-right: 0px;
+  padding-left: 0px;
+}

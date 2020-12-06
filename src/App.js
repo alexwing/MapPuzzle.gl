@@ -35,6 +35,7 @@ class Main extends Component {
     viewState: VIEW_STATES[0],
     pieces: [],
     founds: [],
+    fails: 0,
     height: window.innerHeight
   }
   componentDidMount() {
@@ -62,7 +63,6 @@ class Main extends Component {
   }
   onSelectMapHandler = (val) => {
     console.log(val.target.id);
-
     switch (val.target.id) {
       default:
         this.setState({ viewState: VIEW_STATES[0], piece: null });
@@ -70,20 +70,19 @@ class Main extends Component {
     }
   }
 
-  onHoverInfoHandler = (info) => {
-
+  onClickMapHandler = (info) => {
       if (info && this.state.pieceSelected) {
-        console.log("FOUND: " + info.object.properties.name);
         if (String(this.state.pieceSelectedData.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
-
           if (!this.state.founds.includes(this.state.pieceSelectedData.cartodb_id)) {
+            console.log("FOUND: " + info.object.properties.name);
             this.setState(prevState => ({
               founds: [...prevState.founds, this.state.pieceSelectedData.cartodb_id],
               pieceSelected: null,
               pieceSelectedData: null
-
             }));
           }
+        }else{
+          this.setState({ fails: this.state.fails+1 });
         }
       }
   }
@@ -104,9 +103,8 @@ class Main extends Component {
           colorStroke={this.state.colorStroke}
           colorHeight={this.state.colorHeight}
           piece={this.state.pieceSelected}
-          onHoverInfo={this.onHoverInfoHandler}
+          onClickMap={this.onClickMapHandler}
           viewState={this.state.viewState}
-          pieces={this.state.pieces}
           founds={this.state.founds}
           onDataLoaded={this.onDataLoadedHandler}
         />
@@ -119,6 +117,7 @@ class Main extends Component {
                 pieces={this.state.pieces}
                 height={this.state.height}
                 founds={this.state.founds}
+                fails={this.state.fails}
               />
             </Col>
           </Row>
