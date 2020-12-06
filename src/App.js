@@ -32,13 +32,13 @@ class Main extends Component {
     colorStroke: [150,150, 150],
     pieceSelected: null,
     pieceSelectedData: null,
-    info: null,
     viewState: VIEW_STATES[0],
     pieces: [],
     founds: [],
     height: window.innerHeight
   }
   componentDidMount() {
+ //   Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Transform(the_geom,3857)) as poly, ST_Extent(ST_Transform(the_geom,3857 )) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
     Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(the_geom) as poly, ST_Extent(the_geom) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
       this.setState({ pieces: response.rows })
     )
@@ -73,8 +73,7 @@ class Main extends Component {
   onHoverInfoHandler = (info) => {
 
       if (info && this.state.pieceSelected) {
-        console.log("FOUND FOUND" + this.state.founds);
-        //console.log("NO FOUND "+this.state.pieceSelectedData.cartodb_id+"NO FOUND "+this.state.info.properties.cartodb_id);
+        console.log("FOUND: " + info.object.properties.name);
         if (String(this.state.pieceSelectedData.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
 
           if (!this.state.founds.includes(this.state.pieceSelectedData.cartodb_id)) {
@@ -88,6 +87,7 @@ class Main extends Component {
         }
       }
   }
+
   render() {
     let button;
     if (this.state.pieceSelected) {
@@ -99,7 +99,6 @@ class Main extends Component {
     } 
     return (
       <div>
-
         <DeckMap lineWidth={this.state.lineWidth}
           color={this.state.color}
           colorStroke={this.state.colorStroke}
@@ -117,7 +116,6 @@ class Main extends Component {
             <Col xs={8} md={4} lg={4} xl={3} style={{ zIndex: "9999" }}>
               <ToolsPanel name="Countries"
                 pieceSelected={this.state.pieceSelected} onPieceSelected={this.onPieceSelectedHandler}
-                info={this.state.info}
                 pieces={this.state.pieces}
                 height={this.state.height}
                 founds={this.state.founds}

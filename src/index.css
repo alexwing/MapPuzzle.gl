@@ -28,4 +28,15 @@ table.legend td, table.legend th {
   border: none !important;
 }
 
+.legendPiece{
+  pointer-events: none;
+  background:white;
+  border: 1px solid lightgray;
+  box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2px;
+  height:24px;
+  width:80px;
+}
 
+.form-group {
+  margin-bottom: 0px !important;
+}
