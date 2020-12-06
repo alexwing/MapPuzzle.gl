@@ -27,9 +27,9 @@ const VIEW_STATES = [
 class Main extends Component {
 
   state = {
-    lineWidth: 2,
+    lineWidth: 1,
     color: [255, 0, 0],
-    colorStroke: [0, 0, 0],
+    colorStroke: [150,150, 150],
     pieceSelected: null,
     pieceSelectedData: null,
     info: null,
@@ -71,16 +71,12 @@ class Main extends Component {
   }
 
   onHoverInfoHandler = (info) => {
-    if (!info.object) {
-      this.setState({ info: null })
-      return;
-    }
-    else {
 
-      if (this.state.info && this.state.pieceSelected) {
+
+      if (info && this.state.pieceSelected) {
         console.log("FOUND FOUND" + this.state.founds);
         //console.log("NO FOUND "+this.state.pieceSelectedData.cartodb_id+"NO FOUND "+this.state.info.properties.cartodb_id);
-        if (String(this.state.pieceSelectedData.cartodb_id).trim() === String(this.state.info.properties.cartodb_id).trim()) {
+        if (String(this.state.pieceSelectedData.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
 
           if (!this.state.founds.includes(this.state.pieceSelectedData.cartodb_id)) {
             this.setState(prevState => ({
@@ -88,14 +84,13 @@ class Main extends Component {
               pieceSelected: null,
               pieceSelectedData: null
 
-            }))
+            }));
           }
 
 
         }
       }
-      this.setState({ info: info.object })
-    }
+      
   }
 
   render() {
