@@ -8,7 +8,7 @@ import {LightenDarkenColor} from './Utils.js';
 export default class DeckMap extends Component {
 
   render() {
-    const {onHoverInfo,onDataLoaded,viewState } = this.props;
+    const {onHoverInfo,viewState,founds } = this.props;
     /*function getpieceCondition(piece) {
       return piece !== 'All' ? `WHERE piece='${piece}'` : '';
     }*/
@@ -18,16 +18,16 @@ export default class DeckMap extends Component {
       data: `SELECT *, (pop_est* 100 / (SELECT SUM(pop_est) FROM public.ne_50m_admin_0_countries)) as percent, ST_AsSVG(the_geom) as poly  FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 `,
       pointRadiusMinPixels: 6,
       getLineColor: this.props.colorStroke,
-      getFillColor: (object) => LightenDarkenColor(this.props.color,(object.properties.percent/ (this.props.colorHeight/10))),
+      getFillColor: (object) =>  LightenDarkenColor(this.props.color,founds.includes(object.properties.cartodb_id)?100:0),
       opacity: 0.8,
       pickable: true,
       lineWidthMinPixels: this.props.lineWidth,
       updateTriggers: {
         lineWidthMinPixels: this.props.lineWidth,
         getLineColor: this.props.colorStroke,
-        getFillColor: (object) => LightenDarkenColor(this.props.color,(object.properties.percent/ (this.props.colorHeight/10)))
+        getFillColor: (object) =>  LightenDarkenColor(this.props.color,founds.includes(object.properties.cartodb_id)? 100:0),
       },
-      onHover: info => onHoverInfo(info)
+      onClick: info => onHoverInfo(info)
      
 
     })

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useEventListener } from './hooks/useEventListener'
 import IsDevice from './helpers/isDevice'
+import {  ST_ExtentToVieport } from '../components/Utils.js';
 
 /**
  * Cursor Core
@@ -23,7 +24,8 @@ function CursorCore({
   innerSize = 8,
   innerScale = 0.7,
   outerSize = 8,
-  outerScale = 0.6
+  outerScale = 0.6,
+  selected = null
 }) {
   const cursorOuterRef = useRef()
   const cursorInnerRef = useRef()
@@ -39,20 +41,25 @@ function CursorCore({
   // Primary Mouse Move event
   const onMouseMove = useCallback(({ clientX, clientY }) => {
     setCoords({ x: clientX, y: clientY })
-    cursorInnerRef.current.style.top = clientY + 'px'
-    cursorInnerRef.current.style.left = clientX + 'px'
-    endX.current = clientX
-    endY.current = clientY
+    if(cursorInnerRef){
+      cursorInnerRef.current.style.top = clientY + 'px'
+      cursorInnerRef.current.style.left = clientX + 'px'
+      endX.current = clientX
+      endY.current = clientY
+    }
   }, [])
 
   // Outer Cursor Animation Delay
   const animateOuterCursor = useCallback(
     (time) => {
-      if (previousTimeRef.current !== undefined) {
+      if (previousTimeRef)
+      if (previousTimeRef.current !== undefined && cursorOuterRef && coords) {
         coords.x += (endX.current - coords.x) / 8
         coords.y += (endY.current - coords.y) / 8
-        cursorOuterRef.current.style.top = coords.y + 'px'
-        cursorOuterRef.current.style.left = coords.x + 'px'
+        if (cursorOuterRef.current){
+          cursorOuterRef.current.style.top = coords.y + 'px'
+          cursorOuterRef.current.style.left = coords.x + 'px'
+        }
       }
       previousTimeRef.current = time
       requestRef.current = requestAnimationFrame(animateOuterCursor)
@@ -95,7 +102,7 @@ function CursorCore({
   useEffect(() => {
     if (isActive) {
       //cursorInnerRef.current.style.transform = `translateZ(0) scale(${innerScale})`
-      cursorOuterRef.current.style.transform = `translateZ(0) scale(${0.5})`
+      cursorOuterRef.current.style.transform = `translateZ(0) scale(${0.95})`
     } else {
       cursorInnerRef.current.style.transform = 'translateZ(0) scale(1)'
       cursorOuterRef.current.style.transform = 'translateZ(0) scale(1)'
@@ -106,7 +113,7 @@ function CursorCore({
   useEffect(() => {
     if (isActiveClickable) {
       //cursorInnerRef.current.style.transform = `translateZ(0) scale(${innerScale * 1.2})`
-      cursorOuterRef.current.style.transform = `translateZ(0) scale(${0.5})`
+      cursorOuterRef.current.style.transform = `translateZ(0) scale(${0.95})`
     }
   }, [innerScale, outerScale, isActiveClickable])
 
@@ -193,6 +200,7 @@ function CursorCore({
       pointerEvents: 'none',
       backfaceVisibility: 'hidden',
       willChange: 'transform',
+  
       
     }
   }
@@ -203,14 +211,11 @@ function CursorCore({
   return (
     <React.Fragment>
       <div ref={cursorOuterRef} style={styles.cursorOuter} >
-        <svg height="124px"
+        <svg height="180px"
           width="180px"
-          viewBox="-63.160009765625 -18.2697265625 0.180419921875 0.09833984375000071"
-          preserveAspectRatio="slice"
-          style={{border: "0px solid lightgray", marginLeft:'-50%', margin:'-50%'}}>
-          <path d="M -63.001220703125 -18.22177734375 L -63.160009765625 -18.17138671875 -63.1533203125 -18.20029296875 -63.026025390625 -18.2697265625 -62.97958984375 -18.264794921875 Z" stroke="black" stroke-width="0" fill="blue">
-          </path>
-        </svg>
+          viewBox={selected ? ST_ExtentToVieport(selected.box): ''} preserveAspectRatio="slice" style={{ border: "0px solid lightgray",  marginLeft: "-50%", marginTop: "-50%"}}>
+                <path d={selected ? selected.poly : ''} stroke="black" strokeWidth="0" fill="gray" />
+              </svg>
         </div>
       <div ref={cursorInnerRef} style={styles.cursorInner} />
     </React.Fragment>
