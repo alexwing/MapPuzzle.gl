@@ -44,7 +44,7 @@ export default class DeckMap extends Component {
       >    
         <StaticMap
           reuseMaps
-          mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+          mapStyle="https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"
           preventStyleDiffing
         />
       </DeckGL>

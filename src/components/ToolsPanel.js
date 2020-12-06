@@ -29,7 +29,7 @@ class ToolsPanel extends Component {
             <tr key={c.cartodb_id} onClick={onPieceSelected} id={c.cartodb_id} className={parseInt(c.cartodb_id) === parseInt(pieceSelected) ? "table-primary" : "" } style={ founds.includes(c.cartodb_id) ? {display:"none"} : {display:"normal"}}>
               <td width="80%">{c.name ? c.name :  c.formal_en }</td>
               <td width="20%" align="right">
-              <svg height="24px" width="80px" viewBox={ST_ExtentToVieport(c.box)} preserveAspectRatio="slice" style={{ border: "1px solid lightgray", boxShadow: "rgba(0, 0, 0, 0.15) 1px 1px 2px"}}>
+              <svg height="24px" width="80px" viewBox={ST_ExtentToVieport(c.box)} preserveAspectRatio="slice" style={{ pointerEvents: "none", background:"white", border: "1px solid lightgray", boxShadow: "rgba(0, 0, 0, 0.15) 1px 1px 2px"}}>
                 <path d={c.poly} stroke="black" strokeWidth="0" fill="gray" />
               </svg>
               </td>	
