@@ -1,34 +1,26 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useEventListener } from './hooks/useEventListener'
 import IsDevice from './helpers/isDevice'
-import {  ST_ExtentToVieport } from '../components/Utils.js';
+import { ST_ExtentToVieport } from '../components/Utils.js';
 
 /**
  * Cursor Core
  * Replaces the native cursor with a custom animated cursor, consisting
  * of an inner and outer dot that scale inversely based on hover or click.
  *
- * @author Stephen Scaff (github.com/stephenscaff)
+ * @author Alejandro Aranda (github.com/alexwing)
+ * @author Folk from Stephen Scaff (github.com/stephenscaff)
  *
  * @param {string} color - rgb color value
- * @param {number} outerAlpha - level of alpha transparency for color
- * @param {number} innerSize - inner cursor size in px
- * @param {number} innerScale - inner cursor scale amount
- * @param {number} outerSize - outer cursor size in px
- * @param {number} outerScale - outer cursor scale amount
+ * @param {number} clickScale - inner cursor scale amount
  *
  */
 function CursorCore({
   color = '220, 90, 90',
-  outerAlpha = 0.3,
-  innerSize = 8,
-  innerScale = 0.7,
-  outerSize = 8,
-  outerScale = 0.6,
+  clickScale = 0.7,
   selected = null
 }) {
   const cursorOuterRef = useRef()
-  const cursorInnerRef = useRef()
   const requestRef = useRef()
   const previousTimeRef = useRef()
   const [coords, setCoords] = useState({ x: 0, y: 0 })
@@ -41,26 +33,26 @@ function CursorCore({
   // Primary Mouse Move event
   const onMouseMove = useCallback(({ clientX, clientY }) => {
     setCoords({ x: clientX, y: clientY })
-    if(cursorInnerRef){
-      cursorInnerRef.current.style.top = clientY + 'px'
-      cursorInnerRef.current.style.left = clientX + 'px'
+
+    if (cursorOuterRef.current) {
       endX.current = clientX
       endY.current = clientY
     }
+
   }, [])
 
   // Outer Cursor Animation Delay
   const animateOuterCursor = useCallback(
     (time) => {
       if (previousTimeRef)
-      if (previousTimeRef.current !== undefined && cursorOuterRef && coords) {
-        coords.x += (endX.current - coords.x) / 8
-        coords.y += (endY.current - coords.y) / 8
-        if (cursorOuterRef.current){
-          cursorOuterRef.current.style.top = coords.y + 'px'
-          cursorOuterRef.current.style.left = coords.x + 'px'
+        if (previousTimeRef.current !== undefined && cursorOuterRef && coords) {
+          coords.x += (endX.current - coords.x) / 8
+          coords.y += (endY.current - coords.y) / 8
+          if (cursorOuterRef.current) {
+            cursorOuterRef.current.style.top = coords.y + 'px'
+            cursorOuterRef.current.style.left = coords.x + 'px'
+          }
         }
-      }
       previousTimeRef.current = time
       requestRef.current = requestAnimationFrame(animateOuterCursor)
     },
@@ -101,29 +93,25 @@ function CursorCore({
   // Cursors Hover/Active State
   useEffect(() => {
     if (isActive) {
-      //cursorInnerRef.current.style.transform = `translateZ(0) scale(${innerScale})`
-      cursorOuterRef.current.style.transform = `translateZ(0) scale(${0.95})`
+      //cursorInnerRef.current.style.transform = `translateZ(0) scale(${clickScale})`
+      cursorOuterRef.current.style.transform = `translateZ(0) scale(${clickScale})`
     } else {
-      cursorInnerRef.current.style.transform = 'translateZ(0) scale(1)'
       cursorOuterRef.current.style.transform = 'translateZ(0) scale(1)'
     }
-  }, [innerScale, outerScale, isActive])
+  }, [clickScale, isActive])
 
   // Cursors Click States
   useEffect(() => {
     if (isActiveClickable) {
-      //cursorInnerRef.current.style.transform = `translateZ(0) scale(${innerScale * 1.2})`
-      cursorOuterRef.current.style.transform = `translateZ(0) scale(${0.95})`
+      cursorOuterRef.current.style.transform = `translateZ(0) scale(${clickScale})`
     }
-  }, [innerScale, outerScale, isActiveClickable])
+  }, [clickScale, isActiveClickable])
 
   // Cursor Visibility State
   useEffect(() => {
     if (isVisible) {
-      cursorInnerRef.current.style.opacity = 1
       cursorOuterRef.current.style.opacity = 1
     } else {
-      cursorInnerRef.current.style.opacity = 0
       cursorOuterRef.current.style.opacity = 0
     }
   }, [isVisible])
@@ -180,19 +168,6 @@ function CursorCore({
 
   // Cursor Styles
   const styles = {
-    cursorInner: {
-      zIndex: 999,
-      display: 'block',
-      position: 'fixed',
-    //  borderRadius: '50%',
-      width: innerSize,
-      height: innerSize,
-      pointerEvents: 'none',
-     // backgroundColor: `rgba(${color}, 1)`,
-     // transition: 'opacity 0.15s ease-in-out, transform 0.25s ease-in-out',
-      backfaceVisibility: 'hidden',
-      willChange: 'transform'
-    },
     cursorOuter: {
       zIndex: 999,
       display: 'block',
@@ -200,24 +175,19 @@ function CursorCore({
       pointerEvents: 'none',
       backfaceVisibility: 'hidden',
       willChange: 'transform',
-  
-      
     }
   }
-
   // Hide / Show global cursor
   //document.body.style.cursor = 'none'
 
   return (
     <React.Fragment>
       <div ref={cursorOuterRef} style={styles.cursorOuter} >
-        <svg height="180px"
-          width="180px"
-          viewBox={selected ? ST_ExtentToVieport(selected.box): ''} preserveAspectRatio="slice" style={{ border: "0px solid lightgray",  marginLeft: "-50%", marginTop: "-50%"}}>
-                <path d={selected ? selected.poly : ''} stroke="black" strokeWidth="0" fill="gray" />
-              </svg>
-        </div>
-      <div ref={cursorInnerRef} style={styles.cursorInner} />
+        <svg height="180px" width="180px"
+          viewBox={selected ? ST_ExtentToVieport(selected.box) : ''} preserveAspectRatio="slice" style={{ border: "0px solid lightgray", marginLeft: "-50%", marginTop: "-50%" }}>
+          <path d={selected ? selected.poly : ''} stroke="black" strokeWidth="0" fill={color} />
+        </svg>
+      </div>
     </React.Fragment>
   )
 }
@@ -228,11 +198,7 @@ function CursorCore({
  */
 function AnimatedCursor({
   color = '220, 90, 90',
-  outerAlpha = 0.3,
-  innerSize = 8,
-  outerSize = 8,
-  outerScale = 5,
-  innerScale = 0.7,
+  clickScale = 0.7,
   selected = null
 }) {
   if (typeof navigator !== 'undefined' && IsDevice.any()) {
@@ -241,11 +207,7 @@ function AnimatedCursor({
   return (
     <CursorCore
       color={color}
-      outerAlpha={outerAlpha}
-      innerSize={innerSize}
-      innerScale={innerScale}
-      outerSize={outerSize}
-      outerScale={outerScale}
+      clickScale={clickScale}
       selected={selected}
     />
   )

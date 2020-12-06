@@ -72,7 +72,6 @@ class Main extends Component {
 
   onHoverInfoHandler = (info) => {
 
-
       if (info && this.state.pieceSelected) {
         console.log("FOUND FOUND" + this.state.founds);
         //console.log("NO FOUND "+this.state.pieceSelectedData.cartodb_id+"NO FOUND "+this.state.info.properties.cartodb_id);
@@ -86,26 +85,18 @@ class Main extends Component {
 
             }));
           }
-
-
         }
       }
-      
   }
-
   render() {
     let button;
     if (this.state.pieceSelected) {
       button = <AnimatedCursor
-        innerSize={0.4}
-        outerSize={0.4}
-        color='220, 90, 90'
-        outerAlpha={0.4}
+        clickScale={0.95}
+        color='#666'
         selected={this.state.pieceSelectedData}
       />;
-    } else {
-      button = "";
-    }
+    } 
     return (
       <div>
 
