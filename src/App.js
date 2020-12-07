@@ -4,6 +4,9 @@ import './App.css';
 import React, { Component } from "react";
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+
+import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store"
+
 import Container from 'react-bootstrap/Container';
 
 import MenuTop from './components/MenuTop';
@@ -29,7 +32,7 @@ class Main extends Component {
   state = {
     lineWidth: 1,
     color: [255, 0, 0],
-    colorStroke: [150,150, 150],
+    colorStroke: [150, 150, 150],
     pieceSelected: null,
     pieceSelectedData: null,
     viewState: VIEW_STATES[0],
@@ -39,10 +42,20 @@ class Main extends Component {
     height: window.innerHeight
   }
   componentDidMount() {
- //   Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Transform(the_geom,3857)) as poly, ST_Extent(ST_Transform(the_geom,3857 )) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
+    //   Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Transform(the_geom,3857)) as poly, ST_Extent(ST_Transform(the_geom,3857 )) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
     Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(the_geom) as poly, ST_Extent(the_geom) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
+
       this.setState({ pieces: response.rows })
     )
+
+    //removeCookie("founds");
+    var cookieFounds = getCookie("founds");
+    if (cookieFounds)
+      this.setState({ founds: cookieFounds.split(',').map((e) => parseInt(e)) })
+
+      var cookieFails = getCookie("fails");
+      if (cookieFails)
+        this.setState({ fails:  parseInt(cookieFails) })      
   }
   componentDidUpdate() {
     if (this.state.height !== window.innerHeight)
@@ -71,20 +84,22 @@ class Main extends Component {
   }
 
   onClickMapHandler = (info) => {
-      if (info && this.state.pieceSelected) {
-        if (String(this.state.pieceSelectedData.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
-          if (!this.state.founds.includes(this.state.pieceSelectedData.cartodb_id)) {
-            console.log("FOUND: " + info.object.properties.name);
-            this.setState(prevState => ({
-              founds: [...prevState.founds, this.state.pieceSelectedData.cartodb_id],
-              pieceSelected: null,
-              pieceSelectedData: null
-            }));
-          }
-        }else{
-          this.setState({ fails: this.state.fails+1 });
+    if (info && this.state.pieceSelected) {
+      if (String(this.state.pieceSelectedData.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
+        if (!this.state.founds.includes(this.state.pieceSelectedData.cartodb_id)) {
+          console.log("FOUND: " + info.object.properties.name);
+          this.setState(prevState => ({
+            founds: [...prevState.founds, this.state.pieceSelectedData.cartodb_id],
+            pieceSelected: null,
+            pieceSelectedData: null
+          }));
+          setCookie("founds", this.state.founds.join(), 2)
         }
+      } else {
+        this.setState({ fails: this.state.fails + 1 });
+        setCookie("fails", this.state.fails, 2)
       }
+    }
   }
 
   render() {
@@ -95,7 +110,7 @@ class Main extends Component {
         color='#666'
         selected={this.state.pieceSelectedData}
       />;
-    } 
+    }
     return (
       <div>
         <DeckMap lineWidth={this.state.lineWidth}
