@@ -7,7 +7,7 @@ import Alert from 'react-bootstrap/Alert';
 import Accordion from 'react-bootstrap/Accordion';
 import Table from 'react-bootstrap/Table';
 import { ST_ExtentToVieport } from '../components/Utils.js';
-import {AlphaColor,setColor} from './Utils.js';
+import {setColor} from './Utils.js';
 
 
 class ToolsPanel extends Component {
