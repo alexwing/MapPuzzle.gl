@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { CartoSQLLayer } from '@deck.gl/carto';
 import { StaticMap } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import {AlphaColor} from './Utils.js';
+import {AlphaColor,setColor} from './Utils.js';
 
 export default class DeckMap extends Component {
 
@@ -17,14 +17,14 @@ export default class DeckMap extends Component {
       data: `SELECT *, ST_AsSVG(the_geom) as poly  FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 `,
       pointRadiusMinPixels: 6,
       getLineColor: this.props.colorStroke,
-      getFillColor: (object) =>  AlphaColor(this.props.color,this.props.founds.includes(object.properties.cartodb_id)?150:0),
+      getFillColor: (object) =>  AlphaColor(setColor(object.properties.mapcolor7),this.props.founds.includes(object.properties.cartodb_id)?150:0),
       opacity:1,
       pickable: true,
       lineWidthMinPixels: this.props.lineWidth,
       updateTriggers: {
         lineWidthMinPixels: this.props.lineWidth,
         getLineColor: this.props.colorStroke,
-        getFillColor: (object) =>  AlphaColor(this.props.color,this.props.founds.includes(object.properties.cartodb_id)? 150:0),
+        getFillColor: (object) =>  AlphaColor(setColor(object.properties.mapcolor7),this.props.founds.includes(object.properties.cartodb_id)? 150:0),
       },
       onClick: info => onClickMap(info)
     })
