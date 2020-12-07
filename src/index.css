@@ -36,6 +36,9 @@ table.legend td, table.legend th {
   height:24px;
   width:80px;
 }
+svg.legendPiece , .mousePiece  > svg{
+  opacity: 0.7;
+}
 
 .form-group {
   margin-bottom: 0px !important;

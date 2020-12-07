@@ -7,7 +7,7 @@ import Alert from 'react-bootstrap/Alert';
 import Accordion from 'react-bootstrap/Accordion';
 import Table from 'react-bootstrap/Table';
 import { ST_ExtentToVieport } from '../components/Utils.js';
-
+import {AlphaColor,setColor} from './Utils.js';
 
 
 class ToolsPanel extends Component {
@@ -25,7 +25,7 @@ class ToolsPanel extends Component {
                 <td width="80%">{c.name ? c.name : c.formal_en}</td>
                 <td width="20%" align="right">
                   <svg className="legendPiece" viewBox={ST_ExtentToVieport(c.box)} preserveAspectRatio="slice">
-                    <path d={c.poly} stroke="black" strokeWidth="0" fill="gray" />
+                    <path d={c.poly} stroke="black" strokeWidth="0" fill={setColor(c.mapcolor7)} />
                   </svg>
                 </td>
               </tr>

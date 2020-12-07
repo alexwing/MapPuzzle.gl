@@ -61,43 +61,28 @@ export const LightenDarkenColor = function (col, amt) {
 
 
 export const setColor = function (col) {
-  var colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
-    '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
-    '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
-    '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
-    '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
-    '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
-    '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
-    '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
-    '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
-    '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF',
-    '#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
-    '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
-    '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
-    '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
-    '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
-    '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
-    '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
-    '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
-    '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
-    '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF',
-    '#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
-    '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
-    '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
-    '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
-    '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
-    '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
-    '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
-    '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
-    '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
-    '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
+  var colorArray = ['#d91b5c',
+    '#662d91',
+    '#bf1e2d',
+    '#262262',
+    '#f1592a',
+    '#0f75bc',
+    '#f7941e',
+    '#13a89e',
+    '#fcb040',
+    '#0b9444',
+    '#fff200',
+    '#8cc63f',
+  ];
 
-    console.log (col);
-if (parseInt(col)>=colorScale.length){
-  return hexToRgb(colorArray[parseInt(col)]);
-}else{
-  return hexToRgb("#FF00FF");
-}
+  if (parseInt(col)< colorArray.length) {
+    return colorArray[parseInt(col)];
+  } else {
+    do{
+      col = (parseInt(col) - colorArray.length);
+    }while (parseInt(col) > colorScale.length)
+    return colorArray[Math.abs(col)];
+  }
 
 
 }
@@ -120,7 +105,7 @@ export const AlphaColor = function (col, alpha = 255) {
 
   if (g > 255) g = 255;
   else if (g < 0) g = 0;
-//console.log ( [r, g, b, alpha]);
+  //console.log ( [r, g, b, alpha]);
   return [r, g, b, alpha];
 }
 

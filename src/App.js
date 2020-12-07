@@ -40,7 +40,7 @@ class Main extends Component {
   }
   componentDidMount() {
  //   Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Transform(the_geom,3857)) as poly, ST_Extent(ST_Transform(the_geom,3857 )) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
-    Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(the_geom) as poly, ST_Extent(the_geom) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
+    Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(the_geom) as poly, ST_Extent(the_geom) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
       this.setState({ pieces: response.rows })
     )
   }

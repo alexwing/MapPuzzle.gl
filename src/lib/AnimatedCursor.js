@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useEventListener } from './hooks/useEventListener'
 import IsDevice from './helpers/isDevice'
 import { ST_ExtentToVieport } from '../components/Utils.js';
-
+import {setColor} from '../components/Utils.js';
 /**
  * Cursor Core
  * Replaces the native cursor with a custom animated cursor, consisting
@@ -182,10 +182,10 @@ function CursorCore({
 
   return (
     <React.Fragment>
-      <div ref={cursorOuterRef} style={styles.cursorOuter} >
+      <div ref={cursorOuterRef} style={styles.cursorOuter} className="mousePiece" >
         <svg height="180px" width="180px"
           viewBox={selected ? ST_ExtentToVieport(selected.box) : ''} preserveAspectRatio="slice" style={{ border: "0px solid lightgray", marginLeft: "-50%", marginTop: "-50%" }}>
-          <path d={selected ? selected.poly : ''} stroke="black" strokeWidth="0" fill={color} />
+          <path d={selected ? selected.poly : ''} stroke="black" strokeWidth="0" fill={setColor(selected.mapcolor7)} />
         </svg>
       </div>
     </React.Fragment>
