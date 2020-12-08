@@ -1,20 +1,18 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-
 import React, { Component } from "react";
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-
-import { setCookie, getCookie } from "react-simple-cookie-store"
-
-import Container from 'react-bootstrap/Container';
-
-import MenuTop from './components/MenuTop';
-import ToolsPanel from './components/ToolsPanel';
 import DeckMap from './components/DeckMap';
 
-
+import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store"
+import GameTime from './lib/GameTime.js'
 import { Querydb } from './components/Utils.js';
+
+
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Container from 'react-bootstrap/Container';
+import MenuTop from './components/MenuTop';
+import ToolsPanel from './components/ToolsPanel';
 
 import AnimatedCursor from "./lib"
 
@@ -27,6 +25,7 @@ const VIEW_STATES = [
     bearing: 0
   }
 ];
+
 
 class Main extends Component {
 
@@ -43,7 +42,6 @@ class Main extends Component {
       founds: [],
       fails: 0,
       time: {},
-      seconds: 1,
       height: 0
     }
   }
@@ -62,6 +60,11 @@ class Main extends Component {
     var cookieFails = getCookie("fails");
     if (cookieFails)
       this.setState({ fails: parseInt(cookieFails) })
+
+    var cookieSeconds = getCookie("seconds");
+    if (cookieSeconds)
+      GameTime.seconds = parseInt(cookieSeconds);
+
   }
   componentDidUpdate() {
     if (this.state.height !== window.innerHeight)
@@ -89,8 +92,21 @@ class Main extends Component {
     }
   }
 
+  onResetGameHandler = () => {
+    console.log("Reset the Game");
+    removeCookie("founds");
+    removeCookie("fails");
+    this.setState({
+      pieceSelected: null,
+      pieceSelectedData: null,
+      founds: [],
+      fails: 0,
+    });
+    GameTime.seconds = 0;
+  }
+
+
   onClickMapHandler = (info) => {
-    console.log (this.state.seconds);
     if (info && this.state.pieceSelected) {
       if (String(this.state.pieceSelectedData.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
         if (!this.state.founds.includes(this.state.pieceSelectedData.cartodb_id)) {
@@ -130,8 +146,11 @@ class Main extends Component {
           founds={this.state.founds}
           onDataLoaded={this.onDataLoadedHandler}
         />
-        <MenuTop name="MapPuzzle.gl" onSelectMap={this.onSelectMapHandler} />
-        <Container fluid style={{ paddingTop: 15 + 'px'}}>
+        <MenuTop
+          name="MapPuzzle.gl" onSelectMap={this.onSelectMapHandler}
+          onResetGame={this.onResetGameHandler}
+        />
+        <Container fluid style={{ paddingTop: 15 + 'px' }}>
           <Row>
             <Col xs={8} md={4} lg={4} xl={3} >
               <ToolsPanel name="Countries"
@@ -145,7 +164,6 @@ class Main extends Component {
           </Row>
           {AnimatedCursorValue}
         </Container>
-
       </div>
     );
   }

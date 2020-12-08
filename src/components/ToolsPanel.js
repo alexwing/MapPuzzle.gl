@@ -8,10 +8,11 @@ import Accordion from 'react-bootstrap/Accordion';
 import Table from 'react-bootstrap/Table';
 import Timer from './Timer';
 import { ST_ExtentToVieport } from '../components/Utils.js';
-import {setColor} from './Utils.js';
+import { setColor } from './Utils.js';
 
 
 class ToolsPanel extends Component {
+
 
   render() {
 
@@ -24,7 +25,7 @@ class ToolsPanel extends Component {
             founds.includes(c.cartodb_id) ? null : (
               <tr key={c.cartodb_id} onClick={onPieceSelected} id={c.cartodb_id} className={parseInt(c.cartodb_id) === parseInt(pieceSelected) ? "table-primary" : ""}>
                 <td width="80%">{c.name ? c.name : c.formal_en}</td>
-                <td width="20%" align="right"  className="legendPiece">
+                <td width="20%" align="right" className="legendPiece">
                   <svg viewBox={ST_ExtentToVieport(c.box)} preserveAspectRatio="slice">
                     <path d={c.poly} stroke="black" strokeWidth="0" fill={setColor(c.mapcolor7)} />
                   </svg>
@@ -36,11 +37,13 @@ class ToolsPanel extends Component {
 
     );
 
+
+
     return <Accordion defaultActiveKey="0">
       <Card>
         <Accordion.Toggle as={Card.Header} eventKey="0" >
           {this.props.name}
-          <Timer/>
+          <Timer />
         </Accordion.Toggle>
         <Accordion.Collapse eventKey="0">
           <Card.Body>
@@ -51,27 +54,27 @@ class ToolsPanel extends Component {
                     <Alert.Heading>Founds:</Alert.Heading>
                     <hr />
                     <p className="mb-0">
-                    {founds.length}
-                    </p>                    
+                      {founds.length}
+                    </p>
                   </Alert>
                 </Col>
                 <Col xs={4} lg={4}>
-                <Alert variant="warning">
+                  <Alert variant="warning">
                     <Alert.Heading>Remaining:</Alert.Heading>
                     <hr />
                     <p className="mb-0">
-                    {pieces.length - founds.length}
+                      {pieces.length - founds.length}
                     </p>
-                  </Alert>                  
+                  </Alert>
                 </Col>
                 <Col xs={4} lg={4}>
-                <Alert variant="danger">
+                  <Alert variant="danger">
                     <Alert.Heading>Fails:</Alert.Heading>
                     <hr />
                     <p className="mb-0">
-                    {this.props.fails}
+                      {this.props.fails}
                     </p>
-                  </Alert>                   
+                  </Alert>
                 </Col>
               </Row>
               <div style={{ overflowY: "auto", maxHeight: (height - 190) + "px" }}>
