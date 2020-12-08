@@ -169,7 +169,7 @@ function CursorCore({
   // Cursor Styles
   const styles = {
     cursorOuter: {
-      zIndex: 999,
+      zIndex: 1,
       display: 'block',
       position: 'fixed',
       pointerEvents: 'none',

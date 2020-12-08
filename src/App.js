@@ -5,13 +5,14 @@ import React, { Component } from "react";
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
-import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store"
+import { setCookie, getCookie } from "react-simple-cookie-store"
 
 import Container from 'react-bootstrap/Container';
 
 import MenuTop from './components/MenuTop';
 import ToolsPanel from './components/ToolsPanel';
 import DeckMap from './components/DeckMap';
+
 
 import { Querydb } from './components/Utils.js';
 
@@ -29,17 +30,22 @@ const VIEW_STATES = [
 
 class Main extends Component {
 
-  state = {
-    lineWidth: 1,
-    color: [255, 0, 0],
-    colorStroke: [150, 150, 150],
-    pieceSelected: null,
-    pieceSelectedData: null,
-    viewState: VIEW_STATES[0],
-    pieces: [],
-    founds: [],
-    fails: 0,
-    height: window.innerHeight
+  constructor() {
+    super();
+    this.state = {
+      lineWidth: 1,
+      color: [255, 0, 0],
+      colorStroke: [150, 150, 150],
+      pieceSelected: null,
+      pieceSelectedData: null,
+      viewState: VIEW_STATES[0],
+      pieces: [],
+      founds: [],
+      fails: 0,
+      time: {},
+      seconds: 1,
+      height: 0
+    }
   }
   componentDidMount() {
     //   Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Transform(the_geom,3857)) as poly, ST_Extent(ST_Transform(the_geom,3857 )) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
@@ -48,14 +54,14 @@ class Main extends Component {
       this.setState({ pieces: response.rows })
     )
 
-    //removeCookie("founds");
+    //restore game status from coockie
     var cookieFounds = getCookie("founds");
     if (cookieFounds)
       this.setState({ founds: cookieFounds.split(',').map((e) => parseInt(e)) })
 
-      var cookieFails = getCookie("fails");
-      if (cookieFails)
-        this.setState({ fails:  parseInt(cookieFails) })      
+    var cookieFails = getCookie("fails");
+    if (cookieFails)
+      this.setState({ fails: parseInt(cookieFails) })
   }
   componentDidUpdate() {
     if (this.state.height !== window.innerHeight)
@@ -84,6 +90,7 @@ class Main extends Component {
   }
 
   onClickMapHandler = (info) => {
+    console.log (this.state.seconds);
     if (info && this.state.pieceSelected) {
       if (String(this.state.pieceSelectedData.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
         if (!this.state.founds.includes(this.state.pieceSelectedData.cartodb_id)) {
@@ -103,9 +110,9 @@ class Main extends Component {
   }
 
   render() {
-    let button;
+    let AnimatedCursorValue;
     if (this.state.pieceSelected) {
-      button = <AnimatedCursor
+      AnimatedCursorValue = <AnimatedCursor
         clickScale={0.95}
         color='#666'
         selected={this.state.pieceSelectedData}
@@ -124,9 +131,9 @@ class Main extends Component {
           onDataLoaded={this.onDataLoadedHandler}
         />
         <MenuTop name="MapPuzzle.gl" onSelectMap={this.onSelectMapHandler} />
-        <Container fluid style={{ paddingTop: 15 + 'px' }}>
+        <Container fluid style={{ paddingTop: 15 + 'px'}}>
           <Row>
-            <Col xs={8} md={4} lg={4} xl={3} style={{ zIndex: "9999" }}>
+            <Col xs={8} md={4} lg={4} xl={3} >
               <ToolsPanel name="Countries"
                 pieceSelected={this.state.pieceSelected} onPieceSelected={this.onPieceSelectedHandler}
                 pieces={this.state.pieces}
@@ -136,8 +143,9 @@ class Main extends Component {
               />
             </Col>
           </Row>
+          {AnimatedCursorValue}
         </Container>
-        {button}
+
       </div>
     );
   }

@@ -6,6 +6,7 @@ import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
 import Accordion from 'react-bootstrap/Accordion';
 import Table from 'react-bootstrap/Table';
+import Timer from './Timer';
 import { ST_ExtentToVieport } from '../components/Utils.js';
 import {setColor} from './Utils.js';
 
@@ -39,6 +40,7 @@ class ToolsPanel extends Component {
       <Card>
         <Accordion.Toggle as={Card.Header} eventKey="0" >
           {this.props.name}
+          <Timer/>
         </Accordion.Toggle>
         <Accordion.Collapse eventKey="0">
           <Card.Body>
