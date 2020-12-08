@@ -13,6 +13,7 @@ import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 import MenuTop from './components/MenuTop';
 import ToolsPanel from './components/ToolsPanel';
+//import Fireworks from './lib/Fireworks';
 
 import AnimatedCursor from "./lib"
 
@@ -150,6 +151,7 @@ class Main extends Component {
           name="MapPuzzle.gl" onSelectMap={this.onSelectMapHandler}
           onResetGame={this.onResetGameHandler}
         />
+         
         <Container fluid style={{ paddingTop: 15 + 'px' }}>
           <Row>
             <Col xs={8} md={4} lg={4} xl={3} >
@@ -163,7 +165,9 @@ class Main extends Component {
             </Col>
           </Row>
           {AnimatedCursorValue}
+         
         </Container>
+      
       </div>
     );
   }

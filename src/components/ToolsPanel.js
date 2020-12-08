@@ -7,8 +7,8 @@ import Alert from 'react-bootstrap/Alert';
 import Accordion from 'react-bootstrap/Accordion';
 import Table from 'react-bootstrap/Table';
 import Timer from './Timer';
-import { ST_ExtentToVieport } from '../components/Utils.js';
-import { setColor } from './Utils.js';
+import { ST_ExtentToVieport,setColor } from './Utils';
+
 
 
 class ToolsPanel extends Component {
@@ -83,8 +83,10 @@ class ToolsPanel extends Component {
             </Form>
           </Card.Body>
         </Accordion.Collapse>
+
       </Card>
     </Accordion>
+   
   }
 
 }
