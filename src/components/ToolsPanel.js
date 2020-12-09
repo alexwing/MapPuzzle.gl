@@ -26,7 +26,7 @@ class ToolsPanel extends Component {
               <tr key={c.cartodb_id} onClick={onPieceSelected} id={c.cartodb_id} className={parseInt(c.cartodb_id) === parseInt(pieceSelected) ? "table-primary" : ""}>
                 <td width="80%">{c.name ? c.name : c.formal_en}</td>
                 <td width="20%" align="right" className="legendPiece">
-                  <svg viewBox={ST_ExtentToVieport(c.box)} preserveAspectRatio="slice">
+                  <svg viewBox={(c.box)} preserveAspectRatio="slice">
                     <path d={c.poly} stroke="black" strokeWidth="0" fill={setColor(c.mapcolor7)} />
                   </svg>
                 </td>
