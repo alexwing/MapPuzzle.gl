@@ -123,7 +123,7 @@ export function LazyRound(num) {
 };
 
 
-export async function Querydb(filepath) {
+export async function Jsondb(filepath) {
   return fetch(
     filepath,
     {
@@ -137,7 +137,7 @@ export async function Querydb(filepath) {
     .catch(error => console.log(error));
 }
 
-/*
+
 export async function Querydb(sql) {
   return fetch(
     'https://public.carto.com/api/v2/sql?q=' + sql,
@@ -151,7 +151,7 @@ export async function Querydb(sql) {
     .then(res => res.json())
     .catch(error => console.log(error));
 }
-*/
+
 
 export function secondsToTime(secs){
   let hours = Math.floor(secs / (60 * 60));

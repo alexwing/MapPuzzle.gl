@@ -5,7 +5,8 @@ import DeckMap from './components/DeckMap';
 
 import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store"
 import GameTime from './lib/GameTime.js'
-import { Querydb } from './components/Utils.js';
+import {Jsondb } from './components/Utils.js';
+//import { Querydb } from './components/Utils.js';
 
 
 import Col from 'react-bootstrap/Col';
@@ -56,7 +57,7 @@ class Main extends Component {
     //Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Translate(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))),-ST_Xmin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))),-ST_YMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))))) as poly, CONCAT('0 0 ',(ST_XMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))-ST_XMin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))), ' ',(ST_YMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))-ST_YMin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))))) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name ").then(response =>
     
     //Querydb("SELECT *, ST_AsSVG(ST_Translate(the_geom_webmercator,-ST_Xmin(the_geom_webmercator),-ST_YMax(the_geom_webmercator))) as poly, CONCAT('0 0 ',ST_Distance(CONCAT('SRID=3857;POINT(',ST_XMin(the_geom_webmercator),' 0)')::geometry,CONCAT('SRID=3857;POINT(',ST_XMax(the_geom_webmercator),' 0)')::geometry), ' ',ST_Distance(CONCAT('SRID=3857;POINT(0 ',ST_YMin(the_geom_webmercator),')')::geometry,CONCAT('SRID=3857;POINT(0 ',ST_YMax(the_geom_webmercator),')')::geometry)) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name")
-    Querydb("world_borders.geojson")
+    Jsondb("world_borders.geojson")
     .then(response =>{
       this.setState({ pieces: response.features , data:response})  
       this.checkGameStatus();    
