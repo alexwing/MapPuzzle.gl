@@ -122,6 +122,22 @@ export function LazyRound(num) {
   return parts.length > 1 ? (Math.round(parseInt(parts.join(""), 10) / Math.pow(1000, parts.length - 1)) + ["T", "M", "B"][parts.length - 2]) : parts[0];
 };
 
+
+export async function Querydb(filepath) {
+  return fetch(
+    filepath,
+    {
+      method: "GET",
+      headers: new Headers({
+        Accept: "application/json"
+      })
+    }
+  )
+    .then(res => res.json())
+    .catch(error => console.log(error));
+}
+
+/*
 export async function Querydb(sql) {
   return fetch(
     'https://public.carto.com/api/v2/sql?q=' + sql,
@@ -135,6 +151,7 @@ export async function Querydb(sql) {
     .then(res => res.json())
     .catch(error => console.log(error));
 }
+*/
 
 export function secondsToTime(secs){
   let hours = Math.floor(secs / (60 * 60));

@@ -34,6 +34,7 @@ class Main extends Component {
   constructor() {
     super();
     this.state = {
+      data:null,
       lineWidth: 1,
       color: [255, 0, 0],
       colorStroke: [150, 150, 150],
@@ -54,12 +55,12 @@ class Main extends Component {
     //Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(the_geom_webmercator) as poly, CONCAT(ST_XMin(ST_Extent(the_geom_webmercator)), ' ', ST_YMin(ST_Extent(the_geom_webmercator)),' ',ST_Distance(CONCAT('SRID=3857;POINT(',ST_XMax(the_geom_webmercator),' 0)')::geometry,CONCAT('SRID=3857;POINT(',ST_XMin(the_geom_webmercator),' 0)')::geometry), ' ',ST_Distance(CONCAT('SRID=3857;POINT(0 ',ST_YMax(the_geom_webmercator),')')::geometry,CONCAT('SRID=3857;POINT(0 ',ST_YMin(the_geom_webmercator),')')::geometry)) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name ").then(response =>
     //Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Translate(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))),-ST_Xmin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))),-ST_YMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))))) as poly, CONCAT('0 0 ',(ST_XMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))-ST_XMin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))), ' ',(ST_YMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))-ST_YMin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))))) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name ").then(response =>
     
-    Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Translate(the_geom_webmercator,-ST_Xmin(the_geom_webmercator),-ST_YMax(the_geom_webmercator))) as poly, CONCAT('0 0 ',ST_Distance(CONCAT('SRID=3857;POINT(',ST_XMin(the_geom_webmercator),' 0)')::geometry,CONCAT('SRID=3857;POINT(',ST_XMax(the_geom_webmercator),' 0)')::geometry), ' ',ST_Distance(CONCAT('SRID=3857;POINT(0 ',ST_YMin(the_geom_webmercator),')')::geometry,CONCAT('SRID=3857;POINT(0 ',ST_YMax(the_geom_webmercator),')')::geometry)) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name LIMIT 1")
+    //Querydb("SELECT *, ST_AsSVG(ST_Translate(the_geom_webmercator,-ST_Xmin(the_geom_webmercator),-ST_YMax(the_geom_webmercator))) as poly, CONCAT('0 0 ',ST_Distance(CONCAT('SRID=3857;POINT(',ST_XMin(the_geom_webmercator),' 0)')::geometry,CONCAT('SRID=3857;POINT(',ST_XMax(the_geom_webmercator),' 0)')::geometry), ' ',ST_Distance(CONCAT('SRID=3857;POINT(0 ',ST_YMin(the_geom_webmercator),')')::geometry,CONCAT('SRID=3857;POINT(0 ',ST_YMax(the_geom_webmercator),')')::geometry)) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name")
+    Querydb("world_borders.geojson")
     .then(response =>{
-      this.setState({ pieces: response.rows })  
+      this.setState({ pieces: response.features , data:response})  
       this.checkGameStatus();    
      })
-
 
 
     //restore game status from coockie
@@ -95,7 +96,7 @@ class Main extends Component {
     if (this.state.pieceSelected !== val.target.parentNode.id) {
       this.setState({ pieceSelected: val.target.parentNode.id })
       this.state.pieces.forEach(piece => {
-        if (String(piece.cartodb_id).trim() === String(val.target.parentNode.id).trim()) {
+        if (String(piece.properties.cartodb_id).trim() === String(val.target.parentNode.id).trim()) {
           this.setState({ pieceSelectedData: piece })
         }
       });
@@ -130,11 +131,11 @@ class Main extends Component {
 
   onClickMapHandler = (info) => {
     if (info && this.state.pieceSelected) {
-      if (String(this.state.pieceSelectedData.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
-        if (!this.state.founds.includes(this.state.pieceSelectedData.cartodb_id)) {
+      if (String(this.state.pieceSelectedData.properties.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
+        if (!this.state.founds.includes(this.state.pieceSelectedData.properties.cartodb_id)) {
           console.log("FOUND: " + info.object.properties.name);
           this.setState(prevState => ({
-            founds: [...prevState.founds, this.state.pieceSelectedData.cartodb_id],
+            founds: [...prevState.founds, this.state.pieceSelectedData.properties.cartodb_id],
             pieceSelected: null,
             pieceSelectedData: null
           }));
@@ -179,6 +180,7 @@ class Main extends Component {
           onClickMap={this.onClickMapHandler}
           viewState={this.state.viewState}
           founds={this.state.founds}
+          data={this.state.data}
           onDataLoaded={this.onDataLoadedHandler}        
         />
         <MenuTop

@@ -22,12 +22,12 @@ class ToolsPanel extends Component {
       <Table striped bordered hover size="sm" className="legend">
         <tbody>
           {pieces.map(c =>
-            founds.includes(c.cartodb_id) ? null : (
-              <tr key={c.cartodb_id} onClick={onPieceSelected} id={c.cartodb_id} className={parseInt(c.cartodb_id) === parseInt(pieceSelected) ? "table-primary" : ""}>
-                <td width="80%">{c.name ? c.name : c.formal_en}</td>
+            founds.includes(c.properties.cartodb_id) ? null : (
+              <tr key={c.properties.cartodb_id} onClick={onPieceSelected} id={c.properties.cartodb_id} className={parseInt(c.properties.cartodb_id) === parseInt(pieceSelected) ? "table-primary" : ""}>
+                <td width="80%">{c.properties.name ? c.properties.name : c.properties.formal_en}</td>
                 <td width="20%" align="right" className="legendPiece">
-                  <svg viewBox={(c.box)} preserveAspectRatio="slice">
-                    <path d={c.poly} stroke="black" strokeWidth="0" fill={setColor(c.mapcolor7)} />
+                  <svg viewBox={(c.properties.box)} preserveAspectRatio="slice">
+                    <path d={c.properties.poly} stroke="black" strokeWidth="0" fill={setColor(c.properties.mapcolor)} />
                   </svg>
                 </td>
               </tr>

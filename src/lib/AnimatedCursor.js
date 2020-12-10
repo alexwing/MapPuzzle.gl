@@ -184,8 +184,8 @@ function CursorCore({
     <React.Fragment>
       <div ref={cursorOuterRef} style={styles.cursorOuter} className="mousePiece" >
         <svg height="180px" width="180px"
-          viewBox={selected ? (selected.box) : ''} preserveAspectRatio="slice" style={{ border: "0px solid lightgray", marginLeft: "-50%", marginTop: "-50%" }}>
-          <path d={selected ? selected.poly : ''} stroke="black" strokeWidth="0" fill={setColor(selected.mapcolor7)} />
+          viewBox={selected ? (selected.properties.box) : ''} preserveAspectRatio="slice" style={{ border: "0px solid lightgray", marginLeft: "-50%", marginTop: "-50%" }}>
+          <path d={selected ? selected.properties.poly : ''} stroke="black" strokeWidth="0" fill={setColor(selected.properties.mapcolor)} />
         </svg>
       </div>
     </React.Fragment>
