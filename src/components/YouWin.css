@@ -1,0 +1,42 @@
+
+.modal-backdrop.show {
+    opacity: .1;
+  }
+  .modal-header {
+    background-color: lightskyblue;
+  }
+  .modal-body{
+    padding: 0 1rem;
+  }
+  .modal-body p{
+    margin-bottom: 0px;
+  }
+  .scorewin .alert{
+    border-radius: 0px;
+    margin-bottom: 0px;
+    padding: .75rem 0rem;
+  }
+  .scorewin .alert-warning > .mb-0{
+    font-size: 20px !important;
+    line-height: 40px;
+  }
+  .scorewin .alert-heading.h4 ,.scorewin .mb-0{
+
+    font-size: 25px !important;
+    font-weight: bolder;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 25px;
+    margin: 1.5em 0em !important;
+  }
+  
+  .scorewin hr{
+    margin: 0px;
+  }
+  
+  .scorewin .col-lg-4{
+    padding-right: 0px;
+    padding-left: 0px;
+  }

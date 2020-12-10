@@ -13,7 +13,8 @@ import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 import MenuTop from './components/MenuTop';
 import ToolsPanel from './components/ToolsPanel';
-//import Fireworks from './lib/Fireworks';
+import YouWin from './components/YouWin';
+
 
 import AnimatedCursor from "./lib"
 
@@ -43,18 +44,23 @@ class Main extends Component {
       founds: [],
       fails: 0,
       time: {},
-      height: 0
+      height: 0,
+      win:false
     }
   }
   componentDidMount() {
     //Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Transform(the_geom,3857)) as poly, ST_Extent(ST_Transform(the_geom,3857 )) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
     //Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(the_geom) as poly, ST_Extent(the_geom) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5 GROUP BY cartodb_id ORDER BY name ").then(response =>
-    Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Translate(the_geom_webmercator,-ST_Xmin(the_geom_webmercator),-ST_YMax(the_geom_webmercator))) as poly, CONCAT('0 0 ',ST_Distance(CONCAT('SRID=3857;POINT(',ST_XMin(the_geom_webmercator),' 0)')::geometry,CONCAT('SRID=3857;POINT(',ST_XMax(the_geom_webmercator),' 0)')::geometry), ' ',ST_Distance(CONCAT('SRID=3857;POINT(0 ',ST_YMin(the_geom_webmercator),')')::geometry,CONCAT('SRID=3857;POINT(0 ',ST_YMax(the_geom_webmercator),')')::geometry)) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name ").then(response =>
     //Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(the_geom_webmercator) as poly, CONCAT(ST_XMin(ST_Extent(the_geom_webmercator)), ' ', ST_YMin(ST_Extent(the_geom_webmercator)),' ',ST_Distance(CONCAT('SRID=3857;POINT(',ST_XMax(the_geom_webmercator),' 0)')::geometry,CONCAT('SRID=3857;POINT(',ST_XMin(the_geom_webmercator),' 0)')::geometry), ' ',ST_Distance(CONCAT('SRID=3857;POINT(0 ',ST_YMax(the_geom_webmercator),')')::geometry,CONCAT('SRID=3857;POINT(0 ',ST_YMin(the_geom_webmercator),')')::geometry)) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name ").then(response =>
     //Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Translate(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))),-ST_Xmin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))),-ST_YMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))))) as poly, CONCAT('0 0 ',(ST_XMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))-ST_XMin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))), ' ',(ST_YMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))-ST_YMin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))))) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name ").then(response =>
+    
+    Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Translate(the_geom_webmercator,-ST_Xmin(the_geom_webmercator),-ST_YMax(the_geom_webmercator))) as poly, CONCAT('0 0 ',ST_Distance(CONCAT('SRID=3857;POINT(',ST_XMin(the_geom_webmercator),' 0)')::geometry,CONCAT('SRID=3857;POINT(',ST_XMax(the_geom_webmercator),' 0)')::geometry), ' ',ST_Distance(CONCAT('SRID=3857;POINT(0 ',ST_YMin(the_geom_webmercator),')')::geometry,CONCAT('SRID=3857;POINT(0 ',ST_YMax(the_geom_webmercator),')')::geometry)) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name LIMIT 1")
+    .then(response =>{
+      this.setState({ pieces: response.rows })  
+      this.checkGameStatus();    
+     })
 
-      this.setState({ pieces: response.rows })
-    )
+
 
     //restore game status from coockie
     var cookieFounds = getCookie("founds");
@@ -69,7 +75,17 @@ class Main extends Component {
     if (cookieSeconds)
       GameTime.seconds = parseInt(cookieSeconds);
 
+      this.checkGameStatus();
   }
+  checkGameStatus() {
+
+    console.log(parseInt(this.state.pieces.length) +"-"+ parseInt(this.state.founds.length));
+    if (parseInt(this.state.pieces.length) - parseInt(this.state.founds.length) <=0 && parseInt(this.state.pieces.length)>0 ){
+        this.setState({ YouWin: true })
+    } 
+
+  }
+
   componentDidUpdate() {
     if (this.state.height !== window.innerHeight)
       this.setState({ height: window.innerHeight })
@@ -85,8 +101,9 @@ class Main extends Component {
       });
     } else {
       this.setState({ pieceSelected: null, pieceSelectedData: null })
-    }
+    }  
   }
+
   onSelectMapHandler = (val) => {
     console.log(val.target.id);
     switch (val.target.id) {
@@ -105,6 +122,7 @@ class Main extends Component {
       pieceSelectedData: null,
       founds: [],
       fails: 0,
+      YouWin: false,
     });
     GameTime.seconds = 0;
   }
@@ -120,6 +138,8 @@ class Main extends Component {
             pieceSelected: null,
             pieceSelectedData: null
           }));
+          console.log(this.state.pieces.length +"-"+ this.state.founds.length);          
+          this.checkGameStatus();                 
           setCookie("founds", this.state.founds.join(), 2)
         }
       } else {
@@ -138,6 +158,17 @@ class Main extends Component {
         selected={this.state.pieceSelectedData}
       />;
     }
+
+
+    let YouWinScreen;
+    if (this.state.YouWin) {
+      YouWinScreen = <YouWin
+      pieces={this.state.pieces}
+      founds={this.state.founds}
+      fails={this.state.fails}
+      onResetGame={this.onResetGameHandler}
+      />    
+    }    
     return (
       <div>
         <DeckMap lineWidth={this.state.lineWidth}
@@ -148,13 +179,13 @@ class Main extends Component {
           onClickMap={this.onClickMapHandler}
           viewState={this.state.viewState}
           founds={this.state.founds}
-          onDataLoaded={this.onDataLoadedHandler}
+          onDataLoaded={this.onDataLoadedHandler}        
         />
         <MenuTop
           name="MapPuzzle.gl" onSelectMap={this.onSelectMapHandler}
           onResetGame={this.onResetGameHandler}
         />
-         
+        {YouWinScreen}
         <Container fluid style={{ paddingTop: 15 + 'px' }}>
           <Row>
             <Col xs={8} md={4} lg={4} xl={3} >
@@ -164,13 +195,12 @@ class Main extends Component {
                 height={this.state.height}
                 founds={this.state.founds}
                 fails={this.state.fails}
+                YouWin={this.state.YouWin}
               />
             </Col>
           </Row>
           {AnimatedCursorValue}
-         
         </Container>
-      
       </div>
     );
   }

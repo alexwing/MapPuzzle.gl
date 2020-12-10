@@ -1,6 +1,6 @@
-$particles: 50;
-$width: 500;
-$height: 500;
+$particles: 250;
+$width: 800;
+$height: 800;
 
 // Create the explosion...
 $box-shadow: ();
@@ -80,26 +80,26 @@ body {
   border-radius: 50%;
   box-shadow: $box-shadow2;
   @include animation((1s bang ease-out infinite backwards, 1s gravity ease-in infinite backwards, 5s position linear infinite backwards));
+  z-index: 99;
 }
-    
 .pyro > .after {
   @include animation-delay((1.25s, 1.25s, 1.25s));
   @include animation-duration((1.25s, 1.25s, 6.25s));
 }
-        
+
 @include keyframes(bang) {
   to {
     box-shadow:$box-shadow;
   }
 }
-    
+
 @include keyframes(gravity)  {
   to {
     @include transform(translateY(200px));
     opacity: 0;
   }
 }
-    
+
 @include keyframes(position) {
   0%, 19.9% {
     margin-top: 10%;

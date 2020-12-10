@@ -22,7 +22,7 @@ body{
   }
   
   table.legend{
-    margin-bottom: -20px !important;
+    margin-bottom: 0px !important;
     border: none !important;
   }
   table.legend td, table.legend th {

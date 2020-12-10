@@ -12,9 +12,9 @@ import './Fireworks.scss';
 export default class Fireworks extends Component {
 
     render() {
-        return <div class="pyro">
-            <div class="before"></div>
-            <div class="after"></div>
+        return <div className="pyro">
+            <div className="before"></div>
+            <div className="after"></div>
         </div>;
     }
 
