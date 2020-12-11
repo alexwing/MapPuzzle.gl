@@ -27,6 +27,8 @@ body{
   }
   table.legend td, table.legend th {
     border: none !important;
+    cursor: default;
+  
   }
   
   .legendPiece{

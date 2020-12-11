@@ -35,17 +35,25 @@ export default class MenuTop extends Component {
         show: true
       });
     }
+
+    const Puzzles = (
+        <Nav className="mr-auto">
+          <NavDropdown title="Select a Puzzle" id="puzzle">
+          {this.props.content.map(c =>
+            (
+              <NavDropdown.Item  id={c.id}  onClick={onSelectMap} >{c.name}</NavDropdown.Item>
+            ))}
+          </NavDropdown>              
+        </Nav>
+    );
+
     return <div>
       <Navbar bg="light" expand="lg">
         <Navbar.Brand href="#home"><img src="./logo192.png" alt="" />{this.props.name}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
-            <NavDropdown title="Select Puzzle" id="basic-nav-dropdown">
-              <NavDropdown.Item id="World Countries" href="#World Countries" onClick={onSelectMap} >World Countries</NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
+        {Puzzles}
           <Form inline>
             <Button variant="outline-primary" onClick={handleShow}>Reset Game</Button>
           </Form>

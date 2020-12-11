@@ -10,6 +10,7 @@ export default class DeckMap extends Component {
     /*function getpieceCondition(piece) {
       return piece !== 'All' ? `WHERE piece='${piece}'` : '';
     }*/
+    
       const layers = [ new GeoJsonLayer({
    //   data: `SELECT *, (pop_est* 100 / (SELECT SUM(pop_est) FROM public.ne_50m_admin_0_countries)) as percent FROM public.ne_50m_admin_0_countries ${getpieceCondition(this.props.piece)}`,
       data: this.props.data,

@@ -36,12 +36,12 @@ class MapPuzzle extends Component {
     super();
     this.state = {
       data:null,
+      puzzleSelected:0,
       lineWidth: 1,
       color: [255, 0, 0],
       colorStroke: [150, 150, 150],
       pieceSelected: null,
       pieceSelectedData: null,
-      viewState: VIEW_STATES[0],
       pieces: [],
       founds: [],
       fails: 0,
@@ -57,7 +57,9 @@ class MapPuzzle extends Component {
     //Querydb("SELECT cartodb_id, name, formal_en, ST_AsSVG(ST_Translate(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))),-ST_Xmin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))),-ST_YMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))))) as poly, CONCAT('0 0 ',(ST_XMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))-ST_XMin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))), ' ',(ST_YMax(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator))))-ST_YMin(ST_GeometryN(the_geom_webmercator, generate_series(1, ST_NumGeometries(the_geom_webmercator)))))) as box, mapcolor7 FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name ").then(response =>
     
     //Querydb("SELECT *, ST_AsSVG(ST_Translate(the_geom_webmercator,-ST_Xmin(the_geom_webmercator),-ST_YMax(the_geom_webmercator))) as poly, CONCAT('0 0 ',ST_Distance(CONCAT('SRID=3857;POINT(',ST_XMin(the_geom_webmercator),' 0)')::geometry,CONCAT('SRID=3857;POINT(',ST_XMax(the_geom_webmercator),' 0)')::geometry), ' ',ST_Distance(CONCAT('SRID=3857;POINT(0 ',ST_YMin(the_geom_webmercator),')')::geometry,CONCAT('SRID=3857;POINT(0 ',ST_YMax(the_geom_webmercator),')')::geometry)) as box FROM public.ne_50m_admin_0_countries WHERE ST_Area(the_geom) > 0.5   GROUP BY cartodb_id ORDER BY name")
-    Jsondb("maps/spanish_provinces.geojson")
+    console.log("ssss"+this.props.content.puzzles[0].data);
+
+    Jsondb(this.props.content.puzzles[this.state.puzzleSelected].data)
     .then(response =>{
       this.setState({ pieces: response.features , data:response})  
       this.checkGameStatus();    
@@ -108,11 +110,13 @@ class MapPuzzle extends Component {
 
   onSelectMapHandler = (val) => {
     console.log(val.target.id);
-    switch (val.target.id) {
-      default:
-        this.setState({ viewState: VIEW_STATES[0], piece: null });
-        break;
-    }
+    this.setState({ puzzleSelected: val.target.id, pieceSelectedData: null, pieceSelected: null });
+
+    Jsondb(this.props.content.puzzles[this.state.puzzleSelected].data)
+    .then(response =>{
+      this.setState({ pieces: response.features , data:response})  
+      this.checkGameStatus();    
+     })    
   }
 
   onResetGameHandler = () => {
@@ -179,13 +183,14 @@ class MapPuzzle extends Component {
           colorHeight={this.state.colorHeight}
           piece={this.state.pieceSelected}
           onClickMap={this.onClickMapHandler}
-          viewState={this.state.viewState}
+          viewState={this.props.content.puzzles[this.state.puzzleSelected].view_state}
           founds={this.state.founds}
           data={this.state.data}
           onDataLoaded={this.onDataLoadedHandler}        
         />
         <MenuTop
           name="MapPuzzle.gl" onSelectMap={this.onSelectMapHandler}
+          content={this.props.content.puzzles}
           onResetGame={this.onResetGameHandler}
         />
         {YouWinScreen}

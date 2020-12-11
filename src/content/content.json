@@ -1,0 +1,26 @@
+{
+    "puzzles": [
+      {
+        "id": 0,
+        "name": "World Borders",
+        "data": "maps/world_borders.geojson",
+        "view_state":{
+          "longitude": 0,
+          "latitude": 0,
+          "zoom": 2,
+          "bearing": 0
+        }        
+      },
+      {
+        "id": 1,
+        "name": "Spanish Provinces",
+        "data": "maps/spanish_provinces.geojson",
+        "view_state":{
+          "longitude": -3.713 ,
+          "latitude": 40.2085,
+          "zoom": 5.5,
+          "bearing": 0
+        }        
+      }
+    ]
+  }
