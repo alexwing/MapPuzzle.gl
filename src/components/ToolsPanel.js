@@ -24,7 +24,7 @@ class ToolsPanel extends Component {
           {pieces.map(c =>
             founds.includes(c.properties.cartodb_id) ? null : (
               <tr key={c.properties.cartodb_id} onClick={onPieceSelected} id={c.properties.cartodb_id} className={parseInt(c.properties.cartodb_id) === parseInt(pieceSelected) ? "table-primary" : ""}>
-                <td width="80%">{c.properties.name ? c.properties.name : c.properties.formal_en}</td>
+                <td width="80%">{c.properties.name}</td>
                 <td width="20%" align="right" className="legendPiece">
                   <svg viewBox={(c.properties.box)} preserveAspectRatio="slice">
                     <path d={c.properties.poly} stroke="black" strokeWidth="0" fill={setColor(c.properties.mapcolor)} />
