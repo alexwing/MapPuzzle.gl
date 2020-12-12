@@ -85,8 +85,10 @@ class MapPuzzle extends Component {
   checkGameStatus() {
     //console.log(parseInt(this.state.pieces.length) + "-" + parseInt(this.state.founds.length));
     if (parseInt(this.state.pieces.length) - parseInt(this.state.founds.length) <= 0 && parseInt(this.state.pieces.length) > 0) {
-      this.setState({ YouWin: true })
-    }
+      this.setState({ YouWin: true });
+    }else{
+      this.setState({ YouWin: false });
+    } 
   }
 
   componentDidUpdate() {

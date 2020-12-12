@@ -5,10 +5,9 @@
         "name": "World Borders",
         "data": "maps/world_borders.geojson",
         "view_state":{
-          "longitude": 0,
           "latitude": 0,
-          "zoom": 2,
-          "bearing": 0
+          "longitude": 0,
+          "zoom": 2
         }        
       },
       {
@@ -16,11 +15,30 @@
         "name": "Spanish Provinces",
         "data": "maps/spanish_provinces.geojson",
         "view_state":{
-          "longitude": -3.713 ,
           "latitude": 40.2085,
-          "zoom": 5.5,
-          "bearing": 0
+          "longitude": -3.713 ,
+          "zoom": 5.5
         }        
       }
+      ,{
+        "id": 2,
+        "name": "Usa States",
+        "data": "maps/usa_states.geojson",
+        "view_state":{
+          "latitude": 37.090240,
+          "longitude": -95.712891 ,
+          "zoom": 3.5
+        }        
+      }  
+      ,{
+        "id": 3,
+        "name": "Canada Provinces",
+        "data": "maps/canada_provinces.geojson",
+        "view_state":{
+          "latitude": 56.130367,
+          "longitude": -106.346771 ,
+          "zoom": 3
+        }        
+      }          
     ]
   }

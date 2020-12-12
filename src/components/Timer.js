@@ -34,14 +34,13 @@ export default class Timer extends Component {
     countDown() {
         if (!this.props.YouWin && !this.props.loading) {
             GameTime.seconds++;
-            this.setState({
-                time: secondsToTime(GameTime.seconds),
-            });
             if (GameTime.seconds % 5 === 0) {
-                setCookie("seconds"+this.props.puzzleSelected, GameTime.seconds, 2);
+                setCookie("seconds" + this.props.puzzleSelected, GameTime.seconds, 2);
             }
         }
-
+        this.setState({
+            time: secondsToTime(GameTime.seconds),
+        });
     }
 
     getTime() {
