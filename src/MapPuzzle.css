@@ -12,6 +12,10 @@ body{
     max-height: 32px;
     padding-right: 15px;
   }
+
+  .navbar-brand{
+    cursor: pointer !important;
+  }
   .card-body , .navbar-brand {
     padding: 0px !important;
   }

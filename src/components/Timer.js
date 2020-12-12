@@ -32,7 +32,7 @@ export default class Timer extends Component {
     }
 
     countDown() {
-        if (!this.props.YouWin) {
+        if (!this.props.YouWin && !this.props.loading) {
             GameTime.seconds++;
             this.setState({
                 time: secondsToTime(GameTime.seconds),

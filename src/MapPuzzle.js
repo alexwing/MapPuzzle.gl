@@ -33,6 +33,7 @@ class MapPuzzle extends Component {
       founds: [],
       fails: 0,
       time: {},
+      loading: true,
       height: 0,
       win: false
     }
@@ -46,10 +47,11 @@ class MapPuzzle extends Component {
   }
 
   loadGame(puzzleSelected) {
-
+    this.setState({ loading: true });
+    setCookie("seconds"+this.state.puzzleSelected, GameTime.seconds, 2);
     Jsondb(this.props.content.puzzles[puzzleSelected].data)
       .then(response => {
-        this.setState({ puzzleSelected: puzzleSelected, pieces: response.features, data: response });
+        this.setState({ loading:false,puzzleSelected: puzzleSelected, pieces: response.features, data: response });
         this.checkGameStatus();
         //restore game status from coockie
         var cookieFounds = getCookie("founds" + puzzleSelected);
@@ -184,6 +186,7 @@ class MapPuzzle extends Component {
           name="MapPuzzle.gl" onSelectMap={this.onSelectMapHandler}
           content={this.props.content.puzzles}
           onResetGame={this.onResetGameHandler}
+          loading={this.state.loading}
         />
         {YouWinScreen}
         <Container fluid style={{ paddingTop: 15 + 'px' }}>
