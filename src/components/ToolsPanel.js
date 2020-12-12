@@ -43,7 +43,7 @@ class ToolsPanel extends Component {
       <Card>
         <Accordion.Toggle as={Card.Header} eventKey="0" >
           {this.props.name}
-          <Timer  YouWin={this.props.YouWin}/>
+          <Timer  YouWin={this.props.YouWin} puzzleSelected={this.props.puzzleSelected}/>
         </Accordion.Toggle>
         <Accordion.Collapse eventKey="0">
           <Card.Body>

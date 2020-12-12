@@ -38,7 +38,7 @@ export default class Timer extends Component {
                 time: secondsToTime(GameTime.seconds),
             });
             if (GameTime.seconds % 5 === 0) {
-                setCookie("seconds", GameTime.seconds, 2);
+                setCookie("seconds"+this.props.puzzleSelected, GameTime.seconds, 2);
             }
         }
 
