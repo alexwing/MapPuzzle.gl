@@ -3,6 +3,7 @@
       {
         "id": 0,
         "name": "World Borders",
+        "comment":"",
         "data": "maps/world_borders.geojson",
         "view_state":{
           "latitude": 0,
@@ -13,15 +14,18 @@
       {
         "id": 1,
         "name": "Spanish Provinces",
+        "comment":"",
         "data": "maps/spanish_provinces.geojson",
         "view_state":{
           "latitude": 40.2085,
           "longitude": -3.713 ,
           "zoom": 5.5
-        }        
+        }       
+        
       }
       ,{
         "id": 2,
+        "comment":"Layer download in http://tapiquen-sig.jimdofree.com. Carlos Efraín Porto Tapiquén. Geografía, SIG y Cartografía Digital. Valencia, España, 2020",
         "name": "Usa States",
         "data": "maps/usa_states.geojson",
         "view_state":{
@@ -33,6 +37,7 @@
       ,{
         "id": 3,
         "name": "Canada Provinces",
+        "comment":"Layer download in http://tapiquen-sig.jimdofree.com. Carlos Efraín Porto Tapiquén. Geografía, SIG y Cartografía Digital. Valencia, España, 2020",
         "data": "maps/canada_provinces.geojson",
         "view_state":{
           "latitude": 56.130367,
