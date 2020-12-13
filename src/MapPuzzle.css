@@ -13,7 +13,7 @@ body{
     padding-right: 15px;
   }
 
-  .navbar-nav .dropdown-menu, .navbar-brand{
+  .navbar-nav .dropdown-menu, .navbar-brand,.dropdown-item,   .dropdown-toggle{
     cursor: pointer !important;
   }
   .card-body , .navbar-brand {
