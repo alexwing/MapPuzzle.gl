@@ -5,6 +5,7 @@
         "name": "World Borders",
         "comment":"",
         "data": "maps/world_borders.geojson",
+        "icon": "flags/_united-nations.png",
         "view_state":{
           "latitude": 0,
           "longitude": 0,
@@ -16,6 +17,7 @@
         "name": "Spanish Provinces",
         "comment":"",
         "data": "maps/spanish_provinces.geojson",
+        "icon": "flags/ES.png",
         "view_state":{
           "latitude": 40.2085,
           "longitude": -3.713 ,
@@ -28,6 +30,7 @@
         "comment":"Layer download in http://tapiquen-sig.jimdofree.com. Carlos Efraín Porto Tapiquén. Geografía, SIG y Cartografía Digital. Valencia, España, 2020",
         "name": "Usa States",
         "data": "maps/usa_states.geojson",
+        "icon": "flags/US.png",
         "view_state":{
           "latitude": 37.090240,
           "longitude": -95.712891 ,
@@ -39,6 +42,7 @@
         "name": "Canada Provinces",
         "comment":"Layer download in http://tapiquen-sig.jimdofree.com. Carlos Efraín Porto Tapiquén. Geografía, SIG y Cartografía Digital. Valencia, España, 2020",
         "data": "maps/canada_provinces.geojson",
+        "icon": "flags/CA.png",
         "view_state":{
           "latitude": 56.130367,
           "longitude": -106.346771 ,
@@ -50,6 +54,7 @@
         "comment":"Layer download in https://www.data.gouv.fr/en/datasets/contours-des-regions-francaises-sur-openstreetmap/",
         "name": "France Regions",
         "data": "maps/france_regions.geojson",
+        "icon": "flags/FR.png",
         "view_state":{
           "latitude": 46.227638,
           "longitude": 2.213749 ,
@@ -61,6 +66,7 @@
         "comment":"Layer download in http://www.diva-gis.org/datadown",
         "name": "Germany States",
         "data": "maps/germany_states.geojson",
+        "icon": "flags/DE.png",
         "view_state":{
           "latitude": 51.165691,
           "longitude": 10.451526 ,
@@ -72,6 +78,7 @@
         "comment":"Layer download in http://www.diva-gis.org/datadown",
         "name": "Japan Prefectures",
         "data": "maps/japan_prefectures.geojson",
+        "icon": "flags/JP.png",
         "view_state":{
           "latitude": 36.204823,
           "longitude": 138.252930 ,
