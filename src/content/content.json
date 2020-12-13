@@ -55,6 +55,28 @@
           "longitude": 2.213749 ,
           "zoom": 5.5
         }        
-      }          
+      } 
+      ,{
+        "id": 5,
+        "comment":"Layer download in http://www.diva-gis.org/datadown",
+        "name": "Germany States",
+        "data": "maps/germany_states.geojson",
+        "view_state":{
+          "latitude": 51.165691,
+          "longitude": 10.451526 ,
+          "zoom": 5.5
+        }        
+      }  
+      ,{
+        "id": 6,
+        "comment":"Layer download in http://www.diva-gis.org/datadown",
+        "name": "Japan Prefectures",
+        "data": "maps/japan_prefectures.geojson",
+        "view_state":{
+          "latitude": 36.204823,
+          "longitude": 138.252930 ,
+          "zoom": 5.5
+        }        
+      }                        
     ]
   }
