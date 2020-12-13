@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Alert from 'react-bootstrap/Alert';
 import GameTime from '../lib/GameTime.js'
-import { secondsToTime } from './Utils.js';
+import { secondsToTime } from '../lib/Utils.js';
 import './YouWin.css';
 
 export default class YouWin extends Component {

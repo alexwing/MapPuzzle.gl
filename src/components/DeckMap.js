@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {GeoJsonLayer} from '@deck.gl/layers';
 import { StaticMap } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import {AlphaColor,hexToRgb,setColor} from './Utils.js';
+import {AlphaColor,hexToRgb,setColor} from '../lib/Utils.js';
 export default class DeckMap extends Component {
 
   render() {
@@ -23,9 +23,16 @@ export default class DeckMap extends Component {
       updateTriggers: {
         lineWidthMinPixels: this.props.lineWidth,
         getLineColor: this.props.colorStroke,
-        getFillColor: (object) =>  AlphaColor(hexToRgb(setColor(object.properties.mapcolor)),this.props.founds.includes(object.properties.cartodb_id)? 150:0),
+        getFillColor: (object) =>  AlphaColor(hexToRgb(setColor(object.properties.mapcolor)),this.props.founds.includes(object.properties.cartodb_id)? 150:110),
       },
-      onClick: info => onClickMap(info)
+      onClick: info => onClickMap(info),
+     /* getTooltip: ({object}) => object && {
+        html: `<h2>${object.name}</h2><div>${object.message}</div>`,
+        style: {
+          backgroundColor: '#f00',
+          fontSize: '0.8em'
+        }
+      }*/
     })
   
   ];

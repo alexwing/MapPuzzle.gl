@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useEventListener } from './hooks/useEventListener'
 import IsDevice from './helpers/isDevice'
 //import { ST_ExtentToVieport } from '../components/Utils.js';
-import {setColor} from '../components/Utils.js';
+import {setColor} from './Utils.js';
 /**
  * Cursor Core
  * Replaces the native cursor with a custom animated cursor, consisting

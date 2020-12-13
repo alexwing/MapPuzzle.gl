@@ -7,7 +7,7 @@ import Alert from 'react-bootstrap/Alert';
 import Accordion from 'react-bootstrap/Accordion';
 import Table from 'react-bootstrap/Table';
 import Timer from './Timer';
-import { setColor } from './Utils';
+import { setColor } from '../lib/Utils';
 
 
 
@@ -43,7 +43,11 @@ class ToolsPanel extends Component {
       <Card>
         <Accordion.Toggle as={Card.Header} eventKey="0" >
           {this.props.name}
-          <Timer  YouWin={this.props.YouWin} puzzleSelected={this.props.puzzleSelected}/>
+          <Timer  
+          YouWin={this.props.YouWin} 
+          puzzleSelected={this.props.puzzleSelected}
+          loading={this.props.loading}
+          />
         </Accordion.Toggle>
         <Accordion.Collapse eventKey="0">
           <Card.Body>

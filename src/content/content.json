@@ -44,6 +44,17 @@
           "longitude": -106.346771 ,
           "zoom": 3
         }        
+      } 
+      ,{
+        "id": 4,
+        "comment":"Layer download in https://www.data.gouv.fr/en/datasets/contours-des-regions-francaises-sur-openstreetmap/",
+        "name": "France Regions",
+        "data": "maps/france_regions.geojson",
+        "view_state":{
+          "latitude": 46.227638,
+          "longitude": 2.213749 ,
+          "zoom": 5.5
+        }        
       }          
     ]
   }

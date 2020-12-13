@@ -61,19 +61,36 @@ export const LightenDarkenColor = function (col, amt) {
 
 
 export const setColor = function (col) {
-  var colorArray = ['#d91b5c',
-    '#662d91',
-    '#bf1e2d',
-    '#262262',
-    '#f1592a',
-    '#0f75bc',
-    '#f7941e',
-    '#13a89e',
-    '#fcb040',
-    '#0b9444',
-    '#fff200',
-    '#8cc63f',
-  ];
+  var colorArray = [
+    '#fef400',
+    '#67ba2e',
+    '#eb891a',
+    '#00913c',
+    '#dc261b',
+    '#00938d',
+    '#815329',
+    '#dc2053',
+    '#005ca1',
+    '#df127b',
+    '#291670',
+    '#811e78',
+    '#ce9572',
+    '#a3c828',
+    
+    '#fef400',
+    '#67ba2e',
+    '#eb891a',
+    '#00913c',
+    '#dc261b',
+    '#00938d',
+    '#815329',
+    '#dc2053',
+    '#005ca1',
+    '#df127b',
+    '#291670',
+    '#811e78',
+    '#ce9572',
+    '#a3c828',];
 
   if (parseInt(col)< colorArray.length) {
     return colorArray[parseInt(col)];

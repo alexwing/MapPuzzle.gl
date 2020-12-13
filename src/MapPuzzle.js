@@ -12,7 +12,7 @@ import MenuTop from './components/MenuTop';
 import DeckMap from './components/DeckMap';
 import ToolsPanel from './components/ToolsPanel';
 import YouWin from './components/YouWin';
-import { Jsondb } from './components/Utils.js';
+import { Jsondb } from './lib/Utils.js';
 import AnimatedCursor from "./lib"
 import GameTime from './lib/GameTime.js'
 
@@ -185,7 +185,7 @@ class MapPuzzle extends Component {
           onDataLoaded={this.onDataLoadedHandler}
         />
         <MenuTop
-          name="MapPuzzle.gl" onSelectMap={this.onSelectMapHandler}
+          name="MapPuzzle.xyz" onSelectMap={this.onSelectMapHandler}
           content={this.props.content.puzzles}
           onResetGame={this.onResetGameHandler}
           loading={this.state.loading}

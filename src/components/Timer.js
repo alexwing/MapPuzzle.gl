@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { secondsToTime } from './Utils.js';
+import { secondsToTime } from '../lib/Utils.js';
 import GameTime from '../lib/GameTime.js'
 import { setCookie } from "react-simple-cookie-store"
 
