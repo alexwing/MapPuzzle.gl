@@ -128,9 +128,17 @@ class MapPuzzle extends Component {
     });
     GameTime.seconds = 0;
   }
-
+  onHoverMapHandler = (info) => {
+    if (info.object){    
+      if(this.state.founds.includes(info.object.properties.cartodb_id)){
+        console.log("FOUND: " + info.object.properties.name);
+      }
+    }
+  }
+  
 
   onClickMapHandler = (info) => {
+   
     if (info && this.state.pieceSelected) {
       if (String(this.state.pieceSelectedData.properties.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
         if (!this.state.founds.includes(this.state.pieceSelectedData.properties.cartodb_id)) {
@@ -179,6 +187,7 @@ class MapPuzzle extends Component {
           colorHeight={this.state.colorHeight}
           piece={this.state.pieceSelected}
           onClickMap={this.onClickMapHandler}
+          onHoverMap={this.onHoverMapHandler}
           viewState={this.props.content.puzzles[this.state.puzzleSelected].view_state}
           founds={this.state.founds}
           data={this.state.data}

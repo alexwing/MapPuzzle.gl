@@ -6,7 +6,7 @@ import {AlphaColor,hexToRgb,setColor} from '../lib/Utils.js';
 export default class DeckMap extends Component {
 
   render() {
-    const {onClickMap} = this.props;
+    const {onClickMap,onHoverMap} = this.props;
     /*function getpieceCondition(piece) {
       return piece !== 'All' ? `WHERE piece='${piece}'` : '';
     }*/
@@ -26,13 +26,7 @@ export default class DeckMap extends Component {
         getFillColor: (object) =>  AlphaColor(hexToRgb(setColor(object.properties.mapcolor)),this.props.founds.includes(object.properties.cartodb_id)? 150:110),
       },
       onClick: info => onClickMap(info),
-     /* getTooltip: ({object}) => object && {
-        html: `<h2>${object.name}</h2><div>${object.message}</div>`,
-        style: {
-          backgroundColor: '#f00',
-          fontSize: '0.8em'
-        }
-      }*/
+      onHover: info => onHoverMap(info),
     })
   
   ];
