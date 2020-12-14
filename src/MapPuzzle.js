@@ -15,6 +15,7 @@ import YouWin from './components/YouWin';
 import { Jsondb } from './lib/Utils.js';
 import AnimatedCursor from "./lib"
 import GameTime from './lib/GameTime.js'
+import MouseTooltip from 'react-sticky-mouse-tooltip';
 
 
 class MapPuzzle extends Component {
@@ -35,7 +36,9 @@ class MapPuzzle extends Component {
       time: {},
       loading: true,
       height: 0,
-      win: false
+      win: false,
+      isMouseTooltipVisible: false,
+      tooltipValue: "",
     }
   }
   componentDidMount() {
@@ -131,8 +134,14 @@ class MapPuzzle extends Component {
   onHoverMapHandler = (info) => {
     if (info.object){    
       if(this.state.founds.includes(info.object.properties.cartodb_id)){
+
+        this.setState({ isMouseTooltipVisible: true, tooltipValue: info.object.properties.name });
         console.log("FOUND: " + info.object.properties.name);
+      }else{
+        this.setState({ isMouseTooltipVisible: false, tooltipValue: "" });
       }
+    }else{
+      this.setState({ isMouseTooltipVisible: false, tooltipValue: "" });
     }
   }
   
@@ -215,6 +224,13 @@ class MapPuzzle extends Component {
             </Col>
           </Row>
           {AnimatedCursorValue}
+          <MouseTooltip
+          visible={this.state.isMouseTooltipVisible}
+          offsetX={15}
+          offsetY={-10}
+        >
+          <span><i style={{color:"#777"}}>{this.state.tooltipValue}</i></span>
+        </MouseTooltip>          
         </Container>
       </div>
     );
