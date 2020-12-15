@@ -17,8 +17,7 @@
     "react-dom": "^17.0.1",
     "react-map-gl": "^5.2.10",
     "react-scripts": "4.0.0",
-    "react-simple-cookie-store": "^1.0.12",
-    "react-sticky-mouse-tooltip": "0.0.1"
+    "react-simple-cookie-store": "^1.0.12"
   },
   "scripts": {
     "start": "react-scripts start",

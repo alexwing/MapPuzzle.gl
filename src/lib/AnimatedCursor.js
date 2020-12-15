@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useEventListener } from './hooks/useEventListener'
 import IsDevice from './helpers/isDevice'
-//import { ST_ExtentToVieport } from '../components/Utils.js';
-import {setColor} from './Utils.js';
+import { setColor } from './Utils.js';
 /**
  * Cursor Core
  * Replaces the native cursor with a custom animated cursor, consisting
@@ -18,9 +17,11 @@ import {setColor} from './Utils.js';
 function CursorCore({
   color = '220, 90, 90',
   clickScale = 0.7,
-  selected = null
+  selected = null,
+  tooltip = "",
 }) {
-  const cursorOuterRef = useRef()
+  const pieceCursorRef = useRef()
+  const tooltipRef = useRef()
   const requestRef = useRef()
   const previousTimeRef = useRef()
   const [coords, setCoords] = useState({ x: 0, y: 0 })
@@ -33,24 +34,22 @@ function CursorCore({
   // Primary Mouse Move event
   const onMouseMove = useCallback(({ clientX, clientY }) => {
     setCoords({ x: clientX, y: clientY })
-
-    if (cursorOuterRef.current) {
-      endX.current = clientX
-      endY.current = clientY
-    }
-
+    tooltipRef.current.style.top = clientY + 'px'
+    tooltipRef.current.style.left = clientX + 'px'
+    endX.current = clientX
+    endY.current = clientY
   }, [])
 
   // Outer Cursor Animation Delay
   const animateOuterCursor = useCallback(
     (time) => {
       if (previousTimeRef)
-        if (previousTimeRef.current !== undefined && cursorOuterRef && coords) {
+        if (previousTimeRef.current !== undefined && pieceCursorRef && coords) {
           coords.x += (endX.current - coords.x) / 8
           coords.y += (endY.current - coords.y) / 8
-          if (cursorOuterRef.current) {
-            cursorOuterRef.current.style.top = coords.y + 'px'
-            cursorOuterRef.current.style.left = coords.x + 'px'
+          if (pieceCursorRef.current) {
+            pieceCursorRef.current.style.top = coords.y + 'px'
+            pieceCursorRef.current.style.left = coords.x + 'px'
           }
         }
       previousTimeRef.current = time
@@ -93,26 +92,31 @@ function CursorCore({
   // Cursors Hover/Active State
   useEffect(() => {
     if (isActive) {
-      //cursorInnerRef.current.style.transform = `translateZ(0) scale(${clickScale})`
-      cursorOuterRef.current.style.transform = `translateZ(0) scale(${clickScale})`
+      tooltipRef.current.style.transform = `translateZ(0) scale(${clickScale})`
+      pieceCursorRef.current.style.transform = `translateZ(0) scale(${clickScale})`
     } else {
-      cursorOuterRef.current.style.transform = 'translateZ(0) scale(1)'
+      tooltipRef.current.style.transform = 'translateZ(0) scale(1)'
+      pieceCursorRef.current.style.transform = 'translateZ(0) scale(1)'
     }
-  }, [clickScale, isActive])
+  }, [ clickScale, isActive])
 
   // Cursors Click States
   useEffect(() => {
+    tooltipRef.current.style.transform = `translateZ(0) scale(${clickScale})`
     if (isActiveClickable) {
-      cursorOuterRef.current.style.transform = `translateZ(0) scale(${clickScale})`
+      pieceCursorRef.current.style.transform = `translateZ(0) scale(${clickScale})`
     }
-  }, [clickScale, isActiveClickable])
+  }, [ clickScale, isActiveClickable])
+
 
   // Cursor Visibility State
   useEffect(() => {
     if (isVisible) {
-      cursorOuterRef.current.style.opacity = 1
+      tooltipRef.current.style.opacity = 1
+      pieceCursorRef.current.style.opacity = 1
     } else {
-      cursorOuterRef.current.style.opacity = 0
+      tooltipRef.current.style.opacity = 1
+      pieceCursorRef.current.style.opacity = 0
     }
   }, [isVisible])
 
@@ -123,6 +127,7 @@ function CursorCore({
     )
     clickables.forEach((el) => {
       el.style.cursor = 'none'
+
 
       el.addEventListener('mouseover', () => {
         setIsActive(true)
@@ -168,25 +173,59 @@ function CursorCore({
 
   // Cursor Styles
   const styles = {
-    cursorOuter: {
+    pieceStyle: {
       zIndex: 1,
       display: 'block',
       position: 'fixed',
       pointerEvents: 'none',
       backfaceVisibility: 'hidden',
       willChange: 'transform',
+      transition: 'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
+    },
+    tooltipStyle: {
+      //  pointerEvents: 'none',
+      zIndex: 999,
+      display: 'block',
+      position: 'fixed',
+      borderRadius: '15px',
+      padding: '0px 10px',
+      fontSize: '11px',
+      fontWeight: 'bold',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      color: 'white',
+      backfaceVisibility: 'hidden',
+      willChange: 'transform',
+      transition: 'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
     }
   }
   // Hide / Show global cursor
   //document.body.style.cursor = 'none'
 
+
+  let PieceCursor;
+  if (selected) {
+    PieceCursor =
+      <svg height="180px" width="180px"
+        viewBox={selected ? (selected.properties.box) : ''} preserveAspectRatio="slice" style={{ border: "0px solid lightgray", marginLeft: "-50%", marginTop: "-50%" }}>
+        <path d={selected ? selected.properties.poly : ''} stroke="black" strokeWidth="0" fill={setColor(selected.properties.mapcolor)} />
+      </svg>;
+
+  }
+
+  let TooltipCursor;
+   if (tooltip) {
+      TooltipCursor = <span>{tooltip}</span>;
+
+  }
+
+
   return (
     <React.Fragment>
-      <div ref={cursorOuterRef} style={styles.cursorOuter} className="mousePiece" >
-        <svg height="180px" width="180px"
-          viewBox={selected ? (selected.properties.box) : ''} preserveAspectRatio="slice" style={{ border: "0px solid lightgray", marginLeft: "-50%", marginTop: "-50%" }}>
-          <path d={selected ? selected.properties.poly : ''} stroke="black" strokeWidth="0" fill={setColor(selected.properties.mapcolor)} />
-        </svg>
+      <div ref={pieceCursorRef} style={styles.pieceStyle} className="mousePiece" >
+        {PieceCursor}
+      </div>
+      <div ref={tooltipRef} style={styles.tooltipStyle} >
+        {TooltipCursor}
       </div>
     </React.Fragment>
   )
@@ -199,7 +238,9 @@ function CursorCore({
 function AnimatedCursor({
   color = '220, 90, 90',
   clickScale = 0.7,
-  selected = null
+  selected = null,
+  tooltip = "",
+
 }) {
   if (typeof navigator !== 'undefined' && IsDevice.any()) {
     return <React.Fragment></React.Fragment>
@@ -209,6 +250,7 @@ function AnimatedCursor({
       color={color}
       clickScale={clickScale}
       selected={selected}
+      tooltip={tooltip}
     />
   )
 }

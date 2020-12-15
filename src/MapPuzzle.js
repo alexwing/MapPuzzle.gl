@@ -15,7 +15,6 @@ import YouWin from './components/YouWin';
 import { Jsondb } from './lib/Utils.js';
 import AnimatedCursor from "./lib"
 import GameTime from './lib/GameTime.js'
-import MouseTooltip from 'react-sticky-mouse-tooltip';
 
 
 class MapPuzzle extends Component {
@@ -51,10 +50,10 @@ class MapPuzzle extends Component {
 
   loadGame(puzzleSelected) {
     this.setState({ loading: true });
-    setCookie("seconds"+this.state.puzzleSelected, GameTime.seconds, 2);
+    setCookie("seconds" + this.state.puzzleSelected, GameTime.seconds, 2);
     Jsondb(this.props.content.puzzles[puzzleSelected].data)
       .then(response => {
-        this.setState({ loading:false,puzzleSelected: puzzleSelected, pieces: response.features, data: response });
+        this.setState({ loading: false, puzzleSelected: puzzleSelected, pieces: response.features, data: response });
         this.checkGameStatus();
         //restore game status from coockie
         var cookieFounds = getCookie("founds" + puzzleSelected);
@@ -89,9 +88,9 @@ class MapPuzzle extends Component {
     //console.log(parseInt(this.state.pieces.length) + "-" + parseInt(this.state.founds.length));
     if (parseInt(this.state.pieces.length) - parseInt(this.state.founds.length) <= 0 && parseInt(this.state.pieces.length) > 0) {
       this.setState({ YouWin: true });
-    }else{
+    } else {
       this.setState({ YouWin: false });
-    } 
+    }
   }
 
   componentDidUpdate() {
@@ -132,26 +131,25 @@ class MapPuzzle extends Component {
     GameTime.seconds = 0;
   }
   onHoverMapHandler = (info) => {
-    if (info.object){    
-      if(this.state.founds.includes(info.object.properties.cartodb_id)){
-
+    if (info.object) {
+      if (this.state.founds.includes(info.object.properties.cartodb_id)) {
         this.setState({ isMouseTooltipVisible: true, tooltipValue: info.object.properties.name });
-        console.log("FOUND: " + info.object.properties.name);
-      }else{
+      //  console.log("FOUND: " + info.object.properties.name);
+      } else {
         this.setState({ isMouseTooltipVisible: false, tooltipValue: "" });
       }
-    }else{
+    } else {
       this.setState({ isMouseTooltipVisible: false, tooltipValue: "" });
     }
   }
-  
+
 
   onClickMapHandler = (info) => {
-   
+
     if (info && this.state.pieceSelected) {
       if (String(this.state.pieceSelectedData.properties.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
         if (!this.state.founds.includes(this.state.pieceSelectedData.properties.cartodb_id)) {
-          console.log("FOUND: " + info.object.properties.name);
+         // console.log("FOUND: " + info.object.properties.name);
           this.setState(prevState => ({
             founds: [...prevState.founds, this.state.pieceSelectedData.properties.cartodb_id],
             pieceSelected: null,
@@ -169,16 +167,6 @@ class MapPuzzle extends Component {
   }
 
   render() {
-    let AnimatedCursorValue;
-    if (this.state.pieceSelected) {
-      AnimatedCursorValue = <AnimatedCursor
-        clickScale={0.95}
-        color='#666'
-        selected={this.state.pieceSelectedData}
-      />;
-    }
-
-
     let YouWinScreen;
     if (this.state.YouWin) {
       YouWinScreen = <YouWin
@@ -223,15 +211,13 @@ class MapPuzzle extends Component {
               />
             </Col>
           </Row>
-          {AnimatedCursorValue}
-          <MouseTooltip
-          visible={this.state.isMouseTooltipVisible}
-          offsetX={15}
-          offsetY={-10}
-        >
-          <span><i style={{color:"#777"}}>{this.state.tooltipValue}</i></span>
-        </MouseTooltip>          
         </Container>
+        <AnimatedCursor
+          clickScale={0.95}
+          color='#666'
+          selected={this.state.pieceSelectedData}
+          tooltip={this.state.tooltipValue}
+        />
       </div>
     );
   }
