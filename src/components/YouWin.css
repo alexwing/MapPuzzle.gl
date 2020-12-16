@@ -40,3 +40,11 @@
     padding-right: 0px;
     padding-left: 0px;
   }
+
+  .share{
+    text-align: center;
+    padding: 1.5em;
+  }
+  .share h4{
+    padding-bottom: 0.5em;
+  }

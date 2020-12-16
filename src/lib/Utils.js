@@ -1,3 +1,5 @@
+import GameTime from '../lib/GameTime.js'
+
 
 export const colorScale = function (x) {
   const COLOR_SCALE = [
@@ -76,7 +78,7 @@ export const setColor = function (col) {
     '#811e78',
     '#ce9572',
     '#a3c828',
-    
+
     '#fef400',
     '#67ba2e',
     '#eb891a',
@@ -92,12 +94,12 @@ export const setColor = function (col) {
     '#ce9572',
     '#a3c828',];
 
-  if (parseInt(col)< colorArray.length) {
+  if (parseInt(col) < colorArray.length) {
     return colorArray[parseInt(col)];
   } else {
-    do{
+    do {
       col = (parseInt(col) - colorArray.length);
-    }while (parseInt(col) > colorScale.length)
+    } while (parseInt(col) > colorScale.length)
     return colorArray[Math.abs(col)];
   }
 
@@ -170,7 +172,7 @@ export async function Querydb(sql) {
 }
 
 
-export function secondsToTime(secs){
+export function secondsToTime(secs) {
   let hours = Math.floor(secs / (60 * 60));
 
   let divisor_for_minutes = secs % (60 * 60);
@@ -185,4 +187,37 @@ export function secondsToTime(secs){
     "s": seconds
   };
   return obj;
+}
+
+export function  getTime() {
+  var time = secondsToTime(GameTime.seconds);
+  if (time.h > 0) {
+      return <span id="hours"> <b>{time.h} </b>Hours <b>{time.m}</b> Minutes <b>{time.s}</b> Seconds</span>;
+  } else if (time.m > 0) {
+      return <span id="minutes"><b>{time.m}</b> Minutes <b>{time.s}</b> Seconds</span>;
+  } else if (time.s > 0) {
+      return <span id="seconds"><b>{time.s}</b> Seconds</span>;
+  }
+}
+
+export function getTexTime() {
+  var time = secondsToTime(GameTime.seconds);
+  if (time.h > 0) {
+    return  time.h + " hours and " + time.m + " minutes and " + time.s + " seconds";
+  } else if (time.m > 0) {
+    return  time.m + " minutes and " + time.s + " seconds";
+  } else if (time.s > 0) {
+    return time.s + " seconds";
+  }
+}
+
+
+export function getUrl() {
+
+  let url = window.location.href.split('/')[0];
+  console.log(url);
+  //if (url.includes("localhost")){
+  return "mappuzzle.xyz"
+  //  }
+  // return url
 }

@@ -38,6 +38,7 @@ class MapPuzzle extends Component {
       win: false,
       isMouseTooltipVisible: false,
       tooltipValue: "",
+      YouWin: false,
     }
   }
   componentDidMount() {
@@ -190,6 +191,8 @@ class MapPuzzle extends Component {
         founds={this.state.founds}
         fails={this.state.fails}
         onResetGame={this.onResetGameHandler}
+        path={this.props.content.puzzles[this.state.puzzleSelected].url}
+        name={this.props.content.puzzles[this.state.puzzleSelected].name}
       />
     }
     return (

@@ -5,9 +5,14 @@ import Fireworks from '../lib/Fireworks';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Alert from 'react-bootstrap/Alert';
-import GameTime from '../lib/GameTime.js'
-import { secondsToTime } from '../lib/Utils.js';
+
+import {  getUrl, getTexTime, getTime  } from '../lib/Utils.js';
 import './YouWin.css';
+import { FacebookShareButton, FacebookIcon,
+    EmailShareButton, EmailIcon,
+    TwitterShareButton, TwitterIcon,
+} from "react-share";
+
 
 export default class YouWin extends Component {
 
@@ -15,27 +20,20 @@ export default class YouWin extends Component {
         super(props)
         this.state = {
             show: true,
-           
         }
     }
-    getTime() {
-        var time = secondsToTime(GameTime.seconds);
-        if (time.h > 0) {
-            return <span id="hours"> <b>{time.h} </b>Hours <b>{time.m}</b> Minutes <b>{time.s}</b> Seconds</span>;
-        } else if (time.m > 0) {
-            return <span id="minutes"><b>{time.m}</b> Minutes <b>{time.s}</b> Seconds</span>;
-        } else if (time.s > 0) {
-            return <span id="seconds"><b>{time.s}</b> Seconds</span>;
-        } 
-    }
+
     render() {
-        const {  onResetGame } = this.props;
+        const { onResetGame } = this.props;
         let handleClose = () => {
             this.setState({
                 show: false
             });
         }
-     
+        let url =  "http://"+ getUrl() +"/?map="+this.props.path;
+        let quote = "I completed the puzzle game of the "+this.props.name+", in "+getTexTime()+", with "+this.props.fails+" failures out of "+this.props.founds.length+" pieces found."
+        let hashtag = "education,cartography,puzzle,countries"
+        let title = "MapPuzzle.xyz - Puzzle game based in maps"
         return <div>
             <Modal
                 show={this.state.show}
@@ -65,7 +63,7 @@ export default class YouWin extends Component {
                                 <Alert.Heading>Time:</Alert.Heading>
                                 <hr />
                                 <p className="mb-0">
-                                {this.getTime()}
+                                    {getTime()}
                                 </p>
                             </Alert>
                         </Col>
@@ -77,6 +75,21 @@ export default class YouWin extends Component {
                                     {this.props.fails}
                                 </p>
                             </Alert>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={12} className="share">
+                            <h4>Share your score</h4>
+                            <EmailShareButton url={url} subject={title}  body={quote} >
+                                <EmailIcon size={48} round={true} />
+                            </EmailShareButton>                             
+                            <FacebookShareButton url={url} quote={quote} hashtag={hashtag}>
+                                <FacebookIcon size={48} round={true} />
+                            </FacebookShareButton>
+                            <TwitterShareButton url={url} title ={quote} hashtags={hashtag.split(',')}>
+                                <TwitterIcon size={48} round={true} />
+                            </TwitterShareButton>
+                           
                         </Col>
                     </Row>
                 </Modal.Body>
