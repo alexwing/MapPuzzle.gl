@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
+
 import './MapPuzzle.css';
 
 import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store"
@@ -15,7 +16,7 @@ import YouWin from './components/YouWin';
 import { Jsondb } from './lib/Utils.js';
 import AnimatedCursor from "./lib/AnimatedCursor.js"
 import GameTime from './lib/GameTime.js'
-
+import ReactFullscreeen from 'react-easyfullscreen';
 
 class MapPuzzle extends Component {
 
@@ -45,10 +46,10 @@ class MapPuzzle extends Component {
 
     var puzzleSelected = 0;
     if (window.location.pathname) {
-    //  console.log(window.location.search.substr(5));
+      //  console.log(window.location.search.substr(5));
       this.props.content.puzzles.forEach(function (value, index) {
         if (value.url === window.location.search.substr(5)) {
-      //    console.log(value.url + "==" + window.location.pathname.substring(1));
+          //    console.log(value.url + "==" + window.location.pathname.substring(1));
           puzzleSelected = index
         }
       });
@@ -132,6 +133,9 @@ class MapPuzzle extends Component {
     this.loadGame(val.target.id);
   }
 
+  onFullScreenHandler = (val) => {
+    console.log("enable fullscreen");
+  }
   onResetGameHandler = () => {
     console.log("Reset the Game");
     removeCookie("founds" + this.state.puzzleSelected);
@@ -182,6 +186,8 @@ class MapPuzzle extends Component {
     }
   }
 
+
+
   render() {
     let YouWinScreen;
 
@@ -196,48 +202,54 @@ class MapPuzzle extends Component {
       />
     }
     return (
-      <div>
-        <DeckMap lineWidth={this.state.lineWidth}
-          color={this.state.color}
-          colorStroke={this.state.colorStroke}
-          colorHeight={this.state.colorHeight}
-          piece={this.state.pieceSelected}
-          onClickMap={this.onClickMapHandler}
-          onHoverMap={this.onHoverMapHandler}
-          viewState={this.props.content.puzzles[this.state.puzzleSelected].view_state}
-          founds={this.state.founds}
-          data={this.state.data}
-          onDataLoaded={this.onDataLoadedHandler}
-        />
-        <MenuTop
-          name="MapPuzzle.xyz" onSelectMap={this.onSelectMapHandler}
-          content={this.props.content.puzzles}
-          onResetGame={this.onResetGameHandler}
-          loading={this.state.loading}
-        />
-        {YouWinScreen}
-        <Container fluid style={{ paddingTop: 15 + 'px' }}>
-          <Row>
-            <Col xs={8} md={4} lg={4} xl={3} >
-              <ToolsPanel name={this.props.content.puzzles[this.state.puzzleSelected].name}
-                puzzleSelected={this.state.puzzleSelected}
-                pieceSelected={this.state.pieceSelected} onPieceSelected={this.onPieceSelectedHandler}
-                pieces={this.state.pieces}
-                height={this.state.height}
-                founds={this.state.founds}
-                fails={this.state.fails}
-                YouWin={this.state.YouWin}
-              />
-            </Col>
-          </Row>
-        </Container>
-        <AnimatedCursor
-          clickScale={0.95}
-          color='#666'
-          selected={this.state.pieceSelectedData}
-          tooltip={this.state.tooltipValue}
-        />
-      </div>
+      <ReactFullscreeen>
+        {({ onToggle }) => (
+          <div>
+            <DeckMap lineWidth={this.state.lineWidth}
+              color={this.state.color}
+              colorStroke={this.state.colorStroke}
+              colorHeight={this.state.colorHeight}
+              piece={this.state.pieceSelected}
+              onClickMap={this.onClickMapHandler}
+              onHoverMap={this.onHoverMapHandler}
+              viewState={this.props.content.puzzles[this.state.puzzleSelected].view_state}
+              founds={this.state.founds}
+              data={this.state.data}
+              onDataLoaded={this.onDataLoadedHandler}
+            />
+            <MenuTop
+              name="MapPuzzle.xyz" onSelectMap={this.onSelectMapHandler}
+              content={this.props.content.puzzles}
+              onResetGame={this.onResetGameHandler}
+              loading={this.state.loading}
+              onFullScreen={() => onToggle() }
+            />
+           
+            {YouWinScreen}
+            <Container fluid style={{ paddingTop: 15 + 'px' }}>
+              <Row>
+                <Col xs={8} md={4} lg={4} xl={3} >
+                  <ToolsPanel name={this.props.content.puzzles[this.state.puzzleSelected].name}
+                    puzzleSelected={this.state.puzzleSelected}
+                    pieceSelected={this.state.pieceSelected} onPieceSelected={this.onPieceSelectedHandler}
+                    pieces={this.state.pieces}
+                    height={this.state.height}
+                    founds={this.state.founds}
+                    fails={this.state.fails}
+                    YouWin={this.state.YouWin}
+                  />
+                </Col>
+              </Row>
+            </Container>
+            <AnimatedCursor
+              clickScale={0.95}
+              color='#666'
+              selected={this.state.pieceSelectedData}
+              tooltip={this.state.tooltipValue}
+            />
+          </div>
+        )}
+      </ReactFullscreeen>
     );
   }
 }

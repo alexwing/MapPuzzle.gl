@@ -17,7 +17,7 @@ export default class MenuTop extends Component {
   }
   render() {
 
-    const { onSelectMap, onResetGame } = this.props;
+    const { onSelectMap, onResetGame, onFullScreen } = this.props;
     let handleClose = () => {
       this.setState({
         show: false
@@ -52,13 +52,15 @@ export default class MenuTop extends Component {
 
     return <div>
       <Navbar bg="light" expand="lg">
-        <Navbar.Brand href="#home"><img src="./logo192.png" alt="" />{this.props.name}
+        <Navbar.Brand ><img src="./logo192.png" alt="" />{this.props.name}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           {Puzzles}
           <Form inline>
-            <Button variant="outline-primary" onClick={handleShow}>Reset Game</Button>
+            
+            <Button id="fullscreen" variant="outline-secondary" onClick={onFullScreen}><span className="navbar-reset-icon"></span></Button>
+            <Button id="reset" variant="outline-primary" onClick={handleShow}>Reset Game</Button>
           </Form>
         </Navbar.Collapse>
       </Navbar>
