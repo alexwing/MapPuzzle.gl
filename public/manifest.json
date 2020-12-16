@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "MapPuzzle.xyz",
+  "name": "Puzzle game application based in maps",
   "icons": [
     {
       "src": "favicon.ico",

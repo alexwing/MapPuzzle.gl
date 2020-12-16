@@ -19,7 +19,7 @@ export default class DeckMap extends Component {
       updateTriggers: {
         lineWidthMinPixels: this.props.lineWidth,
         getLineColor: this.props.colorStroke,
-        getFillColor: (object) =>  AlphaColor(hexToRgb(setColor(object.properties.mapcolor)),this.props.founds.includes(object.properties.cartodb_id)? 150:110),
+        getFillColor: (object) =>  AlphaColor(hexToRgb(setColor(object.properties.mapcolor)),this.props.founds.includes(object.properties.cartodb_id)? 150:0),
       },
       onClick: info => onClickMap(info),
       onHover: info => onHoverMap(info),

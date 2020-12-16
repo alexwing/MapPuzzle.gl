@@ -189,23 +189,23 @@ export function secondsToTime(secs) {
   return obj;
 }
 
-export function  getTime() {
+export function getTime() {
   var time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
-      return <span id="hours"> <b>{time.h} </b>Hours <b>{time.m}</b> Minutes <b>{time.s}</b> Seconds</span>;
+    return <span id="hours"> <b>{time.h} </b>Hours <b>{time.m}</b> Minutes <b>{time.s}</b> Seconds</span>;
   } else if (time.m > 0) {
-      return <span id="minutes"><b>{time.m}</b> Minutes <b>{time.s}</b> Seconds</span>;
+    return <span id="minutes"><b>{time.m}</b> Minutes <b>{time.s}</b> Seconds</span>;
   } else if (time.s > 0) {
-      return <span id="seconds"><b>{time.s}</b> Seconds</span>;
+    return <span id="seconds"><b>{time.s}</b> Seconds</span>;
   }
 }
 
 export function getTexTime() {
   var time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
-    return  time.h + " hours and " + time.m + " minutes and " + time.s + " seconds";
+    return time.h + " hours and " + time.m + " minutes and " + time.s + " seconds";
   } else if (time.m > 0) {
-    return  time.m + " minutes and " + time.s + " seconds";
+    return time.m + " minutes and " + time.s + " seconds";
   } else if (time.s > 0) {
     return time.s + " seconds";
   }
@@ -214,10 +214,10 @@ export function getTexTime() {
 
 export function getUrl() {
 
-  let url = window.location.href.split('/')[0];
-  console.log(url);
-  //if (url.includes("localhost")){
-  return "mappuzzle.xyz"
-  //  }
-  // return url
+  let url = window.location.href.split('/')[2];
+  if (url.includes("localhost")) {
+    return "mappuzzle.xyz";
+  }
+  //console.log("url: "+url);
+  return url;
 }
