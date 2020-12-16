@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-
+import { Link } from 'react-router-dom'
 
 
 export default class MenuTop extends Component {
@@ -37,16 +37,17 @@ export default class MenuTop extends Component {
     }
 
     const Puzzles = (
-        <Nav className="mr-auto">
-          <NavDropdown title="Select a Puzzle" id="puzzle">
+      <Nav className="mr-auto">
+        <NavDropdown title="Select a Puzzle" id="puzzle">
           {this.props.content.map(c =>
-            (
-              <NavDropdown.Item  key={c.id} id={c.id}  href={"./#"+c.name} onClick={onSelectMap} >
-               <img src={c.icon} alt={c.name}/> 
-                {c.name}</NavDropdown.Item>
-            ))}
-          </NavDropdown>              
-        </Nav>
+          (
+            <Link className="dropdown-item" id={c.id} key={c.id} to={"./?map=" + c.url} onClick={onSelectMap}>
+              <img src={c.icon} alt={c.name} />
+              {c.name}
+            </Link>
+          ))}
+        </NavDropdown>
+      </Nav>
     );
 
     return <div>
@@ -55,7 +56,7 @@ export default class MenuTop extends Component {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-        {Puzzles}
+          {Puzzles}
           <Form inline>
             <Button variant="outline-primary" onClick={handleShow}>Reset Game</Button>
           </Form>

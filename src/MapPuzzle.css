@@ -19,7 +19,7 @@ body{
     margin: -0.5em 0;
   }
 
-  .navbar-nav .dropdown-menu, .navbar-brand,.dropdown-item,   .dropdown-toggle{
+  .btn , .navbar-nav .dropdown-menu, .navbar-brand,.dropdown-item,   .dropdown-toggle{
     cursor: pointer !important;
   }
   .card-body , .navbar-brand {

@@ -13,7 +13,7 @@ import DeckMap from './components/DeckMap';
 import ToolsPanel from './components/ToolsPanel';
 import YouWin from './components/YouWin';
 import { Jsondb } from './lib/Utils.js';
-import AnimatedCursor from "./lib"
+import AnimatedCursor from "./lib/AnimatedCursor.js"
 import GameTime from './lib/GameTime.js'
 
 
@@ -41,11 +41,26 @@ class MapPuzzle extends Component {
     }
   }
   componentDidMount() {
-    var puzzleSelected = getCookie("puzzleSelected");
-    if (puzzleSelected)
-      this.loadGame(puzzleSelected);
-    else
-      this.loadGame(this.state.puzzleSelected);
+
+    var puzzleSelected = 0;
+    if (window.location.pathname) {
+    //  console.log(window.location.search.substr(5));
+      this.props.content.puzzles.forEach(function (value, index) {
+        if (value.url === window.location.search.substr(5)) {
+      //    console.log(value.url + "==" + window.location.pathname.substring(1));
+          puzzleSelected = index
+        }
+      });
+      if (!puzzleSelected) {
+        puzzleSelected = getCookie("puzzleSelected");
+      }
+    } else {
+      puzzleSelected = getCookie("puzzleSelected");
+    }
+    if (!puzzleSelected) {
+      puzzleSelected = 0;
+    }
+    this.loadGame(puzzleSelected);
   }
 
   loadGame(puzzleSelected) {
@@ -134,7 +149,7 @@ class MapPuzzle extends Component {
     if (info.object) {
       if (this.state.founds.includes(info.object.properties.cartodb_id)) {
         this.setState({ isMouseTooltipVisible: true, tooltipValue: info.object.properties.name });
-      //  console.log("FOUND: " + info.object.properties.name);
+        //  console.log("FOUND: " + info.object.properties.name);
       } else {
         this.setState({ isMouseTooltipVisible: false, tooltipValue: "" });
       }
@@ -149,13 +164,13 @@ class MapPuzzle extends Component {
     if (info && this.state.pieceSelected) {
       if (String(this.state.pieceSelectedData.properties.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
         if (!this.state.founds.includes(this.state.pieceSelectedData.properties.cartodb_id)) {
-         // console.log("FOUND: " + info.object.properties.name);
+          // console.log("FOUND: " + info.object.properties.name);
           this.setState(prevState => ({
             founds: [...prevState.founds, this.state.pieceSelectedData.properties.cartodb_id],
             pieceSelected: null,
             pieceSelectedData: null
           }));
-          console.log(this.state.pieces.length + "-" + this.state.founds.length);
+          //console.log(this.state.pieces.length + "-" + this.state.founds.length);
           this.checkGameStatus();
           setCookie("founds" + this.state.puzzleSelected, this.state.founds.join(), 2)
         }
@@ -168,6 +183,7 @@ class MapPuzzle extends Component {
 
   render() {
     let YouWinScreen;
+
     if (this.state.YouWin) {
       YouWinScreen = <YouWin
         pieces={this.state.pieces}
