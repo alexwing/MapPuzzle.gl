@@ -41,10 +41,10 @@ export default class MenuTop extends Component {
         <NavDropdown title="Select a Puzzle" id="puzzle">
           {this.props.content.map(c =>
           (
-            <Link className="dropdown-item" id={c.id} key={c.id} to={"./?map=" + c.url} onClick={onSelectMap}>
+            <NavDropdown.Item role="button" className="dropdown-item" id={c.id} key={c.id} to={"./?map=" + c.url} onClick={onSelectMap}>
               <img src={c.icon} alt={c.name} />
               {c.name}
-            </Link>
+            </NavDropdown.Item>
           ))}
         </NavDropdown>
       </Nav>

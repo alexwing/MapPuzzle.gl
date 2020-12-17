@@ -66,8 +66,11 @@ class MapPuzzle extends Component {
   }
 
   loadGame(puzzleSelected) {
+
+
+
     this.setState({ loading: true });
-    setCookie("seconds" + this.state.puzzleSelected, GameTime.seconds, 2);
+    setCookie("seconds" + puzzleSelected, GameTime.seconds, 2);
     Jsondb(this.props.content.puzzles[puzzleSelected].data)
       .then(response => {
         this.setState({ loading: false, puzzleSelected: puzzleSelected, pieces: response.features, data: response });
@@ -129,8 +132,10 @@ class MapPuzzle extends Component {
   }
 
   onSelectMapHandler = (val) => {
-    this.setState({ puzzleSelected: val.target.id, pieceSelectedData: null, pieceSelected: null });
-    this.loadGame(val.target.id);
+    if (val.target.id){
+      this.setState({ puzzleSelected: val.target.id, pieceSelectedData: null, pieceSelected: null });
+      this.loadGame(val.target.id);
+    }
   }
 
   onFullScreenHandler = (val) => {
