@@ -103,6 +103,19 @@
         "longitude": 75.318756,
         "zoom": 2.5
       }
+    },
+    {
+      "id": 8,
+      "comment": "Layer download in http://www.diva-gis.org/datadown",
+      "name": "United Kingdom",
+      "data": "maps/united_kingdom.geojson",
+      "icon": "flags/GB.png",
+      "url": "united_kingdom",
+      "view_state": {
+        "latitude": 55.378052,
+        "longitude": -3.435973,
+        "zoom": 5
+      }
     }
   ]
 }

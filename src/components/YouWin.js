@@ -11,6 +11,9 @@ import './YouWin.css';
 import { FacebookShareButton, FacebookIcon,
     EmailShareButton, EmailIcon,
     TwitterShareButton, TwitterIcon,
+    LinkedinShareButton, LinkedinIcon,
+    WhatsappShareButton, WhatsappIcon,
+    TelegramShareButton, TelegramIcon
 } from "react-share";
 
 
@@ -89,7 +92,15 @@ export default class YouWin extends Component {
                             <TwitterShareButton url={url} title ={quote} hashtags={hashtag.split(',')}>
                                 <TwitterIcon size={48} round={true} />
                             </TwitterShareButton>
-                           
+                            <LinkedinShareButton url={url} title={title + " - " + this.props.name}  summary={quote} source ={title}>
+                                <LinkedinIcon size={48} round={true} />
+                            </LinkedinShareButton>                            
+                            <WhatsappShareButton url={url} title={quote} >
+                                <WhatsappIcon size={48} round={true} />
+                            </WhatsappShareButton>                            
+                            <TelegramShareButton url={url} title={quote} >
+                                <TelegramIcon size={48} round={true} />
+                            </TelegramShareButton>                            
                         </Col>
                     </Row>
                 </Modal.Body>
