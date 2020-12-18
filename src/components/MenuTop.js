@@ -36,15 +36,17 @@ export default class MenuTop extends Component {
       });
     }
 
+
+
     const Puzzles = (
       <Nav className="mr-auto">
         <NavDropdown title="Select a Puzzle" id="puzzle">
           {this.props.content.map(c =>
           (
-            <NavDropdown.Item role="button" className="dropdown-item" id={c.id} key={c.id} to={"./?map=" + c.url} onClick={onSelectMap}>
-              <img src={c.icon} alt={c.name} />
-              {c.name}
-            </NavDropdown.Item>
+              <NavDropdown.Item as={Link} id={c.id} key={c.id} to={"./?map=" + c.url} onClick={onSelectMap} exact>
+                <img src={c.icon} alt={c.name} />
+                {c.name}
+              </NavDropdown.Item>
           ))}
         </NavDropdown>
       </Nav>
@@ -58,7 +60,7 @@ export default class MenuTop extends Component {
         <Navbar.Collapse id="basic-navbar-nav">
           {Puzzles}
           <Form inline>
-            
+
             <Button id="fullscreen" variant="outline-secondary" onClick={onFullScreen}><span className="navbar-reset-icon"></span></Button>
             <Button id="reset" variant="outline-primary" onClick={handleShow}>Reset Game</Button>
           </Form>

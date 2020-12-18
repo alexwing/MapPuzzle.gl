@@ -66,11 +66,9 @@ class MapPuzzle extends Component {
   }
 
   loadGame(puzzleSelected) {
-
-
-
+    
     this.setState({ loading: true });
-    setCookie("seconds" + puzzleSelected, GameTime.seconds, 2);
+   // setCookie("seconds" + puzzleSelected, GameTime.seconds, 2);
     Jsondb(this.props.content.puzzles[puzzleSelected].data)
       .then(response => {
         this.setState({ loading: false, puzzleSelected: puzzleSelected, pieces: response.features, data: response });

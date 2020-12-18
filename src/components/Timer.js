@@ -31,9 +31,10 @@ export default class Timer extends Component {
         clearInterval(this.countDown);
     }
 
-    countDown() {
+    countDown() {        
         if (!this.props.YouWin && !this.props.loading) {
             GameTime.seconds++;
+            //save time each 5 seconds
             if (GameTime.seconds % 5 === 0) {
                 setCookie("seconds" + this.props.puzzleSelected, GameTime.seconds, 2);
             }
