@@ -19,7 +19,7 @@ body{
     margin: -0.5em 0;
   }
 
-  button , .btn , .navbar-nav .dropdown-menu, .navbar-brand,.dropdown-item,   .dropdown-toggle{
+  button , .btn , .navbar-nav .dropdown-menu, .navbar-brand,.dropdown-item,   .dropdown-toggle , a{
     cursor: pointer !important;
   }
   .card-body , .navbar-brand {
@@ -146,11 +146,25 @@ body{
   }
 
 
-.navbar-reset-icon {
-  background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ctitle%3E fullscreen %3C/title%3E%3Cpath  fill='gray' fill-rule='evenodd' d='M1 1v6h2V3h4V1H1zm2 12H1v6h6v-2H3v-4zm14 4h-4v2h6v-6h-2v4zm0-16h-4v2h4v4h2V1h-2z'/%3E%3C/svg%3E") !important;
+.navbar-full-icon {
+  background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ctitle%3E fullscreen %3C/title%3E%3Cpath  fill=' ' fill-rule='evenodd' d='M1 1v6h2V3h4V1H1zm2 12H1v6h6v-2H3v-4zm14 4h-4v2h6v-6h-2v4zm0-16h-4v2h4v4h2V1h-2z'/%3E%3C/svg%3E") !important;
   display: inline-block;
-  width: 1.3em;
-  height: 1.3em;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+  margin-top: -0.3em;
+  content: "";
+  background: no-repeat center center;
+  background-image: none;
+  background-size: auto;
+  background-size: 100% 100%;
+}
+.navbar-info-icon {
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 10.9794C11 10.4271 11.4477 9.97937 12 9.97937C12.5523 9.97937 13 10.4271 13 10.9794V16.9794C13 17.5317 12.5523 17.9794 12 17.9794C11.4477 17.9794 11 17.5317 11 16.9794V10.9794Z' fill='currentColor' /%3E%3Cpath d='M12 6.05115C11.4477 6.05115 11 6.49886 11 7.05115C11 7.60343 11.4477 8.05115 12 8.05115C12.5523 8.05115 13 7.60343 13 7.05115C13 6.49886 12.5523 6.05115 12 6.05115Z' fill='currentColor' /%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM4 12C4 16.4183 7.58172 20 12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12Z' fill='currentColor' /%3E%3C/svg%3E") !important;
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  margin-top: -0.3em;
   vertical-align: middle;
   content: "";
   background: no-repeat center center;

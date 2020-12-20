@@ -3,7 +3,7 @@
     {
       "id": 0,
       "name": "World Borders",
-      "comment": "",
+      "comment": "Layer source from https://public.carto.com/api",
       "data": "maps/world_borders.geojson",
       "url": "world_borders",
       "icon": "flags/_united-nations.png",
@@ -16,7 +16,7 @@
     {
       "id": 1,
       "name": "Spanish Provinces",
-      "comment": "",
+      "comment": "Layer source in http://www.diva-gis.org/datadown",
       "data": "maps/spanish_provinces.geojson",
       "url": "spanish_provinces",
       "icon": "flags/ES.png",
@@ -28,7 +28,7 @@
     },
     {
       "id": 2,
-      "comment": "Layer download in http://tapiquen-sig.jimdofree.com. Carlos Efraín Porto Tapiquén. Geografía, SIG y Cartografía Digital. Valencia, España, 2020",
+      "comment": "Layer source in http://tapiquen-sig.jimdofree.com. Carlos Efraín Porto Tapiquén. Geografía, SIG y Cartografía Digital. Valencia, España, 2020",
       "name": "Usa States",
       "data": "maps/usa_states.geojson",
       "url": "usa_states",
@@ -42,7 +42,7 @@
     {
       "id": 3,
       "name": "Canada Provinces",
-      "comment": "Layer download in http://tapiquen-sig.jimdofree.com. Carlos Efraín Porto Tapiquén. Geografía, SIG y Cartografía Digital. Valencia, España, 2020",
+      "comment": "Layer source in http://tapiquen-sig.jimdofree.com. Carlos Efraín Porto Tapiquén. Geografía, SIG y Cartografía Digital. Valencia, España, 2020",
       "data": "maps/canada_provinces.geojson",
       "url": "canada_provinces",
       "icon": "flags/CA.png",
@@ -54,7 +54,7 @@
     },
     {
       "id": 4,
-      "comment": "Layer download in https://www.data.gouv.fr/en/datasets/contours-des-regions-francaises-sur-openstreetmap/",
+      "comment": "Layer source in https://www.data.gouv.fr/en/datasets/contours-des-regions-francaises-sur-openstreetmap/",
       "name": "France Regions",
       "data": "maps/france_regions.geojson",
       "url": "france_regions",
@@ -67,7 +67,7 @@
     },
     {
       "id": 5,
-      "comment": "Layer download in http://www.diva-gis.org/datadown",
+      "comment": "Layer source in http://www.diva-gis.org/datadown",
       "name": "Germany States",
       "data": "maps/germany_states.geojson",
       "url": "germany_states",
@@ -80,7 +80,7 @@
     },
     {
       "id": 6,
-      "comment": "Layer download in http://www.diva-gis.org/datadown",
+      "comment": "Layer source in http://www.diva-gis.org/datadown",
       "name": "Japan Prefectures",
       "data": "maps/japan_prefectures.geojson",
       "icon": "flags/JP.png",
@@ -93,7 +93,7 @@
     },
     {
       "id": 7,
-      "comment": "Layer download in http://www.diva-gis.org/datadown",
+      "comment": "Layer source in http://www.diva-gis.org/datadown",
       "name": "Russian Federation",
       "data": "maps/russian_federation.geojson",
       "icon": "flags/RU.png",
@@ -106,7 +106,7 @@
     },
     {
       "id": 8,
-      "comment": "Layer download in http://www.diva-gis.org/datadown",
+      "comment": "Layer source in http://www.diva-gis.org/datadown",
       "name": "United Kingdom",
       "data": "maps/united_kingdom.geojson",
       "icon": "flags/GB.png",
@@ -119,7 +119,7 @@
     },
     {
       "id": 9,
-      "comment": "Layer download in http://www.diva-gis.org/datadown",
+      "comment": "Layer source in http://www.diva-gis.org/datadown",
       "name": "China Provinces",
       "data": "maps/china_provinces.geojson",
       "icon": "flags/CN.png",
