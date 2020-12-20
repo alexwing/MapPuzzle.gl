@@ -2,7 +2,7 @@
 
 MapPuzzle.gl is an experimental website, developed with React and Deck.gl. It is an accessible way to learn cartography, through this project I try to offer an interactive learning experience with maps.
 
-![MapPuzzle.gl](./public/demoimage.jpg)
+![MapPuzzle.gl](http://mappuzzle.xyz/demoimage.jpg)
 
 ## Description of the game
 
