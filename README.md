@@ -1,6 +1,6 @@
 # MapPuzzle.gl
 
-Puzzle game application based in maps, using Deck.gl and React.The application has been divided into different components of React, communicating with each other. In the country panel, select the piece to find in the map.
+MapPuzzle.gl is an experimental website, developed with React and Deck.gl. It is an accessible way to learn cartography, through this project I try to offer an interactive learning experience with maps.
 
 ## Description of the game
 
