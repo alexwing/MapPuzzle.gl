@@ -2,7 +2,7 @@
 
 MapPuzzle.gl is an experimental website, developed with React and Deck.gl. It is an accessible way to learn cartography, through this project I try to offer an interactive learning experience with maps.
 
-![MapPuzzle.gl](http://mappuzzle.xyz/demoimage.jpg)
+![MapPuzzle.gl](http://mappuzzle.xyz/ogimage.jpg)
 
 ## Description of the game
 
@@ -11,6 +11,8 @@ We have a list on the left side of the screen, with the list of puzzle pieces wh
 It also has a counter of pieces found, pieces to be searched for and faults committed.
 
 You can play it at http://mappuzzle.xyz/
+
+![MapPuzzle.gl](http://mappuzzle.xyz/demoimage.jpg)
 
 ## Code description
 
