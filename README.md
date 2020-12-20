@@ -2,6 +2,8 @@
 
 MapPuzzle.gl is an experimental website, developed with React and Deck.gl. It is an accessible way to learn cartography, through this project I try to offer an interactive learning experience with maps.
 
+![MapPuzzle.gl](/public/demoimage.jpg)
+
 ## Description of the game
 
 We have a list on the left side of the screen, with the list of puzzle pieces which, depending on the map, could be countries, states, cities, provinces, etc. Each map piece is shown with an illustration of the map. When you click on it, it follows the mouse and you will have to look for its equivalent on the map.
