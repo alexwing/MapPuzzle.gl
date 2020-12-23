@@ -6,7 +6,7 @@ import {AlphaColor,hexToRgb,setColor} from '../lib/Utils.js';
 export default class DeckMap extends Component {
 
   render() {
-    const {onClickMap,onHoverMap} = this.props;
+    const {onClickMap,onHoverMap, onViewStateChange} = this.props;
     
       const layers = [ new GeoJsonLayer({
       data: this.props.data,
@@ -22,7 +22,7 @@ export default class DeckMap extends Component {
         getFillColor: (object) =>  AlphaColor(hexToRgb(setColor(object.properties.mapcolor)),this.props.founds.includes(object.properties.cartodb_id)? 150:0),
       },
       onClick: info => onClickMap(info),
-      onHover: info => onHoverMap(info),
+      onHover: info => onHoverMap(info),    
     })
   
   ];
@@ -31,6 +31,7 @@ export default class DeckMap extends Component {
         width="100%"
         height="100%"
         initialViewState={this.props.viewState}
+        onViewStateChange = {onViewStateChange}
         controller={true}
         layers={[layers]}
       >    

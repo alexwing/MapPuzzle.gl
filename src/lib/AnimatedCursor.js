@@ -19,6 +19,7 @@ function CursorCore({
   clickScale = 0.7,
   selected = null,
   tooltip = "",
+  zoom = 2,
 }) {
   const pieceCursorRef = useRef()
   const tooltipRef = useRef()
@@ -204,8 +205,13 @@ function CursorCore({
 
   let PieceCursor;
   if (selected) {
+
+    const scale = Math.pow(2, zoom);
+    let sizeX = parseInt(selected.properties.box.split(" ")[2])  * scale / 78000;
+    let sizeY = parseInt(selected.properties.box.split(" ")[3])  * scale / 78000;
+    //console.log (selected.properties.box.split(" ")[2]);
     PieceCursor =
-      <svg height="180px" width="180px"
+      <svg width={sizeX+"px"} height={sizeY+"px"} 
         viewBox={selected ? (selected.properties.box) : ''} preserveAspectRatio="slice" style={{ border: "0px solid lightgray", marginLeft: "-50%", marginTop: "-50%" }}>
         <path d={selected ? selected.properties.poly : ''} stroke="black" strokeWidth="0" fill={setColor(selected.properties.mapcolor)} />
       </svg>;
@@ -240,6 +246,7 @@ function AnimatedCursor({
   clickScale = 0.7,
   selected = null,
   tooltip = "",
+  zoom = 2,
 
 }) {
   if (typeof navigator !== 'undefined' && IsDevice.any()) {
@@ -250,6 +257,7 @@ function AnimatedCursor({
       color={color}
       clickScale={clickScale}
       selected={selected}
+      zoom={zoom}
       tooltip={tooltip}
     />
   )

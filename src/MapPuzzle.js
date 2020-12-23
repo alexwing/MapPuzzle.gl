@@ -28,6 +28,7 @@ class MapPuzzle extends Component {
       lineWidth: 1,
       color: [255, 0, 0],
       colorStroke: [150, 150, 150],
+      zoom: 2,
       pieceSelected: null,
       pieceSelectedData: null,
       pieces: [],
@@ -132,6 +133,7 @@ class MapPuzzle extends Component {
   onSelectMapHandler = (val) => {
     if (val.target.id){
       this.setState({ puzzleSelected: val.target.id, pieceSelectedData: null, pieceSelected: null });
+      this.setState({ zoom: this.props.content.puzzles[val.target.id].view_state.zoom })
       this.loadGame(val.target.id);
     }
   }
@@ -167,8 +169,13 @@ class MapPuzzle extends Component {
   }
 
 
-  onClickMapHandler = (info) => {
+  onViewStateChangeHandler = (viewState) => {
+    console.log( viewState.viewState.zoom );
+    this.setState({ zoom: viewState.viewState.zoom })
+  }
 
+  onClickMapHandler = (info) => {
+    console.log("FOUND: " );
     if (info && this.state.pieceSelected) {
       if (String(this.state.pieceSelectedData.properties.cartodb_id).trim() === String(info.object.properties.cartodb_id).trim()) {
         if (!this.state.founds.includes(this.state.pieceSelectedData.properties.cartodb_id)) {
@@ -215,6 +222,7 @@ class MapPuzzle extends Component {
               piece={this.state.pieceSelected}
               onClickMap={this.onClickMapHandler}
               onHoverMap={this.onHoverMapHandler}
+              onViewStateChange={this.onViewStateChangeHandler}
               viewState={this.props.content.puzzles[this.state.puzzleSelected].view_state}
               founds={this.state.founds}
               data={this.state.data}
@@ -247,6 +255,7 @@ class MapPuzzle extends Component {
             <AnimatedCursor
               clickScale={0.95}
               color='#666'
+              zoom={this.state.zoom}
               selected={this.state.pieceSelectedData}
               tooltip={this.state.tooltipValue}
             />
