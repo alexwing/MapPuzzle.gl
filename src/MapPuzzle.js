@@ -68,7 +68,8 @@ class MapPuzzle extends Component {
 
   loadGame(puzzleSelected) {
     
-    this.setState({ loading: true });
+    this.setState({ loading: true, zoom: this.props.content.puzzles[puzzleSelected].view_state.zoom });
+
    // setCookie("seconds" + puzzleSelected, GameTime.seconds, 2);
     Jsondb(this.props.content.puzzles[puzzleSelected].data)
       .then(response => {
@@ -133,7 +134,7 @@ class MapPuzzle extends Component {
   onSelectMapHandler = (val) => {
     if (val.target.id){
       this.setState({ puzzleSelected: val.target.id, pieceSelectedData: null, pieceSelected: null });
-      this.setState({ zoom: this.props.content.puzzles[val.target.id].view_state.zoom })
+   
       this.loadGame(val.target.id);
     }
   }
