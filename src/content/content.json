@@ -129,6 +129,19 @@
         "longitude": 104.195396,
         "zoom": 3.4
       }
+    },
+    {
+      "id": 10,
+      "comment": "Layer source in https://www.istat.it/it/archivio/222527",
+      "name": "Italia Regions",
+      "data": "maps/italia_regions.geojson",
+      "icon": "flags/IT.png",
+      "url": "italia_regions",
+      "view_state": {
+        "latitude": 41.871941,
+        "longitude": 12.567380,
+        "zoom": 5.2
+      }
     }
   ]
 }
