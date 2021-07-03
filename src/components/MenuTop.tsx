@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React,  { Component } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
@@ -6,11 +6,11 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { Link } from 'react-router-dom'
-import Info from './Info.js';
+import Info from './Info';
 
 
-export default class MenuTop extends Component {
-  constructor(props) {
+export default class MenuTop extends Component<any, any>  {
+  constructor(props:any) {
     super(props)
     this.state = {
       show: false,
@@ -61,9 +61,9 @@ export default class MenuTop extends Component {
     const Puzzles = (
       <Nav className="mr-auto">
         <NavDropdown title="Select a Puzzle" id="puzzle">
-          {this.props.content.map(c =>
+          {this.props.content.map((c: any) =>
           (
-              <NavDropdown.Item as={Link} id={c.id} key={c.id} to={"./?map=" + c.url} onClick={onSelectMap} exact>
+              <NavDropdown.Item as={Link} id={c.id} key={c.id} to={"./?map=" + c.url} onClick={onSelectMap} >
                 <img src={c.icon} alt={c.name} />
                 {c.name}
               </NavDropdown.Item>

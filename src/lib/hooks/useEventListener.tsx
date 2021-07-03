@@ -5,9 +5,9 @@ import { useRef, useEffect } from 'react'
  * Hook for handling EventListeners
  * @return {object} width, height
  */
-export function useEventListener(eventName, handler, element = window) {
+export function useEventListener(eventName:any, handler:any, element = window) {
   // Create a ref that stores handler
-  const savedHandler = useRef()
+  const savedHandler:any = useRef()
 
   // Update ref.current value if handler changes.
   useEffect(() => {
@@ -21,7 +21,7 @@ export function useEventListener(eventName, handler, element = window) {
       if (!isSupported) return
 
       // Create event listener that calls handler function stored in ref
-      const eventListener = (event) => savedHandler.current(event)
+      const eventListener = (event:any) => savedHandler.current(event)
 
       // Add event listener
       element.addEventListener(eventName, eventListener)

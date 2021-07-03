@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React,  { Component } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Form from 'react-bootstrap/Form';
@@ -11,7 +11,7 @@ import { setColor } from '../lib/Utils';
 
 
 
-class ToolsPanel extends Component {
+class ToolsPanel extends Component<any, any>  {
 
 
   render() {
@@ -21,12 +21,12 @@ class ToolsPanel extends Component {
     const Legend = (
       <Table striped bordered hover size="sm" className="legend">
         <tbody>
-          {pieces.map(c =>
+          {pieces.map((c:any) =>
             founds.includes(c.properties.cartodb_id) ? null : (
               <tr key={c.properties.cartodb_id} onClick={onPieceSelected} id={c.properties.cartodb_id} className={parseInt(c.properties.cartodb_id) === parseInt(pieceSelected) ? "table-primary" : ""}>
                 <td width="80%">{c.properties.name}</td>
                 <td width="20%" align="right" className="legendPiece">
-                  <svg viewBox={(c.properties.box)} preserveAspectRatio="slice">
+                  <svg viewBox={(c.properties.box)} >
                     <path d={c.properties.poly} stroke="black" strokeWidth="0" fill={setColor(c.properties.mapcolor)} />
                   </svg>
                 </td>

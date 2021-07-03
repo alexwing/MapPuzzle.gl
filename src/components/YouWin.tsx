@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React,  { Component } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Fireworks from '../lib/Fireworks';
@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Alert from 'react-bootstrap/Alert';
 
-import {  getUrl, getTexTime, getTime  } from '../lib/Utils.js';
+import {  getUrl, getTexTime, getTime  } from '../lib/Utils';
 import './YouWin.css';
 import { FacebookShareButton, FacebookIcon,
     EmailShareButton, EmailIcon,
@@ -17,9 +17,9 @@ import { FacebookShareButton, FacebookIcon,
 } from "react-share";
 
 
-export default class YouWin extends Component {
+export default class YouWin extends Component<any, any>  {
 
-    constructor(props) {
+    constructor(props:any) {
         super(props)
         this.state = {
             show: true,

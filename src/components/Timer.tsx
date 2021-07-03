@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { secondsToTime } from '../lib/Utils.js';
-import GameTime from '../lib/GameTime.js'
+import { secondsToTime } from '../lib/Utils';
+import GameTime from '../lib/GameTime'
 import { setCookie } from "react-simple-cookie-store"
 
-export default class Timer extends Component {
-
-    constructor(props) {
+export default class Timer extends Component<any, any>  {
+    timer: NodeJS.Timeout | null;
+    constructor(props:any) {
         super(props)
-        this.timer = 0;
+        this.timer = null;
         this.startTimer = this.startTimer.bind(this);
         this.countDown = this.countDown.bind(this);
         this.state = {
@@ -28,15 +28,15 @@ export default class Timer extends Component {
     }
 
     componentWillUnmount() {
-        clearInterval(this.countDown);
+        clearInterval();
     }
 
-    countDown() {        
+    countDown():void {        
         if (!this.props.YouWin && !this.props.loading) {
             GameTime.seconds++;
             //save time each 5 seconds
             if (GameTime.seconds % 5 === 0) {
-                setCookie("seconds" + this.props.puzzleSelected, GameTime.seconds, 2);
+                setCookie("seconds" + this.props.puzzleSelected, GameTime.seconds.toString(), 2);
             }
         }
         this.setState({

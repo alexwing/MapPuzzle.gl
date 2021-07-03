@@ -1,4 +1,4 @@
-const IsDevice = (() => {
+const IsDevice:any = (() => {
   if (typeof navigator == 'undefined') return
 
   let ua = navigator.userAgent
@@ -25,7 +25,7 @@ const IsDevice = (() => {
     /**
      * Any Device
      */
-    any() {
+    any():any {
       return (
         IsDevice.Android() ||
         IsDevice.BlackBerry() ||

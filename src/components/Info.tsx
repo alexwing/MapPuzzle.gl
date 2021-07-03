@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 
-import { getUrl, } from '../lib/Utils.js';
+import { getUrl, } from '../lib/Utils';
 import './Info.css';
 import {
     FacebookShareButton, FacebookIcon,
@@ -17,15 +17,15 @@ import {
 } from "react-share";
 
 
-export default class Info extends Component {
+export default class Info extends Component<any, any>  {
 
-    constructor(props) {
+    constructor(props:any) {
         super(props)
         this.state = {
             show: false,
         }
     }
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps:any) {
         this.setState({ show: nextProps.show });
     }
     render() {
@@ -53,7 +53,7 @@ export default class Info extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {this.props.content.map(c =>
+                    {this.props.content.map((c:any) =>
                     (
                         <tr key={c.id} id={c.id}>
                             <td width="1%"><img src={c.icon} alt={c.name} /></td>
