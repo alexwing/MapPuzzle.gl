@@ -13,7 +13,7 @@ import { Jsondb } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
-import { PieceProps, MapPuzzleProps } from "./lib/interfaces";
+import { PieceProps, MapPuzzleProps } from "./lib/Interfaces";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
