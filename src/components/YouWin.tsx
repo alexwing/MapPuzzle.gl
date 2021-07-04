@@ -28,15 +28,15 @@ export default class YouWin extends Component<any, any>  {
 
     render() {
         const { onResetGame } = this.props;
-        let handleClose = () => {
+        const handleClose = () => {
             this.setState({
                 show: false
             });
         }
-        let url =  "http://"+ getUrl() +"/?map="+this.props.path;
-        let quote = "I completed the puzzle game of the "+this.props.name+", in "+getTexTime()+", with "+this.props.fails+" failures out of "+this.props.founds.length+" pieces found."
-        let hashtag = "education,cartography,puzzle,countries"
-        let title = "MapPuzzle.xyz - Puzzle game based in maps"
+        const url =  "http://"+ getUrl() +"/?map="+this.props.path;
+        const quote = "I completed the puzzle game of the "+this.props.name+", in "+getTexTime()+", with "+this.props.fails+" failures out of "+this.props.founds.length+" pieces found."
+        const hashtag = "education,cartography,puzzle,countries"
+        const title = "MapPuzzle.xyz - Puzzle game based in maps"
         return <div>
             <Modal
                 show={this.state.show}

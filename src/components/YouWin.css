@@ -1,50 +1,49 @@
-
 .modal-backdrop.show {
-    opacity: .1;
-  }
-  .modal-header {
-    background-color: lightskyblue;
-  }
-  .modal-body{
-    padding: 0 1rem;
-  }
-  .modal-body p{
-    margin-bottom: 0px;
-  }
-  .scorewin .alert{
-    border-radius: 0px;
-    margin-bottom: 0px;
-    padding: .75rem 0rem;
-  }
-  .scorewin .alert-warning > .mb-0{
-    font-size: 20px !important;
-    line-height: 40px;
-  }
-  .scorewin .alert-heading.h4 ,.scorewin .mb-0{
+  opacity: 0.1;
+}
+.modal-header {
+  background-color: lightskyblue;
+}
+.modal-body {
+  padding: 0 1rem;
+}
+.modal-body p {
+  margin-bottom: 0px;
+}
+.scorewin .alert {
+  border-radius: 0px;
+  margin-bottom: 0px;
+  padding: 0.75rem 0rem;
+}
+.scorewin .alert-warning > .mb-0 {
+  font-size: 20px !important;
+  line-height: 40px;
+}
+.scorewin .alert-heading.h4,
+.scorewin .mb-0 {
+  font-size: 25px !important;
+  font-weight: bolder;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 25px;
+  margin: 1.5em 0em !important;
+}
 
-    font-size: 25px !important;
-    font-weight: bolder;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    line-height: 25px;
-    margin: 1.5em 0em !important;
-  }
-  
-  .scorewin hr{
-    margin: 0px;
-  }
-  
-  .scorewin .col-lg-4{
-    padding-right: 0px;
-    padding-left: 0px;
-  }
+.scorewin hr {
+  margin: 0px;
+}
 
-  .share{
-    text-align: center;
-    padding: 1.5em;
-  }
-  .share h4{
-    padding-bottom: 0.5em;
-  }
+.scorewin .col-lg-4 {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+
+.share {
+  text-align: center;
+  padding: 1.5em;
+}
+.share h4 {
+  padding-bottom: 0.5em;
+}

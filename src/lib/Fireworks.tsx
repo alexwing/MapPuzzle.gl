@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import './Fireworks.scss';
+import React, { Component } from "react";
+import "./Fireworks.scss";
 /**
  * Fireworks
  * Pure CSS Fireworks
@@ -10,12 +10,12 @@ import './Fireworks.scss';
  */
 
 export default class Fireworks extends Component {
-
-    render() {
-        return <div className="pyro">
-            <div className="before"></div>
-            <div className="after"></div>
-        </div>;
-    }
-
+  render() {
+    return (
+      <div className="pyro">
+        <div className="before"></div>
+        <div className="after"></div>
+      </div>
+    );
+  }
 }

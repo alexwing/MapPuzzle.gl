@@ -1,4 +1,4 @@
-import React,   { Component } from "react";
+import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import "./MapPuzzle.css";
@@ -13,12 +13,7 @@ import { Jsondb } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
-
-interface pieceProps {
-  properties: {
-    cartodb_id: Number;
-  };
-}
+import { PieceProps, MapPuzzleProps } from "./lib/interfaces";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -32,7 +27,7 @@ class MapPuzzle extends Component<any, any> {
       zoom: 2,
       pieceSelected: null,
       pieceSelectedData: null,
-      pieces: new Array<pieceProps>(),
+      pieces: new Array<PieceProps>(),
       founds: new Array<any>(),
       fails: 0,
       time: {},
@@ -47,7 +42,10 @@ class MapPuzzle extends Component<any, any> {
   componentDidMount() {
     var puzzleSelected = 0;
     if (window.location.pathname) {
-      this.props.content.puzzles.forEach(function (value: any, index: number) {
+      this.props.content.puzzles.forEach(function (
+        value: MapPuzzleProps,
+        index: number
+      ) {
         if (value.url === window.location.search.substr(5)) {
           puzzleSelected = index;
         }
@@ -64,13 +62,12 @@ class MapPuzzle extends Component<any, any> {
     this.loadGame(puzzleSelected);
   }
 
-  loadGame(puzzleSelected: any) {
+  loadGame(puzzleSelected: number) {
     this.setState({
       loading: true,
       zoom: this.props.content.puzzles[puzzleSelected].view_state.zoom,
     });
 
-    // setCookie("seconds" + puzzleSelected, GameTime.seconds, 2);
     Jsondb(this.props.content.puzzles[puzzleSelected].data).then((response) => {
       this.setState({
         loading: false,
@@ -103,7 +100,7 @@ class MapPuzzle extends Component<any, any> {
         GameTime.seconds = 0;
       }
 
-      setCookie("puzzleSelected", puzzleSelected, 2);
+      setCookie("puzzleSelected", puzzleSelected.toString(), 2);
       this.checkGameStatus();
     });
   }
@@ -128,7 +125,7 @@ class MapPuzzle extends Component<any, any> {
   onPieceSelectedHandler = (val: any) => {
     if (this.state.pieceSelected !== val.target.parentNode.id) {
       this.setState({ pieceSelected: val.target.parentNode.id });
-      this.state.pieces.forEach((piece: pieceProps) => {
+      this.state.pieces.forEach((piece: PieceProps) => {
         if (
           String(piece.properties.cartodb_id).trim() ===
           String(val.target.parentNode.id).trim()
@@ -153,11 +150,8 @@ class MapPuzzle extends Component<any, any> {
     }
   };
 
-  onFullScreenHandler = (val: any) => {
-    console.log("enable fullscreen");
-  };
+  //Reset the Game
   onResetGameHandler = () => {
-    console.log("Reset the Game");
     removeCookie("founds" + this.state.puzzleSelected);
     removeCookie("fails" + this.state.puzzleSelected);
     removeCookie("seconds" + this.state.puzzleSelected);
@@ -186,7 +180,6 @@ class MapPuzzle extends Component<any, any> {
   };
 
   onViewStateChangeHandler = (viewState: any) => {
-    console.log(viewState.viewState.zoom);
     this.setState({ zoom: viewState.viewState.zoom });
   };
 

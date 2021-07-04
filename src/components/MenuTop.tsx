@@ -20,13 +20,13 @@ export default class MenuTop extends Component<any, any>  {
   render() {
 
     const { onSelectMap, onResetGame, onFullScreen } = this.props;
-    let handleClose = () => {
+    const handleClose = () => {
       this.setState({
         show: false,
         showInfo: false
       });
-    }
-    let handleOK = () => {
+    } 
+    const handleOK = () => {
       onResetGame();
       this.setState({
         show: false,
@@ -34,7 +34,7 @@ export default class MenuTop extends Component<any, any>  {
       });
     }
 
-    let handleShow = () => {
+    const handleShow = () => {
       this.setState({
         show: true,
         showInfo: false
@@ -42,20 +42,12 @@ export default class MenuTop extends Component<any, any>  {
     }
 
 
-    let handleInfo = () => {
+    const handleInfo = () => {
       this.setState({
         show: false,
         showInfo: true
       });
     }
-
-    let InfoCloseHandle = () => {
-      this.setState({
-        show: false,
-        showInfo: false
-      });
-    }
-    
 
 
     const Puzzles = (
@@ -86,7 +78,7 @@ export default class MenuTop extends Component<any, any>  {
           </Form>
         </Navbar.Collapse>
       </Navbar>
-      <Info show={this.state.showInfo} content={this.props.content} InfoClose={InfoCloseHandle}/>
+      <Info show={this.state.showInfo} content={this.props.content} InfoClose={handleClose}/>
       <Modal show={this.state.show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Do you surrender?</Modal.Title>
@@ -99,10 +91,9 @@ export default class MenuTop extends Component<any, any>  {
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-        </Modal.Footer>
+        </Modal.Footer> 
       </Modal>
-    
     </div>;
   }
 
-}
+} 

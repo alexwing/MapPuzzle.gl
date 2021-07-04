@@ -26,8 +26,8 @@ export const colorScale = function (x: any) {
   return COLOR_SCALE[i] || COLOR_SCALE[COLOR_SCALE.length - 1];
 };
 
-export const hexToRgb = function (hex:string|null):Array<number>  {
-  if(!hex) return [0,0,0];
+export const hexToRgb = function (hex: string | null): Array<number> {
+  if (!hex) return [0, 0, 0];
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
   return result
@@ -36,10 +36,10 @@ export const hexToRgb = function (hex:string|null):Array<number>  {
         parseInt(result[2], 16),
         parseInt(result[3], 16),
       ]
-    :  [0,0,0];
+    : [0, 0, 0];
 };
 
-export const LightenDarkenColor = function (col: String, amt: number) {
+export const LightenDarkenColor = function (col: string, amt: number) {
   if (col[0] === "#") {
     col = col.slice(1);
   }
@@ -59,7 +59,7 @@ export const LightenDarkenColor = function (col: String, amt: number) {
   return [r, g, b];
 };
 
-export const setColor = function (col: number):string {
+export const setColor = function (col: number): string {
   var colorArray = [
     "#fef400",
     "#67ba2e",
@@ -102,7 +102,7 @@ export const setColor = function (col: number):string {
   }
 };
 
-export const AlphaColor = function (col:any | string, alpha = 255) {
+export const AlphaColor = function (col: any | string, alpha = 255) {
   if (col[0] === "#") {
     col = col.slice(1);
   }
@@ -118,14 +118,12 @@ export const AlphaColor = function (col:any | string, alpha = 255) {
 
   if (g > 255) g = 255;
   else if (g < 0) g = 0;
-  //console.log ( [r, g, b, alpha]);
   return [r, g, b, alpha];
 };
 
-export function ST_ExtentToVieport(box:string) {
+export function ST_ExtentToVieport(box: string) {
   box = box.replace("BOX(", "").replace(")", "").replace(",", " ");
   var arrayBox = box.split(" ");
-  //return arrayBox[0]+' ' + arrayBox[1]+' ' +arrayBox[2]+' ' +arrayBox[3];
   return (
     arrayBox[0] +
     " " +
@@ -140,7 +138,7 @@ export function ST_ExtentToVieport(box:string) {
   );
 }
 
-export function LazyRound(num:string) {
+export function LazyRound(num: string) {
   var parts = num.split(".");
   return parts.length > 1
     ? Math.round(
@@ -149,7 +147,7 @@ export function LazyRound(num:string) {
     : parts[0];
 }
 
-export async function Jsondb(filepath:string) {
+export async function Jsondb(filepath: string) {
   return fetch(filepath, {
     method: "GET",
     headers: new Headers({
@@ -160,7 +158,7 @@ export async function Jsondb(filepath:string) {
     .catch((error) => console.log(error));
 }
 
-export async function Querydb(sql:string) {
+export async function Querydb(sql: string) {
   return fetch("https://public.carto.com/api/v2/sql?q=" + sql, {
     method: "GET",
     headers: new Headers({
@@ -171,7 +169,7 @@ export async function Querydb(sql:string) {
     .catch((error) => console.log(error));
 }
 
-export function secondsToTime(secs:number) {
+export function secondsToTime(secs: number) {
   const hours = Math.floor(secs / (60 * 60));
 
   const divisor_for_minutes = secs % (60 * 60);
@@ -228,6 +226,5 @@ export function getUrl() {
   if (url.includes("localhost")) {
     return "mappuzzle.xyz";
   }
-  //console.log("url: "+url);
   return url;
 }
