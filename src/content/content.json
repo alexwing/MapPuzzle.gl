@@ -34,7 +34,7 @@
       "url": "usa_states",
       "icon": "flags/US.png",
       "view_state": {
-        "latitude": 37.090240,
+        "latitude": 37.09024,
         "longitude": -95.712891,
         "zoom": 3.5
       }
@@ -87,7 +87,7 @@
       "url": "japan_prefectures",
       "view_state": {
         "latitude": 36.204823,
-        "longitude": 138.252930,
+        "longitude": 138.25293,
         "zoom": 5.5
       }
     },
@@ -99,7 +99,7 @@
       "icon": "flags/RU.png",
       "url": "russian_federation",
       "view_state": {
-        "latitude": 65.524010,
+        "latitude": 65.52401,
         "longitude": 75.318756,
         "zoom": 2.5
       }
@@ -125,7 +125,7 @@
       "icon": "flags/CN.png",
       "url": "china_provinces",
       "view_state": {
-        "latitude": 35.861660,
+        "latitude": 35.86166,
         "longitude": 104.195396,
         "zoom": 3.4
       }
@@ -139,7 +139,20 @@
       "url": "italia_regions",
       "view_state": {
         "latitude": 41.871941,
-        "longitude": 12.567380,
+        "longitude": 12.56738,
+        "zoom": 5.2
+      }
+    },
+    {
+      "id": 11,
+      "comment": "Layer source in https://tapiquen-sig.jimdofree.com/english-version/free-downloads/mexico/",
+      "name": "Mexico states",
+      "data": "maps/mexico_states.geojson",
+      "icon": "flags/MX.png",
+      "url": "mexico_states",
+      "view_state": {
+        "latitude": 23.634501,
+        "longitude": -102.552788,
         "zoom": 5.2
       }
     }
