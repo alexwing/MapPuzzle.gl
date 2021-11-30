@@ -66,6 +66,7 @@ class MapPuzzle extends Component<any, any> {
     this.setState({
       loading: true,
       zoom: this.props.content.puzzles[puzzleSelected].view_state.zoom,
+      viewState: this.props.content.puzzles[puzzleSelected].view_state,
     });
 
     Jsondb(this.props.content.puzzles[puzzleSelected].data).then((response) => {
@@ -152,6 +153,7 @@ class MapPuzzle extends Component<any, any> {
 
   //Reset the Game
   onResetGameHandler = () => {
+    this.onRefocusMapHandler();
     removeCookie("founds" + this.state.puzzleSelected);
     removeCookie("fails" + this.state.puzzleSelected);
     removeCookie("seconds" + this.state.puzzleSelected);
@@ -180,7 +182,18 @@ class MapPuzzle extends Component<any, any> {
   };
 
   onViewStateChangeHandler = (viewState: any) => {
-    this.setState({ zoom: viewState.viewState.zoom });
+    this.setState({
+      zoom: viewState.viewState.zoom,
+      viewState: viewState.viewState,
+    });
+  };
+
+  onRefocusMapHandler = () => {
+    console.log(this.state.viewState);
+    this.setState({
+      viewState:
+        this.props.content.puzzles[this.state.puzzleSelected].view_state,
+    });
   };
 
   onClickMapHandler = (info: any) => {
@@ -243,9 +256,7 @@ class MapPuzzle extends Component<any, any> {
               onClickMap={this.onClickMapHandler}
               onHoverMap={this.onHoverMapHandler}
               onViewStateChange={this.onViewStateChangeHandler}
-              viewState={
-                this.props.content.puzzles[this.state.puzzleSelected].view_state
-              }
+              viewState={this.state.viewState}
               founds={this.state.founds}
               data={this.state.data}
             />
@@ -256,6 +267,7 @@ class MapPuzzle extends Component<any, any> {
               onResetGame={this.onResetGameHandler}
               loading={this.state.loading}
               onFullScreen={() => onToggle()}
+              onRefocus={this.onRefocusMapHandler}
             />
 
             {YouWinScreen}

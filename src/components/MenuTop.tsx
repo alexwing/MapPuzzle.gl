@@ -19,7 +19,7 @@ export default class MenuTop extends Component<any, any>  {
   }
   render() {
 
-    const { onSelectMap, onResetGame, onFullScreen } = this.props;
+    const { onSelectMap, onResetGame, onFullScreen, onRefocus } = this.props;
     const handleClose = () => {
       this.setState({
         show: false,
@@ -72,6 +72,7 @@ export default class MenuTop extends Component<any, any>  {
         <Navbar.Collapse id="basic-navbar-nav">
           {Puzzles}
           <Form inline>
+            <Button id="refocus" variant="outline-secondary" onClick={onRefocus}><span className="navbar-refocus-icon"></span></Button>
             <Button id="fullscreen" variant="outline-secondary" onClick={onFullScreen}><span className="navbar-full-icon"></span></Button>
             <Button id="info" variant="outline-secondary" onClick={handleInfo}><span className="navbar-info-icon"></span></Button>
             <Button id="reset" variant="outline-primary" onClick={handleShow}>Reset Game</Button>

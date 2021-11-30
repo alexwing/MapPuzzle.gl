@@ -175,8 +175,24 @@ table.legend th {
   line-height: 14px;
 }
 
-.navbar-full-icon {
+
+.navbar-refocus-icon {
   background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ctitle%3E fullscreen %3C/title%3E%3Cpath  fill=' ' fill-rule='evenodd' d='M1 1v6h2V3h4V1H1zm2 12H1v6h6v-2H3v-4zm14 4h-4v2h6v-6h-2v4zm0-16h-4v2h4v4h2V1h-2z'/%3E%3C/svg%3E") !important;
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+  margin-top: -0.3em;
+  content: "";
+  background: no-repeat center center;
+  background-image: none;
+  background-size: auto;
+  background-size: 100% 100%;
+}
+
+.navbar-full-icon {
+  background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='iso-8859-1'%3F%3E%3C!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='95.337px' height='95.336px' viewBox='0 0 95.337 95.336' style='enable-background:new 0 0 95.337 95.336;' xml:space='preserve'%3E%3Cg%3E%3Cg%3E%3Cpath d='M92.938,5.78H2.4C1.076,5.78,0,6.857,0,8.18v63.438c0,1.322,1.077,2.4,2.4,2.4h90.538c1.323,0,2.399-1.078,2.399-2.4 V8.181C95.338,6.857,94.262,5.78,92.938,5.78z M88.137,66.817H7.201V12.982h80.936V66.817z'/%3E%3Cpath d='M65.072,81.756h-4.801v-4.402c0-0.663-0.539-1.2-1.201-1.2H36.267c-0.663,0-1.2,0.537-1.2,1.2v4.402h-4.801 c-0.663,0-1.2,0.537-1.2,1.199v5.401c0,0.663,0.538,1.2,1.2,1.2h34.806c0.662,0,1.199-0.537,1.199-1.2v-5.401 C66.271,82.293,65.734,81.756,65.072,81.756z'/%3E%3Cpath d='M15.303,19.077c-1.104,0-2,0.896-2,2v16.672l18.671-18.672H15.303z'/%3E%3C/g%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3C/svg%3E%0A") !important;
+
   display: inline-block;
   width: 1.5em;
   height: 1.5em;

@@ -155,6 +155,35 @@
         "longitude": -102.552788,
         "zoom": 5.2
       }
+      
+    },
+    {
+      "id": 12,
+      "comment": "Layer source in https://tapiquen-sig.jimdofree.com/descargas-gratuitas/venezuela/capas-base/",
+      "name": "Venezuela states",
+      "data": "maps/venezuela_states.geojson",
+      "icon": "flags/VE.png",
+      "url": "venezuela_states",
+      "view_state": {
+        "latitude": 6.423750  ,
+        "longitude": -66.589729,
+        "zoom": 5.2
+      }
+      
+    },
+    {
+      "id": 13,
+      "comment": "Layer source in https://data.humdata.org/dataset/colombia-administrative-boundaries-levels-0-3",
+      "name": "Colombia departments",
+      "data": "maps/colombia_departments.geojson",
+      "icon": "flags/CO.png",
+      "url": "colombia_departments",
+      "view_state": {
+        "latitude": 4.570868  ,
+        "longitude": -74.297333,
+        "zoom": 5.2
+      }
+      
     }
   ]
 }
