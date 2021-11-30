@@ -191,6 +191,7 @@ class MapPuzzle extends Component<any, any> {
   onRefocusMapHandler = () => {
     console.log(this.state.viewState);
     this.setState({
+      zoom:  this.props.content.puzzles[this.state.puzzleSelected].view_state.zoom,
       viewState:
         this.props.content.puzzles[this.state.puzzleSelected].view_state,
     });
