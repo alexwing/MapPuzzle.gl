@@ -185,5 +185,20 @@
       }
       
     }
+    ,
+    {
+      "id": 14,
+      "comment": "Layer source in https://geodata.lib.utexas.edu/catalog/stanford-gg870xt4706",
+      "name": "Ukraine regions",
+      "data": "maps/ukraine.geojson",
+      "icon": "flags/UA.png",
+      "url": "ukraine_regions",
+      "view_state": {
+        "latitude": 48.379433  ,
+        "longitude": 31.165581,
+        "zoom": 5.2
+      }
+      
+    }
   ]
 }

@@ -89,7 +89,7 @@ function CursorCore({
 
   // Cursors Hover/Active State
   useEffect(() => {
-    if (isActive) {
+    if (isActive ) {
       tooltipRef.current.style.transform = `translateZ(0) scale(${clickScale})`;
       pieceCursorRef.current.style.transform = `translateZ(0) scale(${clickScale})`;
     } else {
@@ -171,33 +171,40 @@ function CursorCore({
   //document.body.style.cursor = 'none'
 
   let PieceCursor;
-  const scale = Math.pow(2, zoom);
-  let sizeX = (parseInt(selected.properties.box.split(" ")[2]) * scale) / 78000;
-  let sizeY = (parseInt(selected.properties.box.split(" ")[3]) * scale) / 78000;
-  PieceCursor = (
-    <svg
-      width={sizeX + "px"}
-      height={sizeY + "px"}
-      viewBox={selected ? selected.properties.box : ""}
-      style={{
-        border: "0px solid lightgray",
-        marginLeft: "-50%",
-        marginTop: "-50%",
-      }}
-    >
-      <path
-        d={selected ? selected.properties.poly : ""}
-        stroke="black"
-        strokeWidth="0"
-        fill={setColor(selected.properties.mapcolor)}
-      />
-    </svg>
-  );
+  if (selected) {
+    const scale = Math.pow(2, zoom);
+    let sizeX =
+      (parseInt(selected.properties.box.split(" ")[2]) * scale) / 78000;
+    let sizeY =
+      (parseInt(selected.properties.box.split(" ")[3]) * scale) / 78000;
+    PieceCursor = (
+      <svg
+        width={sizeX + "px"}
+        height={sizeY + "px"}
+        viewBox={selected ? selected.properties.box : ""}
+        style={{
+          border: "0px solid lightgray",
+          marginLeft: "-50%",
+          marginTop: "-50%",
+        }}
+      >
+        <path
+          d={selected ? selected.properties.poly : ""}
+          stroke="black"
+          strokeWidth="0"
+          fill={setColor(selected.properties.mapcolor)}
+        />
+      </svg>
+    );
+  } else {
+    PieceCursor = <span></span>;
+  }
 
   let TooltipCursor;
   if (tooltip) {
     TooltipCursor = <span>{tooltip}</span>;
   }
+
   return (
     <React.Fragment>
       <div ref={pieceCursorRef} className="mousePiece">

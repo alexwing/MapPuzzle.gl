@@ -13,7 +13,7 @@ function AnimatedCursor({
   tooltip = "",
   zoom = 2,
 }) {
-  if ((typeof navigator !== "undefined" && IsDevice?.any()) || !selected) {
+  if ((typeof navigator !== "undefined" && IsDevice?.any())) {
     return <React.Fragment></React.Fragment>;
   }
   return (
