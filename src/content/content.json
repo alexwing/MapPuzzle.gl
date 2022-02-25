@@ -11,7 +11,75 @@
         "latitude": 0,
         "longitude": 0,
         "zoom": 2
-      }
+      },
+      "custom_centroids": [
+        {
+          "cartodb_id": 12,
+          "name": "Antarctica",
+          "left": -50 ,
+          "top": -10
+        },
+        {
+          "cartodb_id": 163,
+          "name": "Norway",
+          "left": -50 ,
+          "top": -135
+        },
+        {
+          "cartodb_id": 166,
+          "name": "New Zealand",
+          "left": -98 ,
+          "top": -11
+        },
+        {
+          "cartodb_id": 162,
+          "name": "Netherlands",
+          "left": -98,
+          "top": -3
+        },
+        {
+          "cartodb_id": 14,
+          "name": "Fr. S. Antarctic Lands",
+          "left": -94,
+          "top": -25
+        },
+        {
+          "cartodb_id": 227,
+          "name": "United States",
+          "left": -22,
+          "top": -17
+        },
+        {
+          "cartodb_id": 73,
+          "name": "France",
+          "left": -54,
+          "top": -5
+        },
+        {
+          "cartodb_id": 41,
+          "name": "Chile",
+          "left": -88,
+          "top": -50
+        },
+        {
+          "cartodb_id": 184,
+          "name": "Russia",
+          "left": -78,
+          "top": -19
+        },
+        {
+          "cartodb_id": 67,
+          "name": "Spain",
+          "left": -65,
+          "top": -20
+        },
+        {
+          "cartodb_id": 178,
+          "name": "Portugal",
+          "left": -92,
+          "top": -14
+        }
+      ]      
     },
     {
       "id": 1,

@@ -27,6 +27,7 @@ class MapPuzzle extends Component<any, any> {
       zoom: 2,
       pieceSelected: null,
       pieceSelectedData: null,
+      pieceSelectedCentroid: null,
       pieces: new Array<PieceProps>(),
       founds: new Array<any>(),
       fails: 0,
@@ -61,7 +62,7 @@ class MapPuzzle extends Component<any, any> {
     }
     this.loadGame(puzzleSelected);
   }
-
+  /* load game from content.json */
   loadGame(puzzleSelected: number) {
     this.setState({
       loading: true,
@@ -105,7 +106,7 @@ class MapPuzzle extends Component<any, any> {
       this.checkGameStatus();
     });
   }
-
+  /* Check remains pieces and update game status */
   checkGameStatus() {
     if (
       parseInt(this.state.pieces.length) - parseInt(this.state.founds.length) <=
@@ -122,7 +123,7 @@ class MapPuzzle extends Component<any, any> {
     if (this.state.height !== window.innerHeight)
       this.setState({ height: window.innerHeight });
   }
-
+  /* Piece is selected on list */
   onPieceSelectedHandler = (val: any) => {
     if (this.state.pieceSelected !== val.target.parentNode.id) {
       this.setState({ pieceSelected: val.target.parentNode.id });
@@ -132,12 +133,26 @@ class MapPuzzle extends Component<any, any> {
           String(val.target.parentNode.id).trim()
         ) {
           this.setState({ pieceSelectedData: piece });
+          this.findCustomCentroids(piece);
         }
       });
     } else {
       this.setState({ pieceSelected: null, pieceSelectedData: null });
     }
   };
+  /* find the custom centroid of the piece from content.json */
+  findCustomCentroids(piece: PieceProps) {
+    let found = false;
+    this.props.content.puzzles[this.state.puzzleSelected].custom_centroids.forEach((centroid: any) => {
+      if (centroid.cartodb_id === piece.properties.cartodb_id) {
+        this.setState({ pieceSelectedCentroid: centroid });
+        found = true;
+      }
+    });
+    if (!found) {
+      this.setState({ pieceSelectedCentroid: null });
+    }    
+  }
 
   onSelectMapHandler = (val: any) => {
     if (val.target.id) {
@@ -151,7 +166,7 @@ class MapPuzzle extends Component<any, any> {
     }
   };
 
-  //Reset the Game
+  /* Reset the Game */
   onResetGameHandler = () => {
     this.onRefocusMapHandler();
     removeCookie("founds" + this.state.puzzleSelected);
@@ -296,6 +311,7 @@ class MapPuzzle extends Component<any, any> {
               color="#666"
               zoom={this.state.zoom}
               selected={this.state.pieceSelectedData}
+              centroid={this.state.pieceSelectedCentroid}
               tooltip={this.state.tooltipValue}
             />
           </div>

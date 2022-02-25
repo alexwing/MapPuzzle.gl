@@ -10,6 +10,7 @@ function AnimatedCursor({
   color = "220, 90, 90",
   clickScale = 0.7,
   selected = null,
+  centroid = null,
   tooltip = "",
   zoom = 2,
 }) {
@@ -21,6 +22,7 @@ function AnimatedCursor({
       color={color}
       clickScale={clickScale}
       selected={selected}
+      centroid={centroid}
       zoom={zoom}
       tooltip={tooltip}
     />

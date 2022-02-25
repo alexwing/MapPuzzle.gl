@@ -15,6 +15,7 @@ import { setColor } from "./Utils";
 function CursorCore({
   clickScale = 0.7,
   selected = null,
+  centroid = null,
   tooltip = "",
   zoom = 2,
 }: any) {
@@ -177,6 +178,12 @@ function CursorCore({
       (parseInt(selected.properties.box.split(" ")[2]) * scale) / 78000;
     let sizeY =
       (parseInt(selected.properties.box.split(" ")[3]) * scale) / 78000;
+    let marginLeft = "-50%";
+    let marginTop = "-50%";
+    if (centroid) {
+      marginLeft =  centroid.left +"%";
+      marginTop = centroid.top +"%";
+    }
     PieceCursor = (
       <svg
         width={sizeX + "px"}
@@ -184,8 +191,8 @@ function CursorCore({
         viewBox={selected ? selected.properties.box : ""}
         style={{
           border: "0px solid lightgray",
-          marginLeft: "-50%",
-          marginTop: "-50%",
+          marginLeft: marginLeft,
+          marginTop: marginTop,
         }}
       >
         <path

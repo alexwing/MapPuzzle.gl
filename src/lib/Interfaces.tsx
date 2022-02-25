@@ -1,6 +1,8 @@
 export interface PieceProps {
   properties: {
     cartodb_id: number;
+    name: string;
+    box: string;
   };
 }
 
@@ -15,5 +17,12 @@ export interface MapPuzzleProps {
     latitude: number;
     longitude: number;
     zoom: number;
-  };
+  },
+  custom_centroids: {
+    cartodb_id: number;
+    name: string;
+    left: number;
+    top: number;
+  }[];
+
 }
