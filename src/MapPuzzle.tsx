@@ -13,7 +13,9 @@ import { Jsondb } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
+
 import { PieceProps, MapPuzzleProps } from "./lib/Interfaces";
+import WikiInfo from "./components/WikiInfo";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -38,6 +40,8 @@ class MapPuzzle extends Component<any, any> {
       isMouseTooltipVisible: false,
       tooltipValue: "",
       YouWin: false,
+      showWikiInfo: false,
+      wikiInfoUrl: "",
     };
   }
   componentDidMount() {
@@ -143,15 +147,21 @@ class MapPuzzle extends Component<any, any> {
   /* find the custom centroid of the piece from content.json */
   findCustomCentroids(piece: PieceProps) {
     let found = false;
-    this.props.content.puzzles[this.state.puzzleSelected].custom_centroids.forEach((centroid: any) => {
-      if (centroid.cartodb_id === piece.properties.cartodb_id) {
-        this.setState({ pieceSelectedCentroid: centroid });
-        found = true;
-      }
-    });
+    if (
+      this.props.content.puzzles[this.state.puzzleSelected].custom_centroids
+    ) {
+      this.props.content.puzzles[
+        this.state.puzzleSelected
+      ].custom_centroids.forEach((centroid: any) => {
+        if (centroid.cartodb_id === piece.properties.cartodb_id) {
+          this.setState({ pieceSelectedCentroid: centroid });
+          found = true;
+        }
+      });
+    }
     if (!found) {
       this.setState({ pieceSelectedCentroid: null });
-    }    
+    }
   }
 
   onSelectMapHandler = (val: any) => {
@@ -206,13 +216,39 @@ class MapPuzzle extends Component<any, any> {
   onRefocusMapHandler = () => {
     console.log(this.state.viewState);
     this.setState({
-      zoom:  this.props.content.puzzles[this.state.puzzleSelected].view_state.zoom,
+      zoom: this.props.content.puzzles[this.state.puzzleSelected].view_state
+        .zoom,
       viewState:
         this.props.content.puzzles[this.state.puzzleSelected].view_state,
     });
   };
 
+  onShowWikiInfoHandler = (val: any) => {
+    this.setState({
+      showWikiInfo: val,
+    });
+  };
+
   onClickMapHandler = (info: any) => {
+    if (info.object && !this.state.pieceSelected) {
+      //if the piece is found, show the wiki info
+      if (this.state.founds.includes(info.object.properties.cartodb_id)) {
+        let wikiFind = info.object.properties.name.trim().toLowerCase();
+        //if include string " - " split and take the first part
+        wikiFind = wikiFind.replace("(disputed)", "");
+        if (wikiFind.includes(" - ")) {
+          wikiFind = wikiFind.split(" - ")[0];
+        }        
+        //remove (Disputed)
+        wikiFind = wikiFind.replace(/ /g, "_")
+        this.setState({
+          showWikiInfo: true,
+          wikiInfoUrl:
+            "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=" +
+            wikiFind,
+        });
+      }
+    }
     if (info && this.state.pieceSelected) {
       if (
         String(this.state.pieceSelectedData.properties.cartodb_id).trim() ===
@@ -284,6 +320,7 @@ class MapPuzzle extends Component<any, any> {
               loading={this.state.loading}
               onFullScreen={() => onToggle()}
               onRefocus={this.onRefocusMapHandler}
+              onShowWikiInfo={this.onShowWikiInfoHandler}
             />
 
             {YouWinScreen}
@@ -313,6 +350,11 @@ class MapPuzzle extends Component<any, any> {
               selected={this.state.pieceSelectedData}
               centroid={this.state.pieceSelectedCentroid}
               tooltip={this.state.tooltipValue}
+            />
+            <WikiInfo
+              show={this.state.showWikiInfo}
+              url={this.state.wikiInfoUrl}
+              onHide={this.onShowWikiInfoHandler}
             />
           </div>
         )}

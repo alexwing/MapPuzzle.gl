@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 import Info from './Info';
 
 
+
 export default class MenuTop extends Component<any, any>  {
   constructor(props:any) {
     super(props)
@@ -18,12 +19,12 @@ export default class MenuTop extends Component<any, any>  {
     }
   }
   render() {
-
-    const { onSelectMap, onResetGame, onFullScreen, onRefocus } = this.props;
+    const { onSelectMap, onResetGame, onFullScreen, onRefocus, onShowWikiInfo } = this.props;
     const handleClose = () => {
       this.setState({
         show: false,
-        showInfo: false
+        showInfo: false,
+        showWikiInfo: false,
       });
     } 
     const handleOK = () => {
@@ -37,19 +38,18 @@ export default class MenuTop extends Component<any, any>  {
     const handleShow = () => {
       this.setState({
         show: true,
-        showInfo: false
+        showInfo: false,
+        showWikiInfo: false
       });
     }
-
 
     const handleInfo = () => {
       this.setState({
         show: false,
-        showInfo: true
+        showInfo: true,
+        showWikiInfo: false
       });
     }
-
-
     const Puzzles = (
       <Nav className="mr-auto">
         <NavDropdown title="Select a Puzzle" id="puzzle">
@@ -75,6 +75,7 @@ export default class MenuTop extends Component<any, any>  {
             <Button id="refocus" variant="outline-secondary" onClick={onRefocus}><span className="navbar-refocus-icon"></span></Button>
             <Button id="fullscreen" variant="outline-secondary" onClick={onFullScreen}><span className="navbar-full-icon"></span></Button>
             <Button id="info" variant="outline-secondary" onClick={handleInfo}><span className="navbar-info-icon"></span></Button>
+            <Button id="wiki" variant="outline-secondary" onClick={onShowWikiInfo}><span className="navbar-wiki-icon"></span></Button>
             <Button id="reset" variant="outline-primary" onClick={handleShow}>Reset Game</Button>
           </Form>
         </Navbar.Collapse>
