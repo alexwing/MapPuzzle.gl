@@ -9,7 +9,7 @@ import MenuTop from "./components/MenuTop";
 import DeckMap from "./components/DeckMap";
 import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
-import { Jsondb } from "./lib/Utils";
+import { Jsondb, cleanNameToWiki } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
@@ -226,6 +226,7 @@ class MapPuzzle extends Component<any, any> {
   onShowWikiInfoHandler = (val: any) => {
     this.setState({
       showWikiInfo: val,
+      wikiInfoUrl: this.props.content.puzzles[this.state.puzzleSelected].wiki
     });
   };
 
@@ -235,12 +236,7 @@ class MapPuzzle extends Component<any, any> {
       if (this.state.founds.includes(info.object.properties.cartodb_id)) {
         let wikiFind = info.object.properties.name.trim().toLowerCase();
         //if include string " - " split and take the first part
-        wikiFind = wikiFind.replace("(disputed)", "");
-        if (wikiFind.includes(" - ")) {
-          wikiFind = wikiFind.split(" - ")[0];
-        }        
-        //remove (Disputed)
-        wikiFind = wikiFind.replace(/ /g, "_")
+        wikiFind = cleanNameToWiki(wikiFind);
         this.setState({
           showWikiInfo: true,
           wikiInfoUrl:
@@ -364,3 +360,4 @@ class MapPuzzle extends Component<any, any> {
 }
 
 export default MapPuzzle;
+

@@ -11,18 +11,17 @@
   margin-bottom: 0px;
 }
 
-.info {
+.infoWiki {
   text-align: justify;
   padding: 1.5em;
-  margin-top: 1em;
   color: #555;
   max-height: 500px;
   overflow-y: scroll;
 }
-.info p {
+.infoWiki p {
   padding-bottom: 0.5em;
 }
-.info h2 {
+.infoWiki h2 {
   padding-bottom: 0.25em;
   font-weight: bold;
   font-size: 1.5em;

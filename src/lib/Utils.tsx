@@ -228,3 +228,16 @@ export function getUrl() {
   }
   return url;
 }
+
+export function cleanNameToWiki(wikiFind: any) {
+  wikiFind = wikiFind.replace("(disputed)", "");
+  if (wikiFind.includes(" - ")) {
+    wikiFind = wikiFind.split(" - ")[0];
+  }
+  //replace - to space
+  wikiFind = wikiFind.replace(/-/g, " ");
+  //remove (Disputed)
+  wikiFind = wikiFind.replace(/ /g, "_");
+  return wikiFind;
+}
+

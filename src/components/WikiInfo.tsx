@@ -11,6 +11,7 @@ function WikiInfo({
   url = "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=Berlin",
 }: any) {
   const [contents, setContents] = useState(Array<string>());
+  const [title, SetTitle] = useState("");
   const [loading, setLoading] = useState(false);
   const [showIn, setShowIn] = useState(false);
   const [error, setError] = useState();
@@ -19,6 +20,11 @@ function WikiInfo({
     const { pages } = json.query;
     return Object.keys(pages).map((id) => pages[id].extract);
   };
+  const extractAPITiltle = (json: any) => {
+    const { pages } = json.query;
+    return Object.keys(pages).map((id) => pages[id].title).join(" ");
+  }
+
 
   //on load show modal
   useEffect(() => {
@@ -28,15 +34,18 @@ function WikiInfo({
   const getContents = async () => {
     let resp;
     let _contents: Array<string> = [];
+    let _title: string = "";
     setLoading(true);
     try {
       resp = await fetch(url);
       const json = await resp.json();
       _contents = extractAPIContents(json);
+      _title = extractAPITiltle(json);
       if (json.query.pages["-1"]) {
         _contents = [            
             "Not found data on Wikipedia"
         ];
+        _title = "";
       }      
     } catch (err: any) {
       setError(err);
@@ -44,13 +53,15 @@ function WikiInfo({
       setLoading(false);
     }
     setContents(_contents);
+    SetTitle(_title);
   };
 
   useEffect(() => {
     if (showIn) {
       getContents();
     }
-  }, [url,showIn]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showIn]);
 
   function handleClose() {
     onHide();
@@ -69,16 +80,12 @@ function WikiInfo({
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
-            Wikipedia Article
+             {title !== "" ? "Wikipedia article for " + title : "Not found data on Wikipedia"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
-            <Col lg={12} className="info">
-              {contents.map((content) => (
-                <div dangerouslySetInnerHTML={{ __html: content }} />
-              ))}
-            </Col>
+            {printContent()}
           </Row>
         </Modal.Body>
         <Modal.Footer>
@@ -87,5 +94,16 @@ function WikiInfo({
       </Modal>
     </React.Fragment>
   );
+
+  function printContent() {
+    if (title === "") {
+      return null;
+    }    
+    return <Col lg={12} className="infoWiki">
+      {contents.map((content) => (
+        <div dangerouslySetInnerHTML={{ __html: content }} />
+      ))}
+    </Col>;
+  }
 }
 export default WikiInfo;
