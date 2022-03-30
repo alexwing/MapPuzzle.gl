@@ -1,3 +1,5 @@
+import { ViewState } from "react-map-gl";
+
 export interface PieceProps {
   properties: {
     cartodb_id: number;
@@ -13,11 +15,7 @@ export interface MapPuzzleProps {
   data: string;
   url: string;
   icon: string;
-  view_state: {
-    latitude: number;
-    longitude: number;
-    zoom: number;
-  },  
+  view_state: ViewState,  
   custom_wiki: {
     cartodb_id: number;
     name: string;

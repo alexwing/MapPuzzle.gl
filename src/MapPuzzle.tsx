@@ -9,13 +9,14 @@ import MenuTop from "./components/MenuTop";
 import DeckMap from "./components/DeckMap";
 import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
-import { Jsondb,getWiki } from "./lib/Utils";
+import { Jsondb, getWiki, copyViewState } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
 
 import { PieceProps, MapPuzzleProps } from "./lib/Interfaces";
 import WikiInfo from "./components/WikiInfo";
+import { ViewState } from "react-map-gl";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -68,10 +69,16 @@ class MapPuzzle extends Component<any, any> {
   }
   /* load game from content.json */
   loadGame(puzzleSelected: number) {
+
+    let viewStateCopy:ViewState = copyViewState(
+      this.props.content.puzzles[puzzleSelected].view_state,
+      this.state.viewState
+    );
+
     this.setState({
       loading: true,
-      zoom: this.props.content.puzzles[puzzleSelected].view_state.zoom,
-      viewState: this.props.content.puzzles[puzzleSelected].view_state,
+      zoom: viewStateCopy.zoom,
+      viewState: viewStateCopy,
     });
 
     Jsondb(this.props.content.puzzles[puzzleSelected].data).then((response) => {
@@ -214,19 +221,21 @@ class MapPuzzle extends Component<any, any> {
   };
 
   onRefocusMapHandler = () => {
-    console.log(this.state.viewState);
+    let viewStateCopy:ViewState = copyViewState(
+      this.props.content.puzzles[this.state.puzzleSelected].view_state,
+      this.state.viewState
+    );
+
     this.setState({
-      zoom: this.props.content.puzzles[this.state.puzzleSelected].view_state
-        .zoom,
-      viewState:
-        this.props.content.puzzles[this.state.puzzleSelected].view_state,
+      zoom: viewStateCopy.zoom,
+      viewState: viewStateCopy,
     });
   };
 
   onShowWikiInfoHandler = (val: any) => {
     this.setState({
       showWikiInfo: val,
-      wikiInfoUrl: this.props.content.puzzles[this.state.puzzleSelected].wiki
+      wikiInfoUrl: this.props.content.puzzles[this.state.puzzleSelected].wiki,
     });
   };
 
@@ -235,10 +244,14 @@ class MapPuzzle extends Component<any, any> {
       //if the piece is found, show the wiki info on click
       if (this.state.founds.includes(info.object.properties.cartodb_id)) {
         debugger;
-        let wiki_url =  getWiki(info.object.properties.cartodb_id,info.object.properties.name, this.props.content.puzzles[this.state.puzzleSelected])
+        let wiki_url = getWiki(
+          info.object.properties.cartodb_id,
+          info.object.properties.name,
+          this.props.content.puzzles[this.state.puzzleSelected]
+        );
         this.setState({
           showWikiInfo: true,
-          wikiInfoUrl:wiki_url,
+          wikiInfoUrl: wiki_url,
         });
       }
     }
@@ -357,4 +370,3 @@ class MapPuzzle extends Component<any, any> {
 }
 
 export default MapPuzzle;
-
