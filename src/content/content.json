@@ -25,6 +25,11 @@
           "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=Ivory_Coast"
         },
         {
+          "cartodb_id": 78,
+          "name": "Georgia",
+          "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=Georgia_(country)"
+        },
+        {
           "cartodb_id": 51,
           "name": "Costa Rica",
           "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=Costa_Rica"
@@ -38,6 +43,11 @@
           "cartodb_id": 38,
           "name": "Central African Rep.",
           "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=Central_African_Republic"
+        },
+        {
+          "cartodb_id": 82,
+          "name": "Gambia",
+          "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=The_Gambia"
         },
         {
           "cartodb_id": 26,
@@ -63,6 +73,12 @@
           "name": "New Zealand",
           "left": -98,
           "top": -11
+        },
+        {
+          "cartodb_id": 204,
+          "name": "Slovakia",
+          "left": -50,
+          "top": -21
         },
         {
           "cartodb_id": 162,
@@ -111,6 +127,12 @@
           "name": "Bahamas",
           "left": -16,
           "top": -41
+        },
+        {
+          "cartodb_id": 82,
+          "name": "Gambia",
+          "left": -50,
+          "top": -5
         },
         {
           "cartodb_id": 178,
