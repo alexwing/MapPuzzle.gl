@@ -9,7 +9,7 @@ import MenuTop from "./components/MenuTop";
 import DeckMap from "./components/DeckMap";
 import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
-import { Jsondb, cleanNameToWiki } from "./lib/Utils";
+import { Jsondb,getWiki } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
@@ -232,16 +232,13 @@ class MapPuzzle extends Component<any, any> {
 
   onClickMapHandler = (info: any) => {
     if (info.object && !this.state.pieceSelected) {
-      //if the piece is found, show the wiki info
+      //if the piece is found, show the wiki info on click
       if (this.state.founds.includes(info.object.properties.cartodb_id)) {
-        let wikiFind = info.object.properties.name.trim().toLowerCase();
-        //if include string " - " split and take the first part
-        wikiFind = cleanNameToWiki(wikiFind);
+        debugger;
+        let wiki_url =  getWiki(info.object.properties.cartodb_id,info.object.properties.name, this.props.content.puzzles[this.state.puzzleSelected])
         this.setState({
           showWikiInfo: true,
-          wikiInfoUrl:
-            "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=" +
-            wikiFind,
+          wikiInfoUrl:wiki_url,
         });
       }
     }

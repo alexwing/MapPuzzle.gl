@@ -13,23 +13,55 @@
         "longitude": 0,
         "zoom": 2
       },
+      "custom_wiki": [
+        {
+          "cartodb_id": 27,
+          "name": "Bosnia and Herz.",
+          "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=Bosnia_and_Herzegovina"
+        },
+        {
+          "cartodb_id": 43,
+          "name": "Ivory Coast",
+          "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=Ivory_Coast"
+        },
+        {
+          "cartodb_id": 51,
+          "name": "Costa Rica",
+          "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=Costa_Rica"
+        },
+        {
+          "cartodb_id": 177,
+          "name": "Democratic People's Republic of Korea",
+          "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=North_Korea"
+        },
+        {
+          "cartodb_id": 38,
+          "name": "Central African Rep.",
+          "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=Central_African_Republic"
+        },
+        {
+          "cartodb_id": 26,
+          "name": "Bahamas",
+          "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=The_Bahamas"
+        }
+      ],
       "custom_centroids": [
         {
           "cartodb_id": 12,
           "name": "Antarctica",
-          "left": -50 ,
+          "left": -50,
           "top": -10
         },
         {
           "cartodb_id": 163,
           "name": "Norway",
-          "left": -50 ,
+          "left": -50,
           "top": -135
         },
         {
           "cartodb_id": 166,
           "name": "New Zealand",
-          "left": -98 ,
+          "left": -98,
           "top": -11
         },
         {
@@ -75,12 +107,18 @@
           "top": -20
         },
         {
+          "cartodb_id": 26,
+          "name": "Bahamas",
+          "left": -16,
+          "top": -41
+        },
+        {
           "cartodb_id": 178,
           "name": "Portugal",
           "left": -92,
           "top": -14
         }
-      ]      
+      ]
     },
     {
       "id": 1,
@@ -99,7 +137,7 @@
     {
       "id": 2,
       "name": "Usa States",
-      "comment": "Layer source in http://tapiquen-sig.jimdofree.com. Carlos Efraín Porto Tapiquén. Geografía, SIG y Cartografía Digital. Valencia, España, 2020",      
+      "comment": "Layer source in http://tapiquen-sig.jimdofree.com. Carlos Efraín Porto Tapiquén. Geografía, SIG y Cartografía Digital. Valencia, España, 2020",
       "wiki": "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=United_States",
       "data": "maps/usa_states.geojson",
       "url": "usa_states",
@@ -235,7 +273,6 @@
         "longitude": -102.552788,
         "zoom": 5.2
       }
-      
     },
     {
       "id": 12,
@@ -246,11 +283,10 @@
       "icon": "flags/VE.png",
       "url": "venezuela_states",
       "view_state": {
-        "latitude": 6.423750  ,
+        "latitude": 6.42375,
         "longitude": -66.589729,
         "zoom": 5.2
       }
-      
     },
     {
       "id": 13,
@@ -261,13 +297,11 @@
       "icon": "flags/CO.png",
       "url": "colombia_departments",
       "view_state": {
-        "latitude": 4.570868  ,
+        "latitude": 4.570868,
         "longitude": -74.297333,
         "zoom": 5.2
       }
-      
-    }
-    ,
+    },
     {
       "id": 14,
       "name": "Ukraine regions",
@@ -277,11 +311,10 @@
       "icon": "flags/UA.png",
       "url": "ukraine_regions",
       "view_state": {
-        "latitude": 48.379433  ,
+        "latitude": 48.379433,
         "longitude": 31.165581,
         "zoom": 5.2
       }
-      
     }
   ]
 }

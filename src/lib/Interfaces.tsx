@@ -17,7 +17,12 @@ export interface MapPuzzleProps {
     latitude: number;
     longitude: number;
     zoom: number;
-  },
+  },  
+  custom_wiki: {
+    cartodb_id: number;
+    name: string;
+    wiki: string;
+  }[],
   custom_centroids: {
     cartodb_id: number;
     name: string;

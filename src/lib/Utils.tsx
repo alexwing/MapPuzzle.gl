@@ -1,5 +1,6 @@
 import GameTime from "../lib/GameTime";
 import React from "react";
+import { MapPuzzleProps } from "./Interfaces";
 export const colorScale = function (x: any) {
   const COLOR_SCALE = [
     // negative
@@ -229,15 +230,28 @@ export function getUrl() {
   return url;
 }
 
-export function cleanNameToWiki(wikiFind: any) {
-  wikiFind = wikiFind.replace("(disputed)", "");
-  if (wikiFind.includes(" - ")) {
-    wikiFind = wikiFind.split(" - ")[0];
+function cleanNameToWiki(name: string) {
+  let wiki_url = name.trim();
+  wiki_url = wiki_url.replace("(disputed)", "");
+  //if include string " - " split and take the first part
+  if (wiki_url.includes(" - ")) {
+    wiki_url = wiki_url.split(" - ")[0];
   }
   //replace - to space
-  wikiFind = wikiFind.replace(/-/g, " ");
+  //wiki_url = wiki_url.replace(/-/g, " ");
   //remove (Disputed)
-  wikiFind = wikiFind.replace(/ /g, "_");
-  return wikiFind;
+  wiki_url = wiki_url.replace(/ /g, "_");
+  return wiki_url;
 }
 
+export function getWiki(cartodb_id: string, name:string, puzzle: MapPuzzleProps ) {
+  let wiki_url:string = "";
+  if (puzzle.custom_wiki) {
+    wiki_url = puzzle.custom_wiki.find((x: any) => x.cartodb_id === cartodb_id)?.wiki || "";
+  }
+  if (wiki_url !== "") {
+    return wiki_url
+  } else {
+    return "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=" + cleanNameToWiki(name)
+  }
+}
