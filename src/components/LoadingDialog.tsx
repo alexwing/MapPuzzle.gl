@@ -5,12 +5,17 @@ import Row from "react-bootstrap/Row";
 import "./LoadingDialog.css";
 import { Spinner } from "react-bootstrap";
 
-function LoadingDialog({  show = false, onHide }: any) {
+function LoadingDialog({ show = false, onHide, delay = 0 }: any) {
   const [showIn, setShowIn] = useState(false);
 
-  useEffect(() => {
-      setShowIn(show);
-  }, [show]);
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowIn(show)
+    }, delay)
+
+    return () => clearTimeout(timeout)
+
+  }, [show,delay])
 
   return (
     <React.Fragment>
@@ -30,7 +35,7 @@ function LoadingDialog({  show = false, onHide }: any) {
         <Modal.Body>
           <Row>
             <Col lg={12}>
-              <Spinner animation="border" variant="info"/>
+              <Spinner animation="border" variant="info" />
             </Col>
           </Row>
         </Modal.Body>

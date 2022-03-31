@@ -305,7 +305,7 @@ class MapPuzzle extends Component<any, any> {
       <ReactFullscreeen>
         {({ onToggle }) => (
           <div>
-            <LoadingDialog show={this.state.loading}  />
+            <LoadingDialog show={this.state.loading} delay={1000} />
             <DeckMap
               lineWidth={this.state.lineWidth}
               color={this.state.color}
