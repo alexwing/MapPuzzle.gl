@@ -1,0 +1,24 @@
+.progress-dialog .modal-header {
+    padding: 0px 20px;
+}
+.progress-dialog .modal-title {
+    margin: auto;
+}
+.progress-dialog .modal-dialog {
+    max-width: 150px;
+}
+.progress-dialog .modal-body {
+    padding: 1rem 1rem;
+    margin: auto;
+}
+
+.progress-dialog .spinner-border {
+    display: inline-block;
+    width: 3rem;
+    height: 3rem;
+    vertical-align: -.125em;
+    border: 0.5em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: .75s linear infinite spinner-border;
+}

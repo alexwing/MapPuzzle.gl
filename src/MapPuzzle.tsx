@@ -3,8 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import "./MapPuzzle.css";
 import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
+
 import MenuTop from "./components/MenuTop";
 import DeckMap from "./components/DeckMap";
 import ToolsPanel from "./components/ToolsPanel";
@@ -13,10 +12,11 @@ import { Jsondb, getWiki, copyViewState } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
-
+import { Col, Row } from "react-bootstrap";
 import { PieceProps, MapPuzzleProps } from "./lib/Interfaces";
 import WikiInfo from "./components/WikiInfo";
 import { ViewState } from "react-map-gl";
+import LoadingDialog from "./components/LoadingDialog";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -117,6 +117,7 @@ class MapPuzzle extends Component<any, any> {
       this.checkGameStatus();
     });
   }
+
   /* Check remains pieces and update game status */
   checkGameStatus() {
     if (
@@ -243,7 +244,6 @@ class MapPuzzle extends Component<any, any> {
     if (info.object && !this.state.pieceSelected) {
       //if the piece is found, show the wiki info on click
       if (this.state.founds.includes(info.object.properties.cartodb_id)) {
-        debugger;
         let wiki_url = getWiki(
           info.object.properties.cartodb_id,
           info.object.properties.name,
@@ -305,6 +305,7 @@ class MapPuzzle extends Component<any, any> {
       <ReactFullscreeen>
         {({ onToggle }) => (
           <div>
+            <LoadingDialog show={this.state.loading}  />
             <DeckMap
               lineWidth={this.state.lineWidth}
               color={this.state.color}
