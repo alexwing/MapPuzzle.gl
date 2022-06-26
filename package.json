@@ -1,5 +1,17 @@
 {
-  "name": "data-visualization-test",
+  "author": {
+    "name": "Alejandro aranda",
+    "email": "alexwing@gmail.com.com",
+    "url": "https://www.aaranda.es"
+  },
+  "keywords": [
+    "react",
+    "react-admin",
+    "deck-gl",
+    "sqlite"
+  ],
+  "license": "MIT",
+  "name": "mappuzzle.gl",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
