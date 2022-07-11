@@ -48,27 +48,22 @@ class MapPuzzle extends Component<any, any> {
     };
   }
   componentDidMount() {
-    
     query(`select * from repositories`).then((data) => {
-      data.forEach((element:QueryExecResult) => {
-        debugger;
-        element.values.forEach((value:any) => {
-          debugger;
-        }
-        );
+      data.forEach((element: QueryExecResult) => {
+        // debugger;
+        element.values.forEach((value: any) => {
+          //    debugger;
+        });
       });
-      this.setState({ data: data, loading: false });
-    }
-    ).catch((err) => {
-      console.log(err);
-    }
-    ).finally(() => {
-      this.setState({ loading: false });
-    }
-    );
-
-
-
+    });
+    query(`select * from contributors`).then((data) => {
+      data.forEach((element: QueryExecResult) => {
+        debugger;
+        element.values.forEach((value: any) => {
+          debugger;
+        });
+      });
+    });
 
     var puzzleSelected = 0;
     if (window.location.pathname) {
@@ -93,8 +88,7 @@ class MapPuzzle extends Component<any, any> {
   }
   /* load game from content.json */
   loadGame(puzzleSelected: number) {
-
-    let viewStateCopy:ViewState = copyViewState(
+    let viewStateCopy: ViewState = copyViewState(
       this.props.content.puzzles[puzzleSelected].view_state,
       this.state.viewState
     );
@@ -246,7 +240,7 @@ class MapPuzzle extends Component<any, any> {
   };
 
   onRefocusMapHandler = () => {
-    let viewStateCopy:ViewState = copyViewState(
+    let viewStateCopy: ViewState = copyViewState(
       this.props.content.puzzles[this.state.puzzleSelected].view_state,
       this.state.viewState
     );
