@@ -17,6 +17,8 @@ import { PieceProps, MapPuzzleProps } from "./lib/Interfaces";
 import WikiInfo from "./components/WikiInfo";
 import { ViewState } from "react-map-gl";
 import LoadingDialog from "./components/LoadingDialog";
+import { query } from "./db/query";
+import { QueryExecResult } from "sql.js";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -46,6 +48,28 @@ class MapPuzzle extends Component<any, any> {
     };
   }
   componentDidMount() {
+    
+    query(`select * from repositories`).then((data) => {
+      data.forEach((element:QueryExecResult) => {
+        debugger;
+        element.values.forEach((value:any) => {
+          debugger;
+        }
+        );
+      });
+      this.setState({ data: data, loading: false });
+    }
+    ).catch((err) => {
+      console.log(err);
+    }
+    ).finally(() => {
+      this.setState({ loading: false });
+    }
+    );
+
+
+
+
     var puzzleSelected = 0;
     if (window.location.pathname) {
       this.props.content.puzzles.forEach(function (
