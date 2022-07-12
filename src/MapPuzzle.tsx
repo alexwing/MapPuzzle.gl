@@ -17,8 +17,8 @@ import { PieceProps, MapPuzzleProps } from "./lib/Interfaces";
 import WikiInfo from "./components/WikiInfo";
 import { ViewState } from "react-map-gl";
 import LoadingDialog from "./components/LoadingDialog";
-import { query } from "./db/query";
-import { QueryExecResult } from "sql.js";
+import { PuzzleService } from "./services/puzzleService";
+import { Puzzle } from "./models/puzzleModel";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -48,24 +48,13 @@ class MapPuzzle extends Component<any, any> {
     };
   }
   componentDidMount() {
-    query(`select * from puzzles`).then((data) => {
-      data.forEach((element: QueryExecResult) => {
-        // debugger;
-        element.values.forEach((value: any) => {
-          //    debugger;
-        });
-      });
-    });
-    query(`select * from view_state`).then((data) => {
-      data.forEach((element: QueryExecResult) => {
-        debugger;
-        element.values.forEach((value: any) => {
-          debugger;
-        });
-      });
-    });
-
     var puzzleSelected = 0;
+    PuzzleService.getPuzzles().then((data: Puzzle[]) => {
+      //this.setState({ data: data, loading: false });
+
+      debugger;
+      console.log(data);
+    });
     if (window.location.pathname) {
       this.props.content.puzzles.forEach(function (
         value: MapPuzzleProps,

@@ -26,7 +26,7 @@ async function createDB(): Promise<WorkerHttpvfs> {
 }
 
 //function to execute a query, return a Promise with the result
-export function query(sql: string): Promise<QueryExecResult[]> {
+export function query(sql: string,  ): Promise<QueryExecResult[]> {
   //create worker
   return createDB()
     .then((worker: WorkerHttpvfs) => {
