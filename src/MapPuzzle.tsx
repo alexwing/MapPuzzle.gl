@@ -48,7 +48,7 @@ class MapPuzzle extends Component<any, any> {
     };
   }
   componentDidMount() {
-    query(`select * from repositories`).then((data) => {
+    query(`select * from puzzles`).then((data) => {
       data.forEach((element: QueryExecResult) => {
         // debugger;
         element.values.forEach((value: any) => {
@@ -56,7 +56,7 @@ class MapPuzzle extends Component<any, any> {
         });
       });
     });
-    query(`select * from contributors`).then((data) => {
+    query(`select * from view_state`).then((data) => {
       data.forEach((element: QueryExecResult) => {
         debugger;
         element.values.forEach((value: any) => {

@@ -11,14 +11,14 @@ const config: SplitFileConfig = {
   config: {
     serverMode: "full", // file is just a plain old full sqlite database
     requestChunkSize: 4096, // the page size of the  sqlite database (by default 4096)
-    url: "db.sqlite", // url to the database (relative or full)
+    url: "puzzles.sqlite", // url to the database (relative or full)
   },
 };
 
 let workerInstance: WorkerHttpvfs;
 
 // worker.db is a now SQL.js instance except that all functions return Promises.
-export async function createDB(): Promise<WorkerHttpvfs> {
+async function createDB(): Promise<WorkerHttpvfs> {
   if (workerInstance) {
     return workerInstance;
   }
