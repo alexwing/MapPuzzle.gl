@@ -1,3 +1,5 @@
+import { ViewState } from "react-map-gl";
+
 //the puzzle data interface
 export interface Puzzle {
   id: number;
@@ -7,4 +9,5 @@ export interface Puzzle {
   name: string;
   url: string;
   wiki: string;
+  view_state: ViewState;
 }

@@ -24,6 +24,7 @@ class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
+      content:null,
       data: null,
       puzzleSelected: 0,
       lineWidth: 1,
@@ -48,37 +49,35 @@ class MapPuzzle extends Component<any, any> {
     };
   }
   componentDidMount() {
-    var puzzleSelected = 0;
-    PuzzleService.getPuzzles().then((data: Puzzle[]) => {
-      //this.setState({ data: data, loading: false });
+    PuzzleService.getPuzzles().then((content: Puzzle[]) => {
+      var puzzleSelected = 0;
+      this.setState({ content: content});
 
-      debugger;
-      console.log(data);
-    });
-    if (window.location.pathname) {
-      this.props.content.puzzles.forEach(function (
-        value: MapPuzzleProps,
-        index: number
-      ) {
-        if (value.url === window.location.search.substr(5)) {
-          puzzleSelected = index;
+      if (window.location.pathname) {
+        this.state.content.forEach(function (
+          value: MapPuzzleProps,
+          index: number
+        ) {
+          if (value.url === window.location.search.substr(5)) {
+            puzzleSelected = index;
+          }
+        });
+        if (!puzzleSelected) {
+          puzzleSelected = getCookie("puzzleSelected");
         }
-      });
-      if (!puzzleSelected) {
+      } else {
         puzzleSelected = getCookie("puzzleSelected");
       }
-    } else {
-      puzzleSelected = getCookie("puzzleSelected");
-    }
-    if (!puzzleSelected) {
-      puzzleSelected = 0;
-    }
-    this.loadGame(puzzleSelected);
+      if (!puzzleSelected) {
+        puzzleSelected = 0;
+      }
+      this.loadGame(puzzleSelected);
+    });
   }
   /* load game from content.json */
   loadGame(puzzleSelected: number) {
     let viewStateCopy: ViewState = copyViewState(
-      this.props.content.puzzles[puzzleSelected].view_state,
+      this.state.content[puzzleSelected].view_state,
       this.state.viewState
     );
 
@@ -88,7 +87,7 @@ class MapPuzzle extends Component<any, any> {
       viewState: viewStateCopy,
     });
 
-    Jsondb(this.props.content.puzzles[puzzleSelected].data).then((response) => {
+    Jsondb(this.state.content[puzzleSelected].data).then((response) => {
       this.setState({
         loading: false,
         puzzleSelected: puzzleSelected,
@@ -163,9 +162,9 @@ class MapPuzzle extends Component<any, any> {
   findCustomCentroids(piece: PieceProps) {
     let found = false;
     if (
-      this.props.content.puzzles[this.state.puzzleSelected].custom_centroids
+      this.state.content[this.state.puzzleSelected].custom_centroids
     ) {
-      this.props.content.puzzles[
+      this.state.content[
         this.state.puzzleSelected
       ].custom_centroids.forEach((centroid: any) => {
         if (centroid.cartodb_id === piece.properties.cartodb_id) {
@@ -230,7 +229,7 @@ class MapPuzzle extends Component<any, any> {
 
   onRefocusMapHandler = () => {
     let viewStateCopy: ViewState = copyViewState(
-      this.props.content.puzzles[this.state.puzzleSelected].view_state,
+      this.state.content[this.state.puzzleSelected].view_state,
       this.state.viewState
     );
 
@@ -243,7 +242,7 @@ class MapPuzzle extends Component<any, any> {
   onShowWikiInfoHandler = (val: any) => {
     this.setState({
       showWikiInfo: val,
-      wikiInfoUrl: this.props.content.puzzles[this.state.puzzleSelected].wiki,
+      wikiInfoUrl: this.state.content[this.state.puzzleSelected].wiki,
     });
   };
 
@@ -254,7 +253,7 @@ class MapPuzzle extends Component<any, any> {
         let wiki_url = getWiki(
           info.object.properties.cartodb_id,
           info.object.properties.name,
-          this.props.content.puzzles[this.state.puzzleSelected]
+          this.state.content[this.state.puzzleSelected]
         );
         this.setState({
           showWikiInfo: true,
@@ -297,18 +296,18 @@ class MapPuzzle extends Component<any, any> {
   render() {
     let YouWinScreen: any = null;
     if (this.state.YouWin) {
-      YouWinScreen = (
+      YouWinScreen = !this.state.content ? null :(
         <YouWin
           pieces={this.state.pieces}
           founds={this.state.founds}
           fails={this.state.fails}
           onResetGame={this.onResetGameHandler}
-          path={this.props.content.puzzles[this.state.puzzleSelected].url}
-          name={this.props.content.puzzles[this.state.puzzleSelected].name}
+          path={this.state.content[this.state.puzzleSelected].url}
+          name={this.state.content[this.state.puzzleSelected].name}
         />
       );
     }
-    return (
+    return !this.state.content ? null : (
       <ReactFullscreeen>
         {({ onToggle }) => (
           <div>
@@ -329,7 +328,7 @@ class MapPuzzle extends Component<any, any> {
             <MenuTop
               name="MapPuzzle.xyz"
               onSelectMap={this.onSelectMapHandler}
-              content={this.props.content.puzzles}
+              content={this.state.content}
               onResetGame={this.onResetGameHandler}
               loading={this.state.loading}
               onFullScreen={() => onToggle()}
@@ -343,7 +342,7 @@ class MapPuzzle extends Component<any, any> {
                 <Col xs={8} md={4} lg={4} xl={3}>
                   <ToolsPanel
                     name={
-                      this.props.content.puzzles[this.state.puzzleSelected].name
+                      this.state.content[this.state.puzzleSelected].name
                     }
                     puzzleSelected={this.state.puzzleSelected}
                     pieceSelected={this.state.pieceSelected}
