@@ -24,7 +24,7 @@ export class PuzzleService {
       });
   }
   //get a puzzle by id
-  public static getPuzzle(id: number): Promise<Puzzle | null> {
+  public static getPuzzle(id: number): Promise<Puzzle> {
     return query(
       `SELECT p.*, vs.latitude, vs.longitude, vs.zoom  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id WHERE p.id = ${id}`
     )
@@ -32,11 +32,11 @@ export class PuzzleService {
         if (result.length > 0) {
           return PuzzleService.mapResultToPuzzle(result[0].values[0]);
         }
-        return Promise.resolve(null);
+        return Promise.reject("Puzzle not found");
       })
       .catch((err) => {
         console.log(err);
-        return Promise.resolve(null);
+        return Promise.reject("Puzzle not found");
       });
   }
 

@@ -24,9 +24,10 @@ class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      content:null,
+      puzzles: null,
       data: null,
       puzzleSelected: 0,
+      puzzleSelectedData: null,
       lineWidth: 1,
       color: [255, 0, 0],
       colorStroke: [150, 150, 150],
@@ -51,7 +52,7 @@ class MapPuzzle extends Component<any, any> {
   componentDidMount() {
     PuzzleService.getPuzzles().then((content: Puzzle[]) => {
       var puzzleSelected = 0;
-      this.setState({ content: content});
+      this.setState({ content: content });
 
       if (window.location.pathname) {
         this.state.content.forEach(function (
@@ -74,53 +75,60 @@ class MapPuzzle extends Component<any, any> {
       this.loadGame(puzzleSelected);
     });
   }
-  /* load game from content.json */
+  /* load game from db */
   loadGame(puzzleSelected: number) {
-    let viewStateCopy: ViewState = copyViewState(
-      this.state.content[puzzleSelected].view_state,
-      this.state.viewState
-    );
-
-    this.setState({
-      loading: true,
-      zoom: viewStateCopy.zoom,
-      viewState: viewStateCopy,
-    });
-
-    Jsondb(this.state.content[puzzleSelected].data).then((response) => {
+    PuzzleService.getPuzzle(puzzleSelected).then((puzzleData: Puzzle) => {
       this.setState({
-        loading: false,
+        puzzleSelectedData: puzzleData,
         puzzleSelected: puzzleSelected,
-        pieces: response.features,
-        data: response,
       });
-      this.checkGameStatus();
-      //restore game status from coockie
-      var cookieFounds = getCookie("founds" + puzzleSelected);
-      if (cookieFounds) {
+
+      let viewStateCopy: ViewState = copyViewState(
+        this.state.puzzleSelectedData.view_state,
+        this.state.viewState
+      );
+
+      this.setState({
+        loading: true,
+        zoom: viewStateCopy.zoom,
+        viewState: viewStateCopy,
+      });
+
+      Jsondb(this.state.puzzleSelectedData.data).then((response) => {
         this.setState({
-          founds: cookieFounds.split(",").map((e: any) => parseInt(e)),
+          puzzleSelected: puzzleSelected,
+          pieces: response.features,
+          data: response,
+          loading: false,
         });
-      } else {
-        this.setState({ founds: [] });
-      }
+        this.checkGameStatus();
+        //restore game status from coockie
+        var cookieFounds = getCookie("founds" + puzzleSelected);
+        if (cookieFounds) {
+          this.setState({
+            founds: cookieFounds.split(",").map((e: any) => parseInt(e)),
+          });
+        } else {
+          this.setState({ founds: [] });
+        }
 
-      var cookieFails = getCookie("fails" + puzzleSelected);
-      if (cookieFails) {
-        this.setState({ fails: parseInt(cookieFails) });
-      } else {
-        this.setState({ fails: 0 });
-      }
+        var cookieFails = getCookie("fails" + puzzleSelected);
+        if (cookieFails) {
+          this.setState({ fails: parseInt(cookieFails) });
+        } else {
+          this.setState({ fails: 0 });
+        }
 
-      var cookieSeconds = getCookie("seconds" + puzzleSelected);
-      if (cookieSeconds) {
-        GameTime.seconds = parseInt(cookieSeconds);
-      } else {
-        GameTime.seconds = 0;
-      }
+        var cookieSeconds = getCookie("seconds" + puzzleSelected);
+        if (cookieSeconds) {
+          GameTime.seconds = parseInt(cookieSeconds);
+        } else {
+          GameTime.seconds = 0;
+        }
 
-      setCookie("puzzleSelected", puzzleSelected.toString(), 2);
-      this.checkGameStatus();
+        setCookie("puzzleSelected", puzzleSelected.toString(), 2);
+        this.checkGameStatus();
+      });
     });
   }
 
@@ -161,17 +169,15 @@ class MapPuzzle extends Component<any, any> {
   /* find the custom centroid of the piece from content.json */
   findCustomCentroids(piece: PieceProps) {
     let found = false;
-    if (
-      this.state.content[this.state.puzzleSelected].custom_centroids
-    ) {
-      this.state.content[
-        this.state.puzzleSelected
-      ].custom_centroids.forEach((centroid: any) => {
-        if (centroid.cartodb_id === piece.properties.cartodb_id) {
-          this.setState({ pieceSelectedCentroid: centroid });
-          found = true;
+    if (this.state.puzzleSelectedData.custom_centroids) {
+      this.state.puzzleSelectedData.custom_centroids.forEach(
+        (centroid: any) => {
+          if (centroid.cartodb_id === piece.properties.cartodb_id) {
+            this.setState({ pieceSelectedCentroid: centroid });
+            found = true;
+          }
         }
-      });
+      );
     }
     if (!found) {
       this.setState({ pieceSelectedCentroid: null });
@@ -229,7 +235,7 @@ class MapPuzzle extends Component<any, any> {
 
   onRefocusMapHandler = () => {
     let viewStateCopy: ViewState = copyViewState(
-      this.state.content[this.state.puzzleSelected].view_state,
+      this.state.puzzleSelectedData.view_state,
       this.state.viewState
     );
 
@@ -242,7 +248,7 @@ class MapPuzzle extends Component<any, any> {
   onShowWikiInfoHandler = (val: any) => {
     this.setState({
       showWikiInfo: val,
-      wikiInfoUrl: this.state.content[this.state.puzzleSelected].wiki,
+      wikiInfoUrl: this.state.puzzleSelectedData.wiki,
     });
   };
 
@@ -253,7 +259,7 @@ class MapPuzzle extends Component<any, any> {
         let wiki_url = getWiki(
           info.object.properties.cartodb_id,
           info.object.properties.name,
-          this.state.content[this.state.puzzleSelected]
+          this.state.puzzleSelectedData
         );
         this.setState({
           showWikiInfo: true,
@@ -296,18 +302,18 @@ class MapPuzzle extends Component<any, any> {
   render() {
     let YouWinScreen: any = null;
     if (this.state.YouWin) {
-      YouWinScreen = !this.state.content ? null :(
+      YouWinScreen = !this.state.content ? null : (
         <YouWin
           pieces={this.state.pieces}
           founds={this.state.founds}
           fails={this.state.fails}
           onResetGame={this.onResetGameHandler}
-          path={this.state.content[this.state.puzzleSelected].url}
-          name={this.state.content[this.state.puzzleSelected].name}
+          path={this.state.puzzleSelectedData.url}
+          name={this.state.puzzleSelectedData.name}
         />
       );
     }
-    return !this.state.content ? null : (
+    return !this.state.puzzleSelectedData ? null : (
       <ReactFullscreeen>
         {({ onToggle }) => (
           <div>
@@ -341,9 +347,7 @@ class MapPuzzle extends Component<any, any> {
               <Row>
                 <Col xs={8} md={4} lg={4} xl={3}>
                   <ToolsPanel
-                    name={
-                      this.state.content[this.state.puzzleSelected].name
-                    }
+                    name={this.state.puzzleSelectedData.name}
                     puzzleSelected={this.state.puzzleSelected}
                     pieceSelected={this.state.pieceSelected}
                     onPieceSelected={this.onPieceSelectedHandler}
