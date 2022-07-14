@@ -13,12 +13,12 @@ import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
 import { Col, Row } from "react-bootstrap";
-import { PieceProps, MapPuzzleProps } from "./lib/Interfaces";
+import { PieceProps } from "./models/Interfaces";
 import WikiInfo from "./components/WikiInfo";
 import { ViewState } from "react-map-gl";
 import LoadingDialog from "./components/LoadingDialog";
 import { PuzzleService } from "./services/puzzleService";
-import { Puzzle } from "./models/puzzleModel";
+import { CustomCentroids, CustomWiki, Puzzle } from "./models/PuzzleDb";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -28,6 +28,8 @@ class MapPuzzle extends Component<any, any> {
       data: null,
       puzzleSelected: 0,
       puzzleSelectedData: null,
+      puzzleCustomCentroids: null,
+      puzzleCustomWiki: null,
       lineWidth: 1,
       color: [255, 0, 0],
       colorStroke: [150, 150, 150],
@@ -51,15 +53,15 @@ class MapPuzzle extends Component<any, any> {
   }
   componentDidMount() {
     PuzzleService.getPuzzles().then((content: Puzzle[]) => {
-      var puzzleSelected = 0;
+      let puzzleSelected = 0;
       this.setState({ content: content });
 
       if (window.location.pathname) {
         this.state.content.forEach(function (
-          value: MapPuzzleProps,
+          value: Puzzle,
           index: number
         ) {
-          if (value.url === window.location.search.substr(5)) {
+          if (value.url === window.location.search.substring(5)) {
             puzzleSelected = index;
           }
         });
@@ -78,6 +80,8 @@ class MapPuzzle extends Component<any, any> {
   /* load game from db */
   loadGame(puzzleSelected: number) {
     PuzzleService.getPuzzle(puzzleSelected).then((puzzleData: Puzzle) => {
+      this.getCustomCentroids(puzzleData.id);
+      this.getCustomWikis(puzzleData.id);
       this.setState({
         puzzleSelectedData: puzzleData,
         puzzleSelected: puzzleSelected,
@@ -103,7 +107,7 @@ class MapPuzzle extends Component<any, any> {
         });
         this.checkGameStatus();
         //restore game status from coockie
-        var cookieFounds = getCookie("founds" + puzzleSelected);
+        const cookieFounds = getCookie("founds" + puzzleSelected);
         if (cookieFounds) {
           this.setState({
             founds: cookieFounds.split(",").map((e: any) => parseInt(e)),
@@ -112,14 +116,14 @@ class MapPuzzle extends Component<any, any> {
           this.setState({ founds: [] });
         }
 
-        var cookieFails = getCookie("fails" + puzzleSelected);
+        const cookieFails = getCookie("fails" + puzzleSelected);
         if (cookieFails) {
           this.setState({ fails: parseInt(cookieFails) });
         } else {
           this.setState({ fails: 0 });
         }
 
-        var cookieSeconds = getCookie("seconds" + puzzleSelected);
+        const cookieSeconds = getCookie("seconds" + puzzleSelected);
         if (cookieSeconds) {
           GameTime.seconds = parseInt(cookieSeconds);
         } else {
@@ -130,6 +134,26 @@ class MapPuzzle extends Component<any, any> {
         this.checkGameStatus();
       });
     });
+  }
+
+  private getCustomCentroids(id: number) {
+    PuzzleService.getCustomCentroids(id).then(
+      (customCentroids: CustomCentroids[]) => {
+        this.setState({
+          puzzleCustomCentroids: customCentroids,
+        });
+      }
+    );
+  }
+
+  private getCustomWikis(id: number) {
+    PuzzleService.getCustomWikis(id).then(
+      (customWiki: CustomWiki[]) => {
+        this.setState({
+          puzzleCustomWiki: customWiki,
+        });
+      }
+    );
   }
 
   /* Check remains pieces and update game status */
@@ -169,8 +193,8 @@ class MapPuzzle extends Component<any, any> {
   /* find the custom centroid of the piece from content.json */
   findCustomCentroids(piece: PieceProps) {
     let found = false;
-    if (this.state.puzzleSelectedData.custom_centroids) {
-      this.state.puzzleSelectedData.custom_centroids.forEach(
+    if (this.state.puzzleCustomCentroids) {
+      this.state.puzzleCustomCentroids.forEach(
         (centroid: any) => {
           if (centroid.cartodb_id === piece.properties.cartodb_id) {
             this.setState({ pieceSelectedCentroid: centroid });
@@ -259,7 +283,7 @@ class MapPuzzle extends Component<any, any> {
         let wiki_url = getWiki(
           info.object.properties.cartodb_id,
           info.object.properties.name,
-          this.state.puzzleSelectedData
+          this.state.puzzleCustomWiki
         );
         this.setState({
           showWikiInfo: true,

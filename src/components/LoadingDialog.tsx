@@ -8,7 +8,7 @@ import { Spinner } from "react-bootstrap";
 function LoadingDialog({ show = false, onHide, delay = 0 }: any) {
   const [showIn, setShowIn] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timeout = setTimeout(() => {
       setShowIn(show)
     }, delay)

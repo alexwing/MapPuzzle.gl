@@ -1,7 +1,6 @@
 import { query } from "../lib/db/query";
 import { QueryExecResult, SqlValue } from "sql.js";
-import { Puzzle } from "../models/puzzleModel";
-import { promises } from "stream";
+import { CustomCentroids, CustomWiki, Puzzle } from "../models/PuzzleDb";
 
 export class PuzzleService {
   //get all puzzles
@@ -56,5 +55,61 @@ export class PuzzleService {
         zoom: result[9],
       },
     } as Puzzle;
+  }
+
+  //get custom centroids by puzzle id
+  public static getCustomCentroids(id: number): Promise<CustomCentroids[]> {
+    return query(`SELECT * FROM custom_centroids WHERE id = ${id}`)
+      .then((result: QueryExecResult[]) => {
+        let centroids: CustomCentroids[] = [];
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            centroids.push(PuzzleService.mapResultToCustomCentroids(value));
+          });
+        });
+        return centroids;
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve([]);
+      });
+  }
+  //map the result to a CustomCentroids object
+  public static mapResultToCustomCentroids(
+    result: SqlValue[]
+  ): CustomCentroids {
+    return {
+      id: result[0],
+      cartodb_id: result[1],
+      name: result[2],
+      left: result[3],
+      top: result[4],
+    } as CustomCentroids;
+  }
+  //get custom wikis by puzzle id
+  public static getCustomWikis(id: number): Promise<CustomWiki[]> {
+    return query(`SELECT * FROM custom_wiki WHERE id = ${id}`)
+      .then((result: QueryExecResult[]) => {
+        let wikis: CustomWiki[] = [];
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            wikis.push(PuzzleService.mapResultToCustomWiki(value));
+          });
+        });
+        return wikis;
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve([]);
+      });
+  }
+  //map the result to a CustomWiki object
+  public static mapResultToCustomWiki(result: SqlValue[]): CustomWiki {
+    return {
+      id: result[0],
+      cartodb_id: result[1],
+      name: result[2],
+      wiki: result[3],
+    } as CustomWiki;
   }
 }

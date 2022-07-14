@@ -1,7 +1,7 @@
 import GameTime from "../lib/GameTime";
 import React from "react";
-import { MapPuzzleProps } from "./Interfaces";
 import { ViewState } from "react-map-gl";
+import { CustomWiki } from "../models/PuzzleDb";
 export const colorScale = function (x: any) {
   const COLOR_SCALE = [
     // negative
@@ -30,8 +30,7 @@ export const colorScale = function (x: any) {
 
 export const hexToRgb = function (hex: string | null): Array<number> {
   if (!hex) return [0, 0, 0];
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? [
         parseInt(result[1], 16),
@@ -45,9 +44,9 @@ export const LightenDarkenColor = function (col: string, amt: number) {
   if (col[0] === "#") {
     col = col.slice(1);
   }
-  var r = parseInt(col[0]) * amt;
-  var g = parseInt(col[1]) * amt;
-  var b = parseInt(col[2]) * amt;
+  let r = parseInt(col[0]) * amt;
+  let g = parseInt(col[1]) * amt;
+  let b = parseInt(col[2]) * amt;
 
   if (r > 255) r = 255;
   else if (r < 0) r = 0;
@@ -62,7 +61,7 @@ export const LightenDarkenColor = function (col: string, amt: number) {
 };
 
 export const setColor = function (col: number): string {
-  var colorArray = [
+  const colorArray = [
     "#fef400",
     "#67ba2e",
     "#eb891a",
@@ -77,7 +76,6 @@ export const setColor = function (col: number): string {
     "#811e78",
     "#ce9572",
     "#a3c828",
-
     "#fef400",
     "#67ba2e",
     "#eb891a",
@@ -125,7 +123,7 @@ export const AlphaColor = function (col: any | string, alpha = 255) {
 
 export function ST_ExtentToVieport(box: string) {
   box = box.replace("BOX(", "").replace(")", "").replace(",", " ");
-  var arrayBox = box.split(" ");
+  const arrayBox = box.split(" ");
   return (
     arrayBox[0] +
     " " +
@@ -141,7 +139,7 @@ export function ST_ExtentToVieport(box: string) {
 }
 
 export function LazyRound(num: string) {
-  var parts = num.split(".");
+  const parts = num.split(".");
   return parts.length > 1
     ? Math.round(
         parseInt(parts.join(""), 10) / Math.pow(1000, parts.length - 1)
@@ -187,7 +185,7 @@ export function secondsToTime(secs: number) {
 }
 
 export function getTime() {
-  var time = secondsToTime(GameTime.seconds);
+  const time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
     return (
       <span id="hours">
@@ -211,7 +209,7 @@ export function getTime() {
 }
 
 export function getTexTime() {
-  var time = secondsToTime(GameTime.seconds);
+  const time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
     return (
       time.h + " hours and " + time.m + " minutes and " + time.s + " seconds"
@@ -248,12 +246,12 @@ function cleanNameToWiki(name: string) {
 export function getWiki(
   cartodb_id: string,
   name: string,
-  puzzle: MapPuzzleProps
+  custom_wiki: CustomWiki[]
 ) {
   let wiki_url: string = "";
-  if (puzzle.custom_wiki) {
+  if (custom_wiki) {
     wiki_url =
-      puzzle.custom_wiki.find((x: any) => x.cartodb_id === cartodb_id)?.wiki ||
+      custom_wiki.find((x: any) => x.cartodb_id === cartodb_id)?.wiki ||
       "";
   }
   if (wiki_url !== "") {
