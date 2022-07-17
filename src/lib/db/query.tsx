@@ -11,7 +11,7 @@ const config: SplitFileConfig = {
   config: {
     serverMode: "full", // file is just a plain old full sqlite database
     requestChunkSize: 4096, // the page size of the  sqlite database (by default 4096)
-    url: "puzzles.sqlite", // url to the database (relative or full)
+    url: "puzzles.sqlite3.png", // url to the database (relative or full)
   },
 };
 
