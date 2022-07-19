@@ -255,10 +255,9 @@ export function getWiki(
       "";
   }
   if (wiki_url !== "") {
-    return wiki_url;
+    return   wiki_url;
   } else {
-    return (
-      "https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=" +
+    return (    
       cleanNameToWiki(name)
     );
   }
@@ -287,3 +286,4 @@ export function copyViewState(
   }
   return viewStateDestination;
 }
+

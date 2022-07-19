@@ -44,7 +44,7 @@ The Gson require this fields to create map layer in Mappuzzle.gl:
 - **geom**: Geometry of the row, is the polygon version of the shape, is use to render the map in deck.gl.
 - **name**: Name of the map piece
 - **poly**: SVG of the map piece to show in the list.
-- **box**: Bounding box of the map piece in 3857 coordinates.
+- **box**: Bounding box of the map piece in 3857 coordinates for SVG format.
 - **mapcolor**: Color of the map piece, this color is asigned from a array of colors.
 
 ```sql
