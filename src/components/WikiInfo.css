@@ -26,4 +26,7 @@
   font-weight: bold;
   font-size: 1.5em;
 }
-
+.lang-selector > .dropdown-menu {
+  max-height: calc(60vh);
+  overflow-y: auto;
+}

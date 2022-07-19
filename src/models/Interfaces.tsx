@@ -15,5 +15,7 @@ export interface WikiInfoPiece {
 export interface WikiInfoLang{
   id: string;
   lang: string;
+  langname: string;
+  autonym: string;
 }
 

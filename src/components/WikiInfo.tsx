@@ -4,8 +4,9 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import "./WikiInfo.css";
-import { getWikiInfo } from "../services/wikiService";
+import { changeLanguage, getWikiInfo } from "../services/wikiService";
 import { WikiInfoPiece } from "../models/Interfaces";
+import { Nav, NavDropdown } from "react-bootstrap";
 
 function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
   const [pieceInfo, setPieceInfo] = useState({
@@ -30,7 +31,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
     }
   }, [showIn]);
 
-  const getContents = () => {
+  function getContents() {
     setLoading(true);
     getWikiInfo(url)
       .then((wikiInfo: WikiInfoPiece) => {
@@ -38,7 +39,6 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
       })
       .catch((errorRecived: any) => {
         setError(errorRecived);
-        debugger;
         setPieceInfo({
           title: "Not found data on Wikipedia",
           contents: [errorRecived.message],
@@ -48,7 +48,38 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
       .finally(() => {
         setLoading(false);
       });
-  };
+  }
+
+  const pieceLangs = (
+    <Nav>
+      <NavDropdown className="lang-selector" title="Select language" id="puzzle">
+        {pieceInfo.langs.map((c: any) =>
+        (
+            <NavDropdown.Item  id={c.lang} key={c.lang}  onClick={onSelectLang} >    
+              {c.langname} - {c.autonym}
+            </NavDropdown.Item>
+        ))}
+      </NavDropdown>
+    </Nav>
+  );
+
+  function onSelectLang(e: any) {
+    const lang = e.target.id;
+     changeLanguage(pieceInfo, lang).then((extract) => {
+      const newPieceInfo = { ...pieceInfo };
+      newPieceInfo.contents = extract;
+      setPieceInfo(newPieceInfo);
+     }
+      ).catch((errorRecived: any) => {
+        setError(errorRecived);
+        setPieceInfo({
+          title: "Not found data on Wikipedia",
+          contents: [errorRecived.message],
+          langs: [],
+        } as WikiInfoPiece);
+      }
+      )
+  }
 
   function handleClose() {
     onHide();
@@ -71,6 +102,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
               ? "Wikipedia article for " + pieceInfo.title
               : "Not found data on Wikipedia"}
           </Modal.Title>
+          {pieceLangs}
         </Modal.Header>
         <Modal.Body>
           <Row>{printContent()}</Row>
