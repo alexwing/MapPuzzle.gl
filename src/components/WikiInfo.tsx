@@ -77,7 +77,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
   }
 
 
-  const navDropdownTitle = <span><span className="lang-selector-icon"></span><span>{ currentLang() }</span></span>;
+  const navDropdownTitle = <span><span className="lang-selector-icon"></span><span className="d-none d-lg-inline d-lg-none" >{ currentLang() }</span></span>;
   const pieceLangs = (
     <Nav>
       <NavDropdown
