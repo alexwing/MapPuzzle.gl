@@ -8,6 +8,7 @@ import { changeLanguage, getWikiInfo } from "../services/wikiService";
 import { WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
 import { Nav, NavDropdown } from "react-bootstrap";
 import LoadingDialog from "./LoadingDialog";
+import { getCookie, setCookie } from "react-simple-cookie-store";
 
 function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
   const [pieceInfo, setPieceInfo] = useState({
@@ -62,8 +63,21 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
       }
     }
   };
+  const currentLang = () => {
+    const puzzleLanguage = getCookie("puzzleLanguage") || "en";
+    //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
+    const pieceLang = pieceInfo.langs.find(
+      (x: any) => x.lang === puzzleLanguage
+    );
+    if (typeof pieceLang === "object" && pieceLang !== null) {
+      return langName(pieceLang);
+    } else {
+      return "";
+    }
+  }
 
-  const navDropdownTitle = <span className="lang-selector-icon"></span>;
+
+  const navDropdownTitle = <span><span className="lang-selector-icon"></span><span>{ currentLang() }</span></span>;
   const pieceLangs = (
     <Nav>
       <NavDropdown
@@ -118,6 +132,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
       .then((extract) => {
         const newPieceInfo = { ...pieceInfo };
         newPieceInfo.contents = extract;
+        setCookie("puzzleLanguage", lang, 2);
         setPieceInfo(newPieceInfo);
       })
       .catch((errorRecived: any) => {

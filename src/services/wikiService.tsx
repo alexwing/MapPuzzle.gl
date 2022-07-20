@@ -1,3 +1,4 @@
+import { getCookie } from "react-simple-cookie-store";
 import { WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
 
 //get wiki info for a piece
@@ -6,7 +7,13 @@ export async function getWikiInfo(piece: string): Promise<WikiInfoPiece> {
     const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts|langlinks&llprop=langname|autonym&lllimit=500&format=json&exintro=&titles=${piece}`;
     const response = await fetch(url);
     const json = await response.json();
-    return mapWikiResponseToWikiInfo(json);
+    let wikiInfo: WikiInfoPiece = mapWikiResponseToWikiInfo(json);
+    
+    const puzzleLanguage = getCookie("puzzleLanguage") || "en";
+    if (puzzleLanguage !== "en") {
+      wikiInfo.contents = await changeLanguage(wikiInfo, puzzleLanguage);     
+    }
+    return wikiInfo;
   } catch (e: any) {
     return {
       title: "Not found data on Wikipedia",
@@ -20,7 +27,7 @@ export async function changeLanguage(
   lang: string
 ): Promise<string[]> {
   try {
-    const pieceLang:any = piece.langs.find((x: any) => x.lang === lang);
+    const pieceLang: any = piece.langs.find((x: any) => x.lang === lang);
     if (typeof pieceLang === "object" && pieceLang !== null) {
       const url = `https://${lang}.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=${pieceLang.id}`;
       const response = await fetch(url);
@@ -28,7 +35,7 @@ export async function changeLanguage(
       const { pages } = json.query;
       const page = pages[Object.keys(pages)[0]];
       return page.extract.split("\n");
-    }else{
+    } else {
       return [];
     }
   } catch (e: any) {
@@ -50,6 +57,13 @@ function mapWikiResponseToWikiInfo(_response: any): WikiInfoPiece {
       autonym: x.autonym,
     } as WikiInfoLang;
   });
+  //add english to lang
+  langs.push({
+    id: title,
+    lang: "en",
+    langname: "English",
+    autonym: "English",
+  } as WikiInfoLang);
   //order langs by langname
   langs = sortLangs(langs);
   return {
@@ -68,7 +82,6 @@ function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
       return 1;
     }
     return 0;
-  }
-  );
+  });
   return langs;
 }
