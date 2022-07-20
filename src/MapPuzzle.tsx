@@ -49,6 +49,7 @@ class MapPuzzle extends Component<any, any> {
       YouWin: false,
       showWikiInfo: false,
       wikiInfoUrl: "",
+      wikiInfoId: -1,
     };
   }
   componentDidMount() {
@@ -57,10 +58,7 @@ class MapPuzzle extends Component<any, any> {
       this.setState({ content: content });
 
       if (window.location.pathname) {
-        this.state.content.forEach(function (
-          value: Puzzle,
-          index: number
-        ) {
+        this.state.content.forEach(function (value: Puzzle, index: number) {
           if (value.url === window.location.search.substring(5)) {
             puzzleSelected = index;
           }
@@ -147,13 +145,11 @@ class MapPuzzle extends Component<any, any> {
   }
 
   private getCustomWikis(id: number) {
-    PuzzleService.getCustomWikis(id).then(
-      (customWiki: CustomWiki[]) => {
-        this.setState({
-          puzzleCustomWiki: customWiki,
-        });
-      }
-    );
+    PuzzleService.getCustomWikis(id).then((customWiki: CustomWiki[]) => {
+      this.setState({
+        puzzleCustomWiki: customWiki,
+      });
+    });
   }
 
   /* Check remains pieces and update game status */
@@ -194,14 +190,12 @@ class MapPuzzle extends Component<any, any> {
   findCustomCentroids(piece: PieceProps) {
     let found = false;
     if (this.state.puzzleCustomCentroids) {
-      this.state.puzzleCustomCentroids.forEach(
-        (centroid: any) => {
-          if (centroid.cartodb_id === piece.properties.cartodb_id) {
-            this.setState({ pieceSelectedCentroid: centroid });
-            found = true;
-          }
+      this.state.puzzleCustomCentroids.forEach((centroid: any) => {
+        if (centroid.cartodb_id === piece.properties.cartodb_id) {
+          this.setState({ pieceSelectedCentroid: centroid });
+          found = true;
         }
-      );
+      });
     }
     if (!found) {
       this.setState({ pieceSelectedCentroid: null });
@@ -270,10 +264,19 @@ class MapPuzzle extends Component<any, any> {
   };
 
   onShowWikiInfoHandler = (val: any) => {
-    this.setState({
-      showWikiInfo: val,
-      wikiInfoUrl: this.state.puzzleSelectedData.wiki,
-    });
+    if (val) {
+      this.setState({
+        showWikiInfo: true,
+        wikiInfoUrl: this.state.puzzleSelectedData.wiki,
+        wikiInfoId: this.state.puzzleSelectedData.id
+      });
+    } else {
+      this.setState({
+        showWikiInfo: false,
+        wikiInfoUrl: "",
+        wikiInfoId: -1
+      });
+    }
   };
 
   onClickMapHandler = (info: any) => {
@@ -288,6 +291,7 @@ class MapPuzzle extends Component<any, any> {
         this.setState({
           showWikiInfo: true,
           wikiInfoUrl: wiki_url,
+          wikiInfoId: info.object.properties.cartodb_id,
         });
       }
     }
@@ -393,6 +397,7 @@ class MapPuzzle extends Component<any, any> {
               tooltip={this.state.tooltipValue}
             />
             <WikiInfo
+              id={this.state.wikiInfoId}
               show={this.state.showWikiInfo}
               url={this.state.wikiInfoUrl}
               onHide={this.onShowWikiInfoHandler}

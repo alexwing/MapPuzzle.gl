@@ -5,10 +5,11 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import "./WikiInfo.css";
 import { changeLanguage, getWikiInfo } from "../services/wikiService";
-import { WikiInfoPiece } from "../models/Interfaces";
+import { WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
 import { Nav, NavDropdown } from "react-bootstrap";
+import LoadingDialog from "./LoadingDialog";
 
-function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
+function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
   const [pieceInfo, setPieceInfo] = useState({
     title: "",
     contents: [],
@@ -17,7 +18,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
 
   const [loading, setLoading] = useState(false);
   const [showIn, setShowIn] = useState(false);
-  const [error, setError] = useState();
+  const [error, setError] = useState(false);
 
   //on load show modal
   useEffect(() => {
@@ -35,10 +36,11 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
     setLoading(true);
     getWikiInfo(url)
       .then((wikiInfo: WikiInfoPiece) => {
+        setError(wikiInfo.title === "Not found data on Wikipedia");
         setPieceInfo(wikiInfo);
       })
       .catch((errorRecived: any) => {
-        setError(errorRecived);
+        setError(true);
         setPieceInfo({
           title: "Not found data on Wikipedia",
           contents: [errorRecived.message],
@@ -49,44 +51,91 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
         setLoading(false);
       });
   }
+  const langName = (piece: WikiInfoLang) => {
+    if (piece.autonym === "") {
+      return piece.langname;
+    } else {
+      if (piece.autonym === piece.langname) {
+        return piece.langname;
+      } else {
+        return piece.langname + " (" + piece.autonym + ")";
+      }
+    }
+  };
 
+  const navDropdownTitle = <span className="lang-selector-icon"></span>;
   const pieceLangs = (
     <Nav>
-      <NavDropdown className="lang-selector" title="Select language" id="puzzle">
-        {pieceInfo.langs.map((c: any) =>
-        (
-            <NavDropdown.Item  id={c.lang} key={c.lang}  onClick={onSelectLang} >    
-              {c.langname} - {c.autonym}
-            </NavDropdown.Item>
+      <NavDropdown
+        className="lang-selector"
+        title={navDropdownTitle}
+        id="puzzle"
+      >
+        {pieceInfo.langs.map((c: any) => (
+          <NavDropdown.Item id={c.lang} key={c.lang} onClick={onSelectLang}>
+            {langName(c)}
+          </NavDropdown.Item>
         ))}
       </NavDropdown>
     </Nav>
   );
 
+  const errorMessage = (
+    <Modal
+      show={showIn}
+      onHide={handleClose}
+      size="sm"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header className="bg-danger">
+        <Modal.Title
+          id="contained-modal-title-vcenter"
+          className="modal-title-error"
+        >
+          {pieceInfo.title}         
+        </Modal.Title>
+        <Button variant="danger" onClick={handleClose}>
+          <i className="close-icon"></i>
+        </Button>
+      </Modal.Header>
+      <Modal.Body className="bg-warning">
+        <Row>
+          <Col>
+            <div>
+              <p>{pieceInfo.contents[0]}</p>
+              <small>Piece: {id} Url: {url}</small>
+            </div>
+          </Col>
+        </Row>
+      </Modal.Body>
+    </Modal>
+  );
+
   function onSelectLang(e: any) {
     const lang = e.target.id;
-     changeLanguage(pieceInfo, lang).then((extract) => {
-      const newPieceInfo = { ...pieceInfo };
-      newPieceInfo.contents = extract;
-      setPieceInfo(newPieceInfo);
-     }
-      ).catch((errorRecived: any) => {
-        setError(errorRecived);
+    changeLanguage(pieceInfo, lang)
+      .then((extract) => {
+        const newPieceInfo = { ...pieceInfo };
+        newPieceInfo.contents = extract;
+        setPieceInfo(newPieceInfo);
+      })
+      .catch((errorRecived: any) => {
+        setError(true);
         setPieceInfo({
           title: "Not found data on Wikipedia",
           contents: [errorRecived.message],
           langs: [],
         } as WikiInfoPiece);
-      }
-      )
+      });
   }
 
   function handleClose() {
     onHide();
   }
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error</div>;
+  if (loading) return <LoadingDialog show={loading} delay={1000} />;
+  if (error) return errorMessage;
   return (
     <React.Fragment>
       <Modal
@@ -108,6 +157,11 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
           <Row>{printContent()}</Row>
         </Modal.Body>
         <Modal.Footer>
+          <Modal.Body id="contained-modal-title-vcenter">
+            <small>
+            This article uses material from the Wikipedia article <a target="_blank" href={"https://en.wikipedia.org/wiki/"+pieceInfo.title}>{pieceInfo.title}</a>, which is released under the <a href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share-Alike License 3.0</a>.
+            </small>
+          </Modal.Body>
           <Button onClick={handleClose}>Ok</Button>
         </Modal.Footer>
       </Modal>
