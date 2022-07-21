@@ -19,6 +19,7 @@ import { ViewState } from "react-map-gl";
 import LoadingDialog from "./components/LoadingDialog";
 import { PuzzleService } from "./services/puzzleService";
 import { CustomCentroids, CustomWiki, Puzzle } from "./models/PuzzleDb";
+import { ConfigService } from "./services/configService";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -53,6 +54,7 @@ class MapPuzzle extends Component<any, any> {
     };
   }
   componentDidMount() {
+    console.log(ConfigService.cookieDays);
     PuzzleService.getPuzzles().then((content: Puzzle[]) => {
       let puzzleSelected = 0;
       this.setState({ content: content });
@@ -128,7 +130,7 @@ class MapPuzzle extends Component<any, any> {
           GameTime.seconds = 0;
         }
 
-        setCookie("puzzleSelected", puzzleSelected.toString(), 2);
+        setCookie("puzzleSelected", puzzleSelected.toString(), ConfigService.cookieDays);
         this.checkGameStatus();
       });
     });
@@ -317,12 +319,12 @@ class MapPuzzle extends Component<any, any> {
           setCookie(
             "founds" + this.state.puzzleSelected,
             this.state.founds.join(),
-            2
+            ConfigService.cookieDays
           );
         }
       } else {
         this.setState({ fails: this.state.fails + 1 });
-        setCookie("fails" + this.state.puzzleSelected, this.state.fails, 2);
+        setCookie("fails" + this.state.puzzleSelected, this.state.fails, ConfigService.cookieDays);
       }
     }
   };

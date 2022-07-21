@@ -24,6 +24,7 @@
     "@types/react-dom": "^17.0.8",
     "bootstrap": "^4.6.0",
     "deck.gl": "^8.4.20",
+    "env-cmd": "^10.1.0",
     "mdbreact": "^5.0.2",
     "node-sass": "^4.14.1",
     "react": "^17.0.2",
@@ -39,9 +40,10 @@
     "sql.js-httpvfs": "^0.8.11"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "dev": "env-cmd -f ./environments/.env.development react-scripts start",
+    "pro": "env-cmd -f ./environments/.env react-scripts start",
+    "build": "env-cmd -f ./environments/.env yarn build",
+    "test": "env-cmd -f ./environments/.env.development react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

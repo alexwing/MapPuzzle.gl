@@ -9,6 +9,7 @@ import { WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
 import { Nav, NavDropdown } from "react-bootstrap";
 import LoadingDialog from "./LoadingDialog";
 import { getCookie, setCookie } from "react-simple-cookie-store";
+import { ConfigService } from "../services/configService";
 
 function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
   const [pieceInfo, setPieceInfo] = useState({
@@ -132,7 +133,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
       .then((extract) => {
         const newPieceInfo = { ...pieceInfo };
         newPieceInfo.contents = extract;
-        setCookie("puzzleLanguage", lang, 2);
+        setCookie("puzzleLanguage", lang,ConfigService.cookieDays);
         setPieceInfo(newPieceInfo);
       })
       .catch((errorRecived: any) => {

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { secondsToTime } from "../lib/Utils";
 import GameTime from "../lib/GameTime";
 import { setCookie } from "react-simple-cookie-store";
+import { ConfigService } from "../services/configService";
 
 export default class Timer extends Component<any, any> {
   timer: NodeJS.Timeout | null;
@@ -39,7 +40,7 @@ export default class Timer extends Component<any, any> {
         setCookie(
           "seconds" + this.props.puzzleSelected,
           GameTime.seconds.toString(),
-          2
+          ConfigService.cookieDays
         );
       }
     }
