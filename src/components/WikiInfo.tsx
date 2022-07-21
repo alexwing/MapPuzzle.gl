@@ -148,7 +148,14 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
   function handleClose() {
     onHide();
   }
-
+  const wikiTitle = () => {
+    if (pieceInfo.title !== '') {
+      return (<span><span className="d-none d-lg-inline d-lg-none" >Wikipedia article for </span>{pieceInfo.title}</span>);
+    } else {
+      return (<span>"Not found data on Wikipedia"</span>);
+    }
+  }
+  
   if (loading) return <LoadingDialog show={loading} delay={1000} />;
   if (error) return errorMessage;
   return (
@@ -162,9 +169,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
-            {pieceInfo.title !== ""
-              ? "Wikipedia article for " + pieceInfo.title
-              : "Not found data on Wikipedia"}
+            {wikiTitle()}
           </Modal.Title>
           {pieceLangs}
         </Modal.Header>
