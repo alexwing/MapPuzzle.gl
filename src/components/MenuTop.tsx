@@ -7,6 +7,9 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { Link } from 'react-router-dom'
 import Info from './Info';
+import { ConfigService } from '../services/configService';
+import { PuzzleService } from '../services/puzzleService';
+import { CustomWiki } from '../models/PuzzleDb';
 
 
 
@@ -43,6 +46,11 @@ export default class MenuTop extends Component<any, any>  {
       });
     }
 
+    const handleEditor = () => {
+      PuzzleService.saveCustomWiki({}as CustomWiki);
+    }
+
+
     const handleInfo = () => {
       this.setState({
         show: false,
@@ -77,6 +85,7 @@ export default class MenuTop extends Component<any, any>  {
             <Button id="info" variant="outline-secondary" onClick={handleInfo}><span className="navbar-info-icon"></span></Button>
             <Button id="wiki" variant="outline-secondary" onClick={onShowWikiInfo}><span className="navbar-wiki-icon"></span></Button>
             <Button id="reset" variant="outline-primary" onClick={handleShow}>Reset Game</Button>
+            { ConfigService.editorEnabled ? <Button id="editor" variant="outline-primary" onClick={handleEditor}>Editor</Button> : null }
           </Form>
         </Navbar.Collapse>
       </Navbar>

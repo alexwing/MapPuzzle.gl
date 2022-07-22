@@ -1,6 +1,7 @@
 import { query } from "../lib/db/query";
 import { QueryExecResult, SqlValue } from "sql.js";
 import { CustomCentroids, CustomWiki, Puzzle } from "../models/PuzzleDb";
+import { ConfigService } from "./configService";
 
 export class PuzzleService {
   //get all puzzles
@@ -111,5 +112,26 @@ export class PuzzleService {
       name: result[2],
       wiki: result[3],
     } as CustomWiki;
+  }
+
+  //save a puzzle customWiki
+  public static async saveCustomWiki(wiki: CustomWiki): Promise<any> {
+    const response = await fetch(ConfigService.backendUrl+"users/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: "test2",
+        password: "pass",
+        email: "prueba2@prueba.es",
+      }),
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error saving custom wiki");
+    });
+    const json = await response.json();
+    console.log(json);
+    return json;
   }
 }
