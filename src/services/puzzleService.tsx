@@ -1,4 +1,4 @@
-import { query } from "../lib/db/query";
+import { query } from "../lib/db/dbFactory";
 import { QueryExecResult, SqlValue } from "sql.js";
 import { CustomCentroids, CustomWiki, Puzzle } from "../models/PuzzleDb";
 import { ConfigService } from "./configService";
