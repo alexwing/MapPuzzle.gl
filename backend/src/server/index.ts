@@ -2,16 +2,11 @@ import 'dotenv/config';
 
 import compression from 'compression';
 import cors from 'cors';
-/*
-
-Copyright (c) 2019 - present AppSeed.us
-
-*/
 import express from 'express';
 import passport from 'passport';
 
 import initPassport from '../config/passport';
-import routes from '../routes/users';
+import routes from '../routes/routes';
 import { connect } from './database';
 
 // Instantiate express
@@ -31,6 +26,6 @@ server.use(cors());
 server.use(express.json());
 
 // Initialize routes middleware
-server.use('/api/users', routes);
+server.use('/api/', routes);
 
 export default server;

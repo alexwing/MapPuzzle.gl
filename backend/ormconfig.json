@@ -2,7 +2,7 @@
     {
       "name": "default",
       "type": "sqlite",
-      "database": "./database.db",
+      "database": "../public/puzzles.sqlite3.png",
       "autoSchemaSync": true,
       "entities": [
         "src/models/**/*{.js,.ts}"

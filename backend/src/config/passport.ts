@@ -1,8 +1,4 @@
-/*
 
-Copyright (c) 2019 - present AppSeed.us
-
-*/
 
 import passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';

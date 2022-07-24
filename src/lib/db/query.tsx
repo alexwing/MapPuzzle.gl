@@ -1,6 +1,7 @@
 import { QueryExecResult } from "sql.js";
 import { createDbWorker, WorkerHttpvfs } from "sql.js-httpvfs";
 import { SplitFileConfig } from "sql.js-httpvfs/dist/sqlite.worker";
+import { ConfigService } from "../../services/configService";
 
 const workerUrl: string = "sqlite.worker.js";
 const wasmUrl: string = "sql-wasm.wasm";
@@ -26,7 +27,10 @@ async function createDB(): Promise<WorkerHttpvfs> {
 }
 
 //function to execute a query, return a Promise with the result
-export function query(sql: string,  ): Promise<QueryExecResult[]> {
+export function query(sql: string): Promise<QueryExecResult[]> {
+  if (ConfigService.foo === "mappuzzle-dev") {
+    return queryBackend(sql);
+  }
   //create worker
   return createDB()
     .then((worker: WorkerHttpvfs) => {
@@ -39,3 +43,21 @@ export function query(sql: string,  ): Promise<QueryExecResult[]> {
       return [];
     });
 }
+
+
+export async function queryBackend(sql: string): Promise<QueryExecResult[]> {
+  //get query from post data to execute in sqlite and return json object
+  const response = await fetch(ConfigService.backendUrl+"query", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sql: sql,
+    }),
+  });
+  return response.json();
+}
+    
+
+
