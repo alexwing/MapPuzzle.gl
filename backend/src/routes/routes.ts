@@ -180,7 +180,7 @@ router.post("/edit", checkToken, (req, res) => {
   });
 });
 
-//return custom query from the database
+//return in get response custom query from the database
 router.get("/query", (req, res) => {
   const { query } = req.query;
   console.log("query:" + JSON.stringify(query));
@@ -197,6 +197,25 @@ router.get("/query", (req, res) => {
     res.json({ success: false, msg: "No query provided" });
   }
 });
+//return in post response custom query from the database
+router.post("/query", (req, res) => {
+  const { query } = req.body;
+  console.log("query:" + JSON.stringify(query));
+  if (query) {
+    connection!
+      .query(query.toString())
+      .then((result) => {
+        res.json(result);
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  }
+  else {
+    res.json({ success: false, msg: "No query provided" });
+  }
+}
+);
 
 
 // Used for tests (nothing functional)

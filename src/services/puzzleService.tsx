@@ -116,7 +116,7 @@ export class PuzzleService {
 
   //save a puzzle customWiki
   public static async saveCustomWiki(wiki: CustomWiki): Promise<any> {
-    const response = await fetch(ConfigService.backendUrl+"users/register", {
+    const response = await fetch(ConfigService.backendUrl+"/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
