@@ -11,7 +11,7 @@ import LoadingDialog from "./LoadingDialog";
 import { getCookie, setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
 
-function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
+function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   const [pieceInfo, setPieceInfo] = useState({
     title: "",
     contents: [],
@@ -30,29 +30,26 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
   //is showing modal
   useEffect(() => {
     if (showIn) {
-      getContents();
+      setLoading(true);
+      getWikiInfo(url)
+        .then((wikiInfo: WikiInfoPiece) => {
+          setError(wikiInfo.title === "Not found data on Wikipedia");
+          setPieceInfo(wikiInfo);
+        })
+        .catch((errorRecived: any) => {
+          setError(true);
+          setPieceInfo({
+            title: "Not found data on Wikipedia",
+            contents: [errorRecived.message],
+            langs: [],
+          } as WikiInfoPiece);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
-  }, [showIn]);
+  }, [showIn, url]);
 
-  function getContents() {
-    setLoading(true);
-    getWikiInfo(url)
-      .then((wikiInfo: WikiInfoPiece) => {
-        setError(wikiInfo.title === "Not found data on Wikipedia");
-        setPieceInfo(wikiInfo);
-      })
-      .catch((errorRecived: any) => {
-        setError(true);
-        setPieceInfo({
-          title: "Not found data on Wikipedia",
-          contents: [errorRecived.message],
-          langs: [],
-        } as WikiInfoPiece);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }
   const langName = (piece: WikiInfoLang) => {
     if (piece.autonym === "") {
       return piece.langname;
@@ -75,10 +72,14 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
     } else {
       return "";
     }
-  }
+  };
 
-
-  const navDropdownTitle = <span><span className="lang-selector-icon"></span><span className="d-none d-lg-inline d-lg-none" >{ currentLang() }</span></span>;
+  const navDropdownTitle = (
+    <span>
+      <span className="lang-selector-icon"></span>
+      <span className="d-none d-lg-inline d-lg-none">{currentLang()}</span>
+    </span>
+  );
   const pieceLangs = (
     <Nav>
       <NavDropdown
@@ -108,7 +109,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
           id="contained-modal-title-vcenter"
           className="modal-title-error"
         >
-          {pieceInfo.title}         
+          {pieceInfo.title}
         </Modal.Title>
         <Button variant="danger" onClick={handleClose}>
           <i className="close-icon"></i>
@@ -119,7 +120,9 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
           <Col>
             <div>
               <p>{pieceInfo.contents[0]}</p>
-              <small>Piece: {id} Url: {url}</small>
+              <small>
+                Piece: {id} Url: {url}
+              </small>
             </div>
           </Col>
         </Row>
@@ -133,7 +136,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
       .then((extract) => {
         const newPieceInfo = { ...pieceInfo };
         newPieceInfo.contents = extract;
-        setCookie("puzzleLanguage", lang,ConfigService.cookieDays);
+        setCookie("puzzleLanguage", lang, ConfigService.cookieDays);
         setPieceInfo(newPieceInfo);
       })
       .catch((errorRecived: any) => {
@@ -150,13 +153,20 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
     onHide();
   }
   const wikiTitle = () => {
-    if (pieceInfo.title !== '') {
-      return (<span><span className="d-none d-lg-inline d-lg-none" >Wikipedia article for </span>{pieceInfo.title}</span>);
+    if (pieceInfo.title !== "") {
+      return (
+        <span>
+          <span className="d-none d-lg-inline d-lg-none">
+            Wikipedia article for{" "}
+          </span>
+          {pieceInfo.title}
+        </span>
+      );
     } else {
-      return (<span>"Not found data on Wikipedia"</span>);
+      return <span>"Not found data on Wikipedia"</span>;
     }
-  }
-  
+  };
+
   if (loading) return <LoadingDialog show={loading} delay={1000} />;
   if (error) return errorMessage;
   return (
@@ -180,7 +190,19 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
         <Modal.Footer>
           <Modal.Body id="contained-modal-title-vcenter">
             <small>
-            This article uses material from the Wikipedia article <a target="_blank" href={"https://en.wikipedia.org/wiki/"+pieceInfo.title}>{pieceInfo.title}</a>, which is released under the <a href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share-Alike License 3.0</a>.
+              This article uses material from the Wikipedia article{" "}
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={"https://en.wikipedia.org/wiki/" + pieceInfo.title}
+              >
+                {pieceInfo.title}
+              </a>
+              , which is released under the{" "}
+              <a href="https://creativecommons.org/licenses/by-sa/3.0/">
+                Creative Commons Attribution-Share-Alike License 3.0
+              </a>
+              .
             </small>
           </Modal.Body>
           <Button onClick={handleClose}>Ok</Button>
@@ -195,8 +217,8 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1}: any) {
     }
     return (
       <Col lg={12} className="infoWiki">
-        {pieceInfo.contents.map((content) => (
-          <div dangerouslySetInnerHTML={{ __html: content }} />
+        {pieceInfo.contents.map((content, index: number) => (
+          <div key={index} dangerouslySetInnerHTML={{ __html: content }} />
         ))}
       </Col>
     );
