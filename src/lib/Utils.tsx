@@ -287,3 +287,8 @@ export function copyViewState(
   return viewStateDestination;
 }
 
+export const className = (c: any, pieceSelected: number) => {
+  return parseInt(c.properties.cartodb_id) === pieceSelected
+    ? "table-primary"
+    : "";
+};

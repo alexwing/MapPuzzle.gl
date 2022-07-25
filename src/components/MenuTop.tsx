@@ -10,6 +10,7 @@ import Info from './Info';
 import { ConfigService } from '../services/configService';
 import { PuzzleService } from '../services/puzzleService';
 import { CustomWiki } from '../models/PuzzleDb';
+import EditorDialog from '../editor/editorDialog';
 
 
 
@@ -22,19 +23,22 @@ export default class MenuTop extends Component<any, any>  {
     }
   }
   render() {
-    const { onSelectMap, onResetGame, onFullScreen, onRefocus, onShowWikiInfo } = this.props;
+    const { onSelectMap, onResetGame, onFullScreen, onRefocus, onShowWikiInfo, onShowEditor } = this.props;
     const handleClose = () => {
       this.setState({
         show: false,
         showInfo: false,
         showWikiInfo: false,
+        showEditor: false,
       });
     } 
     const handleOK = () => {
       onResetGame();
       this.setState({
         show: false,
-        showInfo: false
+        showInfo: false,
+        showWikiInfo: false,
+        showEditor: false,
       });
     }
 
@@ -42,12 +46,18 @@ export default class MenuTop extends Component<any, any>  {
       this.setState({
         show: true,
         showInfo: false,
-        showWikiInfo: false
+        showWikiInfo: false,
+        showEditor: false,
       });
     }
 
     const handleEditor = () => {
-      PuzzleService.saveCustomWiki({}as CustomWiki);
+      this.setState({
+        show: false,
+        showInfo: false,
+        showWikiInfo: false,
+        showEditor: true,
+      });
     }
 
 
@@ -85,7 +95,7 @@ export default class MenuTop extends Component<any, any>  {
             <Button id="info" variant="outline-secondary" onClick={handleInfo}><span className="navbar-info-icon"></span></Button>
             <Button id="wiki" variant="outline-secondary" onClick={onShowWikiInfo}><span className="navbar-wiki-icon"></span></Button>
             <Button id="reset" variant="outline-primary" onClick={handleShow}>Reset Game</Button>
-            { ConfigService.editorEnabled ? <Button id="editor" variant="outline-primary" onClick={handleEditor}>Editor</Button> : null }
+            { ConfigService.editorEnabled ? <Button id="editor" variant="outline-primary" onClick={onShowEditor}>Editor</Button> : null }
           </Form>
         </Navbar.Collapse>
       </Navbar>

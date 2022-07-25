@@ -20,6 +20,7 @@ import LoadingDialog from "./components/LoadingDialog";
 import { PuzzleService } from "./services/puzzleService";
 import { CustomCentroids, CustomWiki, Puzzle } from "./models/PuzzleDb";
 import { ConfigService } from "./services/configService";
+import EditorDialog from "./editor/editorDialog";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -281,6 +282,20 @@ class MapPuzzle extends Component<any, any> {
     }
   };
 
+  onShowEditorHandler = (val: any) => {
+    if (val) {
+      this.setState({
+        showEditor: true,
+      });
+    } else {
+      this.setState({
+        showEditor: false,
+      });
+    }
+  }
+
+
+
   onClickMapHandler = (info: any) => {
     if (info.object && !this.state.pieceSelected) {
       //if the piece is found, show the wiki info on click
@@ -370,6 +385,7 @@ class MapPuzzle extends Component<any, any> {
               onFullScreen={() => onToggle()}
               onRefocus={this.onRefocusMapHandler}
               onShowWikiInfo={this.onShowWikiInfoHandler}
+              onShowEditor={this.onShowEditorHandler}
             />
 
             {YouWinScreen}
@@ -403,6 +419,11 @@ class MapPuzzle extends Component<any, any> {
               show={this.state.showWikiInfo}
               url={this.state.wikiInfoUrl}
               onHide={this.onShowWikiInfoHandler}
+            />
+            <EditorDialog
+              show={this.state.showEditor}
+              onHide={this.onShowEditorHandler}
+              puzzleSelected={this.state.puzzleSelectedData}
             />
           </div>
         )}
