@@ -2,6 +2,7 @@ import { query } from "../lib/db/dbFactory";
 import { QueryExecResult, SqlValue } from "sql.js";
 import { CustomCentroids, CustomWiki, Puzzle } from "../models/PuzzleDb";
 import { ConfigService } from "./configService";
+//import Puzzles from "../../backend/src/models/puzzles";
 
 export class PuzzleService {
   //get all puzzles
@@ -114,9 +115,9 @@ export class PuzzleService {
     } as CustomWiki;
   }
 
-  //save a puzzle customWiki
-  public static async saveCustomWiki(puzzle: Puzzle): Promise<any> {
-    console.log("puzzle: ",JSON.stringify(puzzle));
+  //save a puzzle
+  public static async savePuzzle(puzzle: Puzzle): Promise<any> {
+   // console.log("puzzle: ",JSON.stringify(puzzle));
     const response = await fetch(ConfigService.backendUrl+"/savePuzzle", {
       method: "POST",
       headers: {
@@ -125,10 +126,8 @@ export class PuzzleService {
       body: JSON.stringify({puzzle}),
     }).catch((err) => {
       console.log(err);
-      return Promise.reject("Error saving custom wiki");
+      return Promise.reject("Error saving puzzle");
     });
-    const json = await response.json();
-    console.log(json);
-    return json;
+    return response.json();
   }
 }

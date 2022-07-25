@@ -18,7 +18,7 @@ function EditMap({ puzzle = {} as Puzzle }: any) {
 
   const onSaveHandler = () => {
     setError("");
-    PuzzleService.saveCustomWiki(puzzleEdited)
+    PuzzleService.savePuzzle(puzzleEdited)
       .then((result) => {
         setError(result.msg);
       })
