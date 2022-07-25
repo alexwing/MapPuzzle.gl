@@ -6,7 +6,7 @@ import express from 'express';
 import passport from 'passport';
 
 import initPassport from '../config/passport';
-import routes from '../routes/routes';
+import routes from '../routes/route';
 import { connect } from './database';
 
 // Instantiate express

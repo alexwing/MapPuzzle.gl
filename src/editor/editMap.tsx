@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import { Puzzle } from "../models/PuzzleDb";
 import { PuzzleService } from "../services/puzzleService";
 
@@ -20,11 +20,7 @@ function EditMap({ puzzle = {} as Puzzle }: any) {
     setError("");
     PuzzleService.saveCustomWiki(puzzleEdited)
       .then((result) => {
-        if (!result.success) {
-          setError(result.msg);
-        } else {
-          setError("Save Successful");
-        }
+        setError(result.msg);
       })
       .catch((errorMessage) => {
         setError(errorMessage);
@@ -35,8 +31,14 @@ function EditMap({ puzzle = {} as Puzzle }: any) {
     <Col xs={8} lg={8}>
       <Form>
         <Row>
+          <Col xs={12} lg={12}>
+            <Alert variant="warning">
+              <Alert.Heading>{error !== "" ? error : null}</Alert.Heading>
+            </Alert>
+          </Col>
+        </Row>
+        <Row>
           <Col xs={6} lg={6}>
-            {error !== "" ? error : null}
             <Form.Group className="mb-12" controlId="formname">
               <Form.Label>Puzzle Name</Form.Label>
               <Form.Control

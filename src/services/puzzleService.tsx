@@ -116,16 +116,13 @@ export class PuzzleService {
 
   //save a puzzle customWiki
   public static async saveCustomWiki(puzzle: Puzzle): Promise<any> {
-    const response = await fetch(ConfigService.backendUrl+"/register", {
+    console.log("puzzle: ",JSON.stringify(puzzle));
+    const response = await fetch(ConfigService.backendUrl+"/savePuzzle", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        username: "test2",
-        password: "pass",
-        email: "prueba2@prueba.es",
-      }),
+      body: JSON.stringify({puzzle}),
     }).catch((err) => {
       console.log(err);
       return Promise.reject("Error saving custom wiki");

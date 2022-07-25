@@ -11,6 +11,7 @@ import jwt from "jsonwebtoken";
 import { checkToken } from "../config/safeRoutes";
 import ActiveSession from "../models/activeSession";
 import User from "../models/user";
+import Puzzles from "../models/puzzles";
 import { connection } from "../server/database";
 
 // eslint-disable-next-line new-cap
@@ -222,5 +223,27 @@ router.post("/query", (req, res) => {
 router.get("/testme", (_req, res) => {
   res.status(200).json({ success: true, msg: "all good" });
 });
+
+router.post("/savePuzzle", (req, res) => {
+  const { puzzle } = req.body;
+  console.log("puzzle:" + JSON.stringify(puzzle));
+  const puzzleRepository = connection!.getRepository(Puzzles);
+      puzzleRepository.save(
+        puzzle
+      ).then(() => {
+        res.json({
+          success: true,
+          msg: "Puzzle saved successfully",
+        });
+      }
+      ).catch((err) => {
+        res.json({
+          success: false,
+          msg: err.message,
+        });
+      }
+      );
+}
+);
 
 export default router;
