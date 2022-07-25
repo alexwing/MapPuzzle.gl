@@ -2,7 +2,7 @@ import React from "react";
 import Table from "react-bootstrap/Table";
 import { className, setColor } from "../lib/Utils";
 
-export default function Legend(props: any) {
+export default function PieceList(props: any) {
   const { pieces, founds, onPieceSelected, pieceSelected } = props;
 
   return (

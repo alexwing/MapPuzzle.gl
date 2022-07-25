@@ -6,7 +6,7 @@ import Card from "react-bootstrap/Card";
 import Alert from "react-bootstrap/Alert";
 import Accordion from "react-bootstrap/Accordion";
 import Timer from "./Timer";
-import Legend from "./Legend";
+import PieceList from "./PieceList";
 
 class ToolsPanel extends Component<any, any> {
   render() {
@@ -53,7 +53,7 @@ class ToolsPanel extends Component<any, any> {
                 <div
                   style={{ overflowY: "auto", maxHeight: height - 190 + "px" }}
                 >
-                  <Legend pieces={pieces} founds={founds} onPieceSelected={onPieceSelected} pieceSelected={pieceSelected} />
+                  <PieceList pieces={pieces} founds={founds} onPieceSelected={onPieceSelected} pieceSelected={pieceSelected} />
                 </div>
               </Form>
             </Card.Body>
