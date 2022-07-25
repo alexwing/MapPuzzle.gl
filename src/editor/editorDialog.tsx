@@ -7,7 +7,7 @@ import LoadingDialog from "../components/LoadingDialog";
 import { Puzzle } from "../models/PuzzleDb";
 import PieceList from "../components/PieceList";
 import { PieceProps } from "../models/Interfaces";
-import { Form } from "react-bootstrap";
+import EditMap from "./editMap";
 
 function EditorDialog({
   show = false,
@@ -19,14 +19,10 @@ function EditorDialog({
   const [showIn, setShowIn] = useState(false);
   const [error, setError] = useState(false);
   const [pieceSelected, setPieceSelected] = useState(-1);
-  const [puzzleEdited, setPuzzleEdited] = useState({
-    ...puzzleSelected,
-  } as Puzzle);
 
   //on load show modal
   useEffect(() => {
     setShowIn(show);
-    setPuzzleEdited(puzzleSelected);
   }, [show]);
 
   //is showing modal
@@ -85,6 +81,10 @@ function EditorDialog({
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <small>
+            PuzzleId: {puzzleSelected.id} {puzzleSelected.name} |
+            puzzleSelected: {pieceSelected ? pieceSelected : ""}
+          </small>
           <Row>
             <Col xs={4} lg={4} style={{ padding: "0px" }}>
               <div
@@ -98,26 +98,7 @@ function EditorDialog({
                 />
               </div>
             </Col>
-            <Col xs={8} lg={8}>
-              <div>
-                <small>
-                  PuzzleId: {puzzleSelected.id} {puzzleSelected.name} |
-                  puzzleSelected: {pieceSelected ? pieceSelected : ""}
-                </small>
-                <Form>
-                  <Form.Group className="mb-12" controlId="formBasicEmail">
-                    <Form.Label>Puzzle Name</Form.Label>
-                    <Form.Control type="input" placeholder="Enter puzzle name" value={puzzleEdited.name} onChange={(e) => {
-                      setPuzzleEdited({ ...puzzleSelected, name: e.target.value });
-                    }
-                    } />
-                    <Form.Text className="text-muted">
-                      Enter a name for the puzzle.                    
-                    </Form.Text>
-                  </Form.Group>
-                </Form>
-              </div>
-            </Col>
+            <EditMap puzzle={puzzleSelected} />
           </Row>
         </Modal.Body>
         <Modal.Footer>
