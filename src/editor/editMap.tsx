@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { Puzzle } from "../models/PuzzleDb";
+import { PuzzleService } from "../services/puzzleService";
 
 function EditMap({ puzzle = {} as Puzzle }: any) {
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [puzzleEdited, setPuzzleEdited] = useState({
     ...puzzle,
   } as Puzzle);
@@ -15,15 +16,27 @@ function EditMap({ puzzle = {} as Puzzle }: any) {
     } as Puzzle);
   }, [puzzle]);
 
-  const errorMessage = "Save failed";
+  const onSaveHandler = () => {
+    setError("");
+    PuzzleService.saveCustomWiki(puzzleEdited)
+      .then((result) => {
+        if (!result.success) {
+          setError(result.msg);
+        } else {
+          setError("Save Successful");
+        }
+      })
+      .catch((errorMessage) => {
+        setError(errorMessage);
+      });
+  };
 
   return (
     <Col xs={8} lg={8}>
-      <Row>
-        <Col xs={6} lg={6}>
-          {error ? errorMessage : null}
-
-          <Form>
+      <Form>
+        <Row>
+          <Col xs={6} lg={6}>
+            {error !== "" ? error : null}
             <Form.Group className="mb-12" controlId="formname">
               <Form.Label>Puzzle Name</Form.Label>
               <Form.Control
@@ -69,16 +82,69 @@ function EditMap({ puzzle = {} as Puzzle }: any) {
                 }}
               />
             </Form.Group>
+          </Col>
+          <Col xs={6} lg={6}>
+            <Form.Group className="mb-3" controlId="formData">
+              <Form.Label>Puzzle Data</Form.Label>
+              <Form.Control
+                size="sm"
+                type="input"
+                placeholder="Enter puzzle data"
+                value={puzzleEdited.data}
+                onChange={(e) => {
+                  setPuzzleEdited({
+                    ...puzzleEdited,
+                    data: e.target.value,
+                  });
+                }}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formWiki">
+              <Form.Label>Puzzle Wiki</Form.Label>
+              <Form.Control
+                size="sm"
+                type="input"
+                placeholder="Enter puzzle wiki"
+                value={puzzleEdited.wiki}
+                onChange={(e) => {
+                  setPuzzleEdited({
+                    ...puzzleEdited,
+                    wiki: e.target.value,
+                  });
+                }}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formDescription">
+              <Form.Label>Puzzle Description</Form.Label>
+              <Form.Control
+                size="sm"
+                type="input"
+                placeholder="Enter puzzle description"
+                value={puzzleEdited.comment}
+                onChange={(e) => {
+                  setPuzzleEdited({
+                    ...puzzleEdited,
+                    comment: e.target.value,
+                  });
+                }}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} lg={12}>
             <Button
+              style={{ marginTop: "10px" }}
               variant="primary"
               type="button"
-              style={{ marginTop: "10px" }}
+              onClick={onSaveHandler}
             >
               Save
             </Button>
-          </Form>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
+      </Form>
     </Col>
   );
 }
