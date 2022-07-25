@@ -424,6 +424,7 @@ class MapPuzzle extends Component<any, any> {
               show={this.state.showEditor}
               onHide={this.onShowEditorHandler}
               puzzleSelected={this.state.puzzleSelectedData}
+              pieces={this.state.pieces}
             />
           </div>
         )}

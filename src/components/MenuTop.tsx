@@ -8,9 +8,6 @@ import Modal from 'react-bootstrap/Modal';
 import { Link } from 'react-router-dom'
 import Info from './Info';
 import { ConfigService } from '../services/configService';
-import { PuzzleService } from '../services/puzzleService';
-import { CustomWiki } from '../models/PuzzleDb';
-import EditorDialog from '../editor/editorDialog';
 
 
 
@@ -50,16 +47,6 @@ export default class MenuTop extends Component<any, any>  {
         showEditor: false,
       });
     }
-
-    const handleEditor = () => {
-      this.setState({
-        show: false,
-        showInfo: false,
-        showWikiInfo: false,
-        showEditor: true,
-      });
-    }
-
 
     const handleInfo = () => {
       this.setState({
