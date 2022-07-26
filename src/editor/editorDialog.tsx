@@ -8,6 +8,7 @@ import PieceList from "../components/PieceList";
 import { PieceProps } from "../models/Interfaces";
 import EditMap from "./editMap";
 import Puzzles from "../../backend/src/models/puzzles";
+import { Tab, Tabs } from "react-bootstrap";
 
 function EditorDialog({
   show = false,
@@ -36,7 +37,6 @@ function EditorDialog({
     setPieceSelected(val.target.parentNode.id);
   };
 
-
   function handleClose() {
     onHide();
   }
@@ -56,26 +56,46 @@ function EditorDialog({
             {puzzleSelected.name}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body
+          style={{
+            overflowY: "auto",
+            minHeight: "calc(100vh - 250px)",
+          }}
+        >
           <small>
             PuzzleId: {puzzleSelected.id} {puzzleSelected.name} |
             puzzleSelected: {pieceSelected ? pieceSelected : ""}
           </small>
-          <Row>
-            <Col xs={4} lg={4} style={{ padding: "0px" }}>
-              <div
-                style={{ overflowY: "auto", maxHeight: "calc(100vh - 200px)" }}
-              >
-                <PieceList
-                  pieces={pieces}
-                  founds={[]}
-                  onPieceSelected={onPieceSelectedHandler}
-                  pieceSelected={pieceSelected}
-                />
-              </div>
-            </Col>
-            <EditMap puzzle={puzzleSelected} />
-          </Row>
+          <Tabs
+            defaultActiveKey="puzzle"
+            id="uncontrolled-tab-example"
+            className="mb-3"
+          >
+            <Tab eventKey="puzzle" title="Puzzle">
+              <Row>
+                <EditMap puzzle={puzzleSelected} />
+              </Row>
+            </Tab>
+            <Tab eventKey="pieces" title="Pieces">
+              <Row>
+                <Col xs={4} lg={4} style={{ padding: "0px" }}>
+                  <div
+                    style={{
+                      overflowY: "auto",
+                      maxHeight: "calc(100vh - 300px)",
+                    }}
+                  >
+                    <PieceList
+                      pieces={pieces}
+                      founds={[]}
+                      onPieceSelected={onPieceSelectedHandler}
+                      pieceSelected={pieceSelected}
+                    />
+                  </div>
+                </Col>
+              </Row>
+            </Tab>
+          </Tabs>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={handleClose}>Ok</Button>
