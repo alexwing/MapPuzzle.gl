@@ -18,9 +18,10 @@ import WikiInfo from "./components/WikiInfo";
 import { ViewState } from "react-map-gl";
 import LoadingDialog from "./components/LoadingDialog";
 import { PuzzleService } from "./services/puzzleService";
-import { CustomCentroids, CustomWiki, Puzzle } from "./models/PuzzleDb";
+import { CustomCentroids, CustomWiki } from "./models/PuzzleDb";
 import { ConfigService } from "./services/configService";
 import EditorDialog from "./editor/editorDialog";
+import Puzzles from "../backend/src/models/puzzles";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -56,12 +57,12 @@ class MapPuzzle extends Component<any, any> {
   }
   componentDidMount() {
     console.log(ConfigService.cookieDays);
-    PuzzleService.getPuzzles().then((content: Puzzle[]) => {
+    PuzzleService.getPuzzles().then((content: Puzzles[]) => {
       let puzzleSelected = 0;
       this.setState({ content: content });
 
       if (window.location.pathname) {
-        this.state.content.forEach(function (value: Puzzle, index: number) {
+        this.state.content.forEach(function (value: Puzzles, index: number) {
           if (value.url === window.location.search.substring(5)) {
             puzzleSelected = index;
           }
@@ -80,7 +81,7 @@ class MapPuzzle extends Component<any, any> {
   }
   /* load game from db */
   loadGame(puzzleSelected: number) {
-    PuzzleService.getPuzzle(puzzleSelected).then((puzzleData: Puzzle) => {
+    PuzzleService.getPuzzle(puzzleSelected).then((puzzleData: Puzzles) => {
       this.getCustomCentroids(puzzleData.id);
       this.getCustomWikis(puzzleData.id);
       this.setState({

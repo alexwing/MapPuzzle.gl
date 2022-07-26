@@ -1,17 +1,17 @@
 import { query } from "../lib/db/dbFactory";
 import { QueryExecResult, SqlValue } from "sql.js";
-import { CustomCentroids, CustomWiki, Puzzle } from "../models/PuzzleDb";
+import { CustomCentroids, CustomWiki } from "../models/PuzzleDb";
 import { ConfigService } from "./configService";
-//import Puzzles from "../../backend/src/models/puzzles";
+import Puzzles from "../../backend/src/models/puzzles";
 
 export class PuzzleService {
   //get all puzzles
-  public static async getPuzzles(): Promise<Puzzle[]> {
+  public static async getPuzzles(): Promise<Puzzles[]> {
     return query(
       "SELECT p.*, vs.latitude, vs.longitude, vs.zoom  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id ORDER BY p.id"
     )
       .then((result: QueryExecResult[]) => {
-        let puzzles: Puzzle[] = [];
+        let puzzles: Puzzles[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
             puzzles.push(PuzzleService.mapResultToPuzzle(value));
@@ -25,7 +25,7 @@ export class PuzzleService {
       });
   }
   //get a puzzle by id
-  public static getPuzzle(id: number): Promise<Puzzle> {
+  public static getPuzzle(id: number): Promise<Puzzles> {
     return query(
       `SELECT p.*, vs.latitude, vs.longitude, vs.zoom  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id WHERE p.id = ${id}`
     )
@@ -33,16 +33,16 @@ export class PuzzleService {
         if (result.length > 0) {
           return PuzzleService.mapResultToPuzzle(result[0].values[0]);
         }
-        return Promise.reject("Puzzle not found");
+        return Promise.reject("Puzzles not found");
       })
       .catch((err) => {
         console.log(err);
-        return Promise.reject("Puzzle not found");
+        return Promise.reject("Puzzles not found");
       });
   }
 
-  //map the result to a Puzzle object
-  public static mapResultToPuzzle(result: SqlValue[]): Puzzle {
+  //map the result to a Puzzles object
+  public static mapResultToPuzzle(result: SqlValue[]): Puzzles {
     return {
       id: result[0],
       comment: result[1],
@@ -56,7 +56,7 @@ export class PuzzleService {
         longitude: result[8],
         zoom: result[9],
       },
-    } as Puzzle;
+    } as Puzzles;
   }
 
   //get custom centroids by puzzle id
@@ -116,7 +116,7 @@ export class PuzzleService {
   }
 
   //save a puzzle
-  public static async savePuzzle(puzzle: Puzzle): Promise<any> {
+  public static async savePuzzle(puzzle: Puzzles): Promise<any> {
    // console.log("puzzle: ",JSON.stringify(puzzle));
     const response = await fetch(ConfigService.backendUrl+"/savePuzzle", {
       method: "POST",

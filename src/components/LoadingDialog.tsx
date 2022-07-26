@@ -10,21 +10,20 @@ function LoadingDialog({ show = false, onHide, delay = 0 }: any) {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setShowIn(show)
-    }, delay)
+      setShowIn(show);
+    }, delay);
 
-    return () => clearTimeout(timeout)
-
-  }, [show,delay])
+    return () => clearTimeout(timeout);
+  }, [show, delay]);
 
   return (
     <React.Fragment>
       <Modal
         className="progress-dialog"
         show={showIn}
+        centered
         size="xl"
         aria-labelledby="contained-modal-title-vcenter"
-        centered
         onHide={onHide}
       >
         <Modal.Header>

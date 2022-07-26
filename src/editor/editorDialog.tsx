@@ -4,15 +4,15 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import LoadingDialog from "../components/LoadingDialog";
-import { Puzzle } from "../models/PuzzleDb";
 import PieceList from "../components/PieceList";
 import { PieceProps } from "../models/Interfaces";
 import EditMap from "./editMap";
+import Puzzles from "../../backend/src/models/puzzles";
 
 function EditorDialog({
   show = false,
   onHide,
-  puzzleSelected = {} as Puzzle,
+  puzzleSelected = {} as Puzzles,
   pieces = new Array<PieceProps>(),
 }: any) {
   const [loading, setLoading] = useState(false);

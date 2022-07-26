@@ -4,7 +4,7 @@ import { ConfigService } from "../../services/configService";
 //function to execute a query, return a Promise with the result
 export async function query(sql: string): Promise<QueryExecResult[]> {
     //get query from post data to execute in sqlite and return json object
-  const response = await fetch(ConfigService.backendUrl + "query", {
+  const response = await fetch(ConfigService.backendUrl + "/query", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
