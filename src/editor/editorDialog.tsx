@@ -9,6 +9,8 @@ import { PieceProps } from "../models/Interfaces";
 import EditMap from "./editMap";
 import Puzzles from "../../backend/src/models/puzzles";
 import { Tab, Tabs } from "react-bootstrap";
+import { PuzzleService } from "../services/puzzleService";
+import EditPiece from "./editPiece";
 
 function EditorDialog({
   show = false,
@@ -19,6 +21,7 @@ function EditorDialog({
   const [loading, setLoading] = useState(false);
   const [showIn, setShowIn] = useState(false);
   const [pieceSelected, setPieceSelected] = useState(-1);
+  const [pieceSelectedData, setPieceSelectedData] = useState({} as PieceProps);
 
   //on load show modal
   useEffect(() => {
@@ -33,8 +36,16 @@ function EditorDialog({
   }, [showIn, puzzleSelected]);
 
   /* Piece is selected on list */
-  const onPieceSelectedHandler = (val: any) => {
-    setPieceSelected(val.target.parentNode.id);
+  const onPieceSelectedHandler = async (val: any) => {
+    let piece = pieces.find(
+      (p: PieceProps) =>
+        p.properties.cartodb_id === parseInt(val.target.parentNode.id)
+    );
+    if (piece) {
+      piece = await PuzzleService.updatePieceProps(piece);
+      setPieceSelectedData(piece);
+      setPieceSelected(val.target.parentNode.id);
+    }
   };
 
   function handleClose() {
@@ -92,6 +103,9 @@ function EditorDialog({
                       pieceSelected={pieceSelected}
                     />
                   </div>
+                </Col>
+                <Col xs={8} lg={8} >
+                  <EditPiece piece={pieceSelectedData} />
                 </Col>
               </Row>
             </Tab>

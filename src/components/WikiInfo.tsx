@@ -35,7 +35,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
 
   //is showing modal
   useEffect(() => {
-    if (showIn) {
+    if (showIn && url !== "") {
       setLoading(true);
       getWikiInfo(url)
         .then((wikiInfo: WikiInfoPiece) => {
@@ -66,7 +66,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
           setLoading(false);
         });
     }
-  }, [showIn]);
+  }, [showIn, url]);
 
   const langName = (piece: WikiInfoLang) => {
     if (piece.autonym === "") {

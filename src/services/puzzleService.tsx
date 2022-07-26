@@ -4,6 +4,7 @@ import { ConfigService } from "./configService";
 import Puzzles from "../../backend/src/models/puzzles";
 import CustomCentroids from "../../backend/src/models/customCentroids";
 import CustomWiki from "../../backend/src/models/customWiki";
+import { PieceProps } from "../models/Interfaces";
 
 export class PuzzleService {
   //get all puzzles
@@ -77,6 +78,30 @@ export class PuzzleService {
         return Promise.resolve([]);
       });
   }
+  //get custom centroids by puzzle id and cartodb_id
+  public static async getCustomCentroid(
+    id: number,
+    cartodb_id: number
+  ): Promise<CustomCentroids> {
+    try {
+      const result = await query(
+        `SELECT * FROM custom_centroids WHERE id = ${id} AND cartodb_id = ${cartodb_id}`
+      );
+      if (result.length > 0 && result[0].values.length > 0) {
+        return {
+          id: parseInt(result[0].values[0].toString()),
+          cartodb_id: parseInt(result[0].values[1].toString()),
+          left: parseFloat(result[0].values[2].toString()),
+          top: parseFloat(result[0].values[3].toString()),
+        } as CustomCentroids;
+      }
+      return {} as CustomCentroids;
+    } catch (err) {
+      console.log(err);
+      return {} as CustomCentroids;
+    }
+  }
+
   //map the result to a CustomCentroids object
   public static mapResultToCustomCentroids(
     result: SqlValue[]
@@ -89,22 +114,45 @@ export class PuzzleService {
     } as CustomCentroids;
   }
   //get custom wikis by puzzle id
-  public static getCustomWikis(id: number): Promise<CustomWiki[]> {
-    return query(`SELECT * FROM custom_wiki WHERE id = ${id}`)
-      .then((result: QueryExecResult[]) => {
-        let wikis: CustomWiki[] = [];
-        result.forEach((row) => {
-          row.values.forEach((value) => {
-            wikis.push(PuzzleService.mapResultToCustomWiki(value));
-          });
+  public static async getCustomWikis(id: number): Promise<CustomWiki[]> {
+    try {
+      const result = await query(`SELECT * FROM custom_wiki WHERE id = ${id}`);
+      let wikis: CustomWiki[] = [];
+      result.forEach((row) => {
+        row.values.forEach((value) => {
+          wikis.push(PuzzleService.mapResultToCustomWiki(value));
         });
-        return wikis;
-      })
-      .catch((err) => {
-        console.log(err);
-        return Promise.resolve([]);
       });
+      return wikis;
+    } catch (err) {
+      console.log(err);
+      return Promise.resolve([]);
+    }
   }
+  //get custom wiki by puzzle id and cartodb_id
+  public static async getCustomWiki(
+    id: number,
+    cartodb_id: number
+  ): Promise<CustomWiki> {
+    try {
+      const result = await query(
+        `SELECT * FROM custom_wiki WHERE id = ${id} AND cartodb_id = ${cartodb_id}`
+      );
+      if (result.length > 0 && result[0].values.length > 0) {
+        console.log(JSON.stringify(result[0]));
+        return {
+          id: parseInt(result[0].values[0].toString()),
+          cartodb_id: parseInt(result[0].values[1].toString()),
+          wiki: result[0].values[2].toString(),
+        } as CustomWiki;
+      }
+      return {} as CustomWiki;
+    } catch (err) {
+      console.log(err);
+      return {} as CustomWiki;
+    }
+  }
+
   //map the result to a CustomWiki object
   public static mapResultToCustomWiki(result: SqlValue[]): CustomWiki {
     return {
@@ -114,15 +162,34 @@ export class PuzzleService {
     } as CustomWiki;
   }
 
+  //update pieceProps with wiki info and centroids
+  public static async updatePieceProps(piece: PieceProps): Promise<PieceProps> {
+    const wikiInfo = await this.getCustomWiki(
+      piece.id ? piece.id : -1,
+      piece.properties.cartodb_id
+    );
+    if (wikiInfo) {
+      piece.customWiki = wikiInfo;
+    }
+    const customCentroid = await this.getCustomCentroid(
+      piece.id ? piece.id : -1,
+      piece.properties.cartodb_id
+    );
+    if (customCentroid) {
+      piece.customCentroid = customCentroid;
+    }
+    return piece;
+  }
+
   //save a puzzle
   public static async savePuzzle(puzzle: Puzzles): Promise<any> {
-   // console.log("puzzle: ",JSON.stringify(puzzle));
-    const response = await fetch(ConfigService.backendUrl+"/savePuzzle", {
+    // console.log("puzzle: ",JSON.stringify(puzzle));
+    const response = await fetch(ConfigService.backendUrl + "/savePuzzle", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({puzzle}),
+      body: JSON.stringify({ puzzle }),
     }).catch((err) => {
       console.log(err);
       return Promise.reject("Error saving puzzle");
