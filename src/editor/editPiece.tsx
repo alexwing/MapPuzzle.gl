@@ -11,15 +11,11 @@ function EditPiece({ piece = {} as PieceProps }: any) {
     type: "danger",
   } as AlertModel);
   const [showAlert, setShowAlert] = useState(false);
-  const [PieceEdited, setPieceEdited] = useState({
-    ...piece,
-  } as PieceProps);
+  const [PieceEdited, setPieceEdited] = useState(piece);
 
   //oninit
   useEffect(() => {
-    setPieceEdited({
-      ...piece,
-    } as PieceProps);
+    setPieceEdited(piece);
   }, [piece]);
 
   const clearAlert = () => {
