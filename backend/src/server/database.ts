@@ -1,33 +1,45 @@
-import sqlite3 from 'sqlite3';
+import sqlite3 from "sqlite3";
 /* eslint-disable import/no-mutable-exports */
-import { Connection, ConnectionOptions, createConnection } from 'typeorm';
+import { Connection, ConnectionOptions, createConnection } from "typeorm";
 
-import ActiveSession from '../models/activeSession';
-import User from '../models/user';
-import Puzzles from '../models/puzzles';
+import ActiveSession from "../models/activeSession";
+import User from "../models/user";
+import Puzzles from "../models/puzzles";
+import Countries from "../models/countries";
+import CustomCentroids from "../models/customCentroids";
+import CustomWiki from "../models/customWiki";
 
 if (!process.env.SQLITE_PATH) {
-  throw new Error('SQLITE_PATH environment variable is not set.');
+  throw new Error("SQLITE_PATH environment variable is not set.");
 }
 
 const options: ConnectionOptions = {
-  type: 'sqlite',
+  type: "sqlite",
   database: process.env.SQLITE_PATH,
-  entities: [User, ActiveSession, Puzzles],
+  entities: [
+    User,
+    ActiveSession,
+    Puzzles,
+    Countries,
+    CustomCentroids,
+    CustomWiki,
+  ],
   logging: true,
 };
 
-export let connection : Connection | undefined;
+export let connection: Connection | undefined;
 
 export const connect = async (): Promise<Connection | undefined> => {
   try {
     const conn = await createConnection(options);
     connection = conn;
-    console.log(`Database connection success. Connection name: '${conn.name}' Database: '${conn.options.database}'`);
+    console.log(
+      `Database connection success. Connection name: '${conn.name}' Database: '${conn.options.database}'`
+    );
   } catch (err) {
     console.log(err);
   }
   return undefined;
 };
 
-export const PrepareDB = () => new sqlite3.Database(':memory:');
+export const PrepareDB = () => new sqlite3.Database(":memory:");

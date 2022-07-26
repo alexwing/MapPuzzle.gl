@@ -1,8 +1,9 @@
 import { query } from "../lib/db/dbFactory";
 import { QueryExecResult, SqlValue } from "sql.js";
-import { CustomCentroids, CustomWiki } from "../models/PuzzleDb";
 import { ConfigService } from "./configService";
 import Puzzles from "../../backend/src/models/puzzles";
+import CustomCentroids from "../../backend/src/models/customCentroids";
+import CustomWiki from "../../backend/src/models/customWiki";
 
 export class PuzzleService {
   //get all puzzles
@@ -83,9 +84,8 @@ export class PuzzleService {
     return {
       id: result[0],
       cartodb_id: result[1],
-      name: result[2],
-      left: result[3],
-      top: result[4],
+      left: result[2],
+      top: result[3],
     } as CustomCentroids;
   }
   //get custom wikis by puzzle id
@@ -110,8 +110,7 @@ export class PuzzleService {
     return {
       id: result[0],
       cartodb_id: result[1],
-      name: result[2],
-      wiki: result[3],
+      wiki: result[2],
     } as CustomWiki;
   }
 

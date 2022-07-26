@@ -18,10 +18,11 @@ import WikiInfo from "./components/WikiInfo";
 import { ViewState } from "react-map-gl";
 import LoadingDialog from "./components/LoadingDialog";
 import { PuzzleService } from "./services/puzzleService";
-import { CustomCentroids, CustomWiki } from "./models/PuzzleDb";
 import { ConfigService } from "./services/configService";
 import EditorDialog from "./editor/editorDialog";
 import Puzzles from "../backend/src/models/puzzles";
+import CustomCentroids from "../backend/src/models/customCentroids";
+import CustomWiki from "../backend/src/models/customWiki";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {

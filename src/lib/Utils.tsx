@@ -1,7 +1,7 @@
 import GameTime from "../lib/GameTime";
 import React from "react";
 import { ViewState } from "react-map-gl";
-import { CustomWiki } from "../models/PuzzleDb";
+import CustomWiki from "../../backend/src/models/customWiki";
 export const colorScale = function (x: any) {
   const COLOR_SCALE = [
     // negative
