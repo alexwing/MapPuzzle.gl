@@ -17,7 +17,6 @@ function EditorDialog({
 }: any) {
   const [loading, setLoading] = useState(false);
   const [showIn, setShowIn] = useState(false);
-  const [error, setError] = useState(false);
   const [pieceSelected, setPieceSelected] = useState(-1);
 
   //on load show modal
@@ -37,35 +36,12 @@ function EditorDialog({
     setPieceSelected(val.target.parentNode.id);
   };
 
-  const errorMessage = (
-    <Modal
-      show={showIn}
-      onHide={handleClose}
-      size="sm"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header className="bg-danger">
-        <Modal.Title
-          id="contained-modal-title-vcenter"
-          className="modal-title-error"
-        >
-          {puzzleSelected}
-        </Modal.Title>
-        <Button variant="danger" onClick={handleClose}>
-          <i className="close-icon"></i>
-        </Button>
-      </Modal.Header>
-      <Modal.Body className="bg-warning"></Modal.Body>
-    </Modal>
-  );
 
   function handleClose() {
     onHide();
   }
 
   if (loading) return <LoadingDialog show={loading} delay={1000} />;
-  if (error) return errorMessage;
   return (
     <React.Fragment>
       <Modal

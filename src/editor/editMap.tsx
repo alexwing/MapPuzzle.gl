@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Alert, Button, Col, Form, Row } from "react-bootstrap";
+import {  Button, Col, Form, Row } from "react-bootstrap";
 import Puzzles from "../../backend/src/models/puzzles";
+import AlertMessage from "../components/AlertMessage";
+import { AlertModel } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
 
 function EditMap({ puzzle = {} as Puzzles }: any) {
-  const [error, setError] = useState("");
+  const [alert, setAlert] = useState({
+    title: "",
+    message: "",
+    type: "danger",
+  } as AlertModel);
+  const [showAlert, setShowAlert] = useState(false);
   const [puzzleEdited, setPuzzleEdited] = useState({
     ...puzzle,
   } as Puzzles);
@@ -16,27 +23,40 @@ function EditMap({ puzzle = {} as Puzzles }: any) {
     } as Puzzles);
   }, [puzzle]);
 
-  const onSaveHandler = () => {
-    setError("");
-    PuzzleService.savePuzzle(puzzleEdited)
-      .then((result) => {
-        setError(result.msg);
-      })
-      .catch((errorMessage) => {
-        setError(errorMessage);
-      });
+  const clearAlert = () => {
+    setAlert({
+      title: "",
+      message: "",
+      type: "danger",
+    } as AlertModel);
+    setShowAlert(false);
   };
 
+  const onSaveHandler = () => {
+    clearAlert();
+    PuzzleService.savePuzzle(puzzleEdited)
+      .then((result) => {
+        setAlert({
+          title: "Success",
+          message: result.msg,
+          type: "success",
+        } as AlertModel);
+        setShowAlert(true);
+      })
+      .catch((errorMessage) => {
+        setAlert({
+          title: "Error",
+          message: errorMessage,
+          type: "danger",
+        } as AlertModel);
+        setShowAlert(true);
+        setAlert(errorMessage);
+      });
+  };
   return (
     <Col xs={8} lg={8}>
       <Form>
-        <Row>
-          <Col xs={12} lg={12}>
-            <Alert variant="warning">
-              <Alert.Heading>{error !== "" ? error : null}</Alert.Heading>
-            </Alert>
-          </Col>
-        </Row>
+        <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
         <Row>
           <Col xs={6} lg={6}>
             <Form.Group className="mb-12" controlId="formname">

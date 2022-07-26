@@ -19,3 +19,9 @@ export interface WikiInfoLang{
   autonym: string;
 }
 
+export interface AlertModel {
+  title: string;
+  message: string;
+  type:  "danger" | "success" | "warning";
+}
+

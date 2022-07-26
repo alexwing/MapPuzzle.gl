@@ -5,11 +5,12 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import "./WikiInfo.css";
 import { changeLanguage, getWikiInfo } from "../services/wikiService";
-import { WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
+import { AlertModel, WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
 import { Nav, NavDropdown } from "react-bootstrap";
 import LoadingDialog from "./LoadingDialog";
 import { getCookie, setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
+import AlertMessage from "./AlertMessage";
 
 function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   const [pieceInfo, setPieceInfo] = useState({
@@ -20,7 +21,12 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
 
   const [loading, setLoading] = useState(false);
   const [showIn, setShowIn] = useState(false);
-  const [error, setError] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alert, setAlert] = useState({
+    title: "",
+    message: "",
+    type: "danger",
+  } as AlertModel);
 
   //on load show modal
   useEffect(() => {
@@ -33,11 +39,23 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
       setLoading(true);
       getWikiInfo(url)
         .then((wikiInfo: WikiInfoPiece) => {
-          setError(wikiInfo.title === "Not found data on Wikipedia");
+          if (wikiInfo.title === "Not found data on Wikipedia") {
+            setShowAlert(true);
+            setAlert({
+              title: "Not found data on Wikipedia",
+              message: wikiInfo.title,
+              type: "danger",
+            } as AlertModel);
+          }
           setPieceInfo(wikiInfo);
         })
         .catch((errorRecived: any) => {
-          setError(true);
+          setShowAlert(true);
+          setAlert({
+            title: "Not found data on Wikipedia",
+            message: errorRecived.message,
+            type: "danger",
+          } as AlertModel);
           setPieceInfo({
             title: "Not found data on Wikipedia",
             contents: [errorRecived.message],
@@ -48,7 +66,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
           setLoading(false);
         });
     }
-  }, [showIn, url]);
+  }, [showIn]);
 
   const langName = (piece: WikiInfoLang) => {
     if (piece.autonym === "") {
@@ -96,40 +114,6 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
     </Nav>
   );
 
-  const errorMessage = (
-    <Modal
-      show={showIn}
-      onHide={handleClose}
-      size="sm"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header className="bg-danger">
-        <Modal.Title
-          id="contained-modal-title-vcenter"
-          className="modal-title-error"
-        >
-          {pieceInfo.title}
-        </Modal.Title>
-        <Button variant="danger" onClick={handleClose}>
-          <i className="close-icon"></i>
-        </Button>
-      </Modal.Header>
-      <Modal.Body className="bg-warning">
-        <Row>
-          <Col>
-            <div>
-              <p>{pieceInfo.contents[0]}</p>
-              <small>
-                Piece: {id} Url: {url}
-              </small>
-            </div>
-          </Col>
-        </Row>
-      </Modal.Body>
-    </Modal>
-  );
-
   function onSelectLang(e: any) {
     const lang = e.target.id;
     changeLanguage(pieceInfo, lang)
@@ -140,7 +124,12 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
         setPieceInfo(newPieceInfo);
       })
       .catch((errorRecived: any) => {
-        setError(true);
+        setShowAlert(true);
+        setAlert({
+          title: "Not found data on Wikipedia",
+          message: errorRecived.message,
+          type: "danger",
+        } as AlertModel);
         setPieceInfo({
           title: "Not found data on Wikipedia",
           contents: [errorRecived.message],
@@ -150,6 +139,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   }
 
   function handleClose() {
+    clearAlert();
     onHide();
   }
   const wikiTitle = () => {
@@ -167,10 +157,19 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
     }
   };
 
+  const clearAlert = () => {
+    setAlert({
+      title: "",
+      message: "",
+      type: "danger",
+    } as AlertModel);
+    setShowAlert(false);
+  };
+
   if (loading) return <LoadingDialog show={loading} delay={1000} />;
-  if (error) return errorMessage;
   return (
     <React.Fragment>
+     <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
       <Modal
         show={showIn}
         size="xl"
