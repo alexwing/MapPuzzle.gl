@@ -40,8 +40,8 @@ function EditPiece({ piece = {} as PieceProps }: any) {
       ...PieceEdited,
       customCentroid: {
         ...PieceEdited.customCentroid,
-        top: isNaN(parseFloat(top)) ? 0 : parseFloat(top),
-        left: isNaN(parseFloat(left)) ? 0 : parseFloat(left),
+        top: isNaN(parseInt(top)) ? 0 : parseInt(top),
+        left: isNaN(parseInt(left)) ? 0 : parseInt(left),
       } as CustomCentroids,
     });
   };
@@ -94,33 +94,79 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                 </Button>
               </InputGroup>
             </Form.Group>
-            <Form.Group className="mb-3 w-50" controlId="formLeft">
-              <Form.Label>Offset Left</Form.Label>
-              <Form.Control
-                size="sm"
-                type="input"
-                className=""            
-                placeholder="Enter offset left"
-                value={PieceEdited.customCentroid?.left}
-                step="0.1"
-                onChange={(e) => {
-                  NumericOnly(e);
-                  setLeft(e.target.value);
-                }}
-              />
-            </Form.Group>
             <Form.Group className="mb-3 w-50" controlId="formTop">
               <Form.Label>Offset Top</Form.Label>
-              <Form.Control
-                size="sm"
-                type="input"
-                placeholder="Enter offset top"
-                value={PieceEdited.customCentroid?.top}
-                onChange={(e) => {
-                  NumericOnly(e);
-                  setTop(e.target.value);
-                }}
-              />
+              <InputGroup>
+                <Button
+                  size="sm"
+                  variant="outline-secondary"
+                  id="button-add"
+                  onClick={() => {
+                    setTop(parseInt(top) - 1 + "");
+                  }}
+                >
+                  -
+                </Button>
+                <Form.Control
+                  size="sm"
+                  type="input"
+                  className=""
+                  placeholder="Enter offset top"
+                  value={top}
+                  step="0.1"
+                  onChange={(e) => {
+                    NumericOnly(e);
+                    setTop(e.target.value);
+                  }}
+                />
+                <Button
+                  size="sm"
+                  variant="outline-secondary"
+                  id="button-minus"
+                  onClick={() => {
+                    setTop(parseInt(top) + 1 + "");
+                  }}
+                >
+                  +
+                </Button>
+              </InputGroup>
+            </Form.Group>
+            <Form.Group className="mb-3 w-50" controlId="formLeft">
+              <Form.Label>Offset Left</Form.Label>
+              <InputGroup>
+                <Button
+                  size="sm"
+                  variant="outline-secondary"
+                  id="button-add"
+                  onClick={() => {
+                    setLeft(parseInt(left) - 1 + "");
+                  }}
+                >
+                  -
+                </Button>
+                <Form.Control
+                  size="sm"
+                  type="input"
+                  className=""
+                  placeholder="Enter offset left"
+                  value={left}
+                  step="1"
+                  onChange={(e) => {
+                    NumericOnly(e);
+                    setLeft(e.target.value);
+                  }}
+                />
+                <Button
+                  size="sm"
+                  variant="outline-secondary"
+                  id="button-minus"
+                  onClick={() => {
+                    setLeft(parseInt(left) + 1 + "");
+                  }}
+                >
+                  +
+                </Button>
+              </InputGroup>
             </Form.Group>
           </Col>
         </Row>

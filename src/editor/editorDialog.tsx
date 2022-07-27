@@ -72,12 +72,9 @@ function EditorDialog({
           style={{
             overflowY: "auto",
             minHeight: "calc(100vh - 250px)",
+            padding: "18px",
           }}
         >
-          <small>
-            PuzzleId: {puzzleSelected.id} {puzzleSelected.name} |
-            puzzleSelected: {pieceSelected ? pieceSelected : ""}
-          </small>
           <Tabs
             defaultActiveKey="pieces"
             id="uncontrolled-tab-example"
@@ -91,21 +88,21 @@ function EditorDialog({
             <Tab eventKey="pieces" title="Pieces">
               <Row>
                 <Col xs={4} lg={4} style={{ padding: "0px" }}>
-                  <div
-                    style={{
-                      overflowY: "auto",
-                      maxHeight: "calc(100vh - 300px)",
-                    }}
-                  >
-                    <PieceList
-                      pieces={pieces}
-                      founds={[]}
-                      onPieceSelected={onPieceSelectedHandler}
-                      pieceSelected={pieceSelected}
-                    />
-                  </div>
+                    <div
+                      style={{
+                        overflowY: "auto",
+                        maxHeight: "calc(100vh - 300px)",
+                      }}
+                    >
+                      <PieceList
+                        pieces={pieces}
+                        founds={[]}
+                        onPieceSelected={onPieceSelectedHandler}
+                        pieceSelected={pieceSelected}
+                      />
+                    </div>
                 </Col>
-                <Col xs={8} lg={8} >
+                <Col xs={8} lg={8}>
                   <EditPiece piece={pieceSelectedData} />
                 </Col>
               </Row>
