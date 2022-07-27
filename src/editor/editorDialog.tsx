@@ -79,7 +79,7 @@ function EditorDialog({
             puzzleSelected: {pieceSelected ? pieceSelected : ""}
           </small>
           <Tabs
-            defaultActiveKey="puzzle"
+            defaultActiveKey="pieces"
             id="uncontrolled-tab-example"
             className="mb-3"
           >

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
+import CustomCentroids from "../../backend/src/models/customCentroids";
 import CustomWiki from "../../backend/src/models/customWiki";
 import AlertMessage from "../components/AlertMessage";
 import { AlertModel, PieceProps } from "../models/Interfaces";
@@ -39,7 +40,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
         <Row>
           <Col xs={6} lg={6}>
             <Form.Group className="mb-3" controlId="formWiki">
-              <Form.Label>Puzzles Wiki</Form.Label>
+              <Form.Label>Piece Wiki</Form.Label>
               <Form.Control
                 size="sm"
                 type="input"
@@ -49,14 +50,54 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   setPieceEdited({
                     ...PieceEdited,
                     customWiki: {
-                      id: piece.id,
-                      cartodb_id: piece.properties.cartodb_id,
+                      ...PieceEdited.customWiki,
                       wiki: e.target.value,
                     } as CustomWiki,
                   });
                 }}
               />
             </Form.Group>
+            <Form.Group className="mb-3" controlId="formLeft">
+              <Form.Label>Offset Left</Form.Label>
+              <Form.Control
+                size="sm"
+                type="input"
+                placeholder="Enter offset left"
+                value={PieceEdited.customCentroid?.left}
+                onChange={(e) => {
+                  setPieceEdited({
+                    ...PieceEdited,
+                    customCentroid: {
+                      ...PieceEdited.customCentroid,
+                      left: e.target.value,
+                    } as CustomCentroids,
+                  });
+                }
+                }
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formTop">
+              <Form.Label>Offset Top</Form.Label>
+              <Form.Control
+                size="sm"
+                type="input"
+                placeholder="Enter offset top"
+                value={PieceEdited.customCentroid?.top}
+                onChange={(e) => {
+                  setPieceEdited({
+                    ...PieceEdited,
+                    customCentroid: {
+                      ...PieceEdited.customCentroid,
+                      top: e.target.value,
+                    } as CustomCentroids,
+                  });
+                }
+                }
+              />
+            </Form.Group>
+
+
+                  
           </Col>
           <Col xs={6} lg={6}></Col>
         </Row>
