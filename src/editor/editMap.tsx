@@ -123,25 +123,10 @@ function EditMap({ puzzle = {} as Puzzles }: any) {
             </Form.Group>
             <Form.Group className="mb-3" controlId="formWiki">
               <Form.Label>Puzzles Wiki</Form.Label>
-              <Form.Control
-                size="sm"
-                type="input"
-                placeholder="Enter puzzle wiki"
-                value={puzzleEdited.wiki}
-                onChange={(e) => {
-                  setPuzzleEdited({
-                    ...puzzleEdited,
-                    wiki: e.target.value,
-                  });
-                }}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formDescription">
-              <Form.Label>Puzzles Description</Form.Label>
-              <InputGroup className="mb-3">
+              <InputGroup >
                 <Form.Control
                   type="input"
+                  size="sm"
                   placeholder="Enter puzzle wiki"
                   value={puzzleEdited.wiki}
                   onChange={(e) => {
@@ -151,13 +136,29 @@ function EditMap({ puzzle = {} as Puzzles }: any) {
                     });
                   }}
                 />
-                <Button variant="outline-secondary" id="link" onClick={() => {
+                <Button  size="sm" variant="outline-secondary" id="link" onClick={() => {
                   window.open("https://en.wikipedia.org/wiki/"+puzzleEdited.wiki, "_blank", "noopener,noreferrer");
                 }
                 }>
                   Link
                 </Button>
               </InputGroup>
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formDescription">
+              <Form.Label>Puzzles Description</Form.Label>
+              <Form.Control
+                size="sm"
+                type="input"
+                placeholder="Enter puzzle description"
+                value={puzzleEdited.comment}
+                onChange={(e) => {
+                  setPuzzleEdited({
+                    ...puzzleEdited,
+                    comment: e.target.value,
+                  });
+                }}
+              />
             </Form.Group>
           </Col>
         </Row>

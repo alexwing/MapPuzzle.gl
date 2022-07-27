@@ -45,6 +45,19 @@ function EditPiece({ piece = {} as PieceProps }: any) {
       } as CustomCentroids,
     });
   };
+
+  const wikiLink = () => {
+    const link =
+      PieceEdited.customWiki?.wiki === ""
+        ? PieceEdited.properties.name
+        : PieceEdited.customWiki?.wiki;
+    window.open(
+      `https://en.wikipedia.org/wiki/${link}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
   return !PieceEdited.id ? null : (
     <Col xs={12} lg={12}>
       <Form autoComplete="off">
@@ -57,7 +70,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
           <Col xs={12} lg={12}>
             <Form.Group className="mb-3" controlId="formWiki">
               <Form.Label>Piece Wiki</Form.Label>
-              <InputGroup className="mb-3">
+              <InputGroup>
                 <Form.Control
                   type="input"
                   placeholder="Enter puzzle wiki"
@@ -72,19 +85,21 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                     });
                   }}
                 />
-                <Button variant="outline-secondary" id="link" onClick={() => {
-                  window.open("https://en.wikipedia.org/wiki/"+PieceEdited.customWiki?.wiki, "_blank", "noopener,noreferrer");
-                }
-                }>
+                <Button
+                  variant="outline-secondary"
+                  id="link"
+                  onClick={wikiLink}
+                >
                   Link
                 </Button>
               </InputGroup>
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formLeft">
+            <Form.Group className="mb-3 w-50" controlId="formLeft">
               <Form.Label>Offset Left</Form.Label>
               <Form.Control
                 size="sm"
                 type="input"
+                className=""            
                 placeholder="Enter offset left"
                 value={PieceEdited.customCentroid?.left}
                 step="0.1"
@@ -94,7 +109,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                 }}
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formTop">
+            <Form.Group className="mb-3 w-50" controlId="formTop">
               <Form.Label>Offset Top</Form.Label>
               <Form.Control
                 size="sm"
