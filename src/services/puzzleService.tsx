@@ -83,22 +83,27 @@ export class PuzzleService {
     id: number,
     cartodb_id: number
   ): Promise<CustomCentroids> {
+    let customCentroid: CustomCentroids = {
+      id: id,
+      cartodb_id: cartodb_id,
+      left: 0,
+      top: 0,
+    };
     try {
       const result = await query(
         `SELECT * FROM custom_centroids WHERE id = ${id} AND cartodb_id = ${cartodb_id}`
       );
-      if (result.length > 0 && result[0].values.length > 0) {
-        return {
-          id: parseInt(result[0].values[0].toString()),
-          cartodb_id: parseInt(result[0].values[1].toString()),
-          left: parseFloat(result[0].values[2].toString()),
-          top: parseFloat(result[0].values[3].toString()),
-        } as CustomCentroids;
+      if (result.length > 0) {
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            customCentroid = PuzzleService.mapResultToCustomCentroids(value);
+          });
+        });
       }
-      return {} as CustomCentroids;
+      return customCentroid;
     } catch (err) {
       console.log(err);
-      return {} as CustomCentroids;
+      return customCentroid;
     }
   }
 
@@ -134,22 +139,27 @@ export class PuzzleService {
     id: number,
     cartodb_id: number
   ): Promise<CustomWiki> {
+    let customWiki: CustomWiki = {
+      id: id,
+      cartodb_id: cartodb_id,
+      wiki: "",
+    };
     try {
       const result = await query(
         `SELECT * FROM custom_wiki WHERE id = ${id} AND cartodb_id = ${cartodb_id}`
       );
-      if (result.length > 0 && result[0].values.length > 0) {
-        console.log(JSON.stringify(result[0]));
-        return {
-          id: parseInt(result[0].values[0].toString()),
-          cartodb_id: parseInt(result[0].values[1].toString()),
-          wiki: result[0].values[2].toString(),
-        } as CustomWiki;
+
+      if (result.length > 0) {
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            customWiki = PuzzleService.mapResultToCustomWiki(value);
+          });
+        });
       }
-      return {} as CustomWiki;
+      return customWiki;
     } catch (err) {
       console.log(err);
-      return {} as CustomWiki;
+      return customWiki;
     }
   }
 
@@ -183,7 +193,6 @@ export class PuzzleService {
 
   //save a puzzle
   public static async savePuzzle(puzzle: Puzzles): Promise<any> {
-    // console.log("puzzle: ",JSON.stringify(puzzle));
     const response = await fetch(ConfigService.backendUrl + "/savePuzzle", {
       method: "POST",
       headers: {

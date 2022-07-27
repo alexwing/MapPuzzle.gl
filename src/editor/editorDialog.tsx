@@ -42,6 +42,7 @@ function EditorDialog({
         p.properties.cartodb_id === parseInt(val.target.parentNode.id)
     );
     if (piece) {
+      piece.id = puzzleSelected.id;
       piece = await PuzzleService.updatePieceProps(piece);
       setPieceSelectedData(piece);
       setPieceSelected(val.target.parentNode.id);
