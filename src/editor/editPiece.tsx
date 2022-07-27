@@ -19,6 +19,8 @@ function EditPiece({ piece = {} as PieceProps }: any) {
   //oninit
   useEffect(() => {
     setPieceEdited(piece);
+    setTop(piece.customCentroid.top)
+    setLeft(piece.customCentroid.left)  
   }, [piece]);
 
   const clearAlert = () => {
