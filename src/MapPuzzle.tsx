@@ -30,7 +30,7 @@ class MapPuzzle extends Component<any, any> {
     this.state = {
       puzzles: null,
       data: null,
-      puzzleSelected: 0,
+      puzzleSelected: 1,
       puzzleSelectedData: null,
       puzzleCustomCentroids: null,
       puzzleCustomWiki: null,
@@ -59,13 +59,13 @@ class MapPuzzle extends Component<any, any> {
   componentDidMount() {
     console.log(ConfigService.cookieDays);
     PuzzleService.getPuzzles().then((content: Puzzles[]) => {
-      let puzzleSelected = 0;
+      let puzzleSelected = 1;
       this.setState({ content: content });
 
       if (window.location.pathname) {
         this.state.content.forEach(function (value: Puzzles, index: number) {
           if (value.url === window.location.search.substring(5)) {
-            puzzleSelected = index;
+            puzzleSelected = index+1;
           }
         });
         if (!puzzleSelected) {
