@@ -1,4 +1,6 @@
 import bcrypt from "bcrypt";
+
+import { PieceProps } from "../../../src/models/Interfaces";
 /*
 
 Copyright (c) 2019 - present AppSeed.us
@@ -13,6 +15,8 @@ import ActiveSession from "../models/activeSession";
 import User from "../models/user";
 import Puzzles from "../models/puzzles";
 import { connection } from "../server/database";
+import CustomWiki from "../models/customWiki";
+import CustomCentroids from "../models/customCentroids";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -211,13 +215,10 @@ router.post("/query", (req, res) => {
       .catch((err) => {
         res.json(err);
       });
-  }
-  else {
+  } else {
     res.json({ success: false, msg: "No query provided" });
   }
-}
-);
-
+});
 
 // Used for tests (nothing functional)
 router.get("/testme", (_req, res) => {
@@ -228,22 +229,59 @@ router.post("/savePuzzle", (req, res) => {
   const { puzzle } = req.body;
   console.log("puzzle:" + JSON.stringify(puzzle));
   const puzzleRepository = connection!.getRepository(Puzzles);
-      puzzleRepository.save(
-        puzzle
-      ).then(() => {
-        res.json({
-          success: true,
-          msg: "Puzzle saved successfully",
-        });
-      }
-      ).catch((err) => {
+  puzzleRepository
+    .save(puzzle)
+    .then(() => {
+      res.json({
+        success: true,
+        msg: "Puzzle saved successfully",
+      });
+    })
+    .catch((err) => {
+      res.json({
+        success: false,
+        msg: err.message,
+      });
+    });
+});
+
+router.post("/savePiece", (req, res) => {
+  const { piece } = req.body;
+  console.log("piece:" + JSON.stringify(piece));
+  const pieceProps: PieceProps = piece as PieceProps;
+  //save custom wiki
+  if (pieceProps.customWiki) {
+    const customWikiRepository = connection!.getRepository(CustomWiki);
+    customWikiRepository
+      .save(pieceProps.customWiki)
+      .then(() => {
+        //save custom centroids
+        if (pieceProps.customCentroid) {
+          const customCentroidRepository =
+            connection!.getRepository(CustomCentroids);
+          customCentroidRepository
+            .save(pieceProps.customCentroid)
+            .then(() => {
+              res.json({
+                success: true,
+                msg: "Piece saved successfully",
+              });
+            })
+            .catch((err) => {
+              res.json({
+                success: false,
+                msg: err.message,
+              });
+            });
+        }
+      })
+      .catch((err) => {
         res.json({
           success: false,
           msg: err.message,
         });
-      }
-      );
-}
-);
+      });
+  }
+});
 
 export default router;

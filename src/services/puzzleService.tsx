@@ -205,4 +205,18 @@ export class PuzzleService {
     });
     return response.json();
   }
+  //save piece 
+  public static async savePiece(piece: PieceProps): Promise<any> {
+    const response = await fetch(ConfigService.backendUrl + "/savePiece", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ piece }),
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error saving piece");
+    });
+    return response.json();
+  }
 }

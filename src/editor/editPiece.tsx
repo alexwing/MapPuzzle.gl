@@ -4,6 +4,7 @@ import CustomCentroids from "../../backend/src/models/customCentroids";
 import CustomWiki from "../../backend/src/models/customWiki";
 import AlertMessage from "../components/AlertMessage";
 import { AlertModel, PieceProps } from "../models/Interfaces";
+import { PuzzleService } from "../services/puzzleService";
 
 function EditPiece({ piece = {} as PieceProps }: any) {
   const [alert, setAlert] = useState({
@@ -44,6 +45,24 @@ function EditPiece({ piece = {} as PieceProps }: any) {
         left: isNaN(parseInt(left)) ? 0 : parseInt(left),
       } as CustomCentroids,
     });
+    PuzzleService.savePiece(PieceEdited)
+      .then((result) => {
+        setAlert({
+          title: "Success",
+          message: result.msg,
+          type: "success",
+        } as AlertModel);
+        setShowAlert(true);
+      })
+      .catch((errorMessage) => {
+        setAlert({
+          title: "Error",
+          message: errorMessage,
+          type: "danger",
+        } as AlertModel);
+        setShowAlert(true);
+        setAlert(errorMessage);
+      });
   };
 
   const wikiLink = () => {
