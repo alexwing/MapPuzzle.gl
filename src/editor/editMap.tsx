@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {  Button, Col, Form, Row } from "react-bootstrap";
+import {  Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Puzzles from "../../backend/src/models/puzzles";
 import AlertMessage from "../components/AlertMessage";
 import { AlertModel } from "../models/Interfaces";
@@ -54,7 +54,7 @@ function EditMap({ puzzle = {} as Puzzles }: any) {
       });
   };
   return (
-    <Col xs={8} lg={8}>
+    <Col xs={12} lg={12}>
       <Form>
         <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
         <Row>
@@ -139,18 +139,25 @@ function EditMap({ puzzle = {} as Puzzles }: any) {
 
             <Form.Group className="mb-3" controlId="formDescription">
               <Form.Label>Puzzles Description</Form.Label>
-              <Form.Control
-                size="sm"
-                type="input"
-                placeholder="Enter puzzle description"
-                value={puzzleEdited.comment}
-                onChange={(e) => {
-                  setPuzzleEdited({
-                    ...puzzleEdited,
-                    comment: e.target.value,
-                  });
-                }}
-              />
+              <InputGroup className="mb-3">
+                <Form.Control
+                  type="input"
+                  placeholder="Enter puzzle wiki"
+                  value={puzzleEdited.wiki}
+                  onChange={(e) => {
+                    setPuzzleEdited({
+                      ...puzzleEdited,
+                      wiki: e.target.value,
+                    });
+                  }}
+                />
+                <Button variant="outline-secondary" id="link" onClick={() => {
+                  window.open("https://en.wikipedia.org/wiki/"+puzzleEdited.wiki, "_blank", "noopener,noreferrer");
+                }
+                }>
+                  Link
+                </Button>
+              </InputGroup>
             </Form.Group>
           </Col>
         </Row>
