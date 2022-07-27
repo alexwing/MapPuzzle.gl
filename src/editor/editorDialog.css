@@ -1,0 +1,17 @@
+.modal-backdrop.show {
+  opacity: 0.6;
+}
+.modal-header {
+  background-color: goldenrod;  
+}
+.modal-body {
+  padding: 0.5rem 1rem;
+  overflow-y: auto;
+  min-height: calc(100vh - 250px);
+}
+.modal-body p {
+  margin-bottom: 0px;
+}
+
+
+

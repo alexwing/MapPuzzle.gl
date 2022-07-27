@@ -11,6 +11,7 @@ import Puzzles from "../../backend/src/models/puzzles";
 import { Tab, Tabs } from "react-bootstrap";
 import { PuzzleService } from "../services/puzzleService";
 import EditPiece from "./editPiece";
+import "./editorDialog.css";
 
 function EditorDialog({
   show = false,
@@ -68,13 +69,7 @@ function EditorDialog({
             {puzzleSelected.name}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body
-          style={{
-            overflowY: "auto",
-            minHeight: "calc(100vh - 250px)",
-            padding: "18px",
-          }}
-        >
+        <Modal.Body>
           <Tabs
             defaultActiveKey="pieces"
             id="uncontrolled-tab-example"
