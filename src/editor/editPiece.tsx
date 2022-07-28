@@ -41,15 +41,17 @@ function EditPiece({ piece = {} as PieceProps }: any) {
     else e.target.value = preval.substring(0, preval.length - 1);
   };
   const onSaveHandler = () => {
-    setPieceEdited({
+    const pieceSend = {
       ...PieceEdited,
       customCentroid: {
         ...PieceEdited.customCentroid,
         top: isNaN(parseInt(top)) ? 0 : parseInt(top),
         left: isNaN(parseInt(left)) ? 0 : parseInt(left),
       } as CustomCentroids,
-    });
-    PuzzleService.savePiece(PieceEdited)
+    } as PieceProps;
+    setPieceEdited(pieceSend);
+    
+    PuzzleService.savePiece(pieceSend)
       .then((result) => {
         setAlert({
           title: "Success",

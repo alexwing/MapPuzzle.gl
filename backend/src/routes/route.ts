@@ -246,9 +246,9 @@ router.post("/savePuzzle", (req, res) => {
 });
 
 router.post("/savePiece", async (req, res) => {
-  const { piece } = req.body;
-  console.log("piece:" + JSON.stringify(piece));
-  const pieceProps: PieceProps = piece as PieceProps;
+  const { pieceToSend } = req.body;
+  console.log("piece:" + JSON.stringify(pieceToSend));
+  const pieceProps: PieceProps = pieceToSend as PieceProps;
 
   saveCustomWiki(pieceProps).then(() => {
     res.json({
@@ -267,8 +267,8 @@ router.post("/savePiece", async (req, res) => {
 //save custom wiki
 async function saveCustomWiki(pieceProps: PieceProps): Promise<any> {
   if (pieceProps.customWiki) {
+    const customWikiRepository = connection!.getRepository(CustomWiki);
     if (pieceProps.customWiki.wiki !== "") {
-      const customWikiRepository = connection!.getRepository(CustomWiki);
       customWikiRepository
         .save(pieceProps.customWiki)
         .then(() => {
@@ -279,18 +279,32 @@ async function saveCustomWiki(pieceProps: PieceProps): Promise<any> {
           console.log("Error saving custom wiki");
           return Promise.reject(err);
         });
+    } else {
+      //delete custom centroid for this id and cartodb_id
+      customWikiRepository
+        .delete({
+          cartodb_id: pieceProps.properties.cartodb_id,
+          id: pieceProps.id,
+        })
+        .then(() => {
+          console.log("Custom wiki deleted successfully");
+          return Promise.resolve();
+        })
+        .catch((err) => {
+          console.log("Error wiki custom centroid");
+          return Promise.reject(err);
+        });
     }
   }
   return Promise.resolve();
 }
 async function saveCustomCentroids(pieceProps: PieceProps): Promise<any> {
   if (pieceProps.customCentroid) {
+    const customCentroidRepository = connection!.getRepository(CustomCentroids);
     if (
       pieceProps.customCentroid.left !== 0 ||
       pieceProps.customCentroid.top !== 0
     ) {
-      const customCentroidRepository =
-        connection!.getRepository(CustomCentroids);
       customCentroidRepository
         .save(pieceProps.customCentroid)
         .then(() => {
@@ -299,6 +313,21 @@ async function saveCustomCentroids(pieceProps: PieceProps): Promise<any> {
         })
         .catch((err) => {
           console.log("Error saving custom centroid");
+          return Promise.reject(err);
+        });
+    } else {
+      //delete custom centroid for this id and cartodb_id
+      customCentroidRepository
+        .delete({
+          cartodb_id: pieceProps.properties.cartodb_id,
+          id: pieceProps.id,
+        })
+        .then(() => {
+          console.log("Custom centroid deleted successfully");
+          return Promise.resolve();
+        })
+        .catch((err) => {
+          console.log("Error deleting custom centroid");
           return Promise.reject(err);
         });
     }

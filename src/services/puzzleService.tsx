@@ -207,12 +207,24 @@ export class PuzzleService {
   }
   //save piece 
   public static async savePiece(piece: PieceProps): Promise<any> {
+    // remove geometry from piece, to not send it to the backend
+    const pieceToSend = { 
+      id : piece.id,
+      properties: {
+        cartodb_id: piece.properties.cartodb_id,
+        name: piece.properties.name,
+        box: piece.properties.box,
+      },
+      customWiki: piece.customWiki,
+      customCentroid: piece.customCentroid,
+    } as PieceProps;
+
     const response = await fetch(ConfigService.backendUrl + "/savePiece", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ piece }),
+      body: JSON.stringify({ pieceToSend }),
     }).catch((err) => {
       console.log(err);
       return Promise.reject("Error saving piece");
