@@ -64,6 +64,7 @@ function EditorDialog({
         centered
         onHide={handleClose}
         className="editor-dialog"
+        backdropClassName="editor-dialog-backdrop"
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">

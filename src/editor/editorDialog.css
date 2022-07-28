@@ -1,8 +1,5 @@
-.editor-dialog .modal-backdrop.show {
-  opacity: 0.6;
-}
 .editor-dialog .modal-header {
-  background-color: goldenrod;  
+  background-color: goldenrod;
 }
 .editor-dialog .modal-body {
   padding: 0.5rem 1rem;
@@ -12,6 +9,6 @@
 .editor-dialog .modal-body p {
   margin-bottom: 0px;
 }
-
-
-
+.editor-dialog-backdrop.modal-backdrop.show {
+  opacity: 0.8;
+}

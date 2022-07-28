@@ -5,7 +5,6 @@ import cors from 'cors';
 import express from 'express';
 import passport from 'passport';
 
-import initPassport from '../config/passport';
 import routes from '../routes/route';
 import { connect } from './database';
 
@@ -14,7 +13,6 @@ const server = express();
 server.use(compression());
 
 // Passport Config
-initPassport(passport);
 server.use(passport.initialize());
 
 // Connect to sqlite

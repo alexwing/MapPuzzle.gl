@@ -11,6 +11,7 @@ function AlertMessage({
     type: "danger",
   } as AlertModel,
   onHide,
+  autoClose = 1000,
 }: any) {
   const [showIn, setShowIn] = useState(false);
   const [alert, setAlert] = useState(alertMessage);
@@ -18,7 +19,12 @@ function AlertMessage({
   useEffect(() => {
     setShowIn(show);
     setAlert(alertMessage);
-  }, [show, alertMessage]);
+    if (autoClose > 0) {
+      setTimeout(() => {
+        setShowIn(false);
+      }, autoClose);
+    }
+  }, [show, alertMessage, autoClose]);
 
   function handleClose() {
     onHide();
@@ -30,7 +36,7 @@ function AlertMessage({
       onHide={handleClose}
       size="sm"
       aria-labelledby="contained-modal-title-vcenter"
-      centered    
+      centered
       animation={false}
     >
       <Modal.Header className={"bg-" + alert.type}>

@@ -3,7 +3,6 @@ import sqlite3 from "sqlite3";
 import { Connection, ConnectionOptions, createConnection } from "typeorm";
 
 import ActiveSession from "../models/activeSession";
-import User from "../models/user";
 import Puzzles from "../models/puzzles";
 import Countries from "../models/countries";
 import CustomCentroids from "../models/customCentroids";
@@ -17,7 +16,6 @@ const options: ConnectionOptions = {
   type: "sqlite",
   database: process.env.SQLITE_PATH,
   entities: [
-    User,
     ActiveSession,
     Puzzles,
     Countries,
