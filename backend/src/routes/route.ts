@@ -245,43 +245,65 @@ router.post("/savePuzzle", (req, res) => {
     });
 });
 
-router.post("/savePiece", (req, res) => {
+router.post("/savePiece", async (req, res) => {
   const { piece } = req.body;
   console.log("piece:" + JSON.stringify(piece));
   const pieceProps: PieceProps = piece as PieceProps;
-  //save custom wiki
-  if (pieceProps.customWiki) {
-    const customWikiRepository = connection!.getRepository(CustomWiki);
-    customWikiRepository
-      .save(pieceProps.customWiki)
-      .then(() => {
-        //save custom centroids
-        if (pieceProps.customCentroid) {
-          const customCentroidRepository =
-            connection!.getRepository(CustomCentroids);
-          customCentroidRepository
-            .save(pieceProps.customCentroid)
-            .then(() => {
-              res.json({
-                success: true,
-                msg: "Piece saved successfully",
-              });
-            })
-            .catch((err) => {
-              res.json({
-                success: false,
-                msg: err.message,
-              });
-            });
-        }
-      })
-      .catch((err) => {
-        res.json({
-          success: false,
-          msg: err.message,
-        });
-      });
-  }
+
+  saveCustomWiki(pieceProps).then(() => {
+    res.json({
+      success: true,
+      msg: "Piece saved successfully",
+    });
+  });
+  saveCustomCentroids(pieceProps).then(() => {
+    res.json({
+      success: true,
+      msg: "Piece saved successfully",
+    });
+  });
 });
+
+//save custom wiki
+async function saveCustomWiki(pieceProps: PieceProps): Promise<any> {
+  if (pieceProps.customWiki) {
+    if (pieceProps.customWiki.wiki !== "") {
+      const customWikiRepository = connection!.getRepository(CustomWiki);
+      customWikiRepository
+        .save(pieceProps.customWiki)
+        .then(() => {
+          console.log("Custom wiki saved successfully");
+          return Promise.resolve();
+        })
+        .catch((err) => {
+          console.log("Error saving custom wiki");
+          return Promise.reject(err);
+        });
+    }
+  }
+  return Promise.resolve();
+}
+async function saveCustomCentroids(pieceProps: PieceProps): Promise<any> {
+  if (pieceProps.customCentroid) {
+    if (
+      pieceProps.customCentroid.left !== 0 ||
+      pieceProps.customCentroid.top !== 0
+    ) {
+      const customCentroidRepository =
+        connection!.getRepository(CustomCentroids);
+      customCentroidRepository
+        .save(pieceProps.customCentroid)
+        .then(() => {
+          console.log("Custom centroid saved successfully");
+          return Promise.resolve();
+        })
+        .catch((err) => {
+          console.log("Error saving custom centroid");
+          return Promise.reject(err);
+        });
+    }
+  }
+  return Promise.resolve();
+}
 
 export default router;

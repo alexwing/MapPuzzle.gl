@@ -25,6 +25,48 @@ This db sqlite file is a plain sqlite database, with a table called "puzzles", c
 You can download it at:
 https://github.com/alexwing/MapPuzzle.gl
 
+
+## Build
+
+The project Front-end is in main directory, and the project Back-end is in the directory Backend.
+
+Each project has its own Package.json with the configuration of the dependencies.
+
+### Backend
+
+The backend is built with Node.js, it is a server that receives the requests from the client and sends the response.
+
+This backend use "typeorm" and sqlite3 databases, the entities are defined in the "models" folder, and the endpoints are defined in the "routes" folder.
+
+The backend use Sqlite3 as a database, so it is necessary to install it. the database is allocated in the "db" folder.
+
+```json
+"dev": "ts-node-dev src/index.ts",
+```
+Use dev to run the server in development mode.
+
+### Front
+
+The fontend is built with React.
+
+```json
+"dev": "env-cmd -f ./environments/.env.development react-scripts start",
+```
+Run the frontend in development mode, with backend running in the background.
+
+```json
+"pro": "env-cmd -f ./environments/.env react-scripts start",
+```
+Run "pro" frontend in development mode, and connect to local sqlite3 database, without backend server. the database is allocated in the "public" folder.
+
+The sqlite3 database has a extension called "sqlite3.png", this file is a plain sqlite database, with a table called "puzzles", containing the information of the puzzle maps and the the parameters of the application.
+
+The "png" extension is used to fix the problem of the sqlite3 database, with server gzip compression, the sqlite3 database is not readable by the browser.
+```json
+"build":  "env-cmd -f ./environments/.env react-scripts build",
+```
+Build the app with "build" with pro configuration.
+
 ### Deck.gl
 
 Deck.gl is a free library, developed by Vis.gl and has an open source API and well explained documentation. It is a geographic data view library, an alternative to Mapbox and other libraries. It is based on WebGL and is in charge of map rendering. It also has a development API that allows for the generation of interactive maps; Deck.gl is in charge of generating the map layers, the user interface and the control of user mobility.
@@ -32,7 +74,7 @@ Deck.gl is a free library, developed by Vis.gl and has an open source API and we
 
 React is a web interface development framework, created by Facebook and based on JAVS components. React’s components are modularized, this means that they are functional and independent entities.
 
-### Query Example for Postgis shape table export to Geojson
+## Query Example for Postgis shape table export to Geojson
 
 This query get the geojson necessary to render the map.
 
@@ -77,4 +119,12 @@ FROM (
   
 ```
   
-  
+## Credits
+
+This project was developed by Alejandro Aranda, and is a part of the [MapPuzzle.gl](http://mappuzzle.xyz/) project.
+
+## License
+
+This project is licensed under the MIT license.
+
+

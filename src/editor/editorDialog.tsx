@@ -63,6 +63,7 @@ function EditorDialog({
         aria-labelledby="contained-modal-title-vcenter"
         centered
         onHide={handleClose}
+        className="editor-dialog"
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
