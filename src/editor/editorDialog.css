@@ -12,3 +12,9 @@
 .editor-dialog-backdrop.modal-backdrop.show {
   opacity: 0.8;
 }
+.piece-preview {
+  border: 1px solid #ccc;
+  display: inline-flex;
+  padding: 10px;
+  margin: 10px;
+}

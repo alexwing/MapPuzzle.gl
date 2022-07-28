@@ -19,7 +19,6 @@ function AnimatedCursor({
   }
   return (
     <CursorCore
-      color={color}
       clickScale={clickScale}
       selected={selected}
       centroid={centroid}

@@ -86,8 +86,8 @@ export class PuzzleService {
     let customCentroid: CustomCentroids = {
       id: id,
       cartodb_id: cartodb_id,
-      left: 0,
-      top: 0,
+      left: -50,
+      top: -50,
     };
     try {
       const result = await query(

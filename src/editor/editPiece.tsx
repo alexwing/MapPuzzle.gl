@@ -5,6 +5,7 @@ import CustomWiki from "../../backend/src/models/customWiki";
 import AlertMessage from "../components/AlertMessage";
 import { AlertModel, PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
+import PiecePreview from "./PiecePreview";
 
 function EditPiece({ piece = {} as PieceProps }: any) {
   const [alert, setAlert] = useState({
@@ -14,16 +15,17 @@ function EditPiece({ piece = {} as PieceProps }: any) {
   } as AlertModel);
   const [showAlert, setShowAlert] = useState(false);
   const [PieceEdited, setPieceEdited] = useState(piece);
-  const [top, setTop] = useState("0.0");
-  const [left, setLeft] = useState("0.0");
+  const [top, setTop] = useState("50");
+  const [left, setLeft] = useState("50");
   //oninit
   useEffect(() => {
     setPieceEdited(piece);
-    if (piece.customCentroid){
-      setTop(piece.customCentroid.top)
-      setLeft(piece.customCentroid.left)  
+    if (piece.customCentroid) {
+      setTop(piece.customCentroid.top);
+      setLeft(piece.customCentroid.left);
     }
   }, [piece]);
+  
 
   const clearAlert = () => {
     setAlert({
@@ -40,17 +42,29 @@ function EditPiece({ piece = {} as PieceProps }: any) {
     if (e.target.value === "" || reg.test(e.target.value)) return true;
     else e.target.value = preval.substring(0, preval.length - 1);
   };
-  const onSaveHandler = () => {
-    const pieceSend = {
+
+
+  //set piece send to pieceedited
+  function updatePieceInfo(PieceEdited: PieceProps): PieceProps {
+    return {
       ...PieceEdited,
       customCentroid: {
         ...PieceEdited.customCentroid,
-        top: isNaN(parseInt(top)) ? 0 : parseInt(top),
-        left: isNaN(parseInt(left)) ? 0 : parseInt(left),
+        top: isNaN(parseInt(top)) ? -50 : parseInt(top),
+        left: isNaN(parseInt(left)) ? -50 : parseInt(left),
       } as CustomCentroids,
     } as PieceProps;
+  }
+
+  useEffect(() => {
+    setPieceEdited(updatePieceInfo(PieceEdited));
+  }
+  , [top, left]);
+
+  const onSaveHandler = () => {
+    const pieceSend = updatePieceInfo(PieceEdited);
     setPieceEdited(pieceSend);
-    
+
     PuzzleService.savePiece(pieceSend)
       .then((result) => {
         setAlert({
@@ -119,7 +133,11 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                 </Button>
               </InputGroup>
             </Form.Group>
-            <Form.Group className="mb-3 w-50" controlId="formTop">
+          </Col>
+            </Row>
+        <Row>
+          <Col xs={6} lg={6}>
+            <Form.Group className="mb-3 " controlId="formTop">
               <Form.Label>Offset Top</Form.Label>
               <InputGroup>
                 <Button
@@ -127,7 +145,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   variant="outline-secondary"
                   id="button-add"
                   onClick={() => {
-                    setTop(parseInt(top) - 1 + "");
+                    setTop(parseInt(top) - 5 + "");
                   }}
                 >
                   -
@@ -149,14 +167,14 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   variant="outline-secondary"
                   id="button-minus"
                   onClick={() => {
-                    setTop(parseInt(top) + 1 + "");
+                    setTop(parseInt(top) + 5 + "");
                   }}
                 >
                   +
                 </Button>
               </InputGroup>
             </Form.Group>
-            <Form.Group className="mb-3 w-50" controlId="formLeft">
+            <Form.Group className="mb-3" controlId="formLeft">
               <Form.Label>Offset Left</Form.Label>
               <InputGroup>
                 <Button
@@ -164,7 +182,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   variant="outline-secondary"
                   id="button-add"
                   onClick={() => {
-                    setLeft(parseInt(left) - 1 + "");
+                    setLeft(parseInt(left) - 5 + "");
                   }}
                 >
                   -
@@ -186,13 +204,21 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   variant="outline-secondary"
                   id="button-minus"
                   onClick={() => {
-                    setLeft(parseInt(left) + 1 + "");
+                    setLeft(parseInt(left) + 5 + "");
                   }}
                 >
                   +
                 </Button>
               </InputGroup>
             </Form.Group>
+          </Col>
+
+          <Col xs={6} lg={6}>
+            <PiecePreview
+              selected={PieceEdited}
+              centroid={PieceEdited.customCentroid}
+              zoom={3}
+            />
           </Col>
         </Row>
         <Row>
