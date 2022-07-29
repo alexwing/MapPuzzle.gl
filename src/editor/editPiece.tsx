@@ -56,6 +56,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
 
   useEffect(() => {
     setPieceEdited(updatePieceInfo(PieceEdited));
+  // eslint-disable-next-line
   }, [top, left]);
 
   const onSaveHandler = () => {

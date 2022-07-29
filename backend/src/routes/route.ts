@@ -171,39 +171,52 @@ router.post("/generateTranslation", async (req, res) => {
   if (generateTranslation) {
     const languages: Languages[] = generateTranslation.languages as Languages[];
     const languagesRepository = connection!.getRepository(Languages);
-    languages.forEach((language: Languages) => {
-      languagesRepository.save(language).then(() => {
-        console.log("Custom translation saved successfully");
+    console.log("Aqui llego:" + JSON.stringify(languages));
+    if (languages !== []) {
+      languages.forEach((language: Languages) => {
+        languagesRepository
+          .save(language)
+          .then(() => {
+            console.log("Custom translation saved successfully");
+          })
+          .catch((err: any) => {
+            console.log("Error saving custom translation: " + err.message);
+          });
       });
-    });
+    }
 
     //get all languages actives
     const activeLangs = await languagesRepository.find({
       where: {
-        active: true,
+        active: 1,
       },
     });
 
     const translations: CustomTranslations[] =
       generateTranslation.translations as CustomTranslations[];
-    const customTranslationsRepository =
-      connection!.getRepository(CustomTranslations);
-    translations.forEach((translation: CustomTranslations) => {
-      //if translation lang is active
-      if (activeLangs.find((lang) => lang.lang === translation.lang)) {
-        customTranslationsRepository.save(translation).then(() => {
-          console.log("Custom translation saved successfully");
-        });
-      }
-    });
 
-    return Promise.resolve();
+    if (translations !== []) {
+      const customTranslationsRepository = await connection!.getRepository(
+        CustomTranslations
+      );
+      translations.forEach((translation: CustomTranslations) => {
+        //if translation lang is active
+        if (activeLangs.find((lang) => lang.lang === translation.lang)) {
+          customTranslationsRepository.save(translation).then(() => {
+            console.log("Custom translation saved successfully");
+          });
+        }
+      });
+    }
+    res.json({
+      success: true,
+      msg: "Generate Translation saved successfully",
+    });
   }
   res.json({
     success: true,
-    msg: "generate Translation languages saved successfully",
+    msg: "Generate Translation languages saved successfully",
   });
-  return Promise.resolve();
 });
 
 export default router;

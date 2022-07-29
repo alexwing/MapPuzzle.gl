@@ -10,12 +10,12 @@ function EditMap({ puzzle = {} as Puzzles
 ,  pieces = new Array<PieceProps>()
 }: any) {
   const [loading, setLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const [alert, setAlert] = useState({
     title: "",
     message: "",
     type: "danger",
   } as AlertModel);
-  const [showAlert, setShowAlert] = useState(false);
   const [puzzleEdited, setPuzzleEdited] = useState({
     ...puzzle,
   } as Puzzles);
@@ -40,40 +40,41 @@ function EditMap({ puzzle = {} as Puzzles
     clearAlert();
     PuzzleService.savePuzzle(puzzleEdited)
       .then((result) => {
+        setShowAlert(true);
         setAlert({
           title: "Success",
-          message: result.msg,
+          message: result.message,
           type: "success",
         } as AlertModel);
-        setShowAlert(true);
       })
       .catch((errorMessage) => {
+        setShowAlert(true);
         setAlert({
           title: "Error",
           message: errorMessage,
           type: "danger",
         } as AlertModel);
-        setShowAlert(true);
         setAlert(errorMessage);
       });
   };
 
-  const generateTranslationHandler = () => {
+  const generateTranslationHandler = async () => {
     setLoading(true);
-    PuzzleService.generateTranslation(pieces, puzzle.id)
+    await PuzzleService.generateTranslation(pieces, puzzle.id)
       .then((result:any) => {
+        setLoading(false);
         setAlert({
           title: "Success",
-          message: result.msg,
+          message: "Translation generated successfully",
           type: "success",
         } as AlertModel);
         setShowAlert(true);        
-        setLoading(false);
+        
       }).catch((errorMessage:any) => {
         setLoading(false);
         setAlert({
           title: "Error",
-          message: errorMessage,
+          message: errorMessage.message,
           type: "danger",
         } as AlertModel);
         setShowAlert(true);
@@ -83,8 +84,8 @@ function EditMap({ puzzle = {} as Puzzles
   return (
     <Col xs={12} lg={12}>
       <LoadingDialog show={loading} delay={1000} />
+      <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
       <Form>
-        <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
         <Row>
           <Col xs={6} lg={6}>
             <Form.Group className="mb-12" controlId="formname">

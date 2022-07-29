@@ -46,8 +46,8 @@ export class PuzzleService {
       });
   }
 
-  public static getLanguages(id: number): Promise<Languages[]> {
-    return query(`SELECT DISTINCT l.* from custom_translations ct INNER JOIN languages l ON l.lang = ct.lang WHERE ct.id = ${id} AND l.active = 1 ORDER BY l.langname`)
+  public static getLanguages(): Promise<Languages[]> {
+    return query(`SELECT * FROM languages WHERE active = 1 ORDER BY langname`)
       .then((result: QueryExecResult[]) => {
         let languages: Languages[] = [];
         result.forEach((row) => {
@@ -56,13 +56,30 @@ export class PuzzleService {
           });
         });
         return languages;
-      }
-      )
+      })
       .catch((err) => {
         console.log(err);
         return Promise.resolve([]);
-      }
-      );
+      });
+  }
+
+  public static getLanguagesByPuzzle(id: number): Promise<Languages[]> {
+    return query(
+      `SELECT DISTINCT l.* from custom_translations ct INNER JOIN languages l ON l.lang = ct.lang WHERE ct.id = ${id} AND l.active = 1 ORDER BY l.langname`
+    )
+      .then((result: QueryExecResult[]) => {
+        let languages: Languages[] = [];
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            languages.push(PuzzleService.mapResultToLanguage(value));
+          });
+        });
+        return languages;
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve([]);
+      });
   }
 
   public static mapResultToLanguage(result: SqlValue[]): Languages {
@@ -73,7 +90,6 @@ export class PuzzleService {
       active: result[3],
     } as Languages;
   }
-
 
   //map the result to a Puzzles object
   public static mapResultToPuzzle(result: SqlValue[]): Puzzles {
@@ -270,16 +286,16 @@ export class PuzzleService {
   ): Promise<any> {
     let languages: Languages[] = [];
     let translations: CustomTranslations[] = [];
-    pieces.forEach((piece: PieceProps) => {
+
+    for await (const piece of pieces) {
       piece.id = id;
       //get custom wiki info
       const wiki = piece.customWiki?.wiki
         ? piece.customWiki.wiki
         : piece.properties.name;
       //get wikiService getWikiInfo
-      getWikiInfo(wiki)
+      await getWikiInfo(wiki)
         .then((wikiInfo: WikiInfoPiece) => {
-          console.log(wikiInfo.title);
           wikiInfo.langs.forEach((lang: WikiInfoLang) => {
             //if not exist in languages, add it
             if (!languages.some((l) => l.lang === lang.lang)) {
@@ -302,9 +318,9 @@ export class PuzzleService {
         .catch((err) => {
           console.log(err);
         });
-    });
-//await 5 seconds to wait for the translations to be generated
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+    //await 5 seconds to wait for the translations to be generated
+    //await new Promise((resolve) => setTimeout(resolve, 5000));
     const response = await fetch(
       ConfigService.backendUrl + "/generateTranslation",
       {
@@ -317,9 +333,13 @@ export class PuzzleService {
           translations: translations,
         }),
       }
-    ).catch((err) => {
-      console.log(err);
-      return Promise.reject("Error generating translation");
-    });
+    )
+      .catch((err) => {
+        console.log(err);
+        return Promise.reject("Error generating translation");
+      })
+      .then((res: any) => {
+        return res;
+      });
   }
 }
