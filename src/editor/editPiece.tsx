@@ -25,7 +25,6 @@ function EditPiece({ piece = {} as PieceProps }: any) {
       setLeft(piece.customCentroid.left);
     }
   }, [piece]);
-  
 
   const clearAlert = () => {
     setAlert({
@@ -43,7 +42,6 @@ function EditPiece({ piece = {} as PieceProps }: any) {
     else e.target.value = preval.substring(0, preval.length - 1);
   };
 
-
   //set piece send to pieceedited
   function updatePieceInfo(PieceEdited: PieceProps): PieceProps {
     return {
@@ -58,8 +56,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
 
   useEffect(() => {
     setPieceEdited(updatePieceInfo(PieceEdited));
-  }
-  , [top, left]);
+  }, [top, left]);
 
   const onSaveHandler = () => {
     const pieceSend = updatePieceInfo(PieceEdited);
@@ -134,80 +131,77 @@ function EditPiece({ piece = {} as PieceProps }: any) {
               </InputGroup>
             </Form.Group>
           </Col>
-            </Row>
+        </Row>
         <Row>
           <Col xs={6} lg={6}>
             <Form.Group className="mb-3 " controlId="formTop">
-              <Form.Label>Offset Top</Form.Label>
+              <Form.Label>Offset</Form.Label>
               <InputGroup>
                 <Button
-                  size="sm"
+                  className="btn-cursor"
                   variant="outline-secondary"
                   id="button-add"
                   onClick={() => {
-                    setTop(parseInt(top) - 5 + "");
+                    setTop(parseInt(top) + 5 + "");
                   }}
                 >
-                  -
+                  &uarr;
                 </Button>
                 <Form.Control
-                  size="sm"
+                  hidden={true}
                   type="input"
                   className=""
                   placeholder="Enter offset top"
                   value={top}
-                  step="0.1"
                   onChange={(e) => {
                     NumericOnly(e);
                     setTop(e.target.value);
                   }}
                 />
                 <Button
-                  size="sm"
+                  className="btn-cursor"
                   variant="outline-secondary"
                   id="button-minus"
                   onClick={() => {
-                    setTop(parseInt(top) + 5 + "");
+                    setTop(parseInt(top) - 5 + "");
                   }}
                 >
-                  +
+                  &darr;
                 </Button>
               </InputGroup>
             </Form.Group>
             <Form.Group className="mb-3" controlId="formLeft">
-              <Form.Label>Offset Left</Form.Label>
               <InputGroup>
                 <Button
-                  size="sm"
+                  className="btn-cursor"
                   variant="outline-secondary"
                   id="button-add"
                   onClick={() => {
-                    setLeft(parseInt(left) - 5 + "");
+                    setLeft(parseInt(left) + 5 + "");
                   }}
                 >
-                  -
+                  &larr;
                 </Button>
                 <Form.Control
-                  size="sm"
+                  hidden={true}
                   type="input"
                   className=""
                   placeholder="Enter offset left"
                   value={left}
-                  step="1"
                   onChange={(e) => {
                     NumericOnly(e);
                     setLeft(e.target.value);
                   }}
                 />
                 <Button
-                  size="sm"
+                  className="btn-cursor"
                   variant="outline-secondary"
                   id="button-minus"
                   onClick={() => {
-                    setLeft(parseInt(left) + 5 + "");
+                    setLeft(parseInt(left) - 5 + "");
                   }}
                 >
-                  +
+                  &rarr;
                 </Button>
               </InputGroup>
             </Form.Group>
