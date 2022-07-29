@@ -4,7 +4,10 @@ import { ConfigService } from "./configService";
 import Puzzles from "../../backend/src/models/puzzles";
 import CustomCentroids from "../../backend/src/models/customCentroids";
 import CustomWiki from "../../backend/src/models/customWiki";
-import { PieceProps } from "../models/Interfaces";
+import CustomTranslations from "../../backend/src/models/customTranslations";
+import Languages from "../../backend/src/models/languages";
+import { PieceProps, WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
+import { getWikiInfo } from "./wikiService";
 
 export class PuzzleService {
   //get all puzzles
@@ -42,6 +45,35 @@ export class PuzzleService {
         return Promise.reject("Puzzles not found");
       });
   }
+
+  public static getLanguages(id: number): Promise<Languages[]> {
+    return query(`SELECT DISTINCT l.* from custom_translations ct INNER JOIN languages l ON l.lang = ct.lang WHERE ct.id = ${id} AND l.active = 1 ORDER BY l.langname`)
+      .then((result: QueryExecResult[]) => {
+        let languages: Languages[] = [];
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            languages.push(PuzzleService.mapResultToLanguage(value));
+          });
+        });
+        return languages;
+      }
+      )
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve([]);
+      }
+      );
+  }
+
+  public static mapResultToLanguage(result: SqlValue[]): Languages {
+    return {
+      lang: result[0],
+      langname: result[1],
+      autonym: result[2],
+      active: result[3],
+    } as Languages;
+  }
+
 
   //map the result to a Puzzles object
   public static mapResultToPuzzle(result: SqlValue[]): Puzzles {
@@ -205,11 +237,11 @@ export class PuzzleService {
     });
     return response.json();
   }
-  //save piece 
+  //save piece
   public static async savePiece(piece: PieceProps): Promise<any> {
     // remove geometry from piece, to not send it to the backend
-    const pieceToSend = { 
-      id : piece.id,
+    const pieceToSend = {
+      id: piece.id,
       properties: {
         cartodb_id: piece.properties.cartodb_id,
         name: piece.properties.name,
@@ -230,5 +262,64 @@ export class PuzzleService {
       return Promise.reject("Error saving piece");
     });
     return response.json();
+  }
+  //generate translation for a piece
+  public static async generateTranslation(
+    pieces: PieceProps[],
+    id: number
+  ): Promise<any> {
+    let languages: Languages[] = [];
+    let translations: CustomTranslations[] = [];
+    pieces.forEach((piece: PieceProps) => {
+      piece.id = id;
+      //get custom wiki info
+      const wiki = piece.customWiki?.wiki
+        ? piece.customWiki.wiki
+        : piece.properties.name;
+      //get wikiService getWikiInfo
+      getWikiInfo(wiki)
+        .then((wikiInfo: WikiInfoPiece) => {
+          console.log(wikiInfo.title);
+          wikiInfo.langs.forEach((lang: WikiInfoLang) => {
+            //if not exist in languages, add it
+            if (!languages.some((l) => l.lang === lang.lang)) {
+              languages.push({
+                lang: lang.lang,
+                langname: lang.langname,
+                autonym: lang.autonym,
+              } as Languages);
+            }
+            if (piece.id) {
+              translations.push({
+                id: piece.id,
+                cartodb_id: piece.properties.cartodb_id,
+                lang: lang.lang,
+                translation: lang.id,
+              } as CustomTranslations);
+            }
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+//await 5 seconds to wait for the translations to be generated
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    const response = await fetch(
+      ConfigService.backendUrl + "/generateTranslation",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          languages: languages,
+          translations: translations,
+        }),
+      }
+    ).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error generating translation");
+    });
   }
 }

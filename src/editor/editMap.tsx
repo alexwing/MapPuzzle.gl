@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import {  Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Puzzles from "../../backend/src/models/puzzles";
 import AlertMessage from "../components/AlertMessage";
-import { AlertModel } from "../models/Interfaces";
+import LoadingDialog from "../components/LoadingDialog";
+import { AlertModel, PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
 
-function EditMap({ puzzle = {} as Puzzles }: any) {
+function EditMap({ puzzle = {} as Puzzles 
+,  pieces = new Array<PieceProps>()
+}: any) {
+  const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({
     title: "",
     message: "",
@@ -53,8 +57,32 @@ function EditMap({ puzzle = {} as Puzzles }: any) {
         setAlert(errorMessage);
       });
   };
+
+  const generateTranslationHandler = () => {
+    setLoading(true);
+    PuzzleService.generateTranslation(pieces, puzzle.id)
+      .then((result:any) => {
+        setAlert({
+          title: "Success",
+          message: result.msg,
+          type: "success",
+        } as AlertModel);
+        setShowAlert(true);        
+        setLoading(false);
+      }).catch((errorMessage:any) => {
+        setLoading(false);
+        setAlert({
+          title: "Error",
+          message: errorMessage,
+          type: "danger",
+        } as AlertModel);
+        setShowAlert(true);
+      }
+    );
+  }
   return (
     <Col xs={12} lg={12}>
+      <LoadingDialog show={loading} delay={1000} />
       <Form>
         <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
         <Row>
@@ -165,13 +193,21 @@ function EditMap({ puzzle = {} as Puzzles }: any) {
         <Row>
           <Col xs={12} lg={12}>
             <Button
-              style={{ marginTop: "10px" }}
+              style={{ marginTop: "10px", marginRight: "10px" }}
               variant="primary"
               type="button"
               onClick={onSaveHandler}
             >
               Save
             </Button>
+            <Button
+                    style={{ marginTop: "10px" }}
+                    variant="primary"
+                    type="button"
+                    onClick={generateTranslationHandler}
+                  >
+                    Generate translations from Wikipedia
+                  </Button>            
           </Col>
         </Row>
       </Form>

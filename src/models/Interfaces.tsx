@@ -16,14 +16,14 @@ export interface PieceProps {
 export interface WikiInfoPiece {
   title: string;
   contents: string[];
-  langs: string[];
+  langs: WikiInfoLang[];  
 }
 
 export interface WikiInfoLang{
-  id: string;
-  lang: string;
-  langname: string;
-  autonym: string;
+  id: string; //lang piece name
+  lang: string; // lang code
+  langname: string; // lang name
+  autonym: string; // lang name english
 }
 
 export interface AlertModel {

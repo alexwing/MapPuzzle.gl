@@ -79,30 +79,30 @@ function EditorDialog({
           >
             <Tab eventKey="puzzle" title="Puzzle">
               <Row>
-                <EditMap puzzle={puzzleSelected} />
+                <EditMap puzzle={puzzleSelected} pieces={pieces} />
               </Row>
             </Tab>
             <Tab eventKey="pieces" title="Pieces">
               <Row>
                 <Col xs={4} lg={4} style={{ padding: "0px" }}>
-                    <div
-                      style={{
-                        overflowY: "auto",
-                        maxHeight: "calc(100vh - 300px)",
-                      }}
-                    >
-                      <PieceList
-                        pieces={pieces}
-                        founds={[]}
-                        onPieceSelected={onPieceSelectedHandler}
-                        pieceSelected={pieceSelected}
-                      />
-                    </div>
+                  <div
+                    style={{
+                      overflowY: "auto",
+                      maxHeight: "calc(100vh - 300px)",
+                    }}
+                  >
+                    <PieceList
+                      pieces={pieces}
+                      founds={[]}
+                      onPieceSelected={onPieceSelectedHandler}
+                      pieceSelected={pieceSelected}
+                    />
+                  </div>
                 </Col>
                 <Col xs={8} lg={8}>
                   <EditPiece piece={pieceSelectedData} />
                 </Col>
-              </Row>
+              </Row>              
             </Tab>
           </Tabs>
         </Modal.Body>

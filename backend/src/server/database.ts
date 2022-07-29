@@ -7,6 +7,8 @@ import Puzzles from "../models/puzzles";
 import Countries from "../models/countries";
 import CustomCentroids from "../models/customCentroids";
 import CustomWiki from "../models/customWiki";
+import CustomTranslations from "../models/customTranslations";
+import Languages from "../models/languages";
 
 if (!process.env.SQLITE_PATH) {
   throw new Error("SQLITE_PATH environment variable is not set.");
@@ -21,6 +23,8 @@ const options: ConnectionOptions = {
     Countries,
     CustomCentroids,
     CustomWiki,
+    CustomTranslations,
+    Languages
   ],
   logging: true,
 };

@@ -84,4 +84,8 @@ function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
     return 0;
   });
   return langs;
+
+  
 }
+
+

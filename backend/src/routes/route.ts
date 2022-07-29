@@ -1,14 +1,18 @@
-
 import { PieceProps } from "../../../src/models/Interfaces";
 import express from "express";
 import Puzzles from "../models/puzzles";
 import { connection } from "../server/database";
 import CustomWiki from "../models/customWiki";
 import CustomCentroids from "../models/customCentroids";
+import CustomTranslations from "../models/customTranslations";
+import Languages from "../models/languages";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
 // Route: <HOST>:PORT/api/users/
+
+express.json({ limit: "125mb" });
+express.urlencoded({ limit: "125mb", extended: true });
 
 //return in get response custom query from the database
 router.get("/query", (req, res) => {
@@ -159,5 +163,47 @@ async function saveCustomCentroids(pieceProps: PieceProps): Promise<any> {
   }
   return Promise.resolve();
 }
+
+router.post("/generateTranslation", async (req, res) => {
+  const generateTranslation = req.body;
+  console.log("body:" + JSON.stringify(req.body));
+  console.log("generateTranslation:" + JSON.stringify(generateTranslation));
+  if (generateTranslation) {
+    const languages: Languages[] = generateTranslation.languages as Languages[];
+    const languagesRepository = connection!.getRepository(Languages);
+    languages.forEach((language: Languages) => {
+      languagesRepository.save(language).then(() => {
+        console.log("Custom translation saved successfully");
+      });
+    });
+
+    //get all languages actives
+    const activeLangs = await languagesRepository.find({
+      where: {
+        active: true,
+      },
+    });
+
+    const translations: CustomTranslations[] =
+      generateTranslation.translations as CustomTranslations[];
+    const customTranslationsRepository =
+      connection!.getRepository(CustomTranslations);
+    translations.forEach((translation: CustomTranslations) => {
+      //if translation lang is active
+      if (activeLangs.find((lang) => lang.lang === translation.lang)) {
+        customTranslationsRepository.save(translation).then(() => {
+          console.log("Custom translation saved successfully");
+        });
+      }
+    });
+
+    return Promise.resolve();
+  }
+  res.json({
+    success: true,
+    msg: "generate Translation languages saved successfully",
+  });
+  return Promise.resolve();
+});
 
 export default router;
