@@ -64,7 +64,8 @@ function EditMap({
   const generateTranslationHandler = async () => {
     setLoading(true);
     const piecesToSend: PieceProps[] = [];
-    for await (const piece of pieces) {
+    for (const piece of pieces) {
+      piece.id = puzzleEdited.id;
       piecesToSend.push(await PuzzleService.updatePieceProps(piece));
     }
     await PuzzleService.generateTranslation(piecesToSend, puzzle.id)
