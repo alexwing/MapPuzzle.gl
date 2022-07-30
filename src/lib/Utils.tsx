@@ -262,6 +262,21 @@ export function getWiki(
     );
   }
 }
+export function getWikiSimple(
+  name: string,
+  custom_wiki: string
+) {
+  let wiki_url: string = "";
+  if (custom_wiki) {
+    wiki_url = custom_wiki;
+  }
+  if (wiki_url !== "") {
+    return wiki_url;
+  } else {
+    return cleanNameToWiki(name);
+  }
+}
+
 
 export function copyViewState(
   viewStateOrigin: ViewState,

@@ -8,6 +8,7 @@ import CustomTranslations from "../../backend/src/models/customTranslations";
 import Languages from "../../backend/src/models/languages";
 import { PieceProps, WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
 import { getWikiInfo } from "./wikiService";
+import {  getWikiSimple } from "../lib/Utils";
 
 export class PuzzleService {
   //get all puzzles
@@ -290,12 +291,11 @@ export class PuzzleService {
     for await (const piece of pieces) {
       piece.id = id;
       //get custom wiki info
-      const wiki = piece.customWiki?.wiki
-        ? piece.customWiki.wiki
-        : piece.properties.name;
+      const wiki = getWikiSimple (piece.properties.name, piece.customWiki ? piece.customWiki.wiki : "");
       //get wikiService getWikiInfo
       await getWikiInfo(wiki)
         .then((wikiInfo: WikiInfoPiece) => {
+          
           if (wikiInfo.langs.length > 0) {
             wikiInfo.langs.forEach((lang: WikiInfoLang) => {
               //if not exist in languages, add it
@@ -349,13 +349,10 @@ export class PuzzleService {
           translations: translations,
         }),
       }
-    )
-      .catch((err) => {
-        console.log(err);
-        return Promise.reject("Error generating translation");
-      })
-      .then((res: any) => {
-        return res;
-      });
+    ).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error generating translation");
+    });
+    return response.json();
   }
 }

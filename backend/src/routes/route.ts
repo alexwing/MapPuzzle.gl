@@ -166,6 +166,7 @@ async function saveCustomCentroids(pieceProps: PieceProps): Promise<any> {
 
 router.post("/generateTranslation", async (req, res) => {
   const generateTranslation = req.body;
+  const langErrors: CustomTranslations[] = [];
   if (generateTranslation) {
     const languages: Languages[] = generateTranslation.languages as Languages[];
     const languagesRepository = connection!.getRepository(Languages);
@@ -201,6 +202,7 @@ router.post("/generateTranslation", async (req, res) => {
           //if translation lang is active
           if (translation.lang === "Error"){
             console.error("Error: " + JSON.stringify(translation));
+            langErrors.push(translation);
           }
           if (activeLangs.find((lang) => lang.lang === translation.lang)) {
             await customTranslationsRepository.save(translation).then(() => {
@@ -215,6 +217,7 @@ router.post("/generateTranslation", async (req, res) => {
   res.json({
     success: true,
     msg: "Generate Translation languages saved successfully",
+    langErrors: langErrors,
   });
 });
 

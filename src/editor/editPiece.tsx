@@ -3,6 +3,7 @@ import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import CustomCentroids from "../../backend/src/models/customCentroids";
 import CustomWiki from "../../backend/src/models/customWiki";
 import AlertMessage from "../components/AlertMessage";
+import { getWikiSimple } from "../lib/Utils";
 import { AlertModel, PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
 import PiecePreview from "./PiecePreview";
@@ -43,11 +44,11 @@ function EditPiece({ piece = {} as PieceProps }: any) {
   };
 
   //set piece send to pieceedited
-  function updatePieceInfo(PieceEdited: PieceProps): PieceProps {
+  function updatePieceInfo(pieceProps: PieceProps): PieceProps {
     return {
-      ...PieceEdited,
+      ...pieceProps,
       customCentroid: {
-        ...PieceEdited.customCentroid,
+        ...pieceProps.customCentroid,
         top: isNaN(parseInt(top)) ? -50 : parseInt(top),
         left: isNaN(parseInt(left)) ? -50 : parseInt(left),
       } as CustomCentroids,
@@ -56,7 +57,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
 
   useEffect(() => {
     setPieceEdited(updatePieceInfo(PieceEdited));
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [top, left]);
 
   const onSaveHandler = () => {
@@ -84,10 +85,10 @@ function EditPiece({ piece = {} as PieceProps }: any) {
   };
 
   const wikiLink = () => {
-    const link =
-      PieceEdited.customWiki?.wiki === ""
-        ? PieceEdited.properties.name
-        : PieceEdited.customWiki?.wiki;
+    const link = getWikiSimple(
+      PieceEdited.properties.name,
+      PieceEdited.customWiki ? PieceEdited.customWiki.wiki : ""
+    );
     window.open(
       `https://en.wikipedia.org/wiki/${link}`,
       "_blank",

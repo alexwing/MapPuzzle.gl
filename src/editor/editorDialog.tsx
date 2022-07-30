@@ -89,9 +89,9 @@ function EditorDialog({
                     style={{
                       overflowY: "auto",
                       maxHeight: "calc(100vh - 300px)",
-                    }}
-                  >
+                    }}                  >
                     <PieceList
+
                       pieces={pieces}
                       founds={[]}
                       onPieceSelected={onPieceSelectedHandler}
