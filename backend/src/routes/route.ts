@@ -174,42 +174,59 @@ router.post("/generateTranslation", async (req, res) => {
       for await (const language of languages) {
         console.log("Lang:" + JSON.stringify(language));
         await languagesRepository
-        .save(language)
-        .then(() => {
-          console.log("Lang saved: " + JSON.stringify(language));
-        })
-        .catch((err: any) => {
-          console.error("Error saving custom translation: " + err.message);
-        });
+          .save(language)
+          .then(() => {
+            console.log("Lang saved: " + JSON.stringify(language));
+          })
+          .catch((err: any) => {
+            console.error("Error saving custom translation: " + err.message);
+          });
       }
     }
-    
+
     //get all languages actives
     const activeLangs = await languagesRepository.find({
       where: {
         active: 1,
       },
     });
-    
+
     const translations: CustomTranslations[] =
-    generateTranslation.translations as CustomTranslations[];
-    
+      generateTranslation.translations as CustomTranslations[];
+
     if (translations !== []) {
-      const customTranslationsRepository =  connection!.getRepository(
-        CustomTranslations
-        );
-        for await (const translation of translations) {
-          //if translation lang is active
-          if (translation.lang === "Error"){
-            console.error("Error: " + JSON.stringify(translation));
-            langErrors.push(translation);
-          }
-          if (activeLangs.find((lang) => lang.lang === translation.lang)) {
-            await customTranslationsRepository.save(translation).then(() => {
-            console.log("Translation saved: " + JSON.stringify(translation));
-          }).catch((err: any) => {
-            console.error("Error saving custom translation: " + err.message);
-          });
+      const customTranslationsRepository =
+        connection!.getRepository(CustomTranslations);
+      let first: boolean = true;
+      for await (const translation of translations) {
+        if (first) {
+          first = false;
+          //delete al translations for this puzzle id
+          await customTranslationsRepository
+            .delete({
+              id: translation.id,
+            })
+            .then(() => {
+              console.log(
+                "Custom translations deleted successfully for puzzle : " +
+                  translation.id
+              );
+            });
+        }
+        //if translation lang is active
+        if (translation.lang === "Error") {
+          console.error("Error: " + JSON.stringify(translation));
+          langErrors.push(translation);
+        }
+        if (activeLangs.find((lang) => lang.lang === translation.lang)) {
+          await customTranslationsRepository
+            .save(translation)
+            .then(() => {
+              console.log("Translation saved: " + JSON.stringify(translation));
+            })
+            .catch((err: any) => {
+              console.error("Error saving custom translation: " + err.message);
+            });
         }
       }
     }
