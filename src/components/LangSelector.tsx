@@ -11,6 +11,8 @@ function LangSelector({
   } as WikiInfoPiece,
   onSelectLang,
 }: any) {
+
+    
   const currentLang = () => {
     const puzzleLanguage = getCookie("puzzleLanguage") || "en";
     //find in pieceInfo.langs the lang with the same lang as puzzleLanguage

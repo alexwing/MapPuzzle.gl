@@ -4,7 +4,7 @@ import Container from "react-bootstrap/Container";
 import "./MapPuzzle.css";
 import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store";
 
-import MenuTop from "./components/MenuTop";
+import MenuTop from "./components/MenuTop/MenuTop";
 import DeckMap from "./components/DeckMap";
 import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
