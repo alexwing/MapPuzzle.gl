@@ -11,6 +11,7 @@ import { setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
 import AlertMessage from "./AlertMessage";
 import LangSelector from "./LangSelector";
+import { getCurrentLang } from "../lib/Utils";
 
 function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   const [pieceInfo, setPieceInfo] = useState({
@@ -22,6 +23,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   const [loading, setLoading] = useState(false);
   const [showIn, setShowIn] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [currentLang, setCurrentLang] = React.useState("");
   const [alert, setAlert] = useState({
     title: "",
     message: "",
@@ -48,6 +50,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
             } as AlertModel);
           }
           setPieceInfo(wikiInfo);
+          setCurrentLang(getCurrentLang(wikiInfo.langs));
         })
         .catch((errorRecived: any) => {
           setShowAlert(true);
@@ -76,6 +79,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
         newPieceInfo.contents = extract;
         setCookie("puzzleLanguage", lang, ConfigService.cookieDays);
         setPieceInfo(newPieceInfo);
+        setCurrentLang(getCurrentLang(newPieceInfo.langs));
       })
       .catch((errorRecived: any) => {
         setShowAlert(true);
@@ -135,7 +139,11 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
           <Modal.Title id="contained-modal-title-vcenter">
             {wikiTitle()}
           </Modal.Title>
-          <LangSelector pieceInfo={pieceInfo} onSelectLang={onSelectLang} />
+          <LangSelector
+            langs={pieceInfo.langs}
+            onSelectLang={onSelectLang}
+            currentLang={currentLang}
+          />
         </Modal.Header>
         <Modal.Body>
           <Row>{printContent()}</Row>
@@ -143,7 +151,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
         <Modal.Footer>
           <Modal.Body id="contained-modal-title-vcenter">
             <small>
-              This article uses material from the Wikipedia article{" "}
+              This article uses material from the Wikipedia article&nbsp;
               <a
                 target="_blank"
                 rel="noreferrer"
@@ -151,7 +159,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
               >
                 {pieceInfo.title}
               </a>
-              , which is released under the{" "}
+              , which is released under the&nbsp;
               <a href="https://creativecommons.org/licenses/by-sa/3.0/">
                 Creative Commons Attribution-Share-Alike License 3.0
               </a>

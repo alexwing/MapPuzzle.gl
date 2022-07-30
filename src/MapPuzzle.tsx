@@ -390,7 +390,6 @@ class MapPuzzle extends Component<any, any> {
                 onSelectMap={this.onSelectMapHandler}
                 content={this.state.content}
                 onResetGame={this.onResetGameHandler}
-                loading={this.state.loading}
                 onFullScreen={() => onToggle()}
                 onRefocus={this.onRefocusMapHandler}
                 onShowWikiInfo={this.onShowWikiInfoHandler}

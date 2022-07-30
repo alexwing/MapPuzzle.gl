@@ -2,6 +2,10 @@ import GameTime from "../lib/GameTime";
 import React from "react";
 import { ViewState } from "react-map-gl";
 import CustomWiki from "../../backend/src/models/customWiki";
+import { WikiInfoLang } from "../models/Interfaces";
+import { getCookie } from "react-simple-cookie-store";
+import Languages from "../../backend/src/models/languages";
+
 export const colorScale = function (x: any) {
   const COLOR_SCALE = [
     // negative
@@ -251,21 +255,15 @@ export function getWiki(
   let wiki_url: string = "";
   if (custom_wiki) {
     wiki_url =
-      custom_wiki.find((x: any) => x.cartodb_id === cartodb_id)?.wiki ||
-      "";
+      custom_wiki.find((x: any) => x.cartodb_id === cartodb_id)?.wiki || "";
   }
   if (wiki_url !== "") {
-    return   wiki_url;
+    return wiki_url;
   } else {
-    return (    
-      cleanNameToWiki(name)
-    );
+    return cleanNameToWiki(name);
   }
 }
-export function getWikiSimple(
-  name: string,
-  custom_wiki: string
-) {
+export function getWikiSimple(name: string, custom_wiki: string) {
   let wiki_url: string = "";
   if (custom_wiki) {
     wiki_url = custom_wiki;
@@ -277,18 +275,17 @@ export function getWikiSimple(
   }
 }
 
-
 export function copyViewState(
   viewStateOrigin: ViewState,
   viewStateDestination: ViewState
 ) {
-  if (!viewStateDestination) {  
+  if (!viewStateDestination) {
     viewStateDestination = {
       latitude: viewStateOrigin.latitude,
       longitude: viewStateOrigin.longitude,
       zoom: viewStateOrigin.zoom,
       bearing: 0,
-      pitch: 0
+      pitch: 0,
     };
   } else {
     viewStateDestination = {
@@ -296,8 +293,8 @@ export function copyViewState(
       longitude: viewStateOrigin.longitude,
       zoom: viewStateOrigin.zoom,
       bearing: viewStateDestination.bearing,
-      pitch: viewStateDestination.pitch      
-    };    
+      pitch: viewStateDestination.pitch,
+    };
   }
   return viewStateDestination;
 }
@@ -307,3 +304,44 @@ export const className = (c: any, pieceSelected: number) => {
     ? "table-primary"
     : "";
 };
+
+export function langName(piece: WikiInfoLang) {
+  if (piece.autonym === "") {
+    return piece.langname;
+  } else {
+    if (piece.autonym === piece.langname) {
+      return piece.langname;
+    } else {
+      return piece.langname + " (" + piece.autonym + ")";
+    }
+  }
+}
+
+export function getCurrentLang(langs: WikiInfoLang[]){
+  const puzzleLanguage = getCookie("puzzleLanguage") || "en";
+  //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
+  const pieceLang = langs.find((x: any) => x.lang === puzzleLanguage);
+  if (typeof pieceLang === "object" && pieceLang !== null) {
+    return langName(pieceLang);
+  } else {
+    const pieceLang = langs.find((x: any) => x.lang === "en");
+    if (typeof pieceLang === "object" && pieceLang !== null) {
+      return langName(pieceLang);
+    }else{
+      return "Unknown";
+    }
+  }
+}
+
+export function languagesToWikiInfoLang (languages: Languages[]): WikiInfoLang[] 
+{
+  return languages.map((lang: Languages) => {
+    return {
+      lang: lang.lang,
+      name: lang.lang,
+      langname: lang.langname,
+      autonym: lang.autonym,
+    } as unknown as WikiInfoLang;
+  });
+}
+ 
