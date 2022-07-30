@@ -31,27 +31,29 @@ function AlertMessage({
   }
 
   return (
-    <Modal
-      show={showIn}
-      onHide={handleClose}
-      size="sm"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-      animation={false}
-    >
-      <Modal.Header className={"bg-" + alert.type}>
-        <Modal.Title
-          id="contained-modal-title-vcenter"
-          className="modal-title-error"
-        >
-          {alert.title}
-        </Modal.Title>
-        <Button variant={alert.type} onClick={handleClose}>
-          <i className="close-icon"></i>
-        </Button>
-      </Modal.Header>
-      <Modal.Body className="bg-warning">{alert.message}</Modal.Body>
-    </Modal>
+    <React.Fragment>
+      <Modal
+        show={showIn}
+        onHide={handleClose}
+        size="sm"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        animation={false}
+      >
+        <Modal.Header className={"bg-" + alert.type}>
+          <Modal.Title
+            id="contained-modal-title-vcenter"
+            className="modal-title-error"
+          >
+            {alert.title}
+          </Modal.Title>
+          <Button variant={alert.type} onClick={handleClose}>
+            <i className="close-icon"></i>
+          </Button>
+        </Modal.Header>
+        <Modal.Body className="bg-warning">{alert.message}</Modal.Body>
+      </Modal>
+    </React.Fragment>
   );
 }
 

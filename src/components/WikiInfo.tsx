@@ -5,12 +5,12 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import "./WikiInfo.css";
 import { changeLanguage, getWikiInfo } from "../services/wikiService";
-import { AlertModel, WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
-import { Nav, NavDropdown } from "react-bootstrap";
+import { AlertModel, WikiInfoPiece } from "../models/Interfaces";
 import LoadingDialog from "./LoadingDialog";
-import { getCookie, setCookie } from "react-simple-cookie-store";
+import { setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
 import AlertMessage from "./AlertMessage";
+import LangSelector from "./LangSelector";
 
 function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   const [pieceInfo, setPieceInfo] = useState({
@@ -68,52 +68,6 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
     }
   }, [showIn, url]);
 
-  const langName = (piece: WikiInfoLang) => {
-    if (piece.autonym === "") {
-      return piece.langname;
-    } else {
-      if (piece.autonym === piece.langname) {
-        return piece.langname;
-      } else {
-        return piece.langname + " (" + piece.autonym + ")";
-      }
-    }
-  };
-  const currentLang = () => {
-    const puzzleLanguage = getCookie("puzzleLanguage") || "en";
-    //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
-    const pieceLang = pieceInfo.langs.find(
-      (x: any) => x.lang === puzzleLanguage
-    );
-    if (typeof pieceLang === "object" && pieceLang !== null) {
-      return langName(pieceLang);
-    } else {
-      return "";
-    }
-  };
-
-  const navDropdownTitle = (
-    <span>
-      <span className="lang-selector-icon"></span>
-      <span className="d-none d-lg-inline d-lg-none">{currentLang()}</span>
-    </span>
-  );
-  const pieceLangs = (
-    <Nav>
-      <NavDropdown
-        className="lang-selector"
-        title={navDropdownTitle}
-        id="puzzle"
-      >
-        {pieceInfo.langs.map((c: any) => (
-          <NavDropdown.Item id={c.lang} key={c.lang} onClick={onSelectLang}>
-            {langName(c)}
-          </NavDropdown.Item>
-        ))}
-      </NavDropdown>
-    </Nav>
-  );
-
   function onSelectLang(e: any) {
     const lang = e.target.id;
     changeLanguage(pieceInfo, lang)
@@ -169,7 +123,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   if (loading) return <LoadingDialog show={loading} delay={1000} />;
   return (
     <React.Fragment>
-     <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
+      <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
       <Modal
         show={showIn}
         size="xl"
@@ -181,7 +135,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
           <Modal.Title id="contained-modal-title-vcenter">
             {wikiTitle()}
           </Modal.Title>
-          {pieceLangs}
+          <LangSelector pieceInfo={pieceInfo} onSelectLang={onSelectLang} />
         </Modal.Header>
         <Modal.Body>
           <Row>{printContent()}</Row>

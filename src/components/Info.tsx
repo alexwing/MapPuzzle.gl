@@ -70,7 +70,7 @@ export default class Info extends Component<any, any> {
     );
 
     return (
-      <div>
+      <React.Fragment>
         <Modal
           show={this.state.show}
           size="xl"
@@ -156,7 +156,7 @@ export default class Info extends Component<any, any> {
             <Button onClick={handleClose}>Ok</Button>
           </Modal.Footer>
         </Modal>
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -89,6 +89,10 @@ export default class Timer extends Component<any, any> {
     }
   }
   render() {
-    return <div className="timer">{this.getTime()}</div>;
+    return (
+      <React.Fragment>
+        <div className="timer">{this.getTime()}</div>{" "}
+      </React.Fragment>
+    );
   }
 }

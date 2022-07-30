@@ -65,7 +65,7 @@ class MapPuzzle extends Component<any, any> {
       if (window.location.pathname) {
         this.state.content.forEach(function (value: Puzzles, index: number) {
           if (value.url === window.location.search.substring(5)) {
-            puzzleSelected = index+1;
+            puzzleSelected = index + 1;
           }
         });
         if (!puzzleSelected) {
@@ -133,7 +133,11 @@ class MapPuzzle extends Component<any, any> {
           GameTime.seconds = 0;
         }
 
-        setCookie("puzzleSelected", puzzleSelected.toString(), ConfigService.cookieDays);
+        setCookie(
+          "puzzleSelected",
+          puzzleSelected.toString(),
+          ConfigService.cookieDays
+        );
         this.checkGameStatus();
       });
     });
@@ -273,13 +277,13 @@ class MapPuzzle extends Component<any, any> {
       this.setState({
         showWikiInfo: true,
         wikiInfoUrl: this.state.puzzleSelectedData.wiki,
-        wikiInfoId: this.state.puzzleSelectedData.id
+        wikiInfoId: this.state.puzzleSelectedData.id,
       });
     } else {
       this.setState({
         showWikiInfo: false,
         wikiInfoUrl: "",
-        wikiInfoId: -1
+        wikiInfoId: -1,
       });
     }
   };
@@ -294,9 +298,7 @@ class MapPuzzle extends Component<any, any> {
         showEditor: false,
       });
     }
-  }
-
-
+  };
 
   onClickMapHandler = (info: any) => {
     if (info.object && !this.state.pieceSelected) {
@@ -341,7 +343,11 @@ class MapPuzzle extends Component<any, any> {
         }
       } else {
         this.setState({ fails: this.state.fails + 1 });
-        setCookie("fails" + this.state.puzzleSelected, this.state.fails, ConfigService.cookieDays);
+        setCookie(
+          "fails" + this.state.puzzleSelected,
+          this.state.fails,
+          ConfigService.cookieDays
+        );
       }
     }
   };
@@ -361,76 +367,78 @@ class MapPuzzle extends Component<any, any> {
       );
     }
     return !this.state.puzzleSelectedData ? null : (
-      <ReactFullscreeen>
-        {({ onToggle }) => (
-          <div>
-            <LoadingDialog show={this.state.loading} delay={1000} />
-            <DeckMap
-              lineWidth={this.state.lineWidth}
-              color={this.state.color}
-              colorStroke={this.state.colorStroke}
-              colorHeight={this.state.colorHeight}
-              piece={this.state.pieceSelected}
-              onClickMap={this.onClickMapHandler}
-              onHoverMap={this.onHoverMapHandler}
-              onViewStateChange={this.onViewStateChangeHandler}
-              viewState={this.state.viewState}
-              founds={this.state.founds}
-              data={this.state.data}
-            />
-            <MenuTop
-              name="MapPuzzle.xyz"
-              onSelectMap={this.onSelectMapHandler}
-              content={this.state.content}
-              onResetGame={this.onResetGameHandler}
-              loading={this.state.loading}
-              onFullScreen={() => onToggle()}
-              onRefocus={this.onRefocusMapHandler}
-              onShowWikiInfo={this.onShowWikiInfoHandler}
-              onShowEditor={this.onShowEditorHandler}
-            />
+      <React.Fragment>
+        <ReactFullscreeen>
+          {({ onToggle }) => (
+            <div>
+              <LoadingDialog show={this.state.loading} delay={1000} />
+              <DeckMap
+                lineWidth={this.state.lineWidth}
+                color={this.state.color}
+                colorStroke={this.state.colorStroke}
+                colorHeight={this.state.colorHeight}
+                piece={this.state.pieceSelected}
+                onClickMap={this.onClickMapHandler}
+                onHoverMap={this.onHoverMapHandler}
+                onViewStateChange={this.onViewStateChangeHandler}
+                viewState={this.state.viewState}
+                founds={this.state.founds}
+                data={this.state.data}
+              />
+              <MenuTop
+                name="MapPuzzle.xyz"
+                onSelectMap={this.onSelectMapHandler}
+                content={this.state.content}
+                onResetGame={this.onResetGameHandler}
+                loading={this.state.loading}
+                onFullScreen={() => onToggle()}
+                onRefocus={this.onRefocusMapHandler}
+                onShowWikiInfo={this.onShowWikiInfoHandler}
+                onShowEditor={this.onShowEditorHandler}
+              />
 
-            {YouWinScreen}
-            <Container fluid style={{ paddingTop: 15 + "px" }}>
-              <Row>
-                <Col xs={8} md={4} lg={4} xl={3}>
-                  <ToolsPanel
-                    name={this.state.puzzleSelectedData.name}
-                    puzzleSelected={this.state.puzzleSelected}
-                    pieceSelected={this.state.pieceSelected}
-                    onPieceSelected={this.onPieceSelectedHandler}
-                    pieces={this.state.pieces}
-                    height={this.state.height}
-                    founds={this.state.founds}
-                    fails={this.state.fails}
-                    YouWin={this.state.YouWin}
-                  />
-                </Col>
-              </Row>
-            </Container>
-            <AnimatedCursor
-              clickScale={0.95}
-              color="#666"
-              zoom={this.state.zoom}
-              selected={this.state.pieceSelectedData}
-              centroid={this.state.pieceSelectedCentroid}
-              tooltip={this.state.tooltipValue}
-            />
-            <WikiInfo
-              id={this.state.wikiInfoId}
-              show={this.state.showWikiInfo}
-              url={this.state.wikiInfoUrl}
-              onHide={this.onShowWikiInfoHandler}
-            />
-            <EditorDialog
-              show={this.state.showEditor}
-              onHide={this.onShowEditorHandler}
-              puzzleSelected={this.state.puzzleSelectedData}
-              pieces={this.state.pieces}
-            />
-          </div>
-        )}
-      </ReactFullscreeen>
+              {YouWinScreen}
+              <Container fluid style={{ paddingTop: 15 + "px" }}>
+                <Row>
+                  <Col xs={8} md={4} lg={4} xl={3}>
+                    <ToolsPanel
+                      name={this.state.puzzleSelectedData.name}
+                      puzzleSelected={this.state.puzzleSelected}
+                      pieceSelected={this.state.pieceSelected}
+                      onPieceSelected={this.onPieceSelectedHandler}
+                      pieces={this.state.pieces}
+                      height={this.state.height}
+                      founds={this.state.founds}
+                      fails={this.state.fails}
+                      YouWin={this.state.YouWin}
+                    />
+                  </Col>
+                </Row>
+              </Container>
+              <AnimatedCursor
+                clickScale={0.95}
+                color="#666"
+                zoom={this.state.zoom}
+                selected={this.state.pieceSelectedData}
+                centroid={this.state.pieceSelectedCentroid}
+                tooltip={this.state.tooltipValue}
+              />
+              <WikiInfo
+                id={this.state.wikiInfoId}
+                show={this.state.showWikiInfo}
+                url={this.state.wikiInfoUrl}
+                onHide={this.onShowWikiInfoHandler}
+              />
+              <EditorDialog
+                show={this.state.showEditor}
+                onHide={this.onShowEditorHandler}
+                puzzleSelected={this.state.puzzleSelectedData}
+                pieces={this.state.pieces}
+              />
+            </div>
+          )}
+        </ReactFullscreeen>
+      </React.Fragment>
     );
   }
 }

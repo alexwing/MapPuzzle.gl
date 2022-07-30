@@ -39,7 +39,7 @@ export default class DeckMap extends Component<any, any> {
       }),
     ];
     return (
-      <div>
+      <React.Fragment>
         <DeckGL
           width="100%"
           height="100%"
@@ -54,7 +54,7 @@ export default class DeckMap extends Component<any, any> {
             preventStyleDiffing
           />
         </DeckGL>
-      </div>
+      </React.Fragment>
     );
   }
 }

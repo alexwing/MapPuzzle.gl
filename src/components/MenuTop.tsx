@@ -1,26 +1,31 @@
-import React,  { Component } from 'react';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import Button from 'react-bootstrap/Button';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import Form from 'react-bootstrap/Form';
-import Modal from 'react-bootstrap/Modal';
-import { Link } from 'react-router-dom'
-import Info from './Info';
-import { ConfigService } from '../services/configService';
+import React, { Component } from "react";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import Button from "react-bootstrap/Button";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import Form from "react-bootstrap/Form";
+import Modal from "react-bootstrap/Modal";
+import { Link } from "react-router-dom";
+import Info from "./Info";
+import { ConfigService } from "../services/configService";
 
-
-
-export default class MenuTop extends Component<any, any>  {
-  constructor(props:any) {
-    super(props)
+export default class MenuTop extends Component<any, any> {
+  constructor(props: any) {
+    super(props);
     this.state = {
       show: false,
       showInfo: false,
-    }
+    };
   }
   render() {
-    const { onSelectMap, onResetGame, onFullScreen, onRefocus, onShowWikiInfo, onShowEditor } = this.props;
+    const {
+      onSelectMap,
+      onResetGame,
+      onFullScreen,
+      onRefocus,
+      onShowWikiInfo,
+      onShowEditor,
+    } = this.props;
     const handleClose = () => {
       this.setState({
         show: false,
@@ -28,7 +33,7 @@ export default class MenuTop extends Component<any, any>  {
         showWikiInfo: false,
         showEditor: false,
       });
-    } 
+    };
     const handleOK = () => {
       onResetGame();
       this.setState({
@@ -37,7 +42,7 @@ export default class MenuTop extends Component<any, any>  {
         showWikiInfo: false,
         showEditor: false,
       });
-    }
+    };
 
     const handleShow = () => {
       this.setState({
@@ -46,62 +51,108 @@ export default class MenuTop extends Component<any, any>  {
         showWikiInfo: false,
         showEditor: false,
       });
-    }
+    };
 
     const handleInfo = () => {
       this.setState({
         show: false,
         showInfo: true,
-        showWikiInfo: false
+        showWikiInfo: false,
       });
-    }
+    };
     const Puzzles = (
       <Nav className="mr-auto">
         <NavDropdown title="Select a Puzzle" id="puzzle">
-          {this.props.content.map((c: any) =>
-          (
-              <NavDropdown.Item as={Link} id={c.id} key={c.id} to={"./?map=" + c.url} onClick={onSelectMap} >
-                <img src={c.icon} alt={c.name} />
-                {c.name}
-              </NavDropdown.Item>
+          {this.props.content.map((c: any) => (
+            <NavDropdown.Item
+              as={Link}
+              id={c.id}
+              key={c.id}
+              to={"./?map=" + c.url}
+              onClick={onSelectMap}
+            >
+              <img src={c.icon} alt={c.name} />
+              {c.name}
+            </NavDropdown.Item>
           ))}
         </NavDropdown>
       </Nav>
     );
 
-    return <div>
-      <Navbar bg="light" expand="lg">
-        <Navbar.Brand ><img src="./logo192.png" alt="" />{this.props.name}
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          {Puzzles}
-          <Form inline>
-            <Button id="refocus" variant="outline-secondary" onClick={onRefocus}><span className="navbar-refocus-icon"></span></Button>
-            <Button id="fullscreen" variant="outline-secondary" onClick={onFullScreen}><span className="navbar-full-icon"></span></Button>
-            <Button id="info" variant="outline-secondary" onClick={handleInfo}><span className="navbar-info-icon"></span></Button>
-            <Button id="wiki" variant="outline-secondary" onClick={onShowWikiInfo}><span className="navbar-wiki-icon"></span></Button>
-            <Button id="reset" variant="outline-primary" onClick={handleShow}>Reset Game</Button>
-            { ConfigService.editorEnabled ? <Button id="editor" variant="outline-primary" onClick={onShowEditor}>Editor</Button> : null }
-          </Form>
-        </Navbar.Collapse>
-      </Navbar>
-      <Info show={this.state.showInfo} content={this.props.content} InfoClose={handleClose}/>
-      <Modal show={this.state.show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Do you surrender?</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Click yes, if you want to start a new game</Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleOK}>
-            Yes
-          </Button>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-        </Modal.Footer> 
-      </Modal>
-    </div>;
+    return (
+      <React.Fragment>
+        <Navbar bg="light" expand="lg">
+          <Navbar.Brand>
+            <img src="./logo192.png" alt="" />
+            {this.props.name}
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            {Puzzles}
+            <Form inline>
+              <Button
+                id="refocus"
+                variant="outline-secondary"
+                onClick={onRefocus}
+              >
+                <span className="navbar-refocus-icon"></span>
+              </Button>
+              <Button
+                id="fullscreen"
+                variant="outline-secondary"
+                onClick={onFullScreen}
+              >
+                <span className="navbar-full-icon"></span>
+              </Button>
+              <Button
+                id="info"
+                variant="outline-secondary"
+                onClick={handleInfo}
+              >
+                <span className="navbar-info-icon"></span>
+              </Button>
+              <Button
+                id="wiki"
+                variant="outline-secondary"
+                onClick={onShowWikiInfo}
+              >
+                <span className="navbar-wiki-icon"></span>
+              </Button>
+              <Button id="reset" variant="outline-primary" onClick={handleShow}>
+                Reset Game
+              </Button>
+              {ConfigService.editorEnabled ? (
+                <Button
+                  id="editor"
+                  variant="outline-primary"
+                  onClick={onShowEditor}
+                >
+                  Editor
+                </Button>
+              ) : null}
+            </Form>
+          </Navbar.Collapse>
+        </Navbar>
+        <Info
+          show={this.state.showInfo}
+          content={this.props.content}
+          InfoClose={handleClose}
+        />
+        <Modal show={this.state.show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Do you surrender?</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Click yes, if you want to start a new game</Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={handleOK}>
+              Yes
+            </Button>
+            <Button variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </React.Fragment>
+    );
   }
-
-} 
+}
