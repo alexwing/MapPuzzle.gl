@@ -61,7 +61,7 @@ function EditMap({ puzzle = {} as Puzzles
   const generateTranslationHandler = async () => {
     setLoading(true);
     await PuzzleService.generateTranslation(pieces, puzzle.id)
-      .then((result:any) => {
+      .then(() => {
         setLoading(false);
         setAlert({
           title: "Success",

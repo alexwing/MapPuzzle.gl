@@ -296,24 +296,40 @@ export class PuzzleService {
       //get wikiService getWikiInfo
       await getWikiInfo(wiki)
         .then((wikiInfo: WikiInfoPiece) => {
-          wikiInfo.langs.forEach((lang: WikiInfoLang) => {
-            //if not exist in languages, add it
-            if (!languages.some((l) => l.lang === lang.lang)) {
+          if (wikiInfo.langs.length > 0) {
+            wikiInfo.langs.forEach((lang: WikiInfoLang) => {
+              //if not exist in languages, add it
+              if (!languages.some((l) => l.lang === lang.lang)) {
+                languages.push({
+                  lang: lang.lang,
+                  langname: lang.langname,
+                  autonym: lang.autonym,
+                } as Languages);
+              }
+              if (piece.id) {
+                translations.push({
+                  id: piece.id,
+                  cartodb_id: piece.properties.cartodb_id,
+                  lang: lang.lang,
+                  translation: lang.id,
+                } as CustomTranslations);
+              }
+            });
+          } else {
+            if (!languages.some((l) => l.lang === "error")) {
               languages.push({
-                lang: lang.lang,
-                langname: lang.langname,
-                autonym: lang.autonym,
+                lang: "error",
+                langname: "Error",
+                autonym: "Error",
               } as Languages);
             }
-            if (piece.id) {
-              translations.push({
-                id: piece.id,
-                cartodb_id: piece.properties.cartodb_id,
-                lang: lang.lang,
-                translation: lang.id,
-              } as CustomTranslations);
-            }
-          });
+            translations.push({
+              id: piece.id,
+              cartodb_id: piece.properties.cartodb_id,
+              lang: "Error",
+              translation: piece.properties.name,
+            } as CustomTranslations);
+          }
         })
         .catch((err) => {
           console.log(err);

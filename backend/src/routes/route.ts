@@ -166,52 +166,51 @@ async function saveCustomCentroids(pieceProps: PieceProps): Promise<any> {
 
 router.post("/generateTranslation", async (req, res) => {
   const generateTranslation = req.body;
-  console.log("body:" + JSON.stringify(req.body));
-  console.log("generateTranslation:" + JSON.stringify(generateTranslation));
   if (generateTranslation) {
     const languages: Languages[] = generateTranslation.languages as Languages[];
     const languagesRepository = connection!.getRepository(Languages);
-    console.log("Aqui llego:" + JSON.stringify(languages));
     if (languages !== []) {
-      languages.forEach((language: Languages) => {
-        languagesRepository
-          .save(language)
-          .then(() => {
-            console.log("Custom translation saved successfully");
-          })
-          .catch((err: any) => {
-            console.log("Error saving custom translation: " + err.message);
-          });
-      });
+      for await (const language of languages) {
+        console.log("Lang:" + JSON.stringify(language));
+        await languagesRepository
+        .save(language)
+        .then(() => {
+          console.log("Lang saved: " + JSON.stringify(language));
+        })
+        .catch((err: any) => {
+          console.error("Error saving custom translation: " + err.message);
+        });
+      }
     }
-
+    
     //get all languages actives
     const activeLangs = await languagesRepository.find({
       where: {
         active: 1,
       },
     });
-
+    
     const translations: CustomTranslations[] =
-      generateTranslation.translations as CustomTranslations[];
-
+    generateTranslation.translations as CustomTranslations[];
+    
     if (translations !== []) {
-      const customTranslationsRepository = await connection!.getRepository(
+      const customTranslationsRepository =  connection!.getRepository(
         CustomTranslations
-      );
-      translations.forEach((translation: CustomTranslations) => {
-        //if translation lang is active
-        if (activeLangs.find((lang) => lang.lang === translation.lang)) {
-          customTranslationsRepository.save(translation).then(() => {
-            console.log("Custom translation saved successfully");
+        );
+        for await (const translation of translations) {
+          //if translation lang is active
+          if (translation.lang === "Error"){
+            console.error("Error: " + JSON.stringify(translation));
+          }
+          if (activeLangs.find((lang) => lang.lang === translation.lang)) {
+            await customTranslationsRepository.save(translation).then(() => {
+            console.log("Translation saved: " + JSON.stringify(translation));
+          }).catch((err: any) => {
+            console.error("Error saving custom translation: " + err.message);
           });
         }
-      });
+      }
     }
-    res.json({
-      success: true,
-      msg: "Generate Translation saved successfully",
-    });
   }
   res.json({
     success: true,
