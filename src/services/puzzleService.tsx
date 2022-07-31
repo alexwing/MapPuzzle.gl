@@ -8,7 +8,14 @@ import CustomTranslations from "../../backend/src/models/customTranslations";
 import Languages from "../../backend/src/models/languages";
 import { PieceProps, WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
 import { getWikiInfo } from "./wikiService";
-import {  getWikiSimple } from "../lib/Utils";
+import { getWikiSimple } from "../lib/Utils";
+import {
+  mapResultToCustomCentroids,
+  mapResultToCustomTranslations,
+  mapResultToCustomWiki,
+  mapResultToLanguage,
+  mapResultToPuzzle,
+} from "../lib/mappings/modelMappers";
 
 export class PuzzleService {
   //get all puzzles
@@ -20,7 +27,7 @@ export class PuzzleService {
         let puzzles: Puzzles[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
-            puzzles.push(PuzzleService.mapResultToPuzzle(value));
+            puzzles.push(mapResultToPuzzle(value));
           });
         });
         return puzzles;
@@ -37,7 +44,7 @@ export class PuzzleService {
     )
       .then((result: QueryExecResult[]) => {
         if (result.length > 0) {
-          return PuzzleService.mapResultToPuzzle(result[0].values[0]);
+          return mapResultToPuzzle(result[0].values[0]);
         }
         return Promise.reject("Puzzles not found");
       })
@@ -53,7 +60,7 @@ export class PuzzleService {
         let languages: Languages[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
-            languages.push(PuzzleService.mapResultToLanguage(value));
+            languages.push(mapResultToLanguage(value));
           });
         });
         return languages;
@@ -72,7 +79,7 @@ export class PuzzleService {
         let languages: Languages[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
-            languages.push(PuzzleService.mapResultToLanguage(value));
+            languages.push(mapResultToLanguage(value));
           });
         });
         return languages;
@@ -83,33 +90,6 @@ export class PuzzleService {
       });
   }
 
-  public static mapResultToLanguage(result: SqlValue[]): Languages {
-    return {
-      lang: result[0],
-      langname: result[1],
-      autonym: result[2],
-      active: result[3],
-    } as Languages;
-  }
-
-  //map the result to a Puzzles object
-  public static mapResultToPuzzle(result: SqlValue[]): Puzzles {
-    return {
-      id: result[0],
-      comment: result[1],
-      data: result[2],
-      icon: result[3],
-      name: result[4],
-      url: result[5],
-      wiki: result[6],
-      view_state: {
-        latitude: result[7],
-        longitude: result[8],
-        zoom: result[9],
-      },
-    } as Puzzles;
-  }
-
   //get custom centroids by puzzle id
   public static getCustomCentroids(id: number): Promise<CustomCentroids[]> {
     return query(`SELECT * FROM custom_centroids WHERE id = ${id}`)
@@ -117,7 +97,7 @@ export class PuzzleService {
         let centroids: CustomCentroids[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
-            centroids.push(PuzzleService.mapResultToCustomCentroids(value));
+            centroids.push(mapResultToCustomCentroids(value));
           });
         });
         return centroids;
@@ -145,7 +125,7 @@ export class PuzzleService {
       if (result.length > 0) {
         result.forEach((row) => {
           row.values.forEach((value) => {
-            customCentroid = PuzzleService.mapResultToCustomCentroids(value);
+            customCentroid = mapResultToCustomCentroids(value);
           });
         });
       }
@@ -156,17 +136,6 @@ export class PuzzleService {
     }
   }
 
-  //map the result to a CustomCentroids object
-  public static mapResultToCustomCentroids(
-    result: SqlValue[]
-  ): CustomCentroids {
-    return {
-      id: result[0],
-      cartodb_id: result[1],
-      left: result[2],
-      top: result[3],
-    } as CustomCentroids;
-  }
   //get custom wikis by puzzle id
   public static async getCustomWikis(id: number): Promise<CustomWiki[]> {
     try {
@@ -174,7 +143,7 @@ export class PuzzleService {
       let wikis: CustomWiki[] = [];
       result.forEach((row) => {
         row.values.forEach((value) => {
-          wikis.push(PuzzleService.mapResultToCustomWiki(value));
+          wikis.push(mapResultToCustomWiki(value));
         });
       });
       return wikis;
@@ -201,7 +170,7 @@ export class PuzzleService {
       if (result.length > 0) {
         result.forEach((row) => {
           row.values.forEach((value) => {
-            customWiki = PuzzleService.mapResultToCustomWiki(value);
+            customWiki = mapResultToCustomWiki(value);
           });
         });
       }
@@ -210,15 +179,6 @@ export class PuzzleService {
       console.log(err);
       return customWiki;
     }
-  }
-
-  //map the result to a CustomWiki object
-  public static mapResultToCustomWiki(result: SqlValue[]): CustomWiki {
-    return {
-      id: result[0],
-      cartodb_id: result[1],
-      wiki: result[2],
-    } as CustomWiki;
   }
 
   //update pieceProps with wiki info and centroids
@@ -291,11 +251,13 @@ export class PuzzleService {
     for await (const piece of pieces) {
       piece.id = id;
       //get custom wiki info
-      const wiki = getWikiSimple (piece.name, piece.customWiki ? piece.customWiki.wiki : "");
+      const wiki = getWikiSimple(
+        piece.name,
+        piece.customWiki ? piece.customWiki.wiki : ""
+      );
       //get wikiService getWikiInfo
       await getWikiInfo(wiki)
         .then((wikiInfo: WikiInfoPiece) => {
-          
           if (wikiInfo.langs.length > 0) {
             wikiInfo.langs.forEach((lang: WikiInfoLang) => {
               //if not exist in languages, add it
@@ -357,30 +319,24 @@ export class PuzzleService {
   }
 
   //get pieces translations in a language
-  public static async getCustomTranslations(id: number, lang:string): Promise<CustomTranslations[]> {
-  try {
-    const result = await query(`SELECT * FROM custom_translations WHERE id = ${id} AND lang in ("'${lang}'","en")`);
-    let customTranslations: CustomTranslations[] = [];
-    result.forEach((row) => {
-      row.values.forEach((value) => {
-        customTranslations.push(PuzzleService.mapResultToCustomTranslations(value));
+  public static async getCustomTranslations(
+    id: number,
+    lang: string
+  ): Promise<CustomTranslations[]> {
+    try {
+      const result = await query(
+        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ("'${lang}'","en")`
+      );
+      let customTranslations: CustomTranslations[] = [];
+      result.forEach((row) => {
+        row.values.forEach((value) => {
+          customTranslations.push(mapResultToCustomTranslations(value));
+        });
       });
-    });
-    return customTranslations;
-  } catch (err) {
-    console.log(err);
-    return Promise.resolve([]);
+      return customTranslations;
+    } catch (err) {
+      console.log(err);
+      return Promise.resolve([]);
+    }
   }
-}  
-  //map the result to a CustomTranslations object
-  public static mapResultToCustomTranslations(result: SqlValue[]): CustomTranslations {
-    return {
-      id: result[0],
-      cartodb_id: result[1],
-      lang: result[2],
-      translation: result[3],
-    } as CustomTranslations;
-  }
-
-
 }

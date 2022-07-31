@@ -1,5 +1,6 @@
-import { QueryExecResult, SqlValue } from "sql.js";
+import { QueryExecResult } from "sql.js";
 import { ConfigService } from "../../services/configService";
+import { mapResultToQueryExecResult } from "../mappings/modelMappers";
 
 //function to execute a query, return a Promise with the result
 export async function query(sql: string): Promise<QueryExecResult[]> {
@@ -21,30 +22,3 @@ export async function query(sql: string): Promise<QueryExecResult[]> {
   return mapResultToQueryExecResult(data);
 }
 
-//map the result data to a QueryExecResult[]
-function mapResultToQueryExecResult(data: any[]): QueryExecResult[] {
-  let queryExecResults: QueryExecResult[] = [];
-  let columns: string[] = [];
-  let values: SqlValue[][] = [];
-  let first: boolean = true;
-  data.forEach((element) => {
-    let value: SqlValue[] = [];
-    for (let prop in element) {
-      if (element.hasOwnProperty(prop)) {
-        value.push(element[prop] as SqlValue);
-      }
-    }
-    values.push(value);
-    if (first) {
-      columns = Object.keys(data[0]);
-      first = false;
-    }
-  });
-
-  queryExecResults.push({
-    columns: columns,
-    values: values,
-  } as QueryExecResult);
-
-  return queryExecResults;
-}

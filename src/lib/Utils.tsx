@@ -317,24 +317,25 @@ export function langName(piece: WikiInfoLang) {
   }
 }
 
-export function getCurrentLang(langs: WikiInfoLang[]){
+export function getCurrentLang(langs: WikiInfoLang[]) {
   const puzzleLanguage = getCookie("puzzleLanguage") || "en";
   //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
-  const pieceLang = langs.find((x: any) => x.lang === puzzleLanguage);
+  let pieceLang = langs.find((x: any) => x.lang === puzzleLanguage);
   if (typeof pieceLang === "object" && pieceLang !== null) {
     return langName(pieceLang);
   } else {
-    const pieceLang = langs.find((x: any) => x.lang === "en");
+    pieceLang = langs.find((x: any) => x.lang === "en");
     if (typeof pieceLang === "object" && pieceLang !== null) {
       return langName(pieceLang);
-    }else{
+    } else {
       return "Unknown";
     }
   }
 }
 
-export function languagesToWikiInfoLang (languages: Languages[]): WikiInfoLang[] 
-{
+export function languagesToWikiInfoLang(
+  languages: Languages[]
+): WikiInfoLang[] {
   return languages.map((lang: Languages) => {
     return {
       lang: lang.lang,
@@ -344,4 +345,16 @@ export function languagesToWikiInfoLang (languages: Languages[]): WikiInfoLang[]
     } as unknown as WikiInfoLang;
   });
 }
- 
+
+export function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
+  langs.sort((a: any, b: any) => {
+    if (a.langname < b.langname) {
+      return -1;
+    }
+    if (a.langname > b.langname) {
+      return 1;
+    }
+    return 0;
+  });
+  return langs;
+}
