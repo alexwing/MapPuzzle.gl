@@ -6,6 +6,7 @@ import CustomWiki from "../models/customWiki";
 import CustomCentroids from "../models/customCentroids";
 import CustomTranslations from "../models/customTranslations";
 import Languages from "../models/languages";
+import { securizeQuery } from "../../../src/lib/Commons";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -19,8 +20,9 @@ router.get("/query", (req, res) => {
   const { query } = req.query;
   console.log("query:" + JSON.stringify(query));
   if (query) {
+    const sql:string = securizeQuery(query.toString());
     connection!
-      .query(query.toString())
+      .query(sql)
       .then((result) => {
         res.json(result);
       })

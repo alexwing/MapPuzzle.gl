@@ -336,7 +336,7 @@ class MapPuzzle extends Component<any, any> {
       if (this.state.founds.includes(info.object.properties.cartodb_id)) {
         let wiki_url = getWiki(
           info.object.properties.cartodb_id,
-          info.object.properties.name,
+          info.object.name,
           this.state.puzzleCustomWiki
         );
         this.setState({
