@@ -151,7 +151,7 @@ export function LazyRound(num: string) {
     : parts[0];
 }
 
-export async function Jsondb(filepath: string) {
+export async function Jsondb(filepath: string) : Promise<any> {
   return fetch(filepath, {
     method: "GET",
     headers: new Headers({
@@ -358,3 +358,4 @@ export function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
   });
   return langs;
 }
+

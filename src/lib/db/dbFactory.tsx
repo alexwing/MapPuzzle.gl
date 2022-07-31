@@ -3,6 +3,7 @@ import { query as querySqlite } from "./dbSqlite";
 import { query as queryBackend } from "./dbBackend";
 import { ConfigService } from "../../services/configService";
 import { QueryExecResult } from "sql.js";
+import { securizeQuery } from "../Commons";
 
 export const dbFactory = {
   sqlite: querySqlite,
@@ -25,15 +26,6 @@ export async function query(sql: string): Promise<QueryExecResult[]> {
   }
 }
 
-function securizeQuery(sql: string): string {
-  //disable sql injection
-  sql = sql.replace(/[';]/g, "");
-  //detect INSERT UPDATE DELETE DROP
-  if (sql.toUpperCase().includes("INSERT") || sql.toUpperCase().includes("UPDATE") || sql.toUpperCase().includes("DELETE") || sql.toUpperCase().includes("DROP ")) {
-    sql = "";
-    throw new Error("SQL Injection detected");
-  }
-  return sql;
-}
+
 
 export default query;
