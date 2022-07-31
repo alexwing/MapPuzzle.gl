@@ -86,7 +86,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
 
   const wikiLink = () => {
     const link = getWikiSimple(
-      PieceEdited.properties.name,
+      PieceEdited.name,
       PieceEdited.customWiki ? PieceEdited.customWiki.wiki : ""
     );
     window.open(

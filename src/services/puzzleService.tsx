@@ -261,7 +261,7 @@ export class PuzzleService {
       id: piece.id,
       properties: {
         cartodb_id: piece.properties.cartodb_id,
-        name: piece.properties.name,
+        name: piece.name,
         box: piece.properties.box,
       },
       customWiki: piece.customWiki,
@@ -291,7 +291,7 @@ export class PuzzleService {
     for await (const piece of pieces) {
       piece.id = id;
       //get custom wiki info
-      const wiki = getWikiSimple (piece.properties.name, piece.customWiki ? piece.customWiki.wiki : "");
+      const wiki = getWikiSimple (piece.name, piece.customWiki ? piece.customWiki.wiki : "");
       //get wikiService getWikiInfo
       await getWikiInfo(wiki)
         .then((wikiInfo: WikiInfoPiece) => {
@@ -327,7 +327,7 @@ export class PuzzleService {
               id: piece.id,
               cartodb_id: piece.properties.cartodb_id,
               lang: "Error",
-              translation: piece.properties.name,
+              translation: piece.name,
             } as CustomTranslations);
           }
         })
@@ -355,4 +355,32 @@ export class PuzzleService {
     });
     return response.json();
   }
+
+  //get pieces translations in a language
+  public static async getCustomTranslations(id: number, lang:string): Promise<CustomTranslations[]> {
+  try {
+    const result = await query(`SELECT * FROM custom_translations WHERE id = ${id} AND lang in ("'${lang}'","en")`);
+    let customTranslations: CustomTranslations[] = [];
+    result.forEach((row) => {
+      row.values.forEach((value) => {
+        customTranslations.push(PuzzleService.mapResultToCustomTranslations(value));
+      });
+    });
+    return customTranslations;
+  } catch (err) {
+    console.log(err);
+    return Promise.resolve([]);
+  }
+}  
+  //map the result to a CustomTranslations object
+  public static mapResultToCustomTranslations(result: SqlValue[]): CustomTranslations {
+    return {
+      id: result[0],
+      cartodb_id: result[1],
+      lang: result[2],
+      translation: result[3],
+    } as CustomTranslations;
+  }
+
+
 }

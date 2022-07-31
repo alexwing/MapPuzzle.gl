@@ -4,6 +4,7 @@ import CustomWiki from "../../backend/src/models/customWiki";
 export interface PieceProps {
   id?: number;
   geometry: any;
+  name: string;
   properties: {
     cartodb_id: number;
     name: string;

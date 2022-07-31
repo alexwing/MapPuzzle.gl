@@ -7,7 +7,7 @@ import ConfirmDialog from "./ConfirmDialog";
 import LangSelector from "../LangSelector";
 import { WikiInfoLang } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
-import { getCookie, setCookie } from "react-simple-cookie-store";
+import { setCookie } from "react-simple-cookie-store";
 import Languages from "../../../backend/src/models/languages";
 import { ConfigService } from "../../services/configService";
 import { getCurrentLang, languagesToWikiInfoLang } from "../../lib/Utils";
@@ -21,6 +21,7 @@ function MenuTop({
   onRefocus,
   onShowWikiInfo,
   onShowEditor,
+  onLangChange,
 }: any) {
   const [show, setShow] = React.useState(false);
   const [showInfo, setShowInfo] = React.useState(false);
@@ -31,7 +32,6 @@ function MenuTop({
     setShow(false);
     setShowInfo(false);
     getLanguages();
-
   }, [content]);
 
   const getLanguages = () => {
@@ -65,7 +65,8 @@ function MenuTop({
     const lang = e.target.id;
     setCookie("puzzleLanguage", lang, ConfigService.cookieDays);
     setCurrentLang(getCurrentLang(langs));
-  }
+    onLangChange(lang);
+  };
 
   return (
     <React.Fragment>

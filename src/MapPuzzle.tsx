@@ -23,6 +23,7 @@ import EditorDialog from "./editor/editorDialog";
 import Puzzles from "../backend/src/models/puzzles";
 import CustomCentroids from "../backend/src/models/customCentroids";
 import CustomWiki from "../backend/src/models/customWiki";
+import CustomTranslations from "../backend/src/models/customTranslations";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -102,9 +103,16 @@ class MapPuzzle extends Component<any, any> {
       });
 
       Jsondb(this.state.puzzleSelectedData.data).then((response) => {
+        const pieces: PieceProps[] = response.features;
+
+        //set name to pieces from pieces.properties.name
+        pieces.forEach((piece: PieceProps) => {
+          piece.name = piece.properties.name;
+        });
+
         this.setState({
           puzzleSelected: puzzleSelected,
-          pieces: response.features,
+          pieces: pieces,
           data: response,
           loading: false,
         });
@@ -139,9 +147,31 @@ class MapPuzzle extends Component<any, any> {
           ConfigService.cookieDays
         );
         this.checkGameStatus();
+        this.onLangChangeHandler(getCookie("puzzleLanguage") || "en");
       });
     });
   }
+
+  onLangChangeHandler = (lang: string) => {
+    PuzzleService.getCustomTranslations(this.state.puzzleSelected, lang).then(
+      (customTranslations: CustomTranslations[]) => {
+        const pieces = this.state.pieces;
+        pieces.forEach((piece: PieceProps) => {
+          //find from CustomTranslations[]
+          const customTranslation = customTranslations.find(
+            (e: CustomTranslations) =>
+              e.cartodb_id === piece.properties.cartodb_id && e.lang === lang
+          )?.translation;
+          if (customTranslation) {
+            piece.properties.name = customTranslation;
+          } else {
+            piece.properties.name = piece.name;
+          }
+        });
+        this.setState({ pieces: pieces });
+      }
+    );
+  };
 
   private getCustomCentroids(id: number) {
     PuzzleService.getCustomCentroids(id).then(
@@ -394,6 +424,7 @@ class MapPuzzle extends Component<any, any> {
                 onRefocus={this.onRefocusMapHandler}
                 onShowWikiInfo={this.onShowWikiInfoHandler}
                 onShowEditor={this.onShowEditorHandler}
+                onLangChange={this.onLangChangeHandler}
               />
 
               {YouWinScreen}
