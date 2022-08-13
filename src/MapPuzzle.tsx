@@ -153,6 +153,9 @@ class MapPuzzle extends Component<any, any> {
   }
 
   onLangChangeHandler = (lang: string) => {
+    this.setState({
+      lang: lang,
+    });
     PuzzleService.getCustomTranslations(this.state.puzzleSelected, lang).then(
       (customTranslations: CustomTranslations[]) => {
         const pieces = this.state.pieces;
@@ -441,6 +444,7 @@ class MapPuzzle extends Component<any, any> {
                       founds={this.state.founds}
                       fails={this.state.fails}
                       YouWin={this.state.YouWin}
+                      lang={this.state.lang}
                     />
                   </Col>
                 </Row>

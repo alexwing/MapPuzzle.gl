@@ -1,13 +1,26 @@
-import React from "react";
+import React, {useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import { className, setColor } from "../lib/Utils";
+import { PuzzleService } from "../services/puzzleService";
 
 export default function PieceList(props: any) {
-  const { pieces, founds, onPieceSelected, pieceSelected } = props;
+  const { pieces, founds, onPieceSelected, pieceSelected, lang } = props;
+  const [rtlClass, setRtlClass] = useState("");
+
+  //on init load if rtl lang
+  useEffect(() => {
+    PuzzleService.getLangIsRtl(lang).then(isRtl => {
+      setRtlClass(isRtl ? "rtl" : "");
+    }).catch(err => {
+      console.log(err);
+      setRtlClass("");
+    });
+  } , [lang]);
+  
 
   return (
     <React.Fragment>
-      <Table striped bordered hover size="sm" className="legend">
+      <Table striped bordered hover size="sm" className={"legend " + rtlClass}>
         <tbody>
           {pieces.map((c: any) =>
             founds.includes(c.properties.cartodb_id) ? null : (

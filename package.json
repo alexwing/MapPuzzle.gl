@@ -42,7 +42,7 @@
   "scripts": {
     "dev": "env-cmd -f ./environments/.env.development react-scripts start",
     "pro": "env-cmd -f ./environments/.env react-scripts start",
-    "build":  "env-cmd -f ./environments/.env react-scripts build",
+    "build": "env-cmd -f ./environments/.env react-scripts build",
     "test": "env-cmd -f ./environments/.env.development react-scripts test"
   },
   "eslintConfig": {

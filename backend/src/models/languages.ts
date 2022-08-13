@@ -21,4 +21,8 @@ export default class Languages  {
 
     @Column({ type: 'integer', nullable: true })
     active!: number;
+
+    @Column({ type: 'integer', nullable: true })
+    rtl!: number;
+
 }

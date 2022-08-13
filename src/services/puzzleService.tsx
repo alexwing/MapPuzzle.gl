@@ -339,4 +339,24 @@ export class PuzzleService {
       return Promise.resolve([]);
     }
   }
+
+  public static  async getLangIsRtl(lang: string) {
+    try {
+      const result = await query(
+        `SELECT rtl FROM languages WHERE lang = "${lang}"`);
+      let rtl = false;
+      result.forEach((row) => {
+        row.values.forEach((value) => {
+          rtl = value[0] ==1 ? true : false;
+        });
+      }
+      );
+      return rtl;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  }
+
+
 }

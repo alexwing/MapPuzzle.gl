@@ -25,6 +25,7 @@ export interface WikiInfoLang{
   lang: string; // lang code
   langname: string; // lang name
   autonym: string; // lang name english
+  rtl: boolean; // right to left
 }
 
 export interface AlertModel {
