@@ -12,6 +12,8 @@ import { ConfigService } from "../services/configService";
 import AlertMessage from "./AlertMessage";
 import LangSelector from "./LangSelector";
 import { getCurrentLang } from "../lib/Utils";
+import { PuzzleService } from "../services/puzzleService";
+import { getCookie } from "react-simple-cookie-store";
 
 function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   const [pieceInfo, setPieceInfo] = useState({
@@ -24,17 +26,29 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   const [showIn, setShowIn] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [currentLang, setCurrentLang] = React.useState("");
-  const [alert, setAlert] = useState({
+  const [alertModal, setAlertModal] = useState({
     title: "",
     message: "",
     type: "danger",
   } as AlertModel);
-
+  const [rtlClass, setRtlClass] = useState("");
   //on load show modal
   useEffect(() => {
     setShowIn(show);
   }, [show]);
+  //on init load if rtl lang
+  useEffect(() => {
+    const puzzleLanguage = getCookie("puzzleLanguage") || "en";
+    PuzzleService.getLangIsRtl(puzzleLanguage).then(isRtl => {
+      setRtlClass(isRtl ? "rtl" : "");
+    }).catch(err => {
+      console.log(err);
+      setRtlClass("");
+    });
+  } , [currentLang, [showIn, url]
+  ]);
 
+  
   //is showing modal
   useEffect(() => {
     if (showIn && url !== "") {
@@ -43,7 +57,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
         .then((wikiInfo: WikiInfoPiece) => {
           if (wikiInfo.title === "Not found data on Wikipedia") {
             setShowAlert(true);
-            setAlert({
+            setAlertModal({
               title: "Not found data on Wikipedia",
               message: wikiInfo.title,
               type: "danger",
@@ -54,7 +68,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
         })
         .catch((errorRecived: any) => {
           setShowAlert(true);
-          setAlert({
+          setAlertModal({
             title: "Not found data on Wikipedia",
             message: errorRecived.message,
             type: "danger",
@@ -83,7 +97,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
       })
       .catch((errorRecived: any) => {
         setShowAlert(true);
-        setAlert({
+        setAlertModal({
           title: "Not found data on Wikipedia",
           message: errorRecived.message,
           type: "danger",
@@ -116,7 +130,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   };
 
   const clearAlert = () => {
-    setAlert({
+    setAlertModal({
       title: "",
       message: "",
       type: "danger",
@@ -125,9 +139,13 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   };
 
   if (loading) return <LoadingDialog show={loading} delay={1000} />;
+  const LangSelectorContainer = !ConfigService.langWikiSelector ?  "" : <LangSelector
+    langs={pieceInfo.langs}
+    onSelectLang={onSelectLang}
+    currentLang={currentLang} />;
   return (
     <React.Fragment>
-      <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
+      <AlertMessage show={showAlert} alertMessage={alertModal} onHide={clearAlert} />
       <Modal
         show={showIn}
         size="xl"
@@ -139,13 +157,9 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
           <Modal.Title id="contained-modal-title-vcenter">
             {wikiTitle()}
           </Modal.Title>
-          <LangSelector
-            langs={pieceInfo.langs}
-            onSelectLang={onSelectLang}
-            currentLang={currentLang}
-          />
+          {LangSelectorContainer}
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className={rtlClass}>
           <Row>{printContent()}</Row>
         </Modal.Body>
         <Modal.Footer>
