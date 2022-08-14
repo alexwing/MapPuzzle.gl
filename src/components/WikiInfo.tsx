@@ -39,32 +39,36 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   //on init load if rtl lang
   useEffect(() => {
     const puzzleLanguage = getCookie("puzzleLanguage") || "en";
-    PuzzleService.getLangIsRtl(puzzleLanguage).then(isRtl => {
-      setRtlClass(isRtl ? "rtl" : "");
-    }).catch(err => {
-      console.log(err);
-      setRtlClass("");
-    });
-  } , [currentLang, [showIn, url]
-  ]);
+    PuzzleService.getLangIsRtl(puzzleLanguage)
+      .then((isRtl) => {
+        setRtlClass(isRtl ? "rtl" : "");
+      })
+      .catch((err) => {
+        console.log(err);
+        setRtlClass("");
+      });
+  }, [currentLang, [showIn, url]]);
 
-  
   //is showing modal
   useEffect(() => {
-    if (showIn && url !== "") {
+    if (show && url !== "") {
       setLoading(true);
       getWikiInfo(url)
         .then((wikiInfo: WikiInfoPiece) => {
           if (wikiInfo.title === "Not found data on Wikipedia") {
-            setShowAlert(true);
             setAlertModal({
               title: "Not found data on Wikipedia",
               message: wikiInfo.title,
               type: "danger",
             } as AlertModel);
+            setShowAlert(true);
+            setShowIn(false);
+          } else {
+            setPieceInfo(wikiInfo);
+            setCurrentLang(getCurrentLang(wikiInfo.langs));
+            setShowAlert(false);
+            setShowIn(true);
           }
-          setPieceInfo(wikiInfo);
-          setCurrentLang(getCurrentLang(wikiInfo.langs));
         })
         .catch((errorRecived: any) => {
           setShowAlert(true);
@@ -83,7 +87,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
           setLoading(false);
         });
     }
-  }, [showIn, url]);
+  }, [url]);
 
   function onSelectLang(e: any) {
     const lang = e.target.id;
@@ -139,13 +143,22 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   };
 
   if (loading) return <LoadingDialog show={loading} delay={1000} />;
-  const LangSelectorContainer = !ConfigService.langWikiSelector ?  "" : <LangSelector
-    langs={pieceInfo.langs}
-    onSelectLang={onSelectLang}
-    currentLang={currentLang} />;
+  const LangSelectorContainer = !ConfigService.langWikiSelector ? (
+    ""
+  ) : (
+    <LangSelector
+      langs={pieceInfo.langs}
+      onSelectLang={onSelectLang}
+      currentLang={currentLang}
+    />
+  );
   return (
     <React.Fragment>
-      <AlertMessage show={showAlert} alertMessage={alertModal} onHide={clearAlert} />
+      <AlertMessage
+        show={showAlert}
+        alertMessage={alertModal}
+        onHide={clearAlert}
+      />
       <Modal
         show={showIn}
         size="xl"
