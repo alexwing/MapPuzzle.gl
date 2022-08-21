@@ -168,6 +168,17 @@ class MapPuzzle extends Component<any, any> {
             piece.properties.name = piece.name;
           }
         });
+        //sort pieces by name
+        pieces.sort((a: PieceProps, b: PieceProps) => {
+          if (a.properties.name < b.properties.name) {
+            return -1;
+          }
+          if (a.properties.name > b.properties.name) {
+            return 1;
+          }
+          return 0;
+        }
+        );         
         this.setState({ pieces: pieces });
       }
     );
