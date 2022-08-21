@@ -103,7 +103,7 @@ function EditMap({
           <Row>
             <Col xs={6} lg={6}>
               <Form.Group className="mb-12" controlId="formname">
-                <Form.Label>Puzzles Name</Form.Label>
+                <Form.Label>Puzzle Name</Form.Label>
                 <Form.Control
                   size="sm"
                   type="input"
@@ -118,7 +118,7 @@ function EditMap({
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formUrl">
-                <Form.Label>Puzzles Url</Form.Label>
+                <Form.Label>Puzzle Url</Form.Label>
                 <Form.Control
                   size="sm"
                   type="input"
@@ -133,7 +133,7 @@ function EditMap({
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formIcon">
-                <Form.Label>Puzzles Icon</Form.Label>
+                <Form.Label>Puzzle Icon</Form.Label>
                 <Form.Control
                   size="sm"
                   type="input"
@@ -150,7 +150,7 @@ function EditMap({
             </Col>
             <Col xs={6} lg={6}>
               <Form.Group className="mb-3" controlId="formData">
-                <Form.Label>Puzzles Data</Form.Label>
+                <Form.Label>Puzzle Data</Form.Label>
                 <Form.Control
                   size="sm"
                   type="input"
@@ -165,7 +165,7 @@ function EditMap({
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formWiki">
-                <Form.Label>Puzzles Wiki</Form.Label>
+                <Form.Label>Puzzle Wiki</Form.Label>
                 <InputGroup>
                   <Form.Control
                     type="input"

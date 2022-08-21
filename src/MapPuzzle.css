@@ -277,3 +277,8 @@ table.legend th {
 .modal-backdrop.show {
   opacity: 0.2;
 }
+
+.rtl{
+  direction: rtl;
+  text-align: right;
+}

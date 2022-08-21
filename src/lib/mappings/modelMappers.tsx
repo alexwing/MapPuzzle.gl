@@ -81,6 +81,7 @@ export function  mapResultToLanguage(result: SqlValue[]): Languages {
       langname: result[1],
       autonym: result[2],
       active: result[3],
+      rtl: result[4],
     } as Languages;
   }
 

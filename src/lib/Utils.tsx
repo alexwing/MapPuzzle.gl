@@ -2,7 +2,7 @@ import GameTime from "../lib/GameTime";
 import React from "react";
 import { ViewState } from "react-map-gl";
 import CustomWiki from "../../backend/src/models/customWiki";
-import { WikiInfoLang } from "../models/Interfaces";
+import { PieceProps, WikiInfoLang } from "../models/Interfaces";
 import { getCookie } from "react-simple-cookie-store";
 import Languages from "../../backend/src/models/languages";
 
@@ -342,6 +342,7 @@ export function languagesToWikiInfoLang(
       name: lang.lang,
       langname: lang.langname,
       autonym: lang.autonym,
+      rtl: lang.rtl,
     } as unknown as WikiInfoLang;
   });
 }

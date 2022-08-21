@@ -10,7 +10,7 @@ import PieceList from "./PieceList";
 
 class ToolsPanel extends Component<any, any> {
   render() {
-    const { height, pieceSelected, pieces, onPieceSelected, founds } =
+    const { height, pieceSelected, pieces, onPieceSelected, founds, lang } =
       this.props;
 
     return (
@@ -62,6 +62,7 @@ class ToolsPanel extends Component<any, any> {
                       founds={founds}
                       onPieceSelected={onPieceSelected}
                       pieceSelected={pieceSelected}
+                      lang={lang}
                     />
                   </div>
                 </Form>
