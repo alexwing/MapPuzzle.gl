@@ -1,5 +1,5 @@
 import { query } from "../lib/db/dbFactory";
-import { QueryExecResult, SqlValue } from "sql.js";
+import { QueryExecResult } from "sql.js";
 import { ConfigService } from "./configService";
 import Puzzles from "../../backend/src/models/puzzles";
 import CustomCentroids from "../../backend/src/models/customCentroids";
@@ -347,7 +347,7 @@ export class PuzzleService {
       let rtl = false;
       result.forEach((row) => {
         row.values.forEach((value) => {
-          rtl = value[0] ==1 ? true : false;
+          rtl = value[0] ===1 ? true : false;
         });
       }
       );

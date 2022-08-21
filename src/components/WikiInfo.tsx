@@ -7,13 +7,12 @@ import "./WikiInfo.css";
 import { changeLanguage, getWikiInfo } from "../services/wikiService";
 import { AlertModel, WikiInfoPiece } from "../models/Interfaces";
 import LoadingDialog from "./LoadingDialog";
-import { setCookie } from "react-simple-cookie-store";
+import { setCookie, getCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
 import AlertMessage from "./AlertMessage";
 import LangSelector from "./LangSelector";
 import { getCurrentLang } from "../lib/Utils";
 import { PuzzleService } from "../services/puzzleService";
-import { getCookie } from "react-simple-cookie-store";
 
 function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   const [pieceInfo, setPieceInfo] = useState({
@@ -47,7 +46,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
         console.log(err);
         setRtlClass("");
       });
-  }, [currentLang, [showIn, url]]);
+  }, [currentLang, showIn, url]);
 
   //is showing modal
   useEffect(() => {
@@ -87,7 +86,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
           setLoading(false);
         });
     }
-  }, [url]);
+  }, [url,show]);
 
   function onSelectLang(e: any) {
     const lang = e.target.id;

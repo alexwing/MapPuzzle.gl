@@ -2,7 +2,7 @@ import GameTime from "../lib/GameTime";
 import React from "react";
 import { ViewState } from "react-map-gl";
 import CustomWiki from "../../backend/src/models/customWiki";
-import { PieceProps, WikiInfoLang } from "../models/Interfaces";
+import { WikiInfoLang } from "../models/Interfaces";
 import { getCookie } from "react-simple-cookie-store";
 import Languages from "../../backend/src/models/languages";
 
