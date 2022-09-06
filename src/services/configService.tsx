@@ -2,7 +2,7 @@
 //global config class for the app
 export class ConfigService {
   //REACT_APP_FOO
-  public static backend:boolean = process.env.REACT_APP_FOO === "DEV";
+  public static backend:string = process.env.REACT_APP_FOO || "sqlite";
   public static langWikiSelector:boolean = false;
   public static cookieDays:number =   parseInt(process.env.REACT_APP_COOKIE_DAYS || "1");  
   public static editorEnabled:boolean = process.env.REACT_APP_EDITOR_ENABLED?.toLocaleLowerCase() === "true";
