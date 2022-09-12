@@ -3,6 +3,7 @@
 */
 
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import ViewState from './viewState';
 
 @Entity()
 export default class Puzzles {
@@ -26,6 +27,8 @@ export default class Puzzles {
     
     @Column({ type: 'text', nullable: false })
     wiki?: string
+
+    view_state?: ViewState | null;
 }
 
 

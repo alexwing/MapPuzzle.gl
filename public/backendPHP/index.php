@@ -2,7 +2,7 @@
 
 //disable coors
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
 
 // get the HTTP method, path and body of the request
@@ -13,7 +13,7 @@ $body = json_decode(file_get_contents('php://input'), true);
 
 // connect to the sqlite database
 try {
-  $pdo = new PDO('sqlite:' . dirname(__FILE__) . '/../public/front.sqlite3.png');
+  $pdo = new PDO('sqlite:' . dirname(__FILE__) . '/../front.sqlite3.png');
   $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
   //SQLITE OPEN IN READONLY
   $pdo->setAttribute(PDO::SQLITE_OPEN_READONLY, true);

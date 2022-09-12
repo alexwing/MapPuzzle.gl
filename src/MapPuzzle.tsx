@@ -58,7 +58,6 @@ class MapPuzzle extends Component<any, any> {
     };
   }
   componentDidMount() {
-    console.log(ConfigService.cookieDays);
     PuzzleService.getPuzzles().then((content: Puzzles[]) => {
       let puzzleSelected = 1;
       this.setState({ content: content });
@@ -83,26 +82,20 @@ class MapPuzzle extends Component<any, any> {
   }
   /* load game from db */
   loadGame(puzzleSelected: number) {
-    PuzzleService.getPuzzle(puzzleSelected).then((puzzleData: Puzzles) => {
-      this.getCustomCentroids(puzzleData.id);
-      this.getCustomWikis(puzzleData.id);
-      this.setState({
-        puzzleSelectedData: puzzleData,
-        puzzleSelected: puzzleSelected,
-      });
-
-      let viewStateCopy: ViewState = copyViewState(
-        this.state.puzzleSelectedData.view_state,
-        this.state.viewState
-      );
-
-      this.setState({
-        loading: true,
-        zoom: viewStateCopy.zoom,
-        viewState: viewStateCopy,
-      });
-
-      Jsondb(this.state.puzzleSelectedData.data).then((response) => {
+    this.setState({
+      loading: true,
+    });
+    //get puzzle data from db
+    PuzzleService.getPuzzle(puzzleSelected).then((puzzleData: any) => {
+      //get map data from geojson
+      Jsondb(puzzleData.data).then((response) => {
+        this.getCustomCentroids(puzzleData.id);
+        this.getCustomWikis(puzzleData.id);
+  
+        let viewStateCopy: ViewState = copyViewState(
+          puzzleData.view_state,
+          this.state.viewState
+        );        
         const pieces: PieceProps[] = response.features;
 
         //set name to pieces from pieces.properties.name
@@ -111,7 +104,10 @@ class MapPuzzle extends Component<any, any> {
         });
 
         this.setState({
+          puzzleSelectedData: puzzleData,
           puzzleSelected: puzzleSelected,
+          zoom: viewStateCopy.zoom,
+          viewState: viewStateCopy,          
           pieces: pieces,
           data: response,
           loading: false,
