@@ -36,7 +36,6 @@ class MapPuzzle extends Component<any, any> {
       puzzleCustomCentroids: null,
       puzzleCustomWiki: null,
       lineWidth: 1,
-      color: [255, 0, 0],
       colorStroke: [150, 150, 150],
       zoom: 2,
       pieceSelected: null,
@@ -413,7 +412,6 @@ class MapPuzzle extends Component<any, any> {
               <LoadingDialog show={this.state.loading} delay={1000} />
               <DeckMap
                 lineWidth={this.state.lineWidth}
-                color={this.state.color}
                 colorStroke={this.state.colorStroke}
                 piece={this.state.pieceSelected}
                 onClickMap={this.onClickMapHandler}
