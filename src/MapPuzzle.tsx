@@ -57,7 +57,7 @@ class MapPuzzle extends Component<any, any> {
       wikiInfoId: -1,
     };
   }
-  componentDidMount() {
+  componentDidMount(): void {
     PuzzleService.getPuzzles().then((content: Puzzles[]) => {
       let puzzleSelected = 1;
       this.setState({ content: content });
@@ -75,7 +75,7 @@ class MapPuzzle extends Component<any, any> {
         puzzleSelected = getCookie("puzzleSelected");
       }
       if (!puzzleSelected) {
-        puzzleSelected = 0;
+        puzzleSelected = 1;
       }
       this.loadGame(puzzleSelected);
     });
@@ -112,7 +112,6 @@ class MapPuzzle extends Component<any, any> {
           data: response,
           loading: false,
         });
-        this.checkGameStatus();
         //restore game status from coockie
         const cookieFounds = getCookie("founds" + puzzleSelected);
         if (cookieFounds) {
@@ -416,7 +415,6 @@ class MapPuzzle extends Component<any, any> {
                 lineWidth={this.state.lineWidth}
                 color={this.state.color}
                 colorStroke={this.state.colorStroke}
-                colorHeight={this.state.colorHeight}
                 piece={this.state.pieceSelected}
                 onClickMap={this.onClickMapHandler}
                 onHoverMap={this.onHoverMapHandler}

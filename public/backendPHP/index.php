@@ -4,6 +4,9 @@
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
+//ignore security
+header('Access-Control-Allow-Credentials: true');
+//remove gzip
 
 // get the HTTP method, path and body of the request
 $method = $_SERVER['REQUEST_METHOD'];
