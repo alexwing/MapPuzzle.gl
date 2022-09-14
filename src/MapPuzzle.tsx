@@ -413,7 +413,6 @@ class MapPuzzle extends Component<any, any> {
               <DeckMap
                 lineWidth={this.state.lineWidth}
                 colorStroke={this.state.colorStroke}
-                piece={this.state.pieceSelected}
                 onClickMap={this.onClickMapHandler}
                 onHoverMap={this.onHoverMapHandler}
                 onViewStateChange={this.onViewStateChangeHandler}
