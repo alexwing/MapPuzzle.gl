@@ -23,7 +23,7 @@ function DeckMap({
   }, [data,founds]);
 
   const getLayers = () => {
-    const layers = [
+    return [
       new GeoJsonLayer({
         data: data,
         pointRadiusMinPixels: 6,
@@ -49,7 +49,6 @@ function DeckMap({
         onHover: (info: any) => onHoverMap(info),
       }),
     ];
-    return layers;
   };
 
   return (
