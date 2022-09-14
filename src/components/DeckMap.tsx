@@ -20,7 +20,7 @@ function DeckMap({
 
   useEffect(() => {
     setLayers(getLayers());
-  }, [data, founds]);
+  }, [data, founds,viewState]);
 
   function getLayers() {
     return [

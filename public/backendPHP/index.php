@@ -11,6 +11,9 @@ header('Access-Control-Allow-Credentials: true');
 // get the HTTP method, path and body of the request
 $method = $_SERVER['REQUEST_METHOD'];
 
+
+header('Content-Type: application/json');
+
 // Decode raw body typ aplication/json
 $body = json_decode(file_get_contents('php://input'), true);
 
@@ -64,7 +67,7 @@ if (!$result) {
   echo json_encode([]);
   die();
 } else {
-  header('Content-Type: application/json');
-  echo json_encode($result);
+
+  echo json_encode($result,JSON_NUMERIC_CHECK);
   die();
 }

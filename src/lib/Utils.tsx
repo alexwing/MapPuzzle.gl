@@ -281,17 +281,17 @@ export function copyViewState(
 ) {
   if (!viewStateDestination) {
     viewStateDestination = {
-      latitude: viewStateOrigin.latitude,
-      longitude: viewStateOrigin.longitude,
-      zoom: viewStateOrigin.zoom,
+      latitude: parseFloat( viewStateOrigin.latitude.toString()) ,
+      longitude: parseFloat( viewStateOrigin.longitude.toString()) ,
+      zoom: parseFloat(viewStateOrigin.zoom.toString()) ,
       bearing: 0,
       pitch: 0,
     };
   } else {
     viewStateDestination = {
-      latitude: viewStateOrigin.latitude,
-      longitude: viewStateOrigin.longitude,
-      zoom: viewStateOrigin.zoom,
+      latitude: parseFloat( viewStateOrigin.latitude.toString()) ,
+      longitude: parseFloat( viewStateOrigin.longitude.toString()) ,
+      zoom: parseFloat(viewStateOrigin.zoom.toString()) ,
       bearing: viewStateDestination.bearing,
       pitch: viewStateDestination.pitch,
     };
