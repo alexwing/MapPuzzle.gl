@@ -19,36 +19,35 @@ function DeckMap({
   const [layers, setLayers] = React.useState([] as any);
 
   useEffect(() => {
-    setLayers(getLayers());
-  }, [data, founds,viewState]);
-
-  function getLayers() {
-    return [
-      new GeoJsonLayer({
-        data: data,
-        pointRadiusMinPixels: 6,
-        getLineColor: colorStroke,
-        getFillColor: (object: any) => AlphaColor(
-          hexToRgb(setColor(object.properties.mapcolor)),
-          founds.includes(object.properties.cartodb_id) ? 150 : 0
-        ),
-        opacity: 1,
-        pickable: true,
-        lineWidthMinPixels: lineWidth,
-        updateTriggers: {
-          lineWidthMinPixels: lineWidth,
+    setLayers(
+        new GeoJsonLayer({
+          data: data,
+          pointRadiusMinPixels: 6,
           getLineColor: colorStroke,
-          getFillColor: (object: any) => AlphaColor(
-            hexToRgb(setColor(object.properties.mapcolor)),
-            founds?.includes(object.properties.cartodb_id) ? 150 : 0
-          ),
-        },
-        onClick: (info: any) => onClickMap(info),
-        onHover: (info: any) => onHoverMap(info),
-      }),
-    ];
-  }
-
+          getFillColor: (object: any) =>
+            AlphaColor(
+              hexToRgb(setColor(object.properties.mapcolor)),
+              founds.includes(object.properties.cartodb_id) ? 150 : 0
+            ),
+          opacity: 1,
+          pickable: true,
+          lineWidthMinPixels: lineWidth,
+          updateTriggers: {
+            lineWidthMinPixels: lineWidth,
+            getLineColor: colorStroke,
+            getFillColor: (object: any) =>
+              AlphaColor(
+                hexToRgb(setColor(object.properties.mapcolor)),
+                founds?.includes(object.properties.cartodb_id) ? 150 : 0
+              ),
+          },
+          onClick: (info: any) => onClickMap(info),
+          onHover: (info: any) => onHoverMap(info),
+        }
+      )
+    );
+  }, [data, founds, lineWidth, colorStroke, onClickMap, onHoverMap]);
+  
   return (
     <React.Fragment>
       <DeckGL

@@ -29,7 +29,7 @@ export default class Timer extends Component<any, any> {
   }
 
   componentWillUnmount() {
-    clearInterval();
+    clearInterval(0);
   }
 
   countDown(): void {

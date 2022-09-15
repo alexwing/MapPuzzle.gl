@@ -447,6 +447,7 @@ class MapPuzzle extends Component<any, any> {
                       fails={this.state.fails}
                       YouWin={this.state.YouWin}
                       lang={this.state.lang}
+                      loading={this.state.loading}
                     />
                   </Col>
                 </Row>
