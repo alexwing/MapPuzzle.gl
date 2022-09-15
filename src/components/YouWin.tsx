@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Fireworks from "../lib/Fireworks";
@@ -30,7 +30,6 @@ export default function YouWin({
   path,
   name,
 }: any) {
-
   const [show, setShow] = React.useState(true);
 
   const handleClose = () => {
