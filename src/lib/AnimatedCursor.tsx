@@ -7,7 +7,6 @@ import CursorCore from "./CursorCore";
  * Calls and passes props to CursorCore if not a touch/mobile device.
  */
 function AnimatedCursor({
-  color = "220, 90, 90",
   clickScale = 0.7,
   selected = null,
   centroid = null,

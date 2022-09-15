@@ -453,7 +453,6 @@ class MapPuzzle extends Component<any, any> {
               </Container>
               <AnimatedCursor
                 clickScale={0.95}
-                color="#666"
                 zoom={this.state.zoom}
                 selected={this.state.pieceSelectedData}
                 centroid={this.state.pieceSelectedCentroid}
