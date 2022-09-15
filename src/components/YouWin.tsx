@@ -23,111 +23,109 @@ import {
   TelegramIcon,
 } from "react-share";
 
-export default class YouWin extends Component<any, any> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      show: true,
-    };
-  }
+export default function YouWin({
+  founds,
+  fails,
+  onResetGame,
+  path,
+  name,
+}: any) {
 
-  render() {
-    const { onResetGame } = this.props;
-    const handleClose = () => {
-      this.setState({
-        show: false,
-      });
-    };
-    const url = "http://" + getUrl() + "/?map=" + this.props.path;
-    const quote =
-      "I completed the puzzle game of the " +
-      this.props.name +
-      ", in " +
-      getTexTime() +
-      ", with " +
-      this.props.fails +
-      " failures out of " +
-      this.props.founds.length +
-      " pieces found.";
-    const hashtag = "education,cartography,puzzle,countries";
-    const title = "MapPuzzle.xyz - Puzzle game based in maps";
-    return (
-      <React.Fragment>
-        <Modal
-          show={this.state.show}
-          size="xl"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-          onHide={handleClose}
-        >
-          <Modal.Header>
-            <Modal.Title id="contained-modal-title-vcenter">
-              Congratulations! You're done.
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Row className="scorewin">
-              <Col xs={4} lg={4}>
-                <Alert variant="success">
-                  <Alert.Heading>Founds:</Alert.Heading>
-                  <hr />
-                  <p className="mb-0">{this.props.founds.length}</p>
-                </Alert>
-              </Col>
-              <Col xs={4} lg={4}>
-                <Alert variant="warning">
-                  <Alert.Heading>Time:</Alert.Heading>
-                  <hr />
-                  <p className="mb-0">{getTime()}</p>
-                </Alert>
-              </Col>
-              <Col xs={4} lg={4}>
-                <Alert variant="danger">
-                  <Alert.Heading>Fails:</Alert.Heading>
-                  <hr />
-                  <p className="mb-0">{this.props.fails}</p>
-                </Alert>
-              </Col>
-            </Row>
-            <Row>
-              <Col lg={12} className="share">
-                <h4>Share your score</h4>
-                <EmailShareButton url={url} subject={title} body={quote}>
-                  <EmailIcon size={48} round={true} />
-                </EmailShareButton>
-                <FacebookShareButton url={url} quote={quote} hashtag={hashtag}>
-                  <FacebookIcon size={48} round={true} />
-                </FacebookShareButton>
-                <TwitterShareButton
-                  url={url}
-                  title={quote}
-                  hashtags={hashtag.split(",")}
-                >
-                  <TwitterIcon size={48} round={true} />
-                </TwitterShareButton>
-                <LinkedinShareButton
-                  url={url}
-                  title={title + " - " + this.props.name}
-                  summary={quote}
-                  source={title}
-                >
-                  <LinkedinIcon size={48} round={true} />
-                </LinkedinShareButton>
-                <WhatsappShareButton url={url} title={quote}>
-                  <WhatsappIcon size={48} round={true} />
-                </WhatsappShareButton>
-                <TelegramShareButton url={url} title={quote}>
-                  <TelegramIcon size={48} round={true} />
-                </TelegramShareButton>
-              </Col>
-            </Row>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={onResetGame}>New Game</Button>
-          </Modal.Footer>
-        </Modal>
-        <Fireworks />
-      </React.Fragment>
-    );
-  }
+  const [show, setShow] = React.useState(true);
+
+  const handleClose = () => {
+    setShow(false);
+  };
+
+  const url = "http://" + getUrl() + "/?map=" + path;
+  const quote =
+    "I completed the puzzle game of the " +
+    name +
+    ", in " +
+    getTexTime() +
+    ", with " +
+    fails +
+    " failures out of " +
+    founds.length +
+    " pieces found.";
+  const hashtag = "education,cartography,puzzle,countries";
+  const title = "MapPuzzle.xyz - Puzzle game based in maps";
+  return (
+    <React.Fragment>
+      <Modal
+        show={show}
+        size="xl"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        onHide={handleClose}
+      >
+        <Modal.Header>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Congratulations! You're done.
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Row className="scorewin">
+            <Col xs={4} lg={4}>
+              <Alert variant="success">
+                <Alert.Heading>Founds:</Alert.Heading>
+                <hr />
+                <p className="mb-0">{founds.length}</p>
+              </Alert>
+            </Col>
+            <Col xs={4} lg={4}>
+              <Alert variant="warning">
+                <Alert.Heading>Time:</Alert.Heading>
+                <hr />
+                <p className="mb-0">{getTime()}</p>
+              </Alert>
+            </Col>
+            <Col xs={4} lg={4}>
+              <Alert variant="danger">
+                <Alert.Heading>Fails:</Alert.Heading>
+                <hr />
+                <p className="mb-0">{fails}</p>
+              </Alert>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12} className="share">
+              <h4>Share your score</h4>
+              <EmailShareButton url={url} subject={title} body={quote}>
+                <EmailIcon size={48} round={true} />
+              </EmailShareButton>
+              <FacebookShareButton url={url} quote={quote} hashtag={hashtag}>
+                <FacebookIcon size={48} round={true} />
+              </FacebookShareButton>
+              <TwitterShareButton
+                url={url}
+                title={quote}
+                hashtags={hashtag.split(",")}
+              >
+                <TwitterIcon size={48} round={true} />
+              </TwitterShareButton>
+              <LinkedinShareButton
+                url={url}
+                title={title + " - " + name}
+                summary={quote}
+                source={title}
+              >
+                <LinkedinIcon size={48} round={true} />
+              </LinkedinShareButton>
+              <WhatsappShareButton url={url} title={quote}>
+                <WhatsappIcon size={48} round={true} />
+              </WhatsappShareButton>
+              <TelegramShareButton url={url} title={quote}>
+                <TelegramIcon size={48} round={true} />
+              </TelegramShareButton>
+            </Col>
+          </Row>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={onResetGame}>New Game</Button>
+        </Modal.Footer>
+      </Modal>
+      <Fireworks />
+    </React.Fragment>
+  );
 }

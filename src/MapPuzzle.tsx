@@ -395,7 +395,6 @@ class MapPuzzle extends Component<any, any> {
     if (this.state.YouWin) {
       YouWinScreen = !this.state.content ? null : (
         <YouWin
-          pieces={this.state.pieces}
           founds={this.state.founds}
           fails={this.state.fails}
           onResetGame={this.onResetGameHandler}
