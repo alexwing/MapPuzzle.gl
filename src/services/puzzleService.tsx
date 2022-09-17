@@ -21,7 +21,7 @@ export class PuzzleService {
   //get all puzzles
   public static async getPuzzles(): Promise<Puzzles[]> {
     return query(
-      "SELECT p.*, vs.latitude, vs.longitude, vs.zoom  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id ORDER BY p.id"
+      "SELECT p.*, vs.latitude, vs.longitude, vs.zoom  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id ORDER BY p.name"
     )
       .then((result: QueryExecResult[]) => {
         let puzzles: Puzzles[] = [];

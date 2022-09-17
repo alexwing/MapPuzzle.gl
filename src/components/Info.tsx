@@ -55,7 +55,7 @@ function Info({ show = false, InfoClose, content, name }: any) {
               <img src={c.icon} alt={c.name} />
             </td>
             <td width="30%">{c.name}</td>
-            <td width="50%">{c.comment}</td>
+            <td width="50%"><a href={c.comment} target="_blank" rel="noopener noreferrer">{c.comment}</a></td>
           </tr>
         ))}
       </tbody>

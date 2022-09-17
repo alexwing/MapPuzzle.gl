@@ -64,7 +64,7 @@ class MapPuzzle extends Component<any, any> {
       if (window.location.pathname) {
         this.state.content.forEach(function (value: Puzzles, index: number) {
           if (value.url === window.location.search.substring(5)) {
-            puzzleSelected = index + 1;
+            puzzleSelected = value.id;
           }
         });
         if (!puzzleSelected) {

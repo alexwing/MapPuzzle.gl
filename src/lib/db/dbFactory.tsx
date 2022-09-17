@@ -19,12 +19,16 @@ export async function query(sql: string): Promise<QueryExecResult[]> {
     sql = securizeQuery(sql);
     switch (ConfigService.backend) {
       case "sqlite":
+        console.log("[sqlite Mode]");
         return await dbFactory.sqlite(sql);
       case "backend":
+        console.log("[backend node.js Mode]");
         return await dbFactory.backend(sql);
       case "php":
+        console.log("[PHP Mode]");
         return await dbFactory.php(sql);
       default:
+        console.log("[sqlite Mode]");
         return await dbFactory.sqlite(sql);
     }
   } catch (err) {
