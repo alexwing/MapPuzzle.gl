@@ -35,6 +35,7 @@ export default function YouWin({
   const handleClose = () => {
     setShow(false);
   };
+  
 
   const url = "http://" + getUrl() + "/?map=" + path;
   const quote =
@@ -121,6 +122,7 @@ export default function YouWin({
           </Row>
         </Modal.Body>
         <Modal.Footer>
+          <Button variant="outline-primary" onClick={handleClose}>Explore</Button>
           <Button onClick={onResetGame}>New Game</Button>
         </Modal.Footer>
       </Modal>

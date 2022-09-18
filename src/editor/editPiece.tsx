@@ -179,7 +179,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   variant="outline-secondary"
                   id="button-add"
                   onClick={() => {
-                    setLeft(parseInt(left) + 5 + "");
+                    setLeft(parseInt(left) + 2.5 + "");
                   }}
                 >
                   &larr;
@@ -200,7 +200,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   variant="outline-secondary"
                   id="button-minus"
                   onClick={() => {
-                    setLeft(parseInt(left) - 5 + "");
+                    setLeft(parseInt(left) - 2.5 + "");
                   }}
                 >
                   &rarr;
