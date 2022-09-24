@@ -1,22 +1,68 @@
-import React, {useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
+import { useKeyPress } from "../lib/useKeyPress";
 import { className, setColor } from "../lib/Utils";
 import { PuzzleService } from "../services/puzzleService";
 
 export default function PieceList(props: any) {
-  const { pieces, founds, onPieceSelected, pieceSelected, lang } = props;
+  const {
+    pieces,
+    founds,
+    onPieceSelected,
+    handleUp,
+    handleDown,
+    pieceSelected,
+    lang,
+  } = props;
   const [rtlClass, setRtlClass] = useState("");
+  const upPress = useKeyPress("ArrowUp");
+  const downPress = useKeyPress("ArrowDown");
+  const [enablePress, setEnablePress] = useState(true);
+  const concernedElement = document.querySelector(".legend");
 
   //on init load if rtl lang
   useEffect(() => {
-    PuzzleService.getLangIsRtl(lang).then(isRtl => {
-      setRtlClass(isRtl ? "rtl" : "");
-    }).catch(err => {
-      console.log(err);
-      setRtlClass("");
-    });
-  } , [lang]);
-  
+    PuzzleService.getLangIsRtl(lang)
+      .then((isRtl) => {
+        setRtlClass(isRtl ? "rtl" : "");
+      })
+      .catch((err) => {
+        console.log(err);
+        setRtlClass("");
+      });
+  }, [lang]);
+
+  useEffect(() => {
+    if (upPress && enablePress) {
+      handleUp();
+    }
+  }, [upPress, handleUp, enablePress]);
+
+  useEffect(() => {
+    if (downPress && enablePress) {
+      handleDown();
+    }
+  }, [downPress, handleDown, enablePress]);
+
+  const enablePressHandler = () => {
+    setEnablePress(true);
+  };
+
+  const disablePressHandler = () => {
+    setEnablePress(false);
+  };
+
+  document.addEventListener("mousedown", (event: any) => {
+    if (concernedElement && event) {
+      if (concernedElement.contains(event.target)) {
+        console.log("Clicked Inside");
+        enablePressHandler();
+      } else {
+        console.log("Clicked Outside / Elsewhere");
+        disablePressHandler();
+      }
+    }
+  });
 
   return (
     <React.Fragment>

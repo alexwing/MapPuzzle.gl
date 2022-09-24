@@ -14,6 +14,8 @@ function ToolsPanel({
   puzzleSelected,
   pieceSelected,
   onPieceSelected,
+  handleUp,
+  handleDown,
   pieces,
   height,
   founds,
@@ -71,6 +73,8 @@ function ToolsPanel({
                     founds={founds}
                     onPieceSelected={onPieceSelected}
                     pieceSelected={pieceSelected}
+                    handleUp = {handleUp}
+                    handleDown = {handleDown}
                     lang={lang}
                   />
                 </div>

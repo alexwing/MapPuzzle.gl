@@ -218,12 +218,16 @@ class MapPuzzle extends Component<any, any> {
   }
   /* Piece is selected on list */
   onPieceSelectedHandler = (val: any) => {
-    if (this.state.pieceSelected !== val.target.parentNode.id) {
-      this.setState({ pieceSelected: val.target.parentNode.id });
+    this.selectPiece(val.target.parentNode.id);
+  };
+
+  selectPiece = (pieceId: number) => {
+    if (this.state.pieceSelected !== pieceId) {
+      this.setState({ pieceSelected: pieceId });
       this.state.pieces.forEach((piece: PieceProps) => {
         if (
           String(piece.properties.cartodb_id).trim() ===
-          String(val.target.parentNode.id).trim()
+          String(pieceId).trim()
         ) {
           this.setState({ pieceSelectedData: piece });
           this.findCustomCentroids(piece);
@@ -232,7 +236,47 @@ class MapPuzzle extends Component<any, any> {
     } else {
       this.setState({ pieceSelected: null, pieceSelectedData: null });
     }
+  }
+
+    
+
+  /* handleUp on pieceList */
+  onPieceUpHandler = () => {
+    console.log("onPieceUpHandler");
+    //find previous piece from pieces list and select it
+
+    //finde pieces withou founds
+    const pieces = this.state.pieces.filter(
+      (e: PieceProps) => !this.state.founds.includes(e.properties.cartodb_id)
+    );
+    //find selected piece index
+    const pieceIndex = pieces.findIndex(
+      (e: PieceProps) => e.properties.cartodb_id=== parseInt(this.state.pieceSelected) 
+    );
+    //find previous piece index
+    if (pieceIndex > 0) {
+      this.selectPiece(pieces[pieceIndex - 1].properties.cartodb_id);
+    }
   };
+
+   /* handleDown on pieceList */
+  onPieceDownHandler = (val: any) => {
+    console.log("onPieceUpHandler");
+    //find next piece from pieces list and select it
+     //finde pieces withou founds
+     const pieces = this.state.pieces.filter(
+      (e: PieceProps) => !this.state.founds.includes(e.properties.cartodb_id)
+    );
+    //find selected piece index
+    const pieceIndex = pieces.findIndex(
+      (e: PieceProps) => e.properties.cartodb_id=== parseInt(this.state.pieceSelected) 
+    );
+    //find next piece index
+    if (pieceIndex < pieces.length - 1) {
+      this.selectPiece(pieces[pieceIndex + 1].properties.cartodb_id);
+    }   
+  };
+  
   /* find the custom centroid of the piece from content.json */
   findCustomCentroids(piece: PieceProps) {
     let found = false;
@@ -440,6 +484,8 @@ class MapPuzzle extends Component<any, any> {
                       puzzleSelected={this.state.puzzleSelected}
                       pieceSelected={this.state.pieceSelected}
                       onPieceSelected={this.onPieceSelectedHandler}
+                      handleUp = {this.onPieceUpHandler}
+                      handleDown = {this.onPieceDownHandler}
                       pieces={this.state.pieces}
                       height={this.state.height}
                       founds={this.state.founds}
