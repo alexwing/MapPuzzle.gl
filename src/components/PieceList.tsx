@@ -20,7 +20,7 @@ export default function PieceList(props: any) {
   const [enablePress, setEnablePress] = useState(true);
 
   const identify = "id_" + useId().replaceAll(":", "");
-  const concernedElement = document.querySelector("#"+identify);
+  const concernedElement = document.querySelector("#" + identify);
 
   //on init load if rtl lang
   useEffect(() => {
@@ -35,16 +35,17 @@ export default function PieceList(props: any) {
   }, [lang]);
 
   useEffect(() => {
+    console.log("upPress", upPress, identify);
     if (upPress && enablePress) {
       handleUp();
     }
-  }, [upPress, handleUp]);
+  }, [upPress, handleUp, enablePress, identify]);
 
   useEffect(() => {
     if (downPress && enablePress) {
       handleDown();
     }
-  }, [downPress, handleDown]);
+  }, [downPress, handleDown, enablePress]);
 
   const enablePressHandler = () => {
     setEnablePress(true);
@@ -53,18 +54,21 @@ export default function PieceList(props: any) {
   const disablePressHandler = () => {
     setEnablePress(false);
   };
-
-  document.addEventListener("mouseup", (event: any) => {
-    if (concernedElement && event) {
-      if (concernedElement.contains(event.target)) {
-        console.log("Clicked Inside");
-        enablePressHandler();
-      } else {
-        console.log("Clicked Outside / Elsewhere");
-        disablePressHandler();
+  useEffect(() => {
+    document.addEventListener("mouseup", (event: any) => {
+      if (concernedElement && event) {
+        if (concernedElement.contains(event.target)) {
+          // Clicked in box
+          enablePressHandler();
+        } else {
+          // Clicked outside the box
+          disablePressHandler();
+        }
       }
-    }
-  });
+      event.stopPropagation();
+      event.preventDefault();
+    });
+  }, [concernedElement]);
 
   return (
     <React.Fragment>

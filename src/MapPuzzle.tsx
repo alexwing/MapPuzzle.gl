@@ -260,7 +260,7 @@ class MapPuzzle extends Component<any, any> {
   };
 
    /* handleDown on pieceList */
-  onPieceDownHandler = (val: any) => {
+  onPieceDownHandler = () => {
     console.log("onPieceUpHandler");
     //find next piece from pieces list and select it
      //finde pieces withou founds

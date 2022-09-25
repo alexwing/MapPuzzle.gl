@@ -55,29 +55,28 @@ function EditorDialog({
     }
   }
 
-
-  function handleClose() {
+  const handleClose = () => {
     onHide();
-  }
+  };
   //onPieceUpHandler
-  const onPieceUpHandler = async () => {
+  const onPieceUpHandler = () => {
+    console.log("Editor Dialog onPieceUpHandler");
     //find pieceSelected piece index
     const pieceIndex = pieces.findIndex( (p: PieceProps) => p.properties.cartodb_id === pieceSelected);
     if (pieceIndex > 0) {
-      selectPiece(pieces[pieceIndex - 1]);
+      selectPiece(pieces[pieceIndex - 1].properties.cartodb_id);
     }
   };
-
+  
   //onPieceDownHandler
-  const onPieceDownHandler = async () => {
+  const onPieceDownHandler = () => {
+    console.log("Editor Dialog onPieceDownHandler");
     //find pieceSelected piece index
     const pieceIndex = pieces.findIndex( (p: PieceProps) => p.properties.cartodb_id === pieceSelected);
     if (pieceIndex < pieces.length - 1) {
-      selectPiece(pieces[pieceIndex + 1]);
+      selectPiece(pieces[pieceIndex + 1].properties.cartodb_id);
     }
   };
-
-
 
   if (loading) return <LoadingDialog show={loading} delay={1000} />;
   return (
@@ -116,14 +115,12 @@ function EditorDialog({
                       maxHeight: "calc(100vh - 300px)",
                     }}                  >
                     <PieceList
-
                       pieces={pieces}
                       founds={[]}
                       onPieceSelected={onPieceSelectedHandler}
                       pieceSelected={pieceSelected}
                       handleUp = {onPieceUpHandler}
                       handleDown = {onPieceDownHandler}
-                      identify="editor"
                     />
                   </div>
                 </Col>
