@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useId } from "react";
 import Table from "react-bootstrap/Table";
 import { useKeyPress } from "../lib/useKeyPress";
 import { className, setColor } from "../lib/Utils";
@@ -18,7 +18,9 @@ export default function PieceList(props: any) {
   const upPress = useKeyPress("ArrowUp");
   const downPress = useKeyPress("ArrowDown");
   const [enablePress, setEnablePress] = useState(true);
-  const concernedElement = document.querySelector(".legend");
+
+  const identify = "id_" + useId().replaceAll(":", "");
+  const concernedElement = document.querySelector("#"+identify);
 
   //on init load if rtl lang
   useEffect(() => {
@@ -36,13 +38,13 @@ export default function PieceList(props: any) {
     if (upPress && enablePress) {
       handleUp();
     }
-  }, [upPress, handleUp, enablePress]);
+  }, [upPress, handleUp]);
 
   useEffect(() => {
     if (downPress && enablePress) {
       handleDown();
     }
-  }, [downPress, handleDown, enablePress]);
+  }, [downPress, handleDown]);
 
   const enablePressHandler = () => {
     setEnablePress(true);
@@ -52,7 +54,7 @@ export default function PieceList(props: any) {
     setEnablePress(false);
   };
 
-  document.addEventListener("mousedown", (event: any) => {
+  document.addEventListener("mouseup", (event: any) => {
     if (concernedElement && event) {
       if (concernedElement.contains(event.target)) {
         console.log("Clicked Inside");
@@ -66,7 +68,14 @@ export default function PieceList(props: any) {
 
   return (
     <React.Fragment>
-      <Table striped bordered hover size="sm" className={"legend " + rtlClass}>
+      <Table
+        striped
+        bordered
+        hover
+        size="sm"
+        className={"legend " + rtlClass}
+        id={identify}
+      >
         <tbody>
           {pieces.map((c: any) =>
             founds.includes(c.properties.cartodb_id) ? null : (

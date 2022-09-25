@@ -38,21 +38,46 @@ function EditorDialog({
 
   /* Piece is selected on list */
   const onPieceSelectedHandler = async (val: any) => {
+    selectPiece(parseInt(val.target.parentNode.id));
+  };
+
+  /* Piece is selected on list */
+  const selectPiece = async (pieceId: number) => {
     let piece = pieces.find(
       (p: PieceProps) =>
-        p.properties.cartodb_id === parseInt(val.target.parentNode.id)
+        p.properties.cartodb_id === pieceId
     );
     if (piece) {
       piece.id = puzzleSelected.id;
       piece = await PuzzleService.updatePieceProps(piece);
       setPieceSelectedData(piece);
-      setPieceSelected(val.target.parentNode.id);
+      setPieceSelected(pieceId);
     }
-  };
+  }
+
 
   function handleClose() {
     onHide();
   }
+  //onPieceUpHandler
+  const onPieceUpHandler = async () => {
+    //find pieceSelected piece index
+    const pieceIndex = pieces.findIndex( (p: PieceProps) => p.properties.cartodb_id === pieceSelected);
+    if (pieceIndex > 0) {
+      selectPiece(pieces[pieceIndex - 1]);
+    }
+  };
+
+  //onPieceDownHandler
+  const onPieceDownHandler = async () => {
+    //find pieceSelected piece index
+    const pieceIndex = pieces.findIndex( (p: PieceProps) => p.properties.cartodb_id === pieceSelected);
+    if (pieceIndex < pieces.length - 1) {
+      selectPiece(pieces[pieceIndex + 1]);
+    }
+  };
+
+
 
   if (loading) return <LoadingDialog show={loading} delay={1000} />;
   return (
@@ -96,6 +121,9 @@ function EditorDialog({
                       founds={[]}
                       onPieceSelected={onPieceSelectedHandler}
                       pieceSelected={pieceSelected}
+                      handleUp = {onPieceUpHandler}
+                      handleDown = {onPieceDownHandler}
+                      identify="editor"
                     />
                   </div>
                 </Col>

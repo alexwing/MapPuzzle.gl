@@ -31,7 +31,7 @@ function CursorCore({
   let endY = useRef(0);
 
   // Primary Mouse Move event
-  const onMouseMove = useCallback(({ clientX, clientY }) => {
+  const onMouseMove = useCallback(({ clientX, clientY }:any) => {
     setCoords({ x: clientX, y: clientY });
     tooltipRef.current.style.top = clientY + "px";
     tooltipRef.current.style.left = clientX + "px";
@@ -41,7 +41,7 @@ function CursorCore({
 
   // Outer Cursor Animation Delay
   const animateOuterCursor = useCallback(
-    (time) => {
+    (time:any) => {
       if (previousTimeRef)
         if (previousTimeRef.current !== undefined && pieceCursorRef && coords) {
           coords.x += (endX.current - coords.x) / 8;

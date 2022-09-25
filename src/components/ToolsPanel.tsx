@@ -76,6 +76,7 @@ function ToolsPanel({
                     handleUp = {handleUp}
                     handleDown = {handleDown}
                     lang={lang}
+                    identify="tools"
                   />
                 </div>
               </Form>
