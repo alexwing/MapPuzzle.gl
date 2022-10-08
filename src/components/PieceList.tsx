@@ -35,17 +35,18 @@ export default function PieceList(props: any) {
   }, [lang]);
 
   useEffect(() => {
-    console.log("upPress", upPress, identify);
     if (upPress && enablePress) {
       handleUp();
     }
-  }, [upPress, handleUp, enablePress, identify]);
+  // eslint-disable-next-line
+  }, [upPress,enablePress]);
 
   useEffect(() => {
     if (downPress && enablePress) {
       handleDown();
     }
-  }, [downPress, handleDown, enablePress]);
+  // eslint-disable-next-line
+  }, [downPress,enablePress]);
 
   const enablePressHandler = () => {
     setEnablePress(true);

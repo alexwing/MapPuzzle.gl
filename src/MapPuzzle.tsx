@@ -90,11 +90,11 @@ class MapPuzzle extends Component<any, any> {
       Jsondb(puzzleData.data).then((response) => {
         this.getCustomCentroids(puzzleData.id);
         this.getCustomWikis(puzzleData.id);
-  
+
         let viewStateCopy: ViewState = copyViewState(
           puzzleData.view_state,
           this.state.viewState
-        );        
+        );
         const pieces: PieceProps[] = response.features;
 
         //set name to pieces from pieces.properties.name
@@ -106,7 +106,7 @@ class MapPuzzle extends Component<any, any> {
           puzzleSelectedData: puzzleData,
           puzzleSelected: puzzleSelected,
           zoom: viewStateCopy.zoom,
-          viewState: viewStateCopy,          
+          viewState: viewStateCopy,
           pieces: pieces,
           data: response,
           loading: false,
@@ -174,8 +174,7 @@ class MapPuzzle extends Component<any, any> {
             return 1;
           }
           return 0;
-        }
-        );         
+        });
         this.setState({ pieces: pieces });
       }
     );
@@ -226,8 +225,7 @@ class MapPuzzle extends Component<any, any> {
       this.setState({ pieceSelected: pieceId });
       this.state.pieces.forEach((piece: PieceProps) => {
         if (
-          String(piece.properties.cartodb_id).trim() ===
-          String(pieceId).trim()
+          String(piece.properties.cartodb_id).trim() === String(pieceId).trim()
         ) {
           this.setState({ pieceSelectedData: piece });
           this.findCustomCentroids(piece);
@@ -236,22 +234,19 @@ class MapPuzzle extends Component<any, any> {
     } else {
       this.setState({ pieceSelected: null, pieceSelectedData: null });
     }
-  }
-
-    
+  };
 
   /* handleUp on pieceList */
+  //find previous piece from pieces list and select it
   onPieceUpHandler = () => {
-    console.log("onPieceUpHandler");
-    //find previous piece from pieces list and select it
-
     //finde pieces withou founds
     const pieces = this.state.pieces.filter(
       (e: PieceProps) => !this.state.founds.includes(e.properties.cartodb_id)
     );
     //find selected piece index
     const pieceIndex = pieces.findIndex(
-      (e: PieceProps) => e.properties.cartodb_id=== parseInt(this.state.pieceSelected) 
+      (e: PieceProps) =>
+        e.properties.cartodb_id === parseInt(this.state.pieceSelected)
     );
     //find previous piece index
     if (pieceIndex > 0) {
@@ -259,24 +254,24 @@ class MapPuzzle extends Component<any, any> {
     }
   };
 
-   /* handleDown on pieceList */
+  /* handleDown on pieceList */
+  //find next piece from pieces list and select it
   onPieceDownHandler = () => {
-    console.log("onPieceUpHandler");
-    //find next piece from pieces list and select it
-     //finde pieces withou founds
-     const pieces = this.state.pieces.filter(
+    //finde pieces withou founds
+    const pieces = this.state.pieces.filter(
       (e: PieceProps) => !this.state.founds.includes(e.properties.cartodb_id)
     );
     //find selected piece index
     const pieceIndex = pieces.findIndex(
-      (e: PieceProps) => e.properties.cartodb_id=== parseInt(this.state.pieceSelected) 
+      (e: PieceProps) =>
+        e.properties.cartodb_id === parseInt(this.state.pieceSelected)
     );
     //find next piece index
     if (pieceIndex < pieces.length - 1) {
       this.selectPiece(pieces[pieceIndex + 1].properties.cartodb_id);
-    }   
+    }
   };
-  
+
   /* find the custom centroid of the piece from content.json */
   findCustomCentroids(piece: PieceProps) {
     let found = false;
@@ -484,8 +479,8 @@ class MapPuzzle extends Component<any, any> {
                       puzzleSelected={this.state.puzzleSelected}
                       pieceSelected={this.state.pieceSelected}
                       onPieceSelected={this.onPieceSelectedHandler}
-                      handleUp = {this.onPieceUpHandler}
-                      handleDown = {this.onPieceDownHandler}
+                      handleUp={this.onPieceUpHandler}
+                      handleDown={this.onPieceDownHandler}
                       pieces={this.state.pieces}
                       height={this.state.height}
                       founds={this.state.founds}

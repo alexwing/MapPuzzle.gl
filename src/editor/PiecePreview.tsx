@@ -19,16 +19,10 @@ function PiecePreview({ selected = null, centroid = null }: any) {
     RenderPiecePreview = (
       <div>
         <div
+          className="piece-poi"
           style={{
-            position: "absolute",
             marginLeft:marginLeft+ "px",
-            marginTop: marginTop+ "px",
-            width: "10px",
-            height: "10px",
-            backgroundColor: "#000",
-            border: "1px solid lightgray",
-            borderRadius: "5px",
-            overflow: "hidden",
+            marginTop: marginTop+ "px"
           }}
         ></div>
         <svg

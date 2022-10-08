@@ -17,8 +17,25 @@
   display: inline-flex;
   padding: 10px;
   margin: 10px;
+  transform: scale(2);
+  margin-top: 50%;
+  box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.15);
 }
 .btn-cursor{
     width: 50px;
-    height: 50px;
+    height: 50px; 
+}
+
+.piece-poi{
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background-color: #000;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.full-height{
+    height: calc(30vh);
 }

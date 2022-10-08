@@ -60,7 +60,6 @@ function EditorDialog({
   };
   //onPieceUpHandler
   const onPieceUpHandler = () => {
-    console.log("Editor Dialog onPieceUpHandler");
     //find pieceSelected piece index
     const pieceIndex = pieces.findIndex( (p: PieceProps) => p.properties.cartodb_id === pieceSelected);
     if (pieceIndex > 0) {
@@ -70,7 +69,6 @@ function EditorDialog({
   
   //onPieceDownHandler
   const onPieceDownHandler = () => {
-    console.log("Editor Dialog onPieceDownHandler");
     //find pieceSelected piece index
     const pieceIndex = pieces.findIndex( (p: PieceProps) => p.properties.cartodb_id === pieceSelected);
     if (pieceIndex < pieces.length - 1) {

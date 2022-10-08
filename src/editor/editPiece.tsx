@@ -106,8 +106,9 @@ function EditPiece({ piece = {} as PieceProps }: any) {
         />
         <Row>
           <Col xs={12} lg={12}>
+          <h2>{PieceEdited.name}</h2>
             <Form.Group className="mb-3" controlId="formWiki">
-              <Form.Label>Piece Wiki</Form.Label>
+              <Form.Label>Wikipedia url id:</Form.Label>
               <InputGroup>
                 <Form.Control
                   type="input"
@@ -134,7 +135,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
             </Form.Group>
           </Col>
         </Row>
-        <Row>
+        <Row className="full-height">
           <Col xs={6} lg={6}>
             <Form.Group className="mb-3 " controlId="formTop">
               <Form.Label>Offset</Form.Label>
