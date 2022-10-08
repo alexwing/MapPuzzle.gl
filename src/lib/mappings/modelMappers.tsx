@@ -66,10 +66,11 @@ export function mapResultToPuzzle(result: SqlValue[]): Puzzles {
     name: result[4],
     url: result[5],
     wiki: result[6],
+    countryCode: result[7],
     view_state: {
-      latitude: result[7],
-      longitude: result[8],
-      zoom: result[9],
+      latitude: result[8],
+      longitude: result[9],
+      zoom: result[10],
     },
   } as Puzzles;
 }

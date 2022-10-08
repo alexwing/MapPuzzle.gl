@@ -14,6 +14,13 @@ export interface PieceProps {
   customWiki?: CustomWiki;
 }
 
+export interface Regions {
+  regionCode: number;
+  region: string;
+  subregionCode: number;
+  subregion: string;
+}
+
 export interface WikiInfoPiece {
   title: string;
   contents: string[];

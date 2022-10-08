@@ -6,7 +6,12 @@ import CustomCentroids from "../../backend/src/models/customCentroids";
 import CustomWiki from "../../backend/src/models/customWiki";
 import CustomTranslations from "../../backend/src/models/customTranslations";
 import Languages from "../../backend/src/models/languages";
-import { PieceProps, WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
+import {
+  PieceProps,
+  Regions,
+  WikiInfoLang,
+  WikiInfoPiece,
+} from "../models/Interfaces";
 import { getWikiInfo } from "./wikiService";
 import { getWikiSimple } from "../lib/Utils";
 import {
@@ -51,6 +56,58 @@ export class PuzzleService {
       .catch((err) => {
         console.log(err);
         return Promise.reject("Puzzles not found");
+      });
+  }
+  //get a puzzles by filters (region, subregion)
+  public static getPuzzlesByFilters(
+    region: string,
+    subregion: string
+  ): Promise<Puzzles[]> {
+    let where = "";
+    if (region !== "") {
+      where = ` and c.region = '${region}'`;
+    }
+    if (subregion !== "") {
+      where = ` and c.subregion = '${subregion}'`;
+    }
+    return query(
+      `SELECT p.* FROM puzzles p INNER JOIN countries c ON p.country_code = c.id WHERE 1=1 ${where}`
+    )
+      .then((result: QueryExecResult[]) => {
+        let puzzles: Puzzles[] = [];
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            puzzles.push(mapResultToPuzzle(value));
+          });
+        });
+        return puzzles;
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve([]);
+      });
+  }
+
+  //get regions and subregions
+  public static getRegions(): Promise<Regions[]> {
+    return query(`SELECT DISTINCT c.regioncode, c.region, c.subregioncode, c.subregion FROM countries c ORDER BY c.region, c.subregion`)
+      .then((result: QueryExecResult[]) => {
+        let regions: Regions[] = [];
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            regions.push({
+              regionCode: value[0],
+              region: value[1],
+              subregionCode: value[2],
+              subregion: value[3],
+            } as Regions);
+          });
+        });
+        return regions;
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve([]);
       });
   }
 
@@ -340,23 +397,21 @@ export class PuzzleService {
     }
   }
 
-  public static  async getLangIsRtl(lang: string) {
+  public static async getLangIsRtl(lang: string) {
     try {
       const result = await query(
-        `SELECT rtl FROM languages WHERE lang = "${lang}"`);
+        `SELECT rtl FROM languages WHERE lang = "${lang}"`
+      );
       let rtl = false;
       result.forEach((row) => {
         row.values.forEach((value) => {
-          rtl = value[0] ===1 ? true : false;
+          rtl = value[0] === 1 ? true : false;
         });
-      }
-      );
+      });
       return rtl;
     } catch (err) {
       console.log(err);
       return false;
     }
   }
-
-
 }
