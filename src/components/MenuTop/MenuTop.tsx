@@ -11,6 +11,7 @@ import { setCookie } from "react-simple-cookie-store";
 import Languages from "../../../backend/src/models/languages";
 import { ConfigService } from "../../services/configService";
 import { getCurrentLang, languagesToWikiInfoLang } from "../../lib/Utils";
+import { Button, Nav } from "react-bootstrap";
 
 function MenuTop({
   name,
@@ -25,6 +26,7 @@ function MenuTop({
 }: any) {
   const [show, setShow] = React.useState(false);
   const [showInfo, setShowInfo] = React.useState(false);
+  const [showSelectPuzzle, setShowSelectPuzzle] = React.useState(false);
   const [langs, setLangs] = React.useState([] as WikiInfoLang[]);
   const [currentLang, setCurrentLang] = React.useState("");
 
@@ -67,6 +69,12 @@ function MenuTop({
     setCurrentLang(getCurrentLang(langs));
     onLangChange(lang);
   };
+  const handleShowSelectPuzzle = () => {
+    setShowSelectPuzzle(true);
+  };
+  const handleHideSelectPuzzle = () => {
+    setShowSelectPuzzle(false);
+  };
 
   return (
     <React.Fragment>
@@ -77,7 +85,21 @@ function MenuTop({
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <PuzzleSelector puzzles={content} onSelectMap={onSelectMap} />
+          <Nav className="mr-auto">
+            <Button
+              id="puzzleSelect"
+              variant="outline-primary"
+              onClick={handleShowSelectPuzzle}
+            >
+              Select Puzzle
+            </Button>
+            <PuzzleSelector
+              show={showSelectPuzzle}
+              puzzles={content}
+              onSelectMap={onSelectMap}
+              onHidePuzzleSelector={handleHideSelectPuzzle}
+            />
+          </Nav>
           <LangSelector
             langs={langs}
             onSelectLang={handleLangChange}
