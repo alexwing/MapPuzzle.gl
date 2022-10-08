@@ -19,6 +19,7 @@
   margin: 10px;
   transform: scale(2);
   margin-top: 50%;
+  margin-left: 50%;
   box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.15);
 }
 .btn-cursor{

@@ -16,8 +16,9 @@ function EditPiece({ piece = {} as PieceProps }: any) {
   } as AlertModel);
   const [showAlert, setShowAlert] = useState(false);
   const [PieceEdited, setPieceEdited] = useState(piece);
-  const [top, setTop] = useState("50");
-  const [left, setLeft] = useState("50");
+  const [top, setTop] = useState(50);
+  const [left, setLeft] = useState(50);
+  const [intensity, setIntensity] = useState(2.5);
   //oninit
   useEffect(() => {
     setPieceEdited(piece);
@@ -49,8 +50,8 @@ function EditPiece({ piece = {} as PieceProps }: any) {
       ...pieceProps,
       customCentroid: {
         ...pieceProps.customCentroid,
-        top: isNaN(parseInt(top)) ? -50 : parseInt(top),
-        left: isNaN(parseInt(left)) ? -50 : parseInt(left),
+        top: isNaN(top) ? -50 : top,
+        left: isNaN(left) ? -50 : left,
       } as CustomCentroids,
     } as PieceProps;
   }
@@ -106,7 +107,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
         />
         <Row>
           <Col xs={12} lg={12}>
-          <h2>{PieceEdited.name}</h2>
+            <h2>{PieceEdited.name}</h2>
             <Form.Group className="mb-3" controlId="formWiki">
               <Form.Label>Wikipedia url id:</Form.Label>
               <InputGroup>
@@ -136,7 +137,26 @@ function EditPiece({ piece = {} as PieceProps }: any) {
           </Col>
         </Row>
         <Row className="full-height">
-          <Col xs={6} lg={6}>
+          <Col xs={4} lg={4}>
+            <Form.Group className="mb-6" controlId="formLeft">
+              <Form.Label>Centre accuracy</Form.Label>
+              <InputGroup
+                className="mb-6"
+                style={{ width: "100%", height: "100%" }}
+              >
+                <Form.Control
+                  type="range"
+                  className="slider"
+                  min="0.1"
+                  max="10"
+                  step={0.1}
+                  value={intensity}
+                  onChange={(e: any) => {
+                    setIntensity(parseFloat(e.target.value));
+                  }}
+                />
+              </InputGroup>
+            </Form.Group>
             <Form.Group className="mb-3 " controlId="formTop">
               <Form.Label>Offset</Form.Label>
               <InputGroup>
@@ -145,7 +165,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   variant="outline-secondary"
                   id="button-add"
                   onClick={() => {
-                    setTop(parseInt(top) + 5 + "");
+                    setTop(top + intensity);
                   }}
                 >
                   &uarr;
@@ -158,7 +178,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   value={top}
                   onChange={(e) => {
                     NumericOnly(e);
-                    setTop(e.target.value);
+                    setTop(parseFloat(e.target.value));
                   }}
                 />
                 <Button
@@ -166,21 +186,19 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   variant="outline-secondary"
                   id="button-minus"
                   onClick={() => {
-                    setTop(parseInt(top) - 5 + "");
+                    setTop(top - intensity);
                   }}
                 >
                   &darr;
                 </Button>
               </InputGroup>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formLeft">
               <InputGroup>
                 <Button
                   className="btn-cursor"
                   variant="outline-secondary"
                   id="button-add"
                   onClick={() => {
-                    setLeft(parseInt(left) + 2.5 + "");
+                    setLeft(left + intensity);
                   }}
                 >
                   &larr;
@@ -193,7 +211,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   value={left}
                   onChange={(e) => {
                     NumericOnly(e);
-                    setLeft(e.target.value);
+                    setLeft(parseFloat(e.target.value));
                   }}
                 />
                 <Button
@@ -201,7 +219,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   variant="outline-secondary"
                   id="button-minus"
                   onClick={() => {
-                    setLeft(parseInt(left) - 2.5 + "");
+                    setLeft(left - intensity);
                   }}
                 >
                   &rarr;
@@ -210,7 +228,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
             </Form.Group>
           </Col>
 
-          <Col xs={6} lg={6}>
+          <Col xs={8} lg={8}>
             <PiecePreview
               selected={PieceEdited}
               centroid={PieceEdited.customCentroid}
