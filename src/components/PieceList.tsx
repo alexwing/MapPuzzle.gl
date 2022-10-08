@@ -37,6 +37,7 @@ export default function PieceList(props: any) {
   useEffect(() => {
     if (upPress && enablePress) {
       handleUp();
+      scrollToSelected();
     }
   // eslint-disable-next-line
   }, [upPress,enablePress]);
@@ -44,9 +45,22 @@ export default function PieceList(props: any) {
   useEffect(() => {
     if (downPress && enablePress) {
       handleDown();
+      scrollToSelected();
     }
   // eslint-disable-next-line
   }, [downPress,enablePress]);
+
+  //scroll to piece selected selected
+  const scrollToSelected = () => {
+      if (concernedElement) {
+        // get element id identify and get class table-primary selected 
+        const element = document.querySelector("#" + identify + " .table-primary");
+        //if element exist scroll to element
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center"});
+        }
+      }
+  };
 
   const enablePressHandler = () => {
     setEnablePress(true);
