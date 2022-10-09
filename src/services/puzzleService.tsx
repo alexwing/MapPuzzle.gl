@@ -60,18 +60,18 @@ export class PuzzleService {
   }
   //get a puzzles by filters (region, subregion)
   public static getPuzzlesByFilters(
-    region: string,
-    subregion: string
+    regioncode: number,
+    subregioncode: number
   ): Promise<Puzzles[]> {
     let where = "";
-    if (region !== "") {
-      where = ` and c.region = '${region}'`;
+    if (regioncode !== 0) {
+      where = ` and c.regioncode = '${regioncode}'`;
     }
-    if (subregion !== "") {
-      where = ` and c.subregion = '${subregion}'`;
+    if (subregioncode !== 0) {
+      where = ` and c.subregioncode = '${subregioncode}'`;
     }
     return query(
-      `SELECT p.* FROM puzzles p INNER JOIN countries c ON p.country_code = c.id WHERE 1=1 ${where}`
+      `SELECT p.* FROM puzzles p INNER JOIN countries c ON p.countrycode = c.countrycode WHERE 1=1 ${where}`
     )
       .then((result: QueryExecResult[]) => {
         let puzzles: Puzzles[] = [];

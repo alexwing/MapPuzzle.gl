@@ -1,22 +1,23 @@
 import React, { useEffect, useId } from "react";
 import { Button, Col, Modal, NavDropdown, Row, Table } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import Puzzles from "../../../backend/src/models/puzzles";
 import { Regions } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
 
 function PuzzleSelector({
   show = false,
-  puzzles = [],
   onSelectMap,
   onHidePuzzleSelector,
 }: any) {
   const [selectedPuzzle, setSelectedPuzzle] = React.useState(0);
+  const [selectedRegion, setSelectedRegion] = React.useState(0);
+  const [selectedSubRegion, setSelectedSubRegion] = React.useState(0);
   const [showIn, setShowIn] = React.useState(false);
   const [allregions, setAllregions] = React.useState([] as Regions[]);
   const [regions, setRegions] = React.useState([] as Regions[]);
   const [subregions, setSubregions] = React.useState([] as Regions[]);
   const identify = "id_" + useId().replaceAll(":", "");
+  const [puzzles, setPuzzles] = React.useState([] as Puzzles[]);
   const handleCancel = () => {
     onHidePuzzleSelector();
     setSelectedPuzzle(0);
@@ -30,11 +31,24 @@ function PuzzleSelector({
 
   //on load show modal
   useEffect(() => {
+    setSelectedSubRegion(0);
+    setSelectedPuzzle(0);
+    setSelectedRegion(0);
     setShowIn(show);
     if (show) {
       loadRegions();
     }
   }, [show]);
+
+
+  useEffect(() => {
+    setSelectedPuzzle(0);
+    PuzzleService.getPuzzlesByFilters(selectedRegion, selectedSubRegion).then(
+      (data: Puzzles[]) => {
+        setPuzzles(data);
+      }
+    );
+  }, [ selectedRegion, selectedSubRegion]);
 
   const loadRegions = () => {
     PuzzleService.getRegions().then((data: Regions[]) => {
@@ -53,6 +67,8 @@ function PuzzleSelector({
       setAllregions(data);
     });
   };
+
+
   const className = (c: any, pieceSelected: number) => {
     return parseInt(c.id) === pieceSelected ? "table-primary" : "";
   };
@@ -62,8 +78,10 @@ function PuzzleSelector({
   };
   const onSelectRegion = (val: any) => {
     if (val.target.id === "0") {
+      setSelectedRegion(0);
       setSubregions(allregions);
     } else {
+      setSelectedRegion(parseInt(val.target.id));
       let subregions: Regions[] = [];
       allregions.forEach((element) => {
         if (element.regionCode === parseInt(val.target.id)) {
@@ -72,7 +90,32 @@ function PuzzleSelector({
       });
       setSubregions(subregions);
     }
+    setSelectedSubRegion(0);
   };
+  const onSelectSubRegion = (val: any) => {
+    setSelectedSubRegion(parseInt(val.target.id));
+  };
+
+  const navDropdownRegionsTitle = (
+    <span>
+      <span className="d-none d-lg-inline d-lg-none">
+        {selectedRegion === 0
+          ? "Regions"
+          : regions.find((x) => x.regionCode === selectedRegion)?.region}
+      </span>
+    </span>
+  );
+
+  const navDropdownSubRegionsTitle = (
+    <span>
+      <span className="d-none d-lg-inline d-lg-none">
+        {selectedSubRegion === 0
+          ? "Sub Regions"
+          : subregions.find((x) => x.subregionCode === selectedSubRegion)
+              ?.subregion}
+      </span>
+    </span>
+  );
 
   return (
     <React.Fragment>
@@ -83,7 +126,7 @@ function PuzzleSelector({
         <Modal.Body>
           <Row>
             <Col xs={6} md={6}>
-              <NavDropdown title="Regions" id="nav-dropdown">
+              <NavDropdown title={navDropdownRegionsTitle} id="nav-dropdown">
                 <NavDropdown.Item id="0" onClick={onSelectRegion}>
                   All
                 </NavDropdown.Item>
@@ -101,12 +144,16 @@ function PuzzleSelector({
               </NavDropdown>
             </Col>
             <Col xs={6} md={6}>
-              <NavDropdown title="Subregions" id="nav-dropdown">
+              <NavDropdown title={navDropdownSubRegionsTitle} id="nav-dropdown">
+                <NavDropdown.Item id="0" onClick={onSelectSubRegion}>
+                  All
+                </NavDropdown.Item>
                 {subregions.map((subregion) => (
                   <NavDropdown.Item
+                    id={subregion.subregionCode}
                     key={subregion.subregionCode}
                     eventKey={subregion.subregion}
-                    onClick={onSelectRegion}
+                    onClick={onSelectSubRegion}
                   >
                     {subregion.subregion}
                   </NavDropdown.Item>
@@ -142,7 +189,7 @@ function PuzzleSelector({
             onClick={handleOK}
             disabled={selectedPuzzle === 0}
           >
-            Yes
+            Play
           </Button>
           <Button variant="secondary" onClick={handleCancel}>
             Cancel

@@ -30,7 +30,7 @@ export default class Puzzles {
 
     view_state?: ViewState | null;
     
-    @Column({ name: 'country-code', type: 'text', nullable: false })
+    @Column({ name: 'countrycode', type: 'text', nullable: false })
     countryCode?: number;
 }
 
