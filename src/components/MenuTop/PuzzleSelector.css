@@ -1,0 +1,41 @@
+.puzzle-selector {
+  max-height: calc(100vh - 25em);
+  min-height: calc(100vh - 25em);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+table.puzzle-selector {
+  margin-bottom: 0px !important;
+  border: none !important;
+}
+table.puzzle-selector td,
+table.puzzle-selector th {
+  border: none !important;
+  cursor: default;
+}
+/*<td className="icon"> <img src={c.icon} alt={c.name} />*/
+
+.puzzle-selector .icon {
+    width: 3em;
+    height: 3em;
+    margin: 0.5em;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 0.5em #ccc;
+    cursor: pointer;
+    
+}
+.puzzle-selector .icon img {
+    width: 3em;
+    height: 3em;
+}
+.puzzle-selector .name {
+    font-size: 1.25em;
+    font-style: italic;
+    line-height: 2.5em;
+    padding-left:1em;
+    cursor: pointer;
+    text-shadow: 1px 1px 5px rgb(0,0,0,0.25);
+}
+

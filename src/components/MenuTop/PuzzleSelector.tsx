@@ -1,5 +1,6 @@
 import React, { useEffect, useId } from "react";
 import { Button, Col, Modal, NavDropdown, Row, Table } from "react-bootstrap";
+import "./PuzzleSelector.css";
 import Puzzles from "../../../backend/src/models/puzzles";
 import { Regions } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
@@ -40,7 +41,6 @@ function PuzzleSelector({
     }
   }, [show]);
 
-
   useEffect(() => {
     setSelectedPuzzle(0);
     PuzzleService.getPuzzlesByFilters(selectedRegion, selectedSubRegion).then(
@@ -48,7 +48,7 @@ function PuzzleSelector({
         setPuzzles(data);
       }
     );
-  }, [ selectedRegion, selectedSubRegion]);
+  }, [selectedRegion, selectedSubRegion]);
 
   const loadRegions = () => {
     PuzzleService.getRegions().then((data: Regions[]) => {
@@ -68,13 +68,12 @@ function PuzzleSelector({
     });
   };
 
-
-  const className = (c: any, pieceSelected: number) => {
-    return parseInt(c.id) === pieceSelected ? "table-primary" : "";
+  const classSelected = (c: number, pieceSelected: number) => {
+    return c === pieceSelected ? "table-primary" : "";
   };
 
   const onSelectMapClick = (val: any) => {
-    setSelectedPuzzle(val.target.parentNode.id);
+    setSelectedPuzzle(parseInt(val.target.parentNode.id));
   };
   const onSelectRegion = (val: any) => {
     if (val.target.id === "0") {
@@ -119,7 +118,13 @@ function PuzzleSelector({
 
   return (
     <React.Fragment>
-      <Modal show={showIn} onHide={handleCancel}>
+      <Modal
+        show={showIn}
+        onHide={handleCancel}
+        centered
+        animation={false}
+        size="lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Select a Puzzle to play</Modal.Title>
         </Modal.Header>
@@ -163,23 +168,32 @@ function PuzzleSelector({
           </Row>
           <Row>
             <Col xs={12} md={12}>
-              <Table striped bordered hover size="sm" id={identify}>
-                <tbody>
-                  {puzzles.map((c: Puzzles) => (
-                    <tr
-                      key={c.id}
-                      onClick={onSelectMapClick}
-                      id={c.id.toString()}
-                      className={className(c, selectedPuzzle)}
-                    >
-                      <td>
-                        <img src={c.icon} alt={c.name} />
-                      </td>
-                      <td>{c.name}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
+              <div className="puzzle-selector">
+                <Table
+                  striped
+                  bordered
+                  hover
+                  puzzle-selector
+                  size="sm"
+                  id={identify}
+                >
+                  <tbody>
+                    {puzzles.map((c: Puzzles) => (
+                      <tr
+                        key={c.id}
+                        onClick={onSelectMapClick}
+                        id={c.id.toString()}
+                        className={classSelected(c.id, selectedPuzzle)}
+                      >
+                        <td className="icon">
+                          <img src={c.icon} alt={c.name} />
+                        </td>
+                        <td className="name">{c.name}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
             </Col>
           </Row>
         </Modal.Body>
