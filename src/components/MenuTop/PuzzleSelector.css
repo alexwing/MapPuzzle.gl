@@ -20,9 +20,8 @@ table.puzzle-selector th {
     width: 3em;
     height: 3em;
     margin: 0.5em;
-    background-color: #fff;
+    background: linear-gradient(0deg, #e8e8e8,#fff);
     border: 1px solid #ccc;
-    box-shadow: 0 0 0.5em #ccc;
     cursor: pointer;
     
 }
@@ -36,6 +35,6 @@ table.puzzle-selector th {
     line-height: 2.5em;
     padding-left:1em;
     cursor: pointer;
-    text-shadow: 1px 1px 5px rgb(0,0,0,0.25);
+    text-shadow: 1px 1px 3px rgb(0,0,0,0.35);
 }
 

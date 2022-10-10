@@ -170,7 +170,6 @@ function PuzzleSelector({
             <Col xs={12} md={12}>
               <div className="puzzle-selector">
                 <Table
-                  striped
                   bordered
                   hover
                   puzzle-selector
