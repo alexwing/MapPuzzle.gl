@@ -1,9 +1,16 @@
-import React, { useEffect, useId } from "react";
-import { Button, Col, Modal, NavDropdown, Row, Table } from "react-bootstrap";
+import React, { useEffect } from "react";
+import { Button, Col, Form, Modal, NavDropdown, Row } from "react-bootstrap";
 import "./PuzzleSelector.css";
 import Puzzles from "../../../backend/src/models/puzzles";
 import { Regions } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
+import BootstrapTable, {
+  ColumnDescription,
+  PaginationOptions,
+  SelectRowProps,
+} from "react-bootstrap-table-next";
+import paginationFactory from "react-bootstrap-table2-paginator";
+
 
 function PuzzleSelector({
   show = false,
@@ -17,8 +24,8 @@ function PuzzleSelector({
   const [allregions, setAllregions] = React.useState([] as Regions[]);
   const [regions, setRegions] = React.useState([] as Regions[]);
   const [subregions, setSubregions] = React.useState([] as Regions[]);
-  const identify = "id_" + useId().replaceAll(":", "");
   const [puzzles, setPuzzles] = React.useState([] as Puzzles[]);
+  const [searchName,setSearchName ] =React.useState("");
   const handleCancel = () => {
     onHidePuzzleSelector();
     setSelectedPuzzle(0);
@@ -43,12 +50,12 @@ function PuzzleSelector({
 
   useEffect(() => {
     setSelectedPuzzle(0);
-    PuzzleService.getPuzzlesByFilters(selectedRegion, selectedSubRegion).then(
+    PuzzleService.getPuzzlesByFilters(selectedRegion, selectedSubRegion, searchName).then(
       (data: Puzzles[]) => {
         setPuzzles(data);
       }
     );
-  }, [selectedRegion, selectedSubRegion]);
+  }, [selectedRegion, selectedSubRegion, searchName]);
 
   const loadRegions = () => {
     PuzzleService.getRegions().then((data: Regions[]) => {
@@ -68,13 +75,6 @@ function PuzzleSelector({
     });
   };
 
-  const classSelected = (c: number, pieceSelected: number) => {
-    return c === pieceSelected ? "table-primary" : "";
-  };
-
-  const onSelectMapClick = (val: any) => {
-    setSelectedPuzzle(parseInt(val.target.parentNode.id));
-  };
   const onSelectRegion = (val: any) => {
     if (val.target.id === "0") {
       setSelectedRegion(0);
@@ -116,6 +116,70 @@ function PuzzleSelector({
     </span>
   );
 
+  const columns: ColumnDescription<any, any>[] = [
+    {
+      dataField: "id",
+      text: "id",
+      hidden: true,
+    },
+    {
+      dataField: "icon",
+      text: "",
+      formatter: (cell: any, row: any) => {
+        return <img src={cell} alt={row.name} />;
+      },
+
+      classes: "icon",
+    },
+    {
+      dataField: "region.region",
+      text: "Region",
+      sort: false,
+      classes: "region",
+      headerClasses: "region-header",
+      headerFormatter: dropdownRegion(),
+    },
+    {
+      dataField: "region.subregion",
+      text: "Sub Region",
+      sort: false,
+      classes: "subregion",
+      headerClasses: "subregion-header",
+      headerFormatter: dropdownSubregion(),
+    },
+    {
+      dataField: "name",
+      text: "Name",
+      sort: false,
+      classes: "name",
+      headerFormatter: inputByName(),
+    },
+  ] as ColumnDescription[];
+  
+
+  const selectRow = {
+    mode: "radio",
+    hideSelectColumn: true,
+    clickToSelect: true,
+    bgColor: "#b8daff",
+    onSelect: (row, _isSelect, _rowIndex, _e) => {
+      setSelectedPuzzle(row.id);
+    },
+  } as SelectRowProps<any>;
+
+  const paginationOptions: PaginationOptions = {
+    sizePerPage: 8,
+    showTotal: true,
+    hideSizePerPage: true,
+    hidePageListOnlyOnePage: true,
+  } as PaginationOptions;
+
+  const onSearchNameChange = (e: any) => {
+    setSearchName(e.target.value);
+    loadRegions();
+  }
+
+
   return (
     <React.Fragment>
       <Modal
@@ -124,74 +188,26 @@ function PuzzleSelector({
         centered
         animation={false}
         size="lg"
+        className="puzzle-selector-modal"
       >
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>Select a Puzzle to play</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
-            <Col xs={6} md={6}>
-              <NavDropdown title={navDropdownRegionsTitle} id="nav-dropdown">
-                <NavDropdown.Item id="0" onClick={onSelectRegion}>
-                  All
-                </NavDropdown.Item>
-
-                {regions.map((region) => (
-                  <NavDropdown.Item
-                    id={region.regionCode}
-                    key={region.regionCode}
-                    eventKey={region.region}
-                    onClick={onSelectRegion}
-                  >
-                    {region.region}
-                  </NavDropdown.Item>
-                ))}
-              </NavDropdown>
-            </Col>
-            <Col xs={6} md={6}>
-              <NavDropdown title={navDropdownSubRegionsTitle} id="nav-dropdown">
-                <NavDropdown.Item id="0" onClick={onSelectSubRegion}>
-                  All
-                </NavDropdown.Item>
-                {subregions.map((subregion) => (
-                  <NavDropdown.Item
-                    id={subregion.subregionCode}
-                    key={subregion.subregionCode}
-                    eventKey={subregion.subregion}
-                    onClick={onSelectSubRegion}
-                  >
-                    {subregion.subregion}
-                  </NavDropdown.Item>
-                ))}
-              </NavDropdown>
-            </Col>
-          </Row>
-          <Row>
             <Col xs={12} md={12}>
               <div className="puzzle-selector">
-                <Table
-                  bordered
+                <BootstrapTable
+                  keyField="id"
+                  data={puzzles}
+                  columns={columns}
+                  selectRow={selectRow}
+                  striped
                   hover
-                  puzzle-selector
-                  size="sm"
-                  id={identify}
-                >
-                  <tbody>
-                    {puzzles.map((c: Puzzles) => (
-                      <tr
-                        key={c.id}
-                        onClick={onSelectMapClick}
-                        id={c.id.toString()}
-                        className={classSelected(c.id, selectedPuzzle)}
-                      >
-                        <td className="icon">
-                          <img src={c.icon} alt={c.name} />
-                        </td>
-                        <td className="name">{c.name}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                  condensed
+                  bordered={false}
+                  pagination={paginationFactory(paginationOptions)}
+                />
               </div>
             </Col>
           </Row>
@@ -211,5 +227,68 @@ function PuzzleSelector({
       </Modal>
     </React.Fragment>
   );
+
+  function inputByName() {
+    return (_column: any, _colIndex: any, _components: any) => {
+      return (
+        <Form.Control
+          type="text"
+          placeholder="Find by name"
+          value={searchName}
+          onChange={(e) => onSearchNameChange(e)}
+        />
+      );
+    };
+  }
+  function dropdownRegion(): (
+    column: any,
+    colIndex: any,
+    components: any
+  ) => JSX.Element {
+    return (_column: any, _colIndex: any, _components: any) => {
+      return (
+        <NavDropdown title={navDropdownRegionsTitle} id="nav-dropdown">
+          <NavDropdown.Item id="0" onClick={onSelectRegion}>
+            All
+          </NavDropdown.Item>
+          {regions.map((region) => (
+            <NavDropdown.Item
+              id={region.regionCode}
+              key={region.regionCode}
+              eventKey={region.region}
+              onClick={onSelectRegion}
+            >
+              {region.region}
+            </NavDropdown.Item>
+          ))}
+        </NavDropdown>
+      );
+    };
+  }
+
+  function dropdownSubregion() {
+    return (_column: any, _colIndex: any, _components: any) => {
+      return (
+        <NavDropdown title={navDropdownSubRegionsTitle} id="nav-dropdown">
+          <NavDropdown.Item id="0" onClick={onSelectSubRegion}>
+            All
+          </NavDropdown.Item>
+          {subregions.map((subregion) => (
+            <NavDropdown.Item
+              id={subregion.subregionCode}
+              key={subregion.subregionCode}
+              eventKey={subregion.subregion}
+              onClick={onSelectSubRegion}
+            >
+              {subregion.subregion}
+            </NavDropdown.Item>
+          ))}
+        </NavDropdown>
+      );
+    };
+  }
 }
+
+
+
 export default PuzzleSelector;

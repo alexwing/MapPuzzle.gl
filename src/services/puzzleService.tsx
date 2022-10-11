@@ -21,6 +21,7 @@ import {
   mapResultToLanguage,
   mapResultToPuzzle,
 } from "../lib/mappings/modelMappers";
+import { securizeTextParameter } from "../lib/Commons";
 
 export class PuzzleService {
   //get all puzzles
@@ -61,7 +62,8 @@ export class PuzzleService {
   //get a puzzles by filters (region, subregion)
   public static getPuzzlesByFilters(
     regioncode: number,
-    subregioncode: number
+    subregioncode: number,
+    searchName: string
   ): Promise<Puzzles[]> {
     let where = "";
     if (regioncode !== 0) {
@@ -70,14 +72,26 @@ export class PuzzleService {
     if (subregioncode !== 0) {
       where = ` and c.subregioncode = '${subregioncode}'`;
     }
+    if (searchName !== "" && searchName.length > 2) {
+      where = ` and p.name like '%${securizeTextParameter(searchName)}%'`;
+    }
     return query(
-      `SELECT p.* FROM puzzles p INNER JOIN countries c ON p.countrycode = c.countrycode WHERE 1=1 ${where}`
+      `SELECT p.*, c.regioncode, c.region, c.subregioncode, c.subregion FROM puzzles p INNER JOIN countries c ON p.countrycode = c.countrycode WHERE 1=1 ${where}`
     )
       .then((result: QueryExecResult[]) => {
         let puzzles: Puzzles[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
-            puzzles.push(mapResultToPuzzle(value));
+            const puzzle: Puzzles = mapResultToPuzzle(value);
+
+            puzzle.region = {
+              regionCode: value[8],
+              region: value[9],
+              subregionCode: value[10],
+              subregion: value[11],
+            } as Regions;
+
+            puzzles.push(puzzle);
           });
         });
         return puzzles;
@@ -90,7 +104,9 @@ export class PuzzleService {
 
   //get regions and subregions
   public static getRegions(): Promise<Regions[]> {
-    return query(`SELECT DISTINCT c.regioncode, c.region, c.subregioncode, c.subregion FROM countries c ORDER BY c.region, c.subregion`)
+    return query(
+      `SELECT DISTINCT c.regioncode, c.region, c.subregioncode, c.subregion FROM countries c ORDER BY c.region, c.subregion`
+    )
       .then((result: QueryExecResult[]) => {
         let regions: Regions[] = [];
         result.forEach((row) => {

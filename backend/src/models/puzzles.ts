@@ -3,6 +3,7 @@
 */
 
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Regions } from '../../../src/models/Interfaces';
 import ViewState from './viewState';
 
 @Entity()
@@ -32,6 +33,8 @@ export default class Puzzles {
     
     @Column({ name: 'countrycode', type: 'text', nullable: false })
     countryCode?: number;
+
+    region?: Regions;
 }
 
 

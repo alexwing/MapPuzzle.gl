@@ -1,40 +1,131 @@
+.puzzle-selector-modal .modal-lg {
+  max-width: 1200px !important;
+}
 .puzzle-selector {
+  max-height: calc(100vh - 25em);
+  min-height: calc(100vh - 25em);
+}
+/*
+.puzzle-selector thead {
+  position: absolute;
+}*/
+
+.puzzle-selector .table-responsive {
   max-height: calc(100vh - 25em);
   min-height: calc(100vh - 25em);
   overflow-y: auto;
   overflow-x: hidden;
 }
-
 table.puzzle-selector {
   margin-bottom: 0px !important;
   border: none !important;
 }
-table.puzzle-selector td,
-table.puzzle-selector th {
-  border: none !important;
+.puzzle-selector tbody td {
   cursor: default;
+  border-bottom: 1px solid #dee2e6;
 }
-/*<td className="icon"> <img src={c.icon} alt={c.name} />*/
+
+.puzzle-selector thead th {
+  padding: 0 0 0.5em 1em;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.puzzle-selector .nav-link {
+  padding: 0;
+}
 
 .puzzle-selector .icon {
-    width: 3em;
-    height: 3em;
-    margin: 0.5em;
-    background: linear-gradient(0deg, #e8e8e8,#fff);
-    border: 1px solid #ccc;
-    cursor: pointer;
-    
+  width: 3em;
+  height: 3em;
+  background: linear-gradient(0deg, #e8e8e8, #fff);
+  border: 1px solid #ccc;
+  cursor: pointer;
+  padding: 0;
 }
 .puzzle-selector .icon img {
-    width: 3em;
-    height: 3em;
+  width: 3em;
+  height: 3em;
+  margin: 0.3em 0;
 }
 .puzzle-selector .name {
-    font-size: 1.25em;
-    font-style: italic;
-    line-height: 2.5em;
-    padding-left:1em;
-    cursor: pointer;
-    text-shadow: 1px 1px 3px rgb(0,0,0,0.35);
+  font-size: 1.25em;
+  line-height: 1.75em;
+  padding-left: 1em;
+  cursor: pointer;
+  text-shadow: 1px 1px 3px rgb(0, 0, 0, 0.35);
 }
+
+.puzzle-selector .region {
+  font-size: 1em;
+  line-height: 3.5em;
+  padding: 0 0 0 1em;
+  cursor: pointer;
+
+}
+.puzzle-selector .subregion {
+  font-size: 1em;
+  line-height: 3.5em;
+  padding: 0 0 0 1em;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.puzzle-selector .region-header{
+  width: 20%;
+}
+.puzzle-selector .subregion-header{
+  width: 30%;
+}
+
+/* disable on mobile  region and subregion */
+@media (max-width: 768px) {
+  .puzzle-selector .region,
+  .puzzle-selector .subregion,
+  .puzzle-selector .subregion-header,
+  .puzzle-selector .region-header {
+    display: none;
+  }
+}
+
+/*
+*
+* ==========================================
+* CUSTOM UTIL CLASSES
+* ==========================================
+*
+
+.table-fixed tbody {
+  max-height: calc(100vh - 25em);
+  min-height: calc(100vh - 25em);
+  overflow-y: auto;
+  width: 100%;
+}
+
+.table-fixed thead,
+.table-fixed tbody,
+.table-fixed tr,
+.table-fixed td,
+.table-fixed th {
+  display: block;
+}
+
+.table-fixed tbody td,
+.table-fixed tbody th,
+.table-fixed thead > tr > th {
+  float: left;
+  position: relative;
+}
+.table-fixed tbody td:after,
+.table-fixed tbody th:after,
+.table-fixed thead > tr > th:after {
+  content: "";
+  clear: both;
+  display: block;
+}
+
+
+
+*/
 
