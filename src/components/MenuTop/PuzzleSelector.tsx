@@ -169,10 +169,12 @@ function PuzzleSelector({
   } as SelectRowProps<any>;
 
   const paginationOptions: PaginationOptions = {
-    sizePerPage: 8,
+    sizePerPage: 10,
     showTotal: true,
     hideSizePerPage: true,
     hidePageListOnlyOnePage: true,
+    withFirstAndLast: false,
+    alwaysShowAllBtns: true,
   } as PaginationOptions;
 
   const onSearchNameChange = (e: any) => {
@@ -186,13 +188,9 @@ function PuzzleSelector({
         show={showIn}
         onHide={handleCancel}
         centered
-        animation={false}
         size="lg"
         className="puzzle-selector-modal"
       >
-        <Modal.Header>
-          <Modal.Title>Select a Puzzle to play</Modal.Title>
-        </Modal.Header>
         <Modal.Body>
           <Row>
             <Col xs={12} md={12}>
