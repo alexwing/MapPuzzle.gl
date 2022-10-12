@@ -398,7 +398,7 @@ export class PuzzleService {
   ): Promise<CustomTranslations[]> {
     try {
       const result = await query(
-        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ("'${lang}'","en")`
+        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ("${lang}","en")`
       );
       let customTranslations: CustomTranslations[] = [];
       result.forEach((row) => {
