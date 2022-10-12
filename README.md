@@ -10,9 +10,11 @@ We have a list on the left side of the screen, with the list of puzzle pieces wh
 
 It also has a counter of pieces found, pieces to be searched for and faults committed.
 
-You can play it at http://mappuzzle.xyz/
+## How to play
 
-![MapPuzzle.gl](http://mappuzzle.xyz/demoimage.jpg)
+You can play the game in the following link: [MapPuzzle.xyz](http://mappuzzle.xyz/)
+
+![MapPuzzle.xyz](http://mappuzzle.xyz/demoimage.jpg)
 
 ## Code description
 
@@ -28,13 +30,13 @@ https://github.com/alexwing/MapPuzzle.gl
 
 ## Build
 
-The project Front-end is in main directory, and the project Back-end is in the directory Backend.
+The project Front-end is in main directory, and the project Back-end is in the directory Backend
 
 Each project has its own Package.json with the configuration of the dependencies.
 
 ### Backend
 
-The backend is built with Node.js, it is a server that receives the requests from the client and sends the response.
+The backend is built with Node.js, it is a server that receives the requests from the client and sends the response, it also has a database with the information of the puzzles.
 
 This backend use "typeorm" and sqlite3 databases, the entities are defined in the "models" folder, and the endpoints are defined in the "routes" folder.
 
@@ -47,7 +49,7 @@ Use dev to run the server in development mode.
 
 ### Front
 
-The fontend is built with React.
+The fontend is built with React, it is a client that sends requests to the backend and receives the response.
 
 ```json
 "dev": "env-cmd -f ./environments/.env.development react-scripts start",
@@ -73,6 +75,10 @@ Deck.gl is a free library, developed by Vis.gl and has an open source API and we
 ### React
 
 React is a web interface development framework, created by Facebook and based on JAVS components. React’s components are modularized, this means that they are functional and independent entities.
+
+### Typescript
+
+Typescript is a programming language that is a superset of JavaScript, it is a typed language, which means that it has a type system that allows you to define the type of data that a variable can contain. It is a language that is compiled to JavaScript, so it is necessary to compile it to be able to use it in the browser.
 
 ## Query Example for Postgis shape table export to Geojson
 
@@ -125,6 +131,10 @@ This project was developed by Alejandro Aranda, and is a part of the [MapPuzzle.
 
 ## License
 
-This project is licensed under the MIT license.
+This project is licensed under the MIT license, is free to use, modify and distribute.
 
+
+## contact
+
+If you have any questions, you can contact me at: https://aaranda.es/en/contact/
 

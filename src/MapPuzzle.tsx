@@ -91,6 +91,16 @@ class MapPuzzle extends Component<any, any> {
         this.getCustomCentroids(puzzleData.id);
         this.getCustomWikis(puzzleData.id);
 
+        //// change path  route to "./?map=" + puzzleData.url
+        window.history.pushState(
+          {},
+          puzzleData.name,
+          "./?map=" + puzzleData.url
+        );
+        //change title
+        document.title = 'MapPuzzle.xyz - '+ puzzleData.name;
+        
+
         let viewStateCopy: ViewState = copyViewState(
           puzzleData.view_state,
           this.state.viewState
@@ -288,15 +298,15 @@ class MapPuzzle extends Component<any, any> {
     }
   }
 
-  onSelectMapHandler = (val: any) => {
-    if (val.target.id) {
+  onSelectMapHandler = (val: number) => {
+    if (val) {
       this.setState({
-        puzzleSelected: val.target.id,
+        puzzleSelected: val,
         pieceSelectedData: null,
         pieceSelected: null,
       });
 
-      this.loadGame(val.target.id);
+      this.loadGame(val);
     }
   };
 

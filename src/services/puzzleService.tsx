@@ -6,7 +6,12 @@ import CustomCentroids from "../../backend/src/models/customCentroids";
 import CustomWiki from "../../backend/src/models/customWiki";
 import CustomTranslations from "../../backend/src/models/customTranslations";
 import Languages from "../../backend/src/models/languages";
-import { PieceProps, WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
+import {
+  PieceProps,
+  Regions,
+  WikiInfoLang,
+  WikiInfoPiece,
+} from "../models/Interfaces";
 import { getWikiInfo } from "./wikiService";
 import { getWikiSimple } from "../lib/Utils";
 import {
@@ -16,6 +21,7 @@ import {
   mapResultToLanguage,
   mapResultToPuzzle,
 } from "../lib/mappings/modelMappers";
+import { securizeTextParameter } from "../lib/Commons";
 
 export class PuzzleService {
   //get all puzzles
@@ -51,6 +57,73 @@ export class PuzzleService {
       .catch((err) => {
         console.log(err);
         return Promise.reject("Puzzles not found");
+      });
+  }
+  //get a puzzles by filters (region, subregion)
+  public static getPuzzlesByFilters(
+    regioncode: number,
+    subregioncode: number,
+    searchName: string
+  ): Promise<Puzzles[]> {
+    let where = "";
+    if (regioncode !== 0) {
+      where = ` and c.regioncode = '${regioncode}'`;
+    }
+    if (subregioncode !== 0) {
+      where = ` and c.subregioncode = '${subregioncode}'`;
+    }
+    if (searchName !== "" && searchName.length > 2) {
+      where = ` and p.name like '%${securizeTextParameter(searchName)}%'`;
+    }
+    return query(
+      `SELECT p.*, c.regioncode, c.region, c.subregioncode, c.subregion FROM puzzles p INNER JOIN countries c ON p.countrycode = c.countrycode WHERE 1=1 ${where} ORDER BY p.name`
+    )
+      .then((result: QueryExecResult[]) => {
+        let puzzles: Puzzles[] = [];
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            const puzzle: Puzzles = mapResultToPuzzle(value);
+
+            puzzle.region = {
+              regionCode: value[8],
+              region: value[9],
+              subregionCode: value[10],
+              subregion: value[11],
+            } as Regions;
+
+            puzzles.push(puzzle);
+          });
+        });
+        return puzzles;
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve([]);
+      });
+  }
+
+  //get regions and subregions
+  public static getRegions(): Promise<Regions[]> {
+    return query(
+      `SELECT DISTINCT c.regioncode, c.region, c.subregioncode, c.subregion FROM countries c ORDER BY c.region, c.subregion`
+    )
+      .then((result: QueryExecResult[]) => {
+        let regions: Regions[] = [];
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            regions.push({
+              regionCode: value[0],
+              region: value[1],
+              subregionCode: value[2],
+              subregion: value[3],
+            } as Regions);
+          });
+        });
+        return regions;
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve([]);
       });
   }
 
@@ -325,7 +398,7 @@ export class PuzzleService {
   ): Promise<CustomTranslations[]> {
     try {
       const result = await query(
-        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ("'${lang}'","en")`
+        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ("${lang}","en")`
       );
       let customTranslations: CustomTranslations[] = [];
       result.forEach((row) => {
@@ -340,23 +413,21 @@ export class PuzzleService {
     }
   }
 
-  public static  async getLangIsRtl(lang: string) {
+  public static async getLangIsRtl(lang: string) {
     try {
       const result = await query(
-        `SELECT rtl FROM languages WHERE lang = "${lang}"`);
+        `SELECT rtl FROM languages WHERE lang = "${lang}"`
+      );
       let rtl = false;
       result.forEach((row) => {
         row.values.forEach((value) => {
-          rtl = value[0] ===1 ? true : false;
+          rtl = value[0] === 1 ? true : false;
         });
-      }
-      );
+      });
       return rtl;
     } catch (err) {
       console.log(err);
       return false;
     }
   }
-
-
 }

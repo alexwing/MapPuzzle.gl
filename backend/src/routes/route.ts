@@ -172,7 +172,7 @@ router.post("/generateTranslation", async (req, res) => {
   if (generateTranslation) {
     const languages: Languages[] = generateTranslation.languages as Languages[];
     const languagesRepository = connection!.getRepository(Languages);
-    if (languages !== []) {
+    if (languages.length > 0) {
       for await (const language of languages) {
         console.log("Lang:" + JSON.stringify(language));
         await languagesRepository
@@ -196,7 +196,7 @@ router.post("/generateTranslation", async (req, res) => {
     const translations: CustomTranslations[] =
       generateTranslation.translations as CustomTranslations[];
 
-    if (translations !== []) {
+    if (translations.length > 0) {
       const customTranslationsRepository =
         connection!.getRepository(CustomTranslations);
       let first: boolean = true;
