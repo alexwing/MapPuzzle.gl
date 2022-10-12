@@ -164,7 +164,7 @@ function PuzzleSelector({
     clickToSelect: true,
     bgColor: "#b8daff",
     onSelect: (row, _isSelect, _rowIndex, _e) => {
-      setSelectedPuzzle(row.id);
+      setSelectedPuzzle(parseInt(row.id));
     },
   } as SelectRowProps<any>;
 
