@@ -236,8 +236,8 @@ function PuzzleSelector({
     setSelectedRegion(0);
     //unselet table
     if (ref && typeof ref === "object") {
-      if (ref.current !== undefined) {
-        ref.current.selectionContext.selected = [];
+      if (ref.current !== undefined && ref.current !== null) {
+          ref.current.selectionContext.selected = [];
       }
     }
   }

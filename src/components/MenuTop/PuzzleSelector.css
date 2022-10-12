@@ -4,8 +4,9 @@
 .puzzle-selector {
   max-height: calc(100vh - 25em);
   min-height: calc(100vh - 25em);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
-
 table.puzzle-selector {
   margin-bottom: 0px !important;
   border: none !important;
@@ -146,6 +147,9 @@ table.puzzle-selector {
   }
   .puzzle-selector .name-header {
     width: 97%;
+  }
+  .react-bootstrap-table-pagination-total {
+    display: none;
   }
 }
 .react-bootstrap-table-pagination-total {
