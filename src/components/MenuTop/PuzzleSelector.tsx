@@ -39,6 +39,7 @@ function PuzzleSelector({
 
   //on load show modal
   useEffect(() => {
+    setSearchName("");
     setSelectedSubRegion(0);
     setSelectedPuzzle(0);
     setSelectedRegion(0);
@@ -132,6 +133,14 @@ function PuzzleSelector({
       classes: "icon",
     },
     {
+      dataField: "name",
+      text: "Name",
+      sort: false,
+      classes: "name",
+      headerClasses: "name-header",
+      headerFormatter: inputByName(),
+    },    
+    {
       dataField: "region.region",
       text: "Region",
       sort: false,
@@ -147,13 +156,7 @@ function PuzzleSelector({
       headerClasses: "subregion-header",
       headerFormatter: dropdownSubregion(),
     },
-    {
-      dataField: "name",
-      text: "Name",
-      sort: false,
-      classes: "name",
-      headerFormatter: inputByName(),
-    },
+
   ] as ColumnDescription[];
   
 

@@ -5,17 +5,7 @@
   max-height: calc(100vh - 25em);
   min-height: calc(100vh - 25em);
 }
-/*
-.puzzle-selector thead {
-  position: absolute;
-}*/
 
-.puzzle-selector .table-responsive {
-  max-height: calc(100vh - 25em);
-  min-height: calc(100vh - 25em);
-  overflow-y: auto;
-  overflow-x: hidden;
-}
 table.puzzle-selector {
   margin-bottom: 0px !important;
   border: none !important;
@@ -26,13 +16,14 @@ table.puzzle-selector {
 }
 
 .puzzle-selector thead th {
-  padding: 0 0 0.5em 1em;
-  border-bottom: 1px solid #dee2e6;
+  padding: 1em 0 1em 1em;
+  border-bottom: 0px;
 }
-
 .puzzle-selector .nav-link {
   padding: 0;
 }
+
+/* Columns  */
 
 .puzzle-selector .icon {
   width: 3em;
@@ -46,13 +37,15 @@ table.puzzle-selector {
   width: 3em;
   height: 3em;
   margin: 0.3em 0;
+  padding: 0.15em;
 }
 .puzzle-selector .name {
-  font-size: 1.25em;
-  line-height: 1.75em;
-  padding-left: 1em;
-  cursor: pointer;
-  text-shadow: 1px 1px 3px rgb(0, 0, 0, 0.35);
+	font-size: 1.25em;
+	line-height: 1.75em;
+	padding-left: 1em;
+	cursor: pointer;
+	font-weight: 600;
+	font-style: italic;
 }
 
 .puzzle-selector .region {
@@ -71,12 +64,75 @@ table.puzzle-selector {
   white-space: nowrap;
   overflow: hidden;
 }
+/* Header */
 
+.puzzle-selector .icon-header {
+  width: 3em;
+  color: #fff;
+}
+.puzzle-selector .name-header {
+  width: 47%;
+  padding: 1em 0 0.75em 1em;
+}
 .puzzle-selector .region-header{
   width: 20%;
 }
 .puzzle-selector .subregion-header{
   width: 30%;
+}
+
+ /* Search */
+
+.puzzle-selector .dropdown a {
+  color: #a1a1a1;
+}
+.puzzle-selector .dropdown .dropdown-item  {
+  color: #212529;
+}
+.puzzle-selector .form-control {
+  display: block;
+  width: 100%;
+  height: calc(1.5em + .5em);
+  padding: .25rem .5rem;
+  font-size: 1rem;
+
+  line-height: 1.5;
+  color: #a1a1a1;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #e5e5e5;
+  border-radius:  0;
+}
+.puzzle-selector .form-control::-webkit-input-placeholder {
+  color: #a1a1a1;
+  font-weight: bold;
+}
+.puzzle-selector .form-control:focus {
+  border-color: #a1a1a1;
+  box-shadow: none;
+}
+
+.puzzle-selector .dropdown-menu {
+  max-height: calc(50vh);
+  max-width: calc(95vw);
+  overflow-y: auto;
+}
+
+.puzzle-selector .table {
+	margin-bottom: 0.4em;
+}
+.puzzle-selector .no-found{
+  text-align: center;
+  font-size: 1em;
+  font-weight: bold;
+  color: #a1a1a1;
+  padding: 1em;
+}
+.puzzle-selector .no-found h3{
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #d96161;
+  padding: 0em;
 }
 
 /* disable on mobile  region and subregion */
@@ -87,45 +143,17 @@ table.puzzle-selector {
   .puzzle-selector .region-header {
     display: none;
   }
+  .puzzle-selector .icon-header{
+    width: 3em;
+  }
+  .puzzle-selector .name-header{
+    width: 97%;
+  }
 }
-
-/*
-*
-* ==========================================
-* CUSTOM UTIL CLASSES
-* ==========================================
-*
-
-.table-fixed tbody {
-  max-height: calc(100vh - 25em);
-  min-height: calc(100vh - 25em);
-  overflow-y: auto;
-  width: 100%;
-}
-
-.table-fixed thead,
-.table-fixed tbody,
-.table-fixed tr,
-.table-fixed td,
-.table-fixed th {
-  display: block;
-}
-
-.table-fixed tbody td,
-.table-fixed tbody th,
-.table-fixed thead > tr > th {
-  float: left;
-  position: relative;
-}
-.table-fixed tbody td:after,
-.table-fixed tbody th:after,
-.table-fixed thead > tr > th:after {
-  content: "";
-  clear: both;
-  display: block;
+.react-bootstrap-table-pagination-total {
+  color: #a1a1a1;
+  font-style: italic;
 }
 
 
-
-*/
 

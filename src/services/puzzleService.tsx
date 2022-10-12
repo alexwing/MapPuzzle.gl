@@ -76,7 +76,7 @@ export class PuzzleService {
       where = ` and p.name like '%${securizeTextParameter(searchName)}%'`;
     }
     return query(
-      `SELECT p.*, c.regioncode, c.region, c.subregioncode, c.subregion FROM puzzles p INNER JOIN countries c ON p.countrycode = c.countrycode WHERE 1=1 ${where}`
+      `SELECT p.*, c.regioncode, c.region, c.subregioncode, c.subregion FROM puzzles p INNER JOIN countries c ON p.countrycode = c.countrycode WHERE 1=1 ${where} ORDER BY p.name`
     )
       .then((result: QueryExecResult[]) => {
         let puzzles: Puzzles[] = [];
