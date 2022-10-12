@@ -1,9 +1,17 @@
 .puzzle-selector-modal .modal-lg {
   max-width: 1200px !important;
 }
+
+.puzzle-selector-modal  .modal-content {
+  background-color: #fff;
+  border: 2px solid #bbb;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 1rem 1rem rgba(0, 0, 0, 0.2);
+}
+
 .puzzle-selector {
-  max-height: calc(100vh - 28em);
-  min-height: calc(100vh - 28em);
+  max-height: calc(35em);
+  min-height: calc(35em);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -139,10 +147,7 @@ table.puzzle-selector {
 
 /* disable on mobile  region and subregion */
 @media (max-width: 768px) {
-  .puzzle-selector{
-    max-height: calc(100vh - 15em);
-    min-height: calc(100vh - 15em);
-  }
+
   .puzzle-selector .region,
   .puzzle-selector .subregion,
   .puzzle-selector .subregion-header,
