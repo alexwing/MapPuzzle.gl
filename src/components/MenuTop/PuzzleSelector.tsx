@@ -11,7 +11,6 @@ import BootstrapTable, {
 } from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
-
 function PuzzleSelector({
   show = false,
   onSelectMap,
@@ -25,7 +24,9 @@ function PuzzleSelector({
   const [regions, setRegions] = React.useState([] as Regions[]);
   const [subregions, setSubregions] = React.useState([] as Regions[]);
   const [puzzles, setPuzzles] = React.useState([] as Puzzles[]);
-  const [searchName,setSearchName ] =React.useState("");
+  const [searchName, setSearchName] = React.useState("");
+  const ref: any = React.useRef();
+
   const handleCancel = () => {
     onHidePuzzleSelector();
     setSelectedPuzzle(0);
@@ -39,10 +40,7 @@ function PuzzleSelector({
 
   //on load show modal
   useEffect(() => {
-    setSearchName("");
-    setSelectedSubRegion(0);
-    setSelectedPuzzle(0);
-    setSelectedRegion(0);
+    cleanFilters();
     setShowIn(show);
     if (show) {
       loadRegions();
@@ -51,11 +49,13 @@ function PuzzleSelector({
 
   useEffect(() => {
     setSelectedPuzzle(0);
-    PuzzleService.getPuzzlesByFilters(selectedRegion, selectedSubRegion, searchName).then(
-      (data: Puzzles[]) => {
-        setPuzzles(data);
-      }
-    );
+    PuzzleService.getPuzzlesByFilters(
+      selectedRegion,
+      selectedSubRegion,
+      searchName
+    ).then((data: Puzzles[]) => {
+      setPuzzles(data);
+    });
   }, [selectedRegion, selectedSubRegion, searchName]);
 
   const loadRegions = () => {
@@ -129,7 +129,7 @@ function PuzzleSelector({
       formatter: (cell: any, row: any) => {
         return <img src={cell} alt={row.name} />;
       },
-
+      headerFormatter: cleanButton(),
       classes: "icon",
     },
     {
@@ -139,7 +139,7 @@ function PuzzleSelector({
       classes: "name",
       headerClasses: "name-header",
       headerFormatter: inputByName(),
-    },    
+    },
     {
       dataField: "region.region",
       text: "Region",
@@ -156,9 +156,7 @@ function PuzzleSelector({
       headerClasses: "subregion-header",
       headerFormatter: dropdownSubregion(),
     },
-
   ] as ColumnDescription[];
-  
 
   const selectRow = {
     mode: "radio",
@@ -180,8 +178,7 @@ function PuzzleSelector({
   const onSearchNameChange = (e: any) => {
     setSearchName(e.target.value);
     loadRegions();
-  }
-
+  };
 
   return (
     <React.Fragment>
@@ -201,6 +198,7 @@ function PuzzleSelector({
             <Col xs={12} md={12}>
               <div className="puzzle-selector">
                 <BootstrapTable
+                  ref={ref}
                   keyField="id"
                   data={puzzles}
                   columns={columns}
@@ -230,6 +228,36 @@ function PuzzleSelector({
       </Modal>
     </React.Fragment>
   );
+
+  function cleanFilters() {
+    setSearchName("");
+    setSelectedSubRegion(0);
+    setSelectedPuzzle(0);
+    setSelectedRegion(0);
+    //unselet table
+    if (ref && typeof ref === "object") {
+      if (ref.current !== undefined) {
+        ref.current.selectionContext.selected = [];
+      }
+    }
+  }
+
+  function cleanButton() {
+    return (_column: any, _colIndex: any, _components: any) => {
+      return (
+        <Button
+          className="clean-icon"
+          variant="link"
+          size="sm"
+          onClick={() => {
+            cleanFilters();
+          }}
+        >
+          <span></span>
+        </Button>
+      );
+    };
+  }
 
   function inputByName() {
     return (_column: any, _colIndex: any, _components: any) => {
@@ -291,7 +319,5 @@ function PuzzleSelector({
     };
   }
 }
-
-
 
 export default PuzzleSelector;
