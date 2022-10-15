@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Button, Col, Form, Modal, NavDropdown, Row } from "react-bootstrap";
 import "./PuzzleSelector.css";
 import Puzzles from "../../../backend/src/models/puzzles";
@@ -16,16 +16,17 @@ function PuzzleSelector({
   onSelectMap,
   onHidePuzzleSelector,
 }: any) {
-  const [selectedPuzzle, setSelectedPuzzle] = React.useState(0);
-  const [selectedRegion, setSelectedRegion] = React.useState(0);
-  const [selectedSubRegion, setSelectedSubRegion] = React.useState(0);
-  const [showIn, setShowIn] = React.useState(false);
-  const [allregions, setAllregions] = React.useState([] as Regions[]);
-  const [regions, setRegions] = React.useState([] as Regions[]);
-  const [subregions, setSubregions] = React.useState([] as Regions[]);
-  const [puzzles, setPuzzles] = React.useState([] as Puzzles[]);
-  const [searchName, setSearchName] = React.useState("");
-  const ref: any = React.useRef();
+  const [selectedPuzzle, setSelectedPuzzle] = useState(0);
+  const [selectedRegion, setSelectedRegion] = useState(0);
+  const [selectedSubRegion, setSelectedSubRegion] = useState(0);
+  const [showIn, setShowIn] = useState(false);
+  const [allregions, setAllregions] = useState([] as Regions[]);
+  const [regions, setRegions] = useState([] as Regions[]);
+  const [subregions, setSubregions] = useState([] as Regions[]);
+  const [puzzles, setPuzzles] = useState([] as Puzzles[]);
+  const [searchName, setSearchName] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const ref: any = useRef();
 
   const handleCancel = () => {
     onHidePuzzleSelector();
@@ -42,10 +43,15 @@ function PuzzleSelector({
   useEffect(() => {
     cleanFilters();
     setShowIn(show);
+    //focus on search input
     if (show) {
       loadRegions();
     }
   }, [show]);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [allregions]);
 
   useEffect(() => {
     setSelectedPuzzle(0);
@@ -235,7 +241,7 @@ function PuzzleSelector({
     //unselet table
     if (ref && typeof ref === "object") {
       if (ref.current !== undefined && ref.current !== null) {
-          ref.current.selectionContext.selected = [];
+        ref.current.selectionContext.selected = [];
       }
     }
   }
@@ -261,6 +267,7 @@ function PuzzleSelector({
     return (_column: any, _colIndex: any, _components: any) => {
       return (
         <Form.Control
+          ref={inputRef}
           type="text"
           placeholder="Find by name"
           value={searchName}

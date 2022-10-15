@@ -68,9 +68,9 @@ export function mapResultToPuzzle(result: SqlValue[]): Puzzles {
     wiki: result[6],
     countryCode: result[7],
     view_state: {
-      latitude: result[8],
-      longitude: result[9],
-      zoom: result[10],
+      latitude: parseFloat((result[8] as string)),
+      longitude: parseFloat((result[9] as string)),
+      zoom: parseFloat((result[10] as string)),
     },
   } as Puzzles;
 }
