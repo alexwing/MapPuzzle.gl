@@ -152,7 +152,12 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   step={0.1}
                   value={intensity}
                   onChange={(e: any) => {
-                    setIntensity(parseFloat(e.target.value));
+                    if (!e.target.onInputHasBeenCalled) {
+                      setIntensity(parseFloat(e.target.value.toString()));
+                      e.target.onInputHasBeenCalled = true;
+                    } else {
+                      e.target.onInputHasBeenCalled = false;
+                    }
                   }}
                 />
               </InputGroup>

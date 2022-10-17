@@ -94,8 +94,8 @@ export function  mapResultToLanguage(result: SqlValue[]): Languages {
     return {
       id: result[0],
       cartodb_id: result[1],
-      left: result[2],
-      top: result[3],
+      left: parseFloat((result[2] as string)),
+      top:  parseFloat((result[3] as string))
     } as CustomCentroids;
   }
 
