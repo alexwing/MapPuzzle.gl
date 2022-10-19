@@ -58,6 +58,15 @@ function EditorDialog({
   const handleClose = () => {
     onHide();
   };
+
+  const handleSiteMap = () => {
+    PuzzleService.generateSitemap().then((res) => {
+      alert("Sitemap generated");
+    }).catch((err) => {
+      alert("Error generating sitemap");
+    });
+  }
+
   //onPieceUpHandler
   const onPieceUpHandler = () => {
     //find pieceSelected piece index
@@ -130,6 +139,7 @@ function EditorDialog({
           </Tabs>
         </Modal.Body>
         <Modal.Footer>
+          <Button onClick={handleSiteMap}>Generate Sitemap</Button>
           <Button onClick={handleClose}>Ok</Button>
         </Modal.Footer>
       </Modal>

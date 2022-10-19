@@ -7,6 +7,8 @@ import CustomCentroids from "../models/customCentroids";
 import CustomTranslations from "../models/customTranslations";
 import Languages from "../models/languages";
 import { securizeQuery } from "../../../src/lib/Commons";
+import { SitemapStream, streamToPromise } from "sitemap";
+import { Readable } from "stream";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -20,7 +22,7 @@ router.get("/query", (req, res) => {
   const { query } = req.query;
   console.log("query:" + JSON.stringify(query));
   if (query) {
-    const sql:string = securizeQuery(query.toString());
+    const sql: string = securizeQuery(query.toString());
     connection!
       .query(sql)
       .then((result) => {
@@ -92,6 +94,37 @@ router.post("/savePiece", async (req, res) => {
       success: true,
       msg: "Piece saved successfully",
     });
+  });
+});
+
+router.get("/generateSitemap", async (_req, res) => {
+  const pieces = await connection!.getRepository(Puzzles).find();
+  //create links from pieces format  const links = [{ url: '/page-1/',  changefreq: 'daily', priority: 0.3  }]
+  const links = pieces.map((piece) => {
+    return {
+      url: `http://mappuzzle.xyz/?map=${piece.url}`,
+      changefreq: "monthly",
+      priority: 0.8,
+    };
+  });
+  const stream = new SitemapStream({ hostname: "http://mappuzzle.xyz" });
+
+  let sitemap = await streamToPromise(Readable.from(links).pipe(stream)).then(
+    (sm) => sm.toString()
+  );
+  //write links to stream
+  links.forEach((link) => stream.write(link));
+  //end stream
+  stream.end();
+  //send sitemap
+  res.header("Content-Type", "application/xml");
+  res.send(sitemap);
+  
+  //save to disk in ../public/sitemap.xml
+  const fs = require("fs");
+  fs.writeFile("../public/sitemap.xml", sitemap, function (err: any) {
+    if (err) return console.log(err);
+    console.log("sitemap.xml written");
   });
 });
 

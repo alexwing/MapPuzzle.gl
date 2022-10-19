@@ -59,6 +59,25 @@ export class PuzzleService {
         return Promise.reject("Puzzles not found");
       });
   }
+  //call endpoint get generateSitemap return xml sitemap
+  public static generateSitemap(): Promise<any> {
+    return fetch(ConfigService.backendUrl + "/generateSitemap", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/xml",
+      },
+    })
+      .then((response) => {
+        //response is a xml 
+        return response.text();      
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.reject("Error generating sitemap");
+      });
+  }
+
+
   //get a puzzles by filters (region, subregion)
   public static getPuzzlesByFilters(
     regioncode: number,
