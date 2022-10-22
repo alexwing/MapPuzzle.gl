@@ -173,7 +173,7 @@ function EditorDialog({
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleSiteMap}
-          style={{marginRight: "auto"}}>
+          style={{marginRight: "auto"}}>  
             Generate Sitemap
           </Button>
           <Button onClick={handleClose}>Ok</Button>

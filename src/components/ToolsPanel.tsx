@@ -24,17 +24,16 @@ function ToolsPanel({
   lang,
   loading,
 }: any) {
+  const showTimer =
+    YouWin || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
+
   return (
     <React.Fragment>
       <Accordion defaultActiveKey="0">
         <Card>
           <Accordion.Toggle as={Card.Header} eventKey="0">
             {name}
-            <Timer
-              puzzleSelected={puzzleSelected}
-              YouWin={YouWin}
-              loading={loading}
-            />
+            {showTimer}
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="0">
             <Card.Body>
@@ -73,8 +72,8 @@ function ToolsPanel({
                     founds={founds}
                     onPieceSelected={onPieceSelected}
                     pieceSelected={pieceSelected}
-                    handleUp = {handleUp}
-                    handleDown = {handleDown}
+                    handleUp={handleUp}
+                    handleDown={handleDown}
                     lang={lang}
                   />
                 </div>

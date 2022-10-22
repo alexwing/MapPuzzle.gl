@@ -80,7 +80,7 @@ class MapPuzzle extends Component<any, any> {
     });
   }
   /* load game from db */
-  loadGame(puzzleSelected: number) {
+  loadGame(puzzleSelected: number): void {
     this.setState({
       loading: true,
     });
