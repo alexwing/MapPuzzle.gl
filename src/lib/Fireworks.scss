@@ -1,6 +1,6 @@
-$particles: 250;
-$width: 800;
-$height: 800;
+$particles: 350;
+$width: 900;
+$height: 900;
 
 // Create the explosion...
 $box-shadow: ();
@@ -136,5 +136,8 @@ body {
   99.9% {
     margin-top: 30%;
     margin-left: 80%;
+  }
+  100% {
+    opacity: 0;
   }
 }

@@ -126,7 +126,7 @@ export default function YouWin({
           <Button onClick={onResetGame}>New Game</Button>
         </Modal.Footer>
       </Modal>
-      <Fireworks />
+      { show && <Fireworks /> }
     </React.Fragment>
   );
 }
