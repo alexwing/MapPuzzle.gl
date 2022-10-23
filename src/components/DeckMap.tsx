@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
-// @ts-ignore
 import { GeoJsonLayer } from "@deck.gl/layers";
-import { StaticMap } from "react-map-gl";
-// @ts-ignore
 import DeckGL from "@deck.gl/react";
+import { StaticMap } from "react-map-gl";
 import { AlphaColor, hexToRgb, setColor } from "../lib/Utils";
 
 function DeckMap({
@@ -15,11 +13,12 @@ function DeckMap({
   viewState,
   founds,
   data,
-}: any) {
+}: any): JSX.Element | null {
   const [layers, setLayers] = React.useState([] as any);
 
   useEffect(() => {
-    setLayers(
+    if (viewState) {
+      setLayers(
         new GeoJsonLayer({
           data: data,
           pointRadiusMinPixels: 6,
@@ -43,12 +42,12 @@ function DeckMap({
           },
           onClick: (info: any) => onClickMap(info),
           onHover: (info: any) => onHoverMap(info),
-        }
-      )
-    );
-  }, [data, founds, lineWidth, colorStroke, onClickMap, onHoverMap]);
-  
-  return (
+        })
+      );
+    }
+  }, [colorStroke, data, founds, lineWidth, onClickMap, onHoverMap, viewState]);
+
+  return !viewState ? null : (
     <React.Fragment>
       <DeckGL
         width="100%"

@@ -9,13 +9,14 @@ import { sortLangs } from "../Utils";
 
 //map the result data to a QueryExecResult[]
 export function mapResultToQueryExecResult(data: any[]): QueryExecResult[] {
-  let queryExecResults: QueryExecResult[] = [];
+  const queryExecResults: QueryExecResult[] = [];
   let columns: string[] = [];
-  let values: SqlValue[][] = [];
-  let first: boolean = true;
+  let first = true;
+  const values: SqlValue[][] = [];
   data.forEach((element) => {
-    let value: SqlValue[] = [];
-    for (let prop in element) {
+    const value: SqlValue[] = [];
+    for (const prop in element) {
+      // eslint-disable-next-line no-prototype-builtins
       if (element.hasOwnProperty(prop)) {
         value.push(element[prop] as SqlValue);
       }

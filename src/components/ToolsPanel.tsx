@@ -8,7 +8,6 @@ import Accordion from "react-bootstrap/Accordion";
 import Timer from "./Timer";
 import PieceList from "./PieceList";
 
-//translate to hooks
 function ToolsPanel({
   name,
   puzzleSelected,
@@ -20,14 +19,14 @@ function ToolsPanel({
   height,
   founds,
   fails,
-  YouWin,
+  winner,
   lang,
   loading,
 }: any) {
   const showTimer =
-    YouWin || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
+  winner || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
 
-  return (
+  return !puzzleSelected ? null : (
     <React.Fragment>
       <Accordion defaultActiveKey="0">
         <Card>

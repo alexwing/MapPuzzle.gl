@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Fireworks from "../lib/Fireworks";
@@ -29,13 +29,19 @@ export default function YouWin({
   onResetGame,
   path,
   name,
+  winner = false,
 }: any) {
   const [show, setShow] = React.useState(true);
 
   const handleClose = () => {
     setShow(false);
   };
-  
+
+  useEffect(() => {
+    if (winner) {
+      setShow(true);
+    }
+  }, [winner]);
 
   const url = "http://" + getUrl() + "/?map=" + path;
   const quote =
@@ -50,7 +56,7 @@ export default function YouWin({
     " pieces found.";
   const hashtag = "education,cartography,puzzle,countries";
   const title = "MapPuzzle.xyz - Puzzle game based in maps";
-  return (
+  return !winner ? null : (
     <React.Fragment>
       <Modal
         show={show}
@@ -61,7 +67,7 @@ export default function YouWin({
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
-            Congratulations! You're done.
+            Congratulations! You&apos;re done.
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -122,11 +128,13 @@ export default function YouWin({
           </Row>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-primary" onClick={handleClose}>Explore</Button>
+          <Button variant="outline-primary" onClick={handleClose}>
+            Explore
+          </Button>
           <Button onClick={onResetGame}>New Game</Button>
         </Modal.Footer>
       </Modal>
-      { show && <Fireworks /> }
+      {show && <Fireworks />}
     </React.Fragment>
   );
 }

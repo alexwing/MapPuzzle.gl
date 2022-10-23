@@ -14,8 +14,8 @@ function PiecePreview({ selected = null, centroid = null }: any) {
 
   let RenderPiecePreview;
   if (selected) {
-    let marginTop = -1 * centroid.top;
-    let marginLeft = -1 * centroid.left ;
+    const marginTop = -1 * centroid.top;
+    const marginLeft = -1 * centroid.left ;
     RenderPiecePreview = (
       <div>
         <div

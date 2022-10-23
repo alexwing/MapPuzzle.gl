@@ -21,25 +21,31 @@ import {
   TelegramShareButton,
   TelegramIcon,
 } from "react-share";
-
+import { PuzzleService } from "../services/puzzleService";
+import Puzzles from "../../backend/src/models/puzzles";
 //to function hooks
 
-function Info({ show = false, InfoClose, content, name }: any) {
+function Info({ show = false, InfoClose, name }: any) {
   const [showIn, setShowIn] = useState(false);
+  const [content, setContent] = useState([] as Puzzles[]);
 
   useEffect(() => {
+    PuzzleService.getPuzzles().then((data) => {
+      setContent(data);
+    });
     setShowIn(show);
   }, [show]);
 
   function handleClose() {
     InfoClose();
   }
+
   const url = "http://" + getUrl();
   const quote =
     "MapPuzzle.gl is an experimental website, it is an accessible way to learn cartography, through this project we try to offer an interactive learning experience with maps.";
   const hashtag = "education,cartography,puzzle,countries";
   const title = "MapPuzzle.xyz - Puzzle game based in maps";
-  const Puzzles = (
+  const infoPuzzles = !content ? null : (
     <Table striped bordered size="sm" className="legendInfo">
       <thead>
         <tr>
@@ -61,7 +67,7 @@ function Info({ show = false, InfoClose, content, name }: any) {
       </tbody>
     </Table>
   );
-  return (
+  return !content ? null : (
     <React.Fragment>
       <Modal
         show={showIn}
@@ -97,7 +103,7 @@ function Info({ show = false, InfoClose, content, name }: any) {
                 and faults committed.
               </p>
               <h2>Credits</h2>
-              {Puzzles}
+              {infoPuzzles}
               <p>
                 More info in{" "}
                 <a

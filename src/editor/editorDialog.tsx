@@ -117,7 +117,7 @@ function EditorDialog({
   };
 
   if (loading) return <LoadingDialog show={loading} delay={1000} />;
-  return (
+  return !puzzleSelected ? null : (
     <React.Fragment>
       <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
       <Modal

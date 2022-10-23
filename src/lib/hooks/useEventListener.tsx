@@ -1,5 +1,4 @@
 import { useRef, useEffect } from 'react'
-/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * useEventListener
  * Hook for handling EventListeners

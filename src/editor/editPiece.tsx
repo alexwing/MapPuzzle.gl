@@ -39,7 +39,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
   const NumericOnly = (e: any) => {
     // Allow only numbers . + -
     const reg = /^[0-9.-]+$/;
-    let preval = e.target.value;
+    const preval = e.target.value;
     if (e.target.value === "" || reg.test(e.target.value)) return true;
     else e.target.value = preval.substring(0, preval.length - 1);
   };

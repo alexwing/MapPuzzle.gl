@@ -14,7 +14,7 @@ import LangSelector from "./LangSelector";
 import { getCurrentLang } from "../lib/Utils";
 import { PuzzleService } from "../services/puzzleService";
 
-function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
+function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
   const [pieceInfo, setPieceInfo] = useState({
     title: "",
     contents: [],
@@ -128,7 +128,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
         </span>
       );
     } else {
-      return <span>"Not found data on Wikipedia"</span>;
+      return <span>Not found data on Wikipedia</span>;
     }
   };
 

@@ -16,7 +16,6 @@ import { Button, Nav } from "react-bootstrap";
 function MenuTop({
   name,
   onSelectMap,
-  content,
   onResetGame,
   onFullScreen,
   onRefocus,
@@ -34,7 +33,7 @@ function MenuTop({
     setShow(false);
     setShowInfo(false);
     getLanguages();
-  }, [content]);
+  }, []);
 
   const getLanguages = () => {
     PuzzleService.getLanguages().then((languages: Languages[]) => {
@@ -95,7 +94,6 @@ function MenuTop({
             </Button>
             <PuzzleSelector
               show={showSelectPuzzle}
-              puzzles={content}
               onSelectMap={onSelectMap}
               onHidePuzzleSelector={handleHideSelectPuzzle}
             />
@@ -115,7 +113,7 @@ function MenuTop({
           />
         </Navbar.Collapse>
       </Navbar>
-      <Info show={showInfo} content={content} InfoClose={handleCancel} />
+      <Info show={showInfo} InfoClose={handleCancel} />
       <ConfirmDialog
         show={show}
         handleCancel={handleCancel}

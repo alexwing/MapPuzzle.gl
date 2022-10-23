@@ -226,7 +226,7 @@ export function getTexTime() {
 }
 
 export function getUrl() {
-  let url = window.location.href.split("/")[2];
+  const url = window.location.href.split("/")[2];
   if (url.includes("localhost")) {
     return "mappuzzle.xyz";
   }
@@ -252,7 +252,7 @@ export function getWiki(
   name: string,
   custom_wiki: CustomWiki[]
 ) {
-  let wiki_url: string = "";
+  let wiki_url = "";
   if (custom_wiki) {
     wiki_url =
       custom_wiki.find((x: any) => x.cartodb_id === cartodb_id)?.wiki || "";
@@ -264,7 +264,7 @@ export function getWiki(
   }
 }
 export function getWikiSimple(name: string, custom_wiki: string) {
-  let wiki_url: string = "";
+  let wiki_url = "";
   if (custom_wiki) {
     wiki_url = custom_wiki;
   }

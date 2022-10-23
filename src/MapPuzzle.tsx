@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
@@ -47,22 +49,21 @@ class MapPuzzle extends Component<any, any> {
       time: {},
       loading: true,
       height: 0,
-      win: false,
+      winner: false,
       isMouseTooltipVisible: false,
       tooltipValue: "",
-      YouWin: false,
       showWikiInfo: false,
       wikiInfoUrl: "",
       wikiInfoId: -1,
+      viewState: null,
     };
   }
   componentDidMount(): void {
     PuzzleService.getPuzzles().then((content: Puzzles[]) => {
       let puzzleSelected = 1;
-      this.setState({ content: content });
 
       if (window.location.pathname) {
-        this.state.content.forEach(function (value: Puzzles, index: number) {
+        content.forEach(function (value: Puzzles) {
           if (value.url === window.location.search.substring(5)) {
             puzzleSelected = value.id;
           }
@@ -98,10 +99,9 @@ class MapPuzzle extends Component<any, any> {
           "./?map=" + puzzleData.url
         );
         //change title
-        document.title = 'MapPuzzle.xyz - '+ puzzleData.name;
-        
+        document.title = "MapPuzzle.xyz - " + puzzleData.name;
 
-        let viewStateCopy: ViewState = copyViewState(
+        const viewStateCopy: ViewState = copyViewState(
           puzzleData.view_state,
           this.state.viewState
         );
@@ -215,9 +215,9 @@ class MapPuzzle extends Component<any, any> {
         0 &&
       parseInt(this.state.pieces.length) > 0
     ) {
-      this.setState({ YouWin: true });
+      this.setState({ winner: true });
     } else {
-      this.setState({ YouWin: false });
+      this.setState({ winner: false });
     }
   }
 
@@ -321,7 +321,7 @@ class MapPuzzle extends Component<any, any> {
       pieceSelectedData: null,
       founds: [],
       fails: 0,
-      YouWin: false,
+      winner: false,
     });
     GameTime.seconds = 0;
   };
@@ -348,7 +348,7 @@ class MapPuzzle extends Component<any, any> {
   };
 
   onRefocusMapHandler = () => {
-    let viewStateCopy: ViewState = copyViewState(
+    const viewStateCopy: ViewState = copyViewState(
       this.state.puzzleSelectedData.view_state,
       this.state.viewState
     );
@@ -391,7 +391,7 @@ class MapPuzzle extends Component<any, any> {
     if (info.object && !this.state.pieceSelected) {
       //if the piece is found, show the wiki info on click
       if (this.state.founds.includes(info.object.properties.cartodb_id)) {
-        let wiki_url = getWiki(
+        const wiki_url = getWiki(
           info.object.properties.cartodb_id,
           info.object.name,
           this.state.puzzleCustomWiki
@@ -440,19 +440,7 @@ class MapPuzzle extends Component<any, any> {
   };
 
   render() {
-    let YouWinScreen: any = null;
-    if (this.state.YouWin) {
-      YouWinScreen = !this.state.content ? null : (
-        <YouWin
-          founds={this.state.founds}
-          fails={this.state.fails}
-          onResetGame={this.onResetGameHandler}
-          path={this.state.puzzleSelectedData.url}
-          name={this.state.puzzleSelectedData.name}
-        />
-      );
-    }
-    return !this.state.puzzleSelectedData ? null : (
+    return (
       <React.Fragment>
         <ReactFullscreeen>
           {({ onToggle }) => (
@@ -471,7 +459,6 @@ class MapPuzzle extends Component<any, any> {
               <MenuTop
                 name="MapPuzzle.xyz"
                 onSelectMap={this.onSelectMapHandler}
-                content={this.state.content}
                 onResetGame={this.onResetGameHandler}
                 onFullScreen={() => onToggle()}
                 onRefocus={this.onRefocusMapHandler}
@@ -479,13 +466,19 @@ class MapPuzzle extends Component<any, any> {
                 onShowEditor={this.onShowEditorHandler}
                 onLangChange={this.onLangChangeHandler}
               />
-
-              {YouWinScreen}
+              <YouWin
+                winner={this.state.winner}
+                founds={this.state.founds}
+                fails={this.state.fails}
+                onResetGame={this.onResetGameHandler}
+                path={this.state.puzzleSelectedData?.url}
+                name={this.state.puzzleSelectedData?.name}
+              />
               <Container fluid style={{ paddingTop: 15 + "px" }}>
                 <Row>
                   <Col xs={8} md={4} lg={4} xl={3}>
                     <ToolsPanel
-                      name={this.state.puzzleSelectedData.name}
+                      name={this.state.puzzleSelectedData?.name}
                       puzzleSelected={this.state.puzzleSelected}
                       pieceSelected={this.state.pieceSelected}
                       onPieceSelected={this.onPieceSelectedHandler}
@@ -495,7 +488,7 @@ class MapPuzzle extends Component<any, any> {
                       height={this.state.height}
                       founds={this.state.founds}
                       fails={this.state.fails}
-                      YouWin={this.state.YouWin}
+                      winner={this.state.winner}
                       lang={this.state.lang}
                       loading={this.state.loading}
                     />
@@ -510,7 +503,6 @@ class MapPuzzle extends Component<any, any> {
                 tooltip={this.state.tooltipValue}
               />
               <WikiInfo
-                id={this.state.wikiInfoId}
                 show={this.state.showWikiInfo}
                 url={this.state.wikiInfoUrl}
                 onHide={this.onShowWikiInfoHandler}

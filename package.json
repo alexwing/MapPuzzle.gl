@@ -71,8 +71,17 @@
     ]
   },
   "devDependencies": {
+    "@types/react-bootstrap-table2-paginator": "^2.1.2",
     "@types/react-router-dom": "^5.1.7",
     "@types/sql.js": "^1.4.4",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
+    "eslint": "^7.9.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.3.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.31.10",
     "http-server": "^14.1.1",
     "react-refresh": "^0.14.0",
     "so": "^1.0.1",

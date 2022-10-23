@@ -8,7 +8,7 @@ export async function getWikiInfo(piece: string): Promise<WikiInfoPiece> {
     const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts|langlinks&llprop=langname|autonym&lllimit=500&format=json&exintro=&titles=${piece}`;
     const response = await fetch(url);
     const json = await response.json();
-    let wikiInfo: WikiInfoPiece = mapWikiResponseToWikiInfo(json);
+    const wikiInfo: WikiInfoPiece = mapWikiResponseToWikiInfo(json);
     
     const puzzleLanguage = getCookie("puzzleLanguage") || "en";
     if (puzzleLanguage !== "en") {

@@ -18,7 +18,7 @@ function CursorCore({
   centroid = null,
   tooltip = "",
   zoom = 2,
-}: any) {
+}: any): JSX.Element {
   const pieceCursorRef: any = useRef();
   const tooltipRef: any = useRef();
   const requestRef: any = useRef();
@@ -27,8 +27,8 @@ function CursorCore({
   const [isVisible, setIsVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [isActiveClickable, setIsActiveClickable] = useState(false);
-  let endX = useRef(0);
-  let endY = useRef(0);
+  const endX = useRef(0);
+  const endY = useRef(0);
 
   // Primary Mouse Move event
   const onMouseMove = useCallback(({ clientX, clientY }:any) => {
@@ -174,9 +174,9 @@ function CursorCore({
   let PieceCursor;
   if (selected) {
     const scale = Math.pow(2, zoom);
-    let sizeX =
+    const sizeX =
       (parseInt(selected.properties.box.split(" ")[2]) * scale) / 78000;
-    let sizeY =
+    const sizeY =
       (parseInt(selected.properties.box.split(" ")[3]) * scale) / 78000;
     let marginLeft = "-50%";
     let marginTop = "-50%";
