@@ -13,11 +13,11 @@ function AnimatedCursor({
   centroid = null,
   tooltip = "",
   zoom = 2,
-}: any): JSX.Element {
-  if ((typeof navigator !== "undefined" && IsDevice?.any())) {
+}: any): JSX.Element | null {
+  if (typeof navigator !== "undefined" && IsDevice?.any()) {
     return <React.Fragment></React.Fragment>;
   }
-  return (
+  return !zoom ? null : (
     <CursorCore
       clickScale={clickScale}
       selected={selected}

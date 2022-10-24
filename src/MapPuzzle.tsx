@@ -22,7 +22,6 @@ import LoadingDialog from "./components/LoadingDialog";
 import { PuzzleService } from "./services/puzzleService";
 import { ConfigService } from "./services/configService";
 import EditorDialog from "./editor/editorDialog";
-import Puzzles from "../backend/src/models/puzzles";
 import CustomCentroids from "../backend/src/models/customCentroids";
 import CustomWiki from "../backend/src/models/customWiki";
 import CustomTranslations from "../backend/src/models/customTranslations";
@@ -31,15 +30,11 @@ class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      puzzles: null,
       data: null,
       puzzleSelected: 1,
       puzzleSelectedData: null,
       puzzleCustomCentroids: null,
       puzzleCustomWiki: null,
-      lineWidth: 1,
-      colorStroke: [150, 150, 150],
-      zoom: 2,
       pieceSelected: null,
       pieceSelectedData: null,
       pieceSelectedCentroid: null,
@@ -59,27 +54,16 @@ class MapPuzzle extends Component<any, any> {
     };
   }
   componentDidMount(): void {
-    PuzzleService.getPuzzles().then((content: Puzzles[]) => {
-      let puzzleSelected = 1;
-
-      if (window.location.pathname) {
-        content.forEach(function (value: Puzzles) {
-          if (value.url === window.location.search.substring(5)) {
-            puzzleSelected = value.id;
-          }
-        });
-        if (!puzzleSelected) {
-          puzzleSelected = getCookie("puzzleSelected");
-        }
-      } else {
-        puzzleSelected = getCookie("puzzleSelected");
-      }
-      if (!puzzleSelected) {
-        puzzleSelected = 1;
-      }
-      this.loadGame(puzzleSelected);
-    });
+    if (window.location.pathname) {
+      const puzzleUrl = window.location.search.substring(5);
+      PuzzleService.getPuzzleIdByUrl(puzzleUrl).then((content: number) => {
+        this.loadGame(content);
+      });
+    } else {
+      this.loadGame(1);
+    }
   }
+
   /* load game from db */
   loadGame(puzzleSelected: number): void {
     this.setState({
@@ -115,7 +99,6 @@ class MapPuzzle extends Component<any, any> {
         this.setState({
           puzzleSelectedData: puzzleData,
           puzzleSelected: puzzleSelected,
-          zoom: viewStateCopy.zoom,
           viewState: viewStateCopy,
           pieces: pieces,
           data: response,
@@ -145,11 +128,6 @@ class MapPuzzle extends Component<any, any> {
           GameTime.seconds = 0;
         }
 
-        setCookie(
-          "puzzleSelected",
-          puzzleSelected.toString(),
-          ConfigService.cookieDays
-        );
         this.checkGameStatus();
         this.onLangChangeHandler(getCookie("puzzleLanguage") || "en");
       });
@@ -342,7 +320,6 @@ class MapPuzzle extends Component<any, any> {
 
   onViewStateChangeHandler = (viewState: any) => {
     this.setState({
-      zoom: viewState.viewState.zoom,
       viewState: viewState.viewState,
     });
   };
@@ -354,7 +331,6 @@ class MapPuzzle extends Component<any, any> {
     );
 
     this.setState({
-      zoom: viewStateCopy.zoom,
       viewState: viewStateCopy,
     });
   };
@@ -447,8 +423,6 @@ class MapPuzzle extends Component<any, any> {
             <div>
               <LoadingDialog show={this.state.loading} delay={1000} />
               <DeckMap
-                lineWidth={this.state.lineWidth}
-                colorStroke={this.state.colorStroke}
                 onClickMap={this.onClickMapHandler}
                 onHoverMap={this.onHoverMapHandler}
                 onViewStateChange={this.onViewStateChangeHandler}
@@ -497,7 +471,7 @@ class MapPuzzle extends Component<any, any> {
               </Container>
               <AnimatedCursor
                 clickScale={0.95}
-                zoom={this.state.zoom}
+                zoom={this.state.viewState?.zoom}
                 selected={this.state.pieceSelectedData}
                 centroid={this.state.pieceSelectedCentroid}
                 tooltip={this.state.tooltipValue}

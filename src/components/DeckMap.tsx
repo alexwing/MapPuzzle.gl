@@ -2,11 +2,10 @@ import React, { useEffect } from "react";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import { StaticMap } from "react-map-gl";
-import { AlphaColor, hexToRgb, setColor } from "../lib/Utils";
+import { AlphaColor, colorStroke, hexToRgb, lineWidth, setColor } from "../lib/Utils";
+
 
 function DeckMap({
-  lineWidth,
-  colorStroke,
   onClickMap,
   onHoverMap,
   onViewStateChange,
@@ -45,7 +44,7 @@ function DeckMap({
         })
       );
     }
-  }, [colorStroke, data, founds, lineWidth, onClickMap, onHoverMap, viewState]);
+  }, [data, founds, lineWidth, onClickMap, onHoverMap, viewState]);
 
   return !viewState ? null : (
     <React.Fragment>

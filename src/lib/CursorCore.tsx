@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useEventListener } from "./hooks/useEventListener";
 import { setColor } from "./Utils";
@@ -31,7 +32,7 @@ function CursorCore({
   const endY = useRef(0);
 
   // Primary Mouse Move event
-  const onMouseMove = useCallback(({ clientX, clientY }:any) => {
+  const onMouseMove = useCallback(({ clientX, clientY }: any) => {
     setCoords({ x: clientX, y: clientY });
     tooltipRef.current.style.top = clientY + "px";
     tooltipRef.current.style.left = clientX + "px";
@@ -41,7 +42,7 @@ function CursorCore({
 
   // Outer Cursor Animation Delay
   const animateOuterCursor = useCallback(
-    (time:any) => {
+    (time: any) => {
       if (previousTimeRef)
         if (previousTimeRef.current !== undefined && pieceCursorRef && coords) {
           coords.x += (endX.current - coords.x) / 8;
@@ -90,7 +91,7 @@ function CursorCore({
 
   // Cursors Hover/Active State
   useEffect(() => {
-    if (isActive ) {
+    if (isActive) {
       tooltipRef.current.style.transform = `translateZ(0) scale(${clickScale})`;
       pieceCursorRef.current.style.transform = `translateZ(0) scale(${clickScale})`;
     } else {
@@ -123,26 +124,28 @@ function CursorCore({
     const clickables = document.querySelectorAll(
       'a, input[type="submit"], input[type="image"], label[for], select, button, .link'
     );
-    clickables.forEach((el: any) => {
-      el.style.cursor = "none";
+    clickables.forEach((el: unknown): void => {
+      if (el instanceof HTMLElement) {
+        el.style.cursor = "none";
 
-      el.addEventListener("mouseover", () => {
-        setIsActive(true);
-      });
-      el.addEventListener("click", () => {
-        setIsActive(true);
-        setIsActiveClickable(false);
-      });
-      el.addEventListener("mousedown", () => {
-        setIsActiveClickable(true);
-      });
-      el.addEventListener("mouseup", () => {
-        setIsActive(true);
-      });
-      el.addEventListener("mouseout", () => {
-        setIsActive(false);
-        setIsActiveClickable(false);
-      });
+        el.addEventListener("mouseover", () => {
+          setIsActive(true);
+        });
+        el.addEventListener("click", () => {
+          setIsActive(true);
+          setIsActiveClickable(false);
+        });
+        el.addEventListener("mousedown", () => {
+          setIsActiveClickable(true);
+        });
+        el.addEventListener("mouseup", () => {
+          setIsActive(true);
+        });
+        el.addEventListener("mouseout", () => {
+          setIsActive(false);
+          setIsActiveClickable(false);
+        });
+      }
     });
 
     return () => {
@@ -175,14 +178,14 @@ function CursorCore({
   if (selected) {
     const scale = Math.pow(2, zoom);
     const sizeX =
-      (parseInt(selected.properties.box.split(" ")[2]) * scale) / 78000;
+      (parseInt(selected.properties.box.split(" ")[2]) * scale) / 74000;
     const sizeY =
-      (parseInt(selected.properties.box.split(" ")[3]) * scale) / 78000;
+      (parseInt(selected.properties.box.split(" ")[3]) * scale) / 74000;
     let marginLeft = "-50%";
     let marginTop = "-50%";
     if (centroid) {
-      marginLeft =  centroid.left +"%";
-      marginTop = centroid.top +"%";
+      marginLeft = centroid.left + "%";
+      marginTop = centroid.top + "%";
     }
     PieceCursor = (
       <svg

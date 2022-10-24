@@ -43,6 +43,27 @@ export class PuzzleService {
         return Promise.resolve([]);
       });
   }
+
+  public static getPuzzleIdByUrl(url: string): Promise<number> {
+    return query(
+      `SELECT p.id  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id WHERE p.url = '${url}'`
+    )
+      .then((result: QueryExecResult[]) => {
+        let id = 1;
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            id = parseInt(value[0] ? value[0].toString() : "1");
+          });
+        });
+        return id;
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve(0);
+      });
+  }
+      
+
   //get a puzzle by id
   public static getPuzzle(id: number): Promise<Puzzles> {
     return query(
@@ -68,15 +89,14 @@ export class PuzzleService {
       },
     })
       .then((response) => {
-        //response is a xml 
-        return response.text();      
+        //response is a xml
+        return response.text();
       })
       .catch((err) => {
         console.log(err);
         return Promise.reject("Error generating sitemap");
       });
   }
-
 
   //get a puzzles by filters (region, subregion)
   public static getPuzzlesByFilters(

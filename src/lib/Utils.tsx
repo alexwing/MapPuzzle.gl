@@ -2,11 +2,15 @@ import GameTime from "../lib/GameTime";
 import React from "react";
 import { ViewState } from "react-map-gl";
 import CustomWiki from "../../backend/src/models/customWiki";
-import { WikiInfoLang } from "../models/Interfaces";
+import { PieceProps, WikiInfoLang } from "../models/Interfaces";
 import { getCookie } from "react-simple-cookie-store";
 import Languages from "../../backend/src/models/languages";
 
-export const colorScale = function (x: any) {
+
+export const colorStroke = [150, 150, 150];
+export const lineWidth = 1;
+
+export const colorScale = function (x: number): number[] {
   const COLOR_SCALE = [
     // negative
     [65, 182, 196],
@@ -255,7 +259,7 @@ export function getWiki(
   let wiki_url = "";
   if (custom_wiki) {
     wiki_url =
-      custom_wiki.find((x: any) => x.cartodb_id === cartodb_id)?.wiki || "";
+      custom_wiki.find((x: CustomWiki) => x.cartodb_id === parseInt(cartodb_id))?.wiki || "";
   }
   if (wiki_url !== "") {
     return wiki_url;
@@ -299,8 +303,8 @@ export function copyViewState(
   return viewStateDestination;
 }
 
-export const className = (c: any, pieceSelected: number) => {
-  return parseInt(c.properties.cartodb_id) === pieceSelected
+export const className = (c: PieceProps, pieceSelected: number) => {
+  return c.properties.cartodb_id === pieceSelected
     ? "table-primary"
     : "";
 };
@@ -320,11 +324,11 @@ export function langName(piece: WikiInfoLang) {
 export function getCurrentLang(langs: WikiInfoLang[]) {
   const puzzleLanguage = getCookie("puzzleLanguage") || "en";
   //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
-  let pieceLang = langs.find((x: any) => x.lang === puzzleLanguage);
+  let pieceLang = langs.find((x: WikiInfoLang ) => x.lang === puzzleLanguage);
   if (typeof pieceLang === "object" && pieceLang !== null) {
     return langName(pieceLang);
   } else {
-    pieceLang = langs.find((x: any) => x.lang === "en");
+    pieceLang = langs.find((x: WikiInfoLang ) => x.lang === "en");
     if (typeof pieceLang === "object" && pieceLang !== null) {
       return langName(pieceLang);
     } else {
@@ -348,7 +352,7 @@ export function languagesToWikiInfoLang(
 }
 
 export function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
-  langs.sort((a: any, b: any) => {
+  langs.sort((a: WikiInfoLang, b: WikiInfoLang) => {
     if (a.langname < b.langname) {
       return -1;
     }
