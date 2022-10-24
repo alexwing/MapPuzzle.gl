@@ -2,7 +2,7 @@ import React from "react";
 import Table from "react-bootstrap/Table";
 import CustomTranslations from "../../backend/src/models/customTranslations";
 
-export default function ErrorList(props: any) {
+export default function ErrorList(props: any): JSX.Element | null {
   const { customTranslations } = props;
 
   if (customTranslations.length === 0) {

@@ -86,31 +86,33 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
           setLoading(false);
         });
     }
-  }, [url,show]);
+  }, [url, show]);
 
-  function onSelectLang(e: any) {
-    const lang = e.target.id;
-    changeLanguage(pieceInfo, lang)
-      .then((extract) => {
-        const newPieceInfo = { ...pieceInfo };
-        newPieceInfo.contents = extract;
-        setCookie("puzzleLanguage", lang, ConfigService.cookieDays);
-        setPieceInfo(newPieceInfo);
-        setCurrentLang(getCurrentLang(newPieceInfo.langs));
-      })
-      .catch((errorRecived: any) => {
-        setShowAlert(true);
-        setAlertModal({
-          title: "Not found data on Wikipedia",
-          message: errorRecived.message,
-          type: "danger",
-        } as AlertModel);
-        setPieceInfo({
-          title: "Not found data on Wikipedia",
-          contents: [errorRecived.message],
-          langs: [],
-        } as WikiInfoPiece);
-      });
+  function onSelectLang(e: MouseEvent) {
+    if (e.target instanceof HTMLButtonElement) {
+      const lang = e.target.id;
+      changeLanguage(pieceInfo, lang)
+        .then((extract) => {
+          const newPieceInfo = { ...pieceInfo };
+          newPieceInfo.contents = extract;
+          setCookie("puzzleLanguage", lang, ConfigService.cookieDays);
+          setPieceInfo(newPieceInfo);
+          setCurrentLang(getCurrentLang(newPieceInfo.langs));
+        })
+        .catch((errorRecived: any) => {
+          setShowAlert(true);
+          setAlertModal({
+            title: "Not found data on Wikipedia",
+            message: errorRecived.message,
+            type: "danger",
+          } as AlertModel);
+          setPieceInfo({
+            title: "Not found data on Wikipedia",
+            contents: [errorRecived.message],
+            langs: [],
+          } as WikiInfoPiece);
+        });
+    }
   }
 
   function handleClose() {

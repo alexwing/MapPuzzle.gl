@@ -1,6 +1,6 @@
 import { getCookie } from "react-simple-cookie-store";
 import { mapWikiResponseToWikiInfo } from "../lib/mappings/modelMappers";
-import { WikiInfoPiece } from "../models/Interfaces";
+import { WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
 
 //get wiki info for a piece
 export async function getWikiInfo(piece: string): Promise<WikiInfoPiece> {
@@ -28,7 +28,7 @@ export async function changeLanguage(
   lang: string
 ): Promise<string[]> {
   try {
-    const pieceLang: any = piece.langs.find((x: any) => x.lang === lang);
+    const pieceLang: WikiInfoLang | undefined = piece.langs.find((x: WikiInfoLang) => x.lang === lang);
     if (typeof pieceLang === "object" && pieceLang !== null) {
       const url = `https://${lang}.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=${pieceLang.id}`;
       const response = await fetch(url);
