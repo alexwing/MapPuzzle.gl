@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/display-name */
 import React, { useEffect, useState, useRef } from "react";
 import { Button, Col, Form, Modal, NavDropdown, Row } from "react-bootstrap";
@@ -12,11 +14,17 @@ import BootstrapTable, {
 } from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
+interface PuzzleSelectorProps {
+  show: boolean;
+  onSelectMap: (puzzle: number) => void;
+  onHidePuzzleSelector: () => void;
+}
+
 function PuzzleSelector({
   show = false,
   onSelectMap,
   onHidePuzzleSelector,
-}: any): JSX.Element {
+}: PuzzleSelectorProps): JSX.Element {
   const [selectedPuzzle, setSelectedPuzzle] = useState(0);
   const [selectedRegion, setSelectedRegion] = useState(0);
   const [selectedSubRegion, setSelectedSubRegion] = useState(0);

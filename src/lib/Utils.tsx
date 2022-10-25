@@ -110,6 +110,7 @@ export const setColor = function (col: number): string {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const AlphaColor = function (col: any | string, alpha = 255) {
   if (col[0] === "#") {
     col = col.slice(1);
@@ -155,6 +156,7 @@ export function LazyRound(num: string) {
     : parts[0];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function Jsondb(filepath: string) : Promise<any> {
   return fetch(filepath, {
     method: "GET",
@@ -252,14 +254,14 @@ function cleanNameToWiki(name: string) {
 }
 
 export function getWiki(
-  cartodb_id: string,
+  cartodb_id: number,
   name: string,
   custom_wiki: CustomWiki[]
 ) {
   let wiki_url = "";
   if (custom_wiki) {
     wiki_url =
-      custom_wiki.find((x: CustomWiki) => x.cartodb_id === parseInt(cartodb_id))?.wiki || "";
+      custom_wiki.find((x: CustomWiki) => x.cartodb_id === cartodb_id)?.wiki || "";
   }
   if (wiki_url !== "") {
     return wiki_url;

@@ -1,9 +1,19 @@
 import React, { useEffect } from "react";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
-import { StaticMap } from "react-map-gl";
+import { StaticMap, ViewState } from "react-map-gl";
 import { AlphaColor, colorStroke, hexToRgb, lineWidth, setColor } from "../lib/Utils";
+import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 
+
+interface DeckMapProps {
+  onClickMap: (e: PieceEvent) => void;
+  onHoverMap: (e: PieceEvent) => void;
+  onViewStateChange: (e: ViewStateEvent) => void;
+  viewState: ViewState;
+  founds:  Array<number>;
+  data: any;
+}
 
 function DeckMap({
   onClickMap,
@@ -12,7 +22,7 @@ function DeckMap({
   viewState,
   founds,
   data,
-}: any): JSX.Element | null {
+}: DeckMapProps): JSX.Element | null {
   const [layers, setLayers] = React.useState([] as any);
 
   useEffect(() => {
@@ -22,7 +32,7 @@ function DeckMap({
           data: data,
           pointRadiusMinPixels: 6,
           getLineColor: colorStroke,
-          getFillColor: (object: any) =>
+          getFillColor: (object: PieceProps) =>
             AlphaColor(
               hexToRgb(setColor(object.properties.mapcolor)),
               founds.includes(object.properties.cartodb_id) ? 150 : 0
@@ -33,14 +43,14 @@ function DeckMap({
           updateTriggers: {
             lineWidthMinPixels: lineWidth,
             getLineColor: colorStroke,
-            getFillColor: (object: any) =>
+            getFillColor: (object: PieceProps) =>
               AlphaColor(
                 hexToRgb(setColor(object.properties.mapcolor)),
                 founds?.includes(object.properties.cartodb_id) ? 150 : 0
               ),
           },
-          onClick: (info: any) => onClickMap(info),
-          onHover: (info: any) => onHoverMap(info),
+          onClick: (info: PieceEvent) => onClickMap(info),
+          onHover: (info: PieceEvent) => onHoverMap(info),
         })
       );
     }

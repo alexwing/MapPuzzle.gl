@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getCookie } from "react-simple-cookie-store";
 import { mapWikiResponseToWikiInfo } from "../lib/mappings/modelMappers";
 import { WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";

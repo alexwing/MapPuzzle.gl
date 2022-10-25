@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import CustomCentroids from "../../backend/src/models/customCentroids";
+import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
 import { setColor } from "./Utils";
 /**
@@ -13,13 +15,22 @@ import { setColor } from "./Utils";
  * @param {number} clickScale - inner cursor scale amount
  *
  */
+
+interface CursorCoreProps {
+  clickScale: number;
+  selected: PieceProps;
+  centroid: CustomCentroids;
+  tooltip: string;
+  zoom: number;
+}
+
 function CursorCore({
   clickScale = 0.7,
-  selected = null,
-  centroid = null,
+  selected,
+  centroid,
   tooltip = "",
   zoom = 2,
-}: any): JSX.Element {
+}: CursorCoreProps): JSX.Element {
   const pieceCursorRef: any = useRef();
   const tooltipRef: any = useRef();
   const requestRef: any = useRef();

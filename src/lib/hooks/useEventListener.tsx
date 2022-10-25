@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef, useEffect } from 'react'
 /**
  * useEventListener
  * Hook for handling EventListeners
  * @return {object} width, height
  */
-export function useEventListener(eventName:any, handler:any, element = window) {
+export function useEventListener(eventName:string, handler:any, element = window) {
   // Create a ref that stores handler
   const savedHandler:any = useRef()
 
@@ -20,7 +21,7 @@ export function useEventListener(eventName:any, handler:any, element = window) {
       if (!isSupported) return
 
       // Create event listener that calls handler function stored in ref
-      const eventListener = (event:any) => savedHandler.current(event)
+      const eventListener = (event: any) => savedHandler.current(event)
 
       // Add event listener
       element.addEventListener(eventName, eventListener)

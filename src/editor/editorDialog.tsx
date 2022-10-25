@@ -14,12 +14,19 @@ import EditPiece from "./editPiece";
 import "./editorDialog.css";
 import AlertMessage from "../components/AlertMessage";
 
+interface EditorDialogProps {
+  show: boolean;
+  onHide: (val: boolean) => void;
+  puzzleSelected: Puzzles;
+  pieces: PieceProps[];
+}
+
 function EditorDialog({
   show = false,
   onHide,
   puzzleSelected = {} as Puzzles,
   pieces = new Array<PieceProps>(),
-}: any) {
+}: EditorDialogProps) {
   const [loading, setLoading] = useState(false);
   const [showIn, setShowIn] = useState(false);
   const [pieceSelected, setPieceSelected] = useState(-1);
@@ -71,7 +78,7 @@ function EditorDialog({
   };
 
   const handleClose = () => {
-    onHide();
+    onHide(false);
   };
 
   const handleSiteMap = () => {
@@ -160,8 +167,9 @@ function EditorDialog({
                       onPieceSelected={onPieceSelectedHandler}
                       pieceSelected={pieceSelected}
                       handleUp={onPieceUpHandler}
-                      handleDown={onPieceDownHandler}
-                    />
+                      handleDown={onPieceDownHandler} 
+                      lang={"en"}                    
+                      />
                   </div>
                 </Col>
                 <Col xs={8} lg={8}>
@@ -172,8 +180,11 @@ function EditorDialog({
           </Tabs>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleSiteMap}
-          style={{marginRight: "auto"}}>
+          <Button
+            variant="secondary"
+            onClick={handleSiteMap}
+            style={{ marginRight: "auto" }}
+          >
             Generate Sitemap
           </Button>
           <Button onClick={handleClose}>Ok</Button>

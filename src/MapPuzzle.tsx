@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
@@ -15,7 +13,7 @@ import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
 import { Col, Row } from "react-bootstrap";
-import { PieceProps } from "./models/Interfaces";
+import { PieceEvent, PieceProps, ViewStateEvent } from "./models/Interfaces";
 import WikiInfo from "./components/WikiInfo";
 import { ViewState } from "react-map-gl";
 import LoadingDialog from "./components/LoadingDialog";
@@ -25,6 +23,7 @@ import EditorDialog from "./editor/editorDialog";
 import CustomCentroids from "../backend/src/models/customCentroids";
 import CustomWiki from "../backend/src/models/customWiki";
 import CustomTranslations from "../backend/src/models/customTranslations";
+import Puzzles from "../backend/src/models/puzzles";
 
 class MapPuzzle extends Component<any, any> {
   constructor(props: any) {
@@ -39,7 +38,7 @@ class MapPuzzle extends Component<any, any> {
       pieceSelectedData: null,
       pieceSelectedCentroid: null,
       pieces: new Array<PieceProps>(),
-      founds: new Array<any>(),
+      founds: new Array<number>(),
       fails: 0,
       time: {},
       loading: true,
@@ -70,7 +69,7 @@ class MapPuzzle extends Component<any, any> {
       loading: true,
     });
     //get puzzle data from db
-    PuzzleService.getPuzzle(puzzleSelected).then((puzzleData: any) => {
+    PuzzleService.getPuzzle(puzzleSelected).then((puzzleData: Puzzles) => {
       //get map data from geojson
       Jsondb(puzzleData.data).then((response) => {
         this.getCustomCentroids(puzzleData.id);
@@ -85,30 +84,36 @@ class MapPuzzle extends Component<any, any> {
         //change title
         document.title = "MapPuzzle.xyz - " + puzzleData.name;
 
-        const viewStateCopy: ViewState = copyViewState(
-          puzzleData.view_state,
-          this.state.viewState
-        );
-        const pieces: PieceProps[] = response.features;
+        if (
+          puzzleData.view_state !== null &&
+          puzzleData.view_state !== undefined
+        ) {
+          const viewStateCopy: ViewState = copyViewState(
+            puzzleData.view_state,
+            this.state.viewState
+          );
 
-        //set name to pieces from pieces.properties.name
-        pieces.forEach((piece: PieceProps) => {
-          piece.name = piece.properties.name;
-        });
+          const pieces: PieceProps[] = response.features;
 
-        this.setState({
-          puzzleSelectedData: puzzleData,
-          puzzleSelected: puzzleSelected,
-          viewState: viewStateCopy,
-          pieces: pieces,
-          data: response,
-          loading: false,
-        });
+          //set name to pieces from pieces.properties.name
+          pieces.forEach((piece: PieceProps) => {
+            piece.name = piece.properties.name;
+          });
+
+          this.setState({
+            puzzleSelectedData: puzzleData,
+            puzzleSelected: puzzleSelected,
+            viewState: viewStateCopy,
+            pieces: pieces,
+            data: response,
+            loading: false,
+          });
+        }
         //restore game status from coockie
         const cookieFounds = getCookie("founds" + puzzleSelected);
         if (cookieFounds) {
           this.setState({
-            founds: cookieFounds.split(",").map((e: any) => parseInt(e)),
+            founds: cookieFounds.split(",").map((e: string) => parseInt(e)),
           });
         } else {
           this.setState({ founds: [] });
@@ -205,7 +210,7 @@ class MapPuzzle extends Component<any, any> {
   }
   /* Piece is selected on list */
   onPieceSelectedHandler = (val: any) => {
-    this.selectPiece(val.target.parentNode.id);
+    this.selectPiece(parseInt(val.target.parentNode.id));
   };
 
   selectPiece = (pieceId: number) => {
@@ -264,7 +269,7 @@ class MapPuzzle extends Component<any, any> {
   findCustomCentroids(piece: PieceProps) {
     let found = false;
     if (this.state.puzzleCustomCentroids) {
-      this.state.puzzleCustomCentroids.forEach((centroid: any) => {
+      this.state.puzzleCustomCentroids.forEach((centroid: CustomCentroids) => {
         if (centroid.cartodb_id === piece.properties.cartodb_id) {
           this.setState({ pieceSelectedCentroid: centroid });
           found = true;
@@ -303,7 +308,7 @@ class MapPuzzle extends Component<any, any> {
     });
     GameTime.seconds = 0;
   };
-  onHoverMapHandler = (info: any) => {
+  onHoverMapHandler = (info: PieceEvent) => {
     if (info.object) {
       if (this.state.founds.includes(info.object.properties.cartodb_id)) {
         this.setState({
@@ -318,7 +323,7 @@ class MapPuzzle extends Component<any, any> {
     }
   };
 
-  onViewStateChangeHandler = (viewState: any) => {
+  onViewStateChangeHandler = (viewState: ViewStateEvent) => {
     this.setState({
       viewState: viewState.viewState,
     });
@@ -335,7 +340,7 @@ class MapPuzzle extends Component<any, any> {
     });
   };
 
-  onShowWikiInfoHandler = (val: any) => {
+  onShowWikiInfoHandler = (val: boolean) => {
     if (val) {
       this.setState({
         showWikiInfo: true,
@@ -351,7 +356,7 @@ class MapPuzzle extends Component<any, any> {
     }
   };
 
-  onShowEditorHandler = (val: any) => {
+  onShowEditorHandler = (val: boolean) => {
     if (val) {
       this.setState({
         showEditor: true,
@@ -363,7 +368,7 @@ class MapPuzzle extends Component<any, any> {
     }
   };
 
-  onClickMapHandler = (info: any) => {
+  onClickMapHandler = (info: PieceEvent) => {
     if (info.object && !this.state.pieceSelected) {
       //if the piece is found, show the wiki info on click
       if (this.state.founds.includes(info.object.properties.cartodb_id)) {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { query } from "../lib/db/dbFactory";
 import { QueryExecResult } from "sql.js";
 import { ConfigService } from "./configService";

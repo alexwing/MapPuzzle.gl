@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueryExecResult, SqlValue } from "sql.js";
 import CustomCentroids from "../../../backend/src/models/customCentroids";
 import CustomTranslations from "../../../backend/src/models/customTranslations";
