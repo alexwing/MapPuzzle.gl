@@ -13,6 +13,7 @@ import { PuzzleService } from "../services/puzzleService";
 import EditPiece from "./editPiece";
 import "./editorDialog.css";
 import AlertMessage from "../components/AlertMessage";
+import { ConfigService } from "../services/configService";
 
 interface EditorDialogProps {
   show: boolean;
@@ -168,7 +169,7 @@ function EditorDialog({
                       pieceSelected={pieceSelected}
                       handleUp={onPieceUpHandler}
                       handleDown={onPieceDownHandler} 
-                      lang={"en"}                    
+                      lang={ConfigService.defaultLang}                    
                       />
                   </div>
                 </Col>

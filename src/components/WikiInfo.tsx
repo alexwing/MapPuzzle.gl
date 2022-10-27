@@ -37,7 +37,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
   }, [show]);
   //on init load if rtl lang
   useEffect(() => {
-    const puzzleLanguage = getCookie("puzzleLanguage") || "en";
+    const puzzleLanguage = getCookie("puzzleLanguage") || ConfigService.defaultLang;
     PuzzleService.getLangIsRtl(puzzleLanguage)
       .then((isRtl) => {
         setRtlClass(isRtl ? "rtl" : "");

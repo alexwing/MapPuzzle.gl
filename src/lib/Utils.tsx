@@ -5,6 +5,7 @@ import CustomWiki from "../../backend/src/models/customWiki";
 import { PieceProps, WikiInfoLang } from "../models/Interfaces";
 import { getCookie } from "react-simple-cookie-store";
 import Languages from "../../backend/src/models/languages";
+import { ConfigService } from "../services/configService";
 
 
 export const colorStroke = [150, 150, 150];
@@ -324,13 +325,13 @@ export function langName(piece: WikiInfoLang) {
 }
 
 export function getCurrentLang(langs: WikiInfoLang[]) {
-  const puzzleLanguage = getCookie("puzzleLanguage") || "en";
+  const puzzleLanguage = getCookie("puzzleLanguage") || ConfigService.defaultLang;
   //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
   let pieceLang = langs.find((x: WikiInfoLang ) => x.lang === puzzleLanguage);
   if (typeof pieceLang === "object" && pieceLang !== null) {
     return langName(pieceLang);
   } else {
-    pieceLang = langs.find((x: WikiInfoLang ) => x.lang === "en");
+    pieceLang = langs.find((x: WikiInfoLang ) => x.lang === ConfigService.defaultLang);
     if (typeof pieceLang === "object" && pieceLang !== null) {
       return langName(pieceLang);
     } else {

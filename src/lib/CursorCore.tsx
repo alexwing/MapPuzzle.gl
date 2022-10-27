@@ -186,7 +186,7 @@ function CursorCore({
   //document.body.style.cursor = 'none'
 
   let PieceCursor;
-  if (selected) {
+  if (selected.properties?.box) {
     const scale = Math.pow(2, zoom);
     const sizeX =
       (parseInt(selected.properties.box.split(" ")[2]) * scale) / 74000;
@@ -194,7 +194,7 @@ function CursorCore({
       (parseInt(selected.properties.box.split(" ")[3]) * scale) / 74000;
     let marginLeft = "-50%";
     let marginTop = "-50%";
-    if (centroid) {
+    if (centroid.id) {
       marginLeft = centroid.left + "%";
       marginTop = centroid.top + "%";
     }
@@ -220,11 +220,7 @@ function CursorCore({
   } else {
     PieceCursor = <span></span>;
   }
-
-  let TooltipCursor;
-  if (tooltip) {
-    TooltipCursor = <span>{tooltip}</span>;
-  }
+  const TooltipCursor = tooltip ? <span>{tooltip}</span> : undefined;
 
   return (
     <React.Fragment>

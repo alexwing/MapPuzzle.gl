@@ -63,7 +63,6 @@ export class PuzzleService {
         return Promise.resolve(0);
       });
   }
-      
 
   //get a puzzle by id
   public static getPuzzle(id: number): Promise<Puzzles> {
@@ -353,7 +352,7 @@ export class PuzzleService {
     });
     return response.json();
   }
-  //generate translation for a piece
+  //generate translation for a pieces
   public static async generateTranslation(
     pieces: PieceProps[],
     id: number
@@ -369,46 +368,7 @@ export class PuzzleService {
         piece.customWiki ? piece.customWiki.wiki : ""
       );
       //get wikiService getWikiInfo
-      await getWikiInfo(wiki)
-        .then((wikiInfo: WikiInfoPiece) => {
-          if (wikiInfo.langs.length > 0) {
-            wikiInfo.langs.forEach((lang: WikiInfoLang) => {
-              //if not exist in languages, add it
-              if (!languages.some((l) => l.lang === lang.lang)) {
-                languages.push({
-                  lang: lang.lang,
-                  langname: lang.langname,
-                  autonym: lang.autonym,
-                } as Languages);
-              }
-              if (piece.id) {
-                translations.push({
-                  id: piece.id,
-                  cartodb_id: piece.properties.cartodb_id,
-                  lang: lang.lang,
-                  translation: lang.id,
-                } as CustomTranslations);
-              }
-            });
-          } else {
-            if (!languages.some((l) => l.lang === "error")) {
-              languages.push({
-                lang: "error",
-                langname: "Error",
-                autonym: "Error",
-              } as Languages);
-            }
-            translations.push({
-              id: piece.id,
-              cartodb_id: piece.properties.cartodb_id,
-              lang: "Error",
-              translation: piece.name,
-            } as CustomTranslations);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await PuzzleService.getWikiInfo(wiki, languages, piece, translations);
     }
     //await 5 seconds to wait for the translations to be generated
     //await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -431,6 +391,54 @@ export class PuzzleService {
     return response.json();
   }
 
+  private static async getWikiInfo(
+    wiki: string,
+    languages: Languages[],
+    piece: PieceProps,
+    translations: CustomTranslations[]
+  ) {
+    await getWikiInfo(wiki)
+      .then((wikiInfo: WikiInfoPiece) => {
+        if (wikiInfo.langs.length > 0) {
+          wikiInfo.langs.forEach((lang: WikiInfoLang) => {
+            //if not exist in languages, add it
+            if (!languages.some((l) => l.lang === lang.lang)) {
+              languages.push({
+                lang: lang.lang,
+                langname: lang.langname,
+                autonym: lang.autonym,
+              } as Languages);
+            }
+            if (piece.id) {
+              translations.push({
+                id: piece.id,
+                cartodb_id: piece.properties.cartodb_id,
+                lang: lang.lang,
+                translation: lang.id,
+              } as CustomTranslations);
+            }
+          });
+        } else {
+          if (!languages.some((l) => l.lang === "error")) {
+            languages.push({
+              lang: "error",
+              langname: "Error",
+              autonym: "Error",
+            } as Languages);
+          }
+          translations.push({
+            id: piece.id,
+            cartodb_id: piece.properties.cartodb_id,
+            lang: "Error",
+            translation: piece.name,
+          } as CustomTranslations);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   //get pieces translations in a language
   public static async getCustomTranslations(
     id: number,
@@ -438,7 +446,7 @@ export class PuzzleService {
   ): Promise<CustomTranslations[]> {
     try {
       const result = await query(
-        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ("${lang}","en")`
+        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ('${lang}','${ConfigService.defaultLang}')`
       );
       const customTranslations: CustomTranslations[] = [];
       result.forEach((row) => {

@@ -2,6 +2,7 @@
 import { getCookie } from "react-simple-cookie-store";
 import { mapWikiResponseToWikiInfo } from "../lib/mappings/modelMappers";
 import { WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
+import { ConfigService } from "./configService";
 
 //get wiki info for a piece
 export async function getWikiInfo(piece: string): Promise<WikiInfoPiece> {
@@ -11,8 +12,8 @@ export async function getWikiInfo(piece: string): Promise<WikiInfoPiece> {
     const json = await response.json();
     const wikiInfo: WikiInfoPiece = mapWikiResponseToWikiInfo(json);
     
-    const puzzleLanguage = getCookie("puzzleLanguage") || "en";
-    if (puzzleLanguage !== "en") {
+    const puzzleLanguage = getCookie("puzzleLanguage") || ConfigService.defaultLang;
+    if (puzzleLanguage !== ConfigService.defaultLang) {
       wikiInfo.contents = await changeLanguage(wikiInfo, puzzleLanguage);     
     }
     return wikiInfo;
