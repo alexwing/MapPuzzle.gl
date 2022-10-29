@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useId, MouseEventHandler } from "react";
+import React, { useState, useEffect, useId } from "react";
 import Table from "react-bootstrap/Table";
 import { useKeyPress } from "../lib/useKeyPress";
 import { className, setColor } from "../lib/Utils";
@@ -8,7 +8,8 @@ import { PuzzleService } from "../services/puzzleService";
 interface PieceListProps {
   pieces: Array<PieceProps>;
   founds: Array<number>;
-  onPieceSelected: MouseEventHandler<HTMLTableRowElement>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onPieceSelected: (pieceId: any) => void;
   handleUp: () => void;
   handleDown: () => void;
   pieceSelected: number;

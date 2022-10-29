@@ -31,7 +31,7 @@ interface InfoProps {
   name: string;
 }
 
-function Info({ show = false, InfoClose, name }: InfoProps) {
+function Info({ show = false, InfoClose, name }: InfoProps) : JSX.Element | null {
   const [showIn, setShowIn] = useState(false);
   const [content, setContent] = useState([] as Puzzles[]);
 

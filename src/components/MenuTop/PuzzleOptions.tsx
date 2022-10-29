@@ -19,7 +19,7 @@ function PuzzleOptions({
   onShowWikiInfo,
   handleShow,
   onShowEditor,
-}: PuzzleOptionsProps) {
+}: PuzzleOptionsProps) : JSX.Element {
 
   const onShowWikiInfoHandler = () => {
     onShowWikiInfo(true);

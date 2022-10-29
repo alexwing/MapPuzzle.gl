@@ -5,10 +5,10 @@ import { setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
 
 interface TimerProps {
-  puzzleSelected: string;
+  puzzleSelected: number;
 }
 
-function Timer({ puzzleSelected }: TimerProps) {
+function Timer({ puzzleSelected }: TimerProps) : JSX.Element {
   const [time, setTime] = useState({
     h: 0,
     m: 0,

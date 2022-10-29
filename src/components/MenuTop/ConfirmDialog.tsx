@@ -17,7 +17,7 @@ function ConfirmDialog({
     show,
     handleCancel,
     handleOK,
- }: ConfirmDialogProps) {
+ }: ConfirmDialogProps) : JSX.Element {
   return (
     <React.Fragment>
       <Modal show={show} onHide={handleCancel}>

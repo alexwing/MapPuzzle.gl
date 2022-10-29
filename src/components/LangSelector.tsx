@@ -13,7 +13,7 @@ interface LangSelectorProps {
 }
 
 
-function LangSelector({ langs = [] as WikiInfoLang[],currentLang, onSelectLang }: LangSelectorProps) {
+function LangSelector({ langs = [] as WikiInfoLang[],currentLang, onSelectLang }: LangSelectorProps) : JSX.Element {
 
   const navDropdownTitle = (
     <span>

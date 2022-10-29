@@ -22,7 +22,7 @@ interface WikiInfoProps {
 }
 
 
-function WikiInfo({ show = false, onHide, url = "Berlin" }: WikiInfoProps) {
+function WikiInfo({ show = false, onHide, url = "Berlin" }: WikiInfoProps) : JSX.Element {
   const [pieceInfo, setPieceInfo] = useState({
     title: "",
     contents: [],

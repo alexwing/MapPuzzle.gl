@@ -23,6 +23,16 @@ import {
   TelegramIcon,
 } from "react-share";
 
+interface YouWinProps {
+  founds: Array<number>;
+  fails: number;
+  onResetGame: () => void;
+  path: string;
+  name: string;
+  winner: boolean;
+}
+
+
 export default function YouWin({
   founds,
   fails,
@@ -30,7 +40,7 @@ export default function YouWin({
   path,
   name,
   winner = false,
-}: any) {
+}: YouWinProps) : JSX.Element | null {
   const [show, setShow] = React.useState(true);
 
   const handleClose = () => {

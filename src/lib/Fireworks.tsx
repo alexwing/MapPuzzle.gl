@@ -8,7 +8,7 @@ import "./Fireworks.scss";
  * @author Script CSS: Eddie Lin (https://codepen.io/yshlin)
  *
  */
-function Fireworks () {
+function Fireworks () : JSX.Element {
   return (
     <React.Fragment>
       <div className="pyro">

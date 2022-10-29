@@ -15,7 +15,7 @@ interface EditorDialogProps {
 function EditMap({
   puzzle = {} as Puzzles,
   pieces = new Array<PieceProps>(),
-}: EditorDialogProps) {
+}: EditorDialogProps) : JSX.Element | null {
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [langErrors, setLangErrors] = useState([]);
@@ -74,6 +74,7 @@ function EditMap({
       piecesToSend.push(await PuzzleService.updatePieceProps(piece));
     }
     await PuzzleService.generateTranslation(piecesToSend, puzzle.id)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((res: any) => {
         setLoading(false);
         setAlert({
@@ -85,6 +86,7 @@ function EditMap({
         setShowAlert(true);
         setLangErrors(res.langErrors);
       })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .catch((errorMessage: any) => {
         setLoading(false);
         setAlert({

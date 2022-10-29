@@ -103,8 +103,9 @@ export function  mapResultToLanguage(result: SqlValue[]): Languages {
 
 
 //map wiki response to wiki info
-export function mapWikiResponseToWikiInfo(_response: any): WikiInfoPiece {
-    const { pages } = _response.query;
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function mapWikiResponseToWikiInfo(response: any): WikiInfoPiece {
+    const { pages } = response.query;
     const page = pages[Object.keys(pages)[0]];
     const title = page.title;
     const contents = page.extract.split("\n");

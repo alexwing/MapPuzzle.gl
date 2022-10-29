@@ -19,7 +19,7 @@ function AlertMessage({
   } as AlertModel,
   onHide,
   autoClose = 1000,
-}: AlertMessageProps) {
+}: AlertMessageProps) : JSX.Element {
   const [showIn, setShowIn] = useState(false);
   const [alert, setAlert] = useState(alertMessage);
   //on load show modal

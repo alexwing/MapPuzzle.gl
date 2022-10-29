@@ -27,7 +27,7 @@ function EditorDialog({
   onHide,
   puzzleSelected = {} as Puzzles,
   pieces = new Array<PieceProps>(),
-}: EditorDialogProps) {
+}: EditorDialogProps) : JSX.Element | null {
   const [loading, setLoading] = useState(false);
   const [showIn, setShowIn] = useState(false);
   const [pieceSelected, setPieceSelected] = useState(-1);

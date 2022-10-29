@@ -25,7 +25,7 @@ import CustomWiki from "../backend/src/models/customWiki";
 import CustomTranslations from "../backend/src/models/customTranslations";
 import Puzzles from "../backend/src/models/puzzles";
 
-function MapPuzzle() {
+function MapPuzzle() : JSX.Element  {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
   const [puzzleSelected, setPuzzleSelected] = useState(1);
   const [puzzleSelectedData, setPuzzleSelectedData] = useState({} as Puzzles);
@@ -55,7 +55,7 @@ function MapPuzzle() {
     if (window.location.pathname) {
       const puzzleUrl = window.location.search.substring(5);
       PuzzleService.getPuzzleIdByUrl(puzzleUrl).then((content: number) => {
-        loadGame(content);
+          loadGame(content);
       });
     } else {
       loadGame(1);

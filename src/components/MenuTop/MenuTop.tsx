@@ -34,7 +34,7 @@ function MenuTop({
   onShowWikiInfo,
   onShowEditor,
   onLangChange,
-}: MenuTopProps) {
+}: MenuTopProps) : JSX.Element {
   const [show, setShow] = React.useState(false);
   const [showInfo, setShowInfo] = React.useState(false);
   const [showSelectPuzzle, setShowSelectPuzzle] = React.useState(false);

@@ -12,6 +12,7 @@ interface DeckMapProps {
   onViewStateChange: (e: ViewStateEvent) => void;
   viewState: ViewState;
   founds:  Array<number>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
 }
 
@@ -23,7 +24,7 @@ function DeckMap({
   founds,
   data,
 }: DeckMapProps): JSX.Element | null {
-  const [layers, setLayers] = React.useState([] as any);
+  const [layers, setLayers] = React.useState([] as Array<GeoJsonLayer>);
 
   useEffect(() => {
     if (viewState.latitude && viewState.longitude && data) {

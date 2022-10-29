@@ -10,7 +10,7 @@ interface LoadingDialogProps {
   delay: number;
 }
 
-function LoadingDialog({ show = false, delay = 0 }: LoadingDialogProps) {
+function LoadingDialog({ show = false, delay = 0 }: LoadingDialogProps) : JSX.Element {
   const [showIn, setShowIn] = useState(false);
 
   useEffect(() => {
