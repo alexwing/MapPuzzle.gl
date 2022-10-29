@@ -112,7 +112,7 @@ function MapPuzzle() {
     });
   };
 
-  const restoreCookies = (puzzleId:number) => {
+  const restoreCookies = (puzzleId: number) => {
     const cookieFounds = getCookie("founds" + puzzleId);
     if (cookieFounds) {
       setFounds(cookieFounds.split(",").map(Number));
@@ -162,11 +162,10 @@ function MapPuzzle() {
           return 0;
         });
         setPieces(piecesAux);
-
       }
     );
   };
-  
+
   useEffect(() => {
     changeLang();
   }, [lang]);
@@ -189,7 +188,6 @@ function MapPuzzle() {
     });
   };
 
-
   useEffect(() => {
     if (pieces.length - founds.length <= 0 && pieces.length > 0) {
       setWinner(true);
@@ -209,6 +207,7 @@ function MapPuzzle() {
         );
         setShowWikiInfo(true);
         setWikiInfoUrl(wiki_url);
+        return;
       }
     }
     if (info && pieceSelected) {
@@ -217,8 +216,10 @@ function MapPuzzle() {
         String(info.object.properties.cartodb_id).trim()
       ) {
         if (!founds.includes(pieceSelectedData.properties.cartodb_id)) {
-          
-          const auxFounds = [...founds, pieceSelectedData.properties.cartodb_id];
+          const auxFounds = [
+            ...founds,
+            pieceSelectedData.properties.cartodb_id,
+          ];
           setFounds(auxFounds);
           setPieceSelected(-1);
           setPieceSelectedData({} as PieceProps);
@@ -308,9 +309,9 @@ function MapPuzzle() {
   };
 
   const onShowEditorHandler = (val: boolean) => {
-      setShowEditor(val);
+    setShowEditor(val);
   };
-  
+
   /* Piece is selected on list */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onPieceSelectedHandler = (val: any) => {
@@ -391,7 +392,7 @@ function MapPuzzle() {
       <ReactFullscreeen>
         {({ onToggle }) => (
           <div>
-            <LoadingDialog show={loading} delay={1000} />
+            <LoadingDialog show={loading}  delay={1000} />
             <DeckMap
               onClickMap={onClickMapHandler}
               onHoverMap={onHoverMapHandler}

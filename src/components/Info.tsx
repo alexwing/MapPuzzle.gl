@@ -25,7 +25,13 @@ import { PuzzleService } from "../services/puzzleService";
 import Puzzles from "../../backend/src/models/puzzles";
 //to function hooks
 
-function Info({ show = false, InfoClose, name }: any) {
+interface InfoProps {
+  show: boolean;
+  InfoClose: () => void;
+  name: string;
+}
+
+function Info({ show = false, InfoClose, name }: InfoProps) {
   const [showIn, setShowIn] = useState(false);
   const [content, setContent] = useState([] as Puzzles[]);
 
@@ -55,8 +61,8 @@ function Info({ show = false, InfoClose, name }: any) {
         </tr>
       </thead>
       <tbody>
-        {content.map((c: any) => (
-          <tr key={c.id} id={c.id}>
+        {content.map((c: Puzzles) => (
+          <tr key={c.id} id={c.id.toString()}>
             <td width="1%">
               <img src={c.icon} alt={c.name} />
             </td>

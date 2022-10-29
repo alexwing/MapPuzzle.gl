@@ -3,13 +3,21 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
 
+interface ConfirmDialogProps {
+  title: string;
+  message: string;
+  show: boolean;
+  handleCancel: () => void;
+  handleOK: () => void;
+}
+
 function ConfirmDialog({ 
     title,
     message,
     show,
     handleCancel,
     handleOK,
- }: any) {
+ }: ConfirmDialogProps) {
   return (
     <React.Fragment>
       <Modal show={show} onHide={handleCancel}>

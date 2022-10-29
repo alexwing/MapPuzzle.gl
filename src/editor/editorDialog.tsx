@@ -17,7 +17,7 @@ import { ConfigService } from "../services/configService";
 
 interface EditorDialogProps {
   show: boolean;
-  onHide: (val: boolean) => void;
+  onHide: (val:boolean) => void;
   puzzleSelected: Puzzles;
   pieces: PieceProps[];
 }
@@ -61,6 +61,7 @@ function EditorDialog({
   }, [showIn, puzzleSelected]);
 
   /* Piece is selected on list */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onPieceSelectedHandler = async (val: any) => {
     selectPiece(parseInt(val.target.parentNode.id));
   };
@@ -84,7 +85,7 @@ function EditorDialog({
 
   const handleSiteMap = () => {
     PuzzleService.generateSitemap()
-      .then((res) => {
+      .then(() => {
         setAlert({
           title: "Success",
           message: "Sitemap generated",
@@ -124,7 +125,7 @@ function EditorDialog({
     }
   };
 
-  if (loading) return <LoadingDialog show={loading} delay={1000} />;
+  if (loading) return <LoadingDialog show={loading} delay={1000}/>;
   return !puzzleSelected ? null : (
     <React.Fragment>
       <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />

@@ -49,7 +49,7 @@ export const hexToRgb = function (hex: string | null): Array<number> {
     : [0, 0, 0];
 };
 
-export const LightenDarkenColor = function (col: string, amt: number) {
+export const LightenDarkenColor = function (col: string, amt: number): Array<number> {
   if (col[0] === "#") {
     col = col.slice(1);
   }
@@ -112,7 +112,7 @@ export const setColor = function (col: number): string {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const AlphaColor = function (col: any | string, alpha = 255) {
+export const AlphaColor = function (col: any | string, alpha = 255): Array<number> {
   if (col[0] === "#") {
     col = col.slice(1);
   }
@@ -131,7 +131,7 @@ export const AlphaColor = function (col: any | string, alpha = 255) {
   return [r, g, b, alpha];
 };
 
-export function ST_ExtentToVieport(box: string) {
+export function ST_ExtentToVieport(box: string): string {
   box = box.replace("BOX(", "").replace(")", "").replace(",", " ");
   const arrayBox = box.split(" ");
   return (
@@ -148,7 +148,7 @@ export function ST_ExtentToVieport(box: string) {
   );
 }
 
-export function LazyRound(num: string) {
+export function LazyRound(num: string): string {
   const parts = num.split(".");
   return parts.length > 1
     ? Math.round(
@@ -169,7 +169,7 @@ export async function Jsondb(filepath: string) : Promise<any> {
     .catch((error) => console.log(error));
 }
 
-export async function Querydb(sql: string) {
+export async function Querydb(sql: string) : Promise<Response> {
   return fetch("https://public.carto.com/api/v2/sql?q=" + sql, {
     method: "GET",
     headers: new Headers({

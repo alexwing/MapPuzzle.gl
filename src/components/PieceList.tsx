@@ -23,7 +23,7 @@ export default function PieceList({
   handleDown,
   pieceSelected,
   lang,
-}: PieceListProps) {
+}: PieceListProps): JSX.Element {
   const [rtlClass, setRtlClass] = useState("");
   const upPress = useKeyPress("ArrowUp");
   const downPress = useKeyPress("ArrowDown");
@@ -108,12 +108,12 @@ export default function PieceList({
         id={identify}
       >
         <tbody>
-          {pieces.map((c: any) =>
+          {pieces.map((c: PieceProps) =>
             founds.includes(c.properties.cartodb_id) ? null : (
               <tr
                 key={c.properties.cartodb_id}
                 onClick={onPieceSelected}
-                id={c.properties.cartodb_id}
+                id={c.properties.cartodb_id.toString()}
                 className={className(c, pieceSelected)}
               >
                 <td width="80%">{c.properties.name}</td>

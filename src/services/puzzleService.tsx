@@ -461,7 +461,7 @@ export class PuzzleService {
     }
   }
 
-  public static async getLangIsRtl(lang: string) {
+  public static async getLangIsRtl(lang: string) : Promise<boolean> {
     try {
       const result = await query(
         `SELECT rtl FROM languages WHERE lang = "${lang}"`

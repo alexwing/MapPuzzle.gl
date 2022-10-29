@@ -14,7 +14,15 @@ import LangSelector from "./LangSelector";
 import { getCurrentLang } from "../lib/Utils";
 import { PuzzleService } from "../services/puzzleService";
 
-function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
+
+interface WikiInfoProps {
+  show: boolean;
+  onHide: (val:boolean) => void;
+  url: string;
+}
+
+
+function WikiInfo({ show = false, onHide, url = "Berlin" }: WikiInfoProps) {
   const [pieceInfo, setPieceInfo] = useState({
     title: "",
     contents: [],
@@ -37,7 +45,8 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
   }, [show]);
   //on init load if rtl lang
   useEffect(() => {
-    const puzzleLanguage = getCookie("puzzleLanguage") || ConfigService.defaultLang;
+    const puzzleLanguage =
+      getCookie("puzzleLanguage") || ConfigService.defaultLang;
     PuzzleService.getLangIsRtl(puzzleLanguage)
       .then((isRtl) => {
         setRtlClass(isRtl ? "rtl" : "");
@@ -69,6 +78,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
             setShowIn(true);
           }
         })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .catch((errorRecived: any) => {
           setShowAlert(true);
           setAlertModal({
@@ -99,6 +109,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
           setPieceInfo(newPieceInfo);
           setCurrentLang(getCurrentLang(newPieceInfo.langs));
         })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .catch((errorRecived: any) => {
           setShowAlert(true);
           setAlertModal({
@@ -117,7 +128,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
 
   function handleClose() {
     clearAlert();
-    onHide();
+    onHide(false);
   }
   const wikiTitle = () => {
     if (pieceInfo.title !== "") {
@@ -143,7 +154,13 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: any) {
     setShowAlert(false);
   };
 
-  if (loading) return <LoadingDialog show={loading} delay={1000} />;
+  if (loading)
+    return (
+      <LoadingDialog
+        show={loading}
+        delay={1000}      
+      />
+    );
   const LangSelectorContainer = !ConfigService.langWikiSelector ? (
     ""
   ) : (

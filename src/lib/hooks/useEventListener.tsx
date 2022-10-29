@@ -5,7 +5,7 @@ import { useRef, useEffect } from 'react'
  * Hook for handling EventListeners
  * @return {object} width, height
  */
-export function useEventListener(eventName:string, handler:any, element = window) {
+export function useEventListener(eventName:string, handler:(event: any) => void, element = window) : void {
   // Create a ref that stores handler
   const savedHandler:any = useRef()
 

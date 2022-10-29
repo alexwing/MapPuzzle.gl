@@ -5,7 +5,12 @@ import Row from "react-bootstrap/Row";
 import "./LoadingDialog.css";
 import { Spinner } from "react-bootstrap";
 
-function LoadingDialog({ show = false, onHide, delay = 0 }: any) {
+interface LoadingDialogProps {
+  show: boolean;
+  delay: number;
+}
+
+function LoadingDialog({ show = false, delay = 0 }: LoadingDialogProps) {
   const [showIn, setShowIn] = useState(false);
 
   useEffect(() => {
@@ -24,7 +29,6 @@ function LoadingDialog({ show = false, onHide, delay = 0 }: any) {
         centered
         size="xl"
         aria-labelledby="contained-modal-title-vcenter"
-        onHide={onHide}
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">

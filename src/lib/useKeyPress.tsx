@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function useKeyPress(targetKey: string) {
+export function useKeyPress(targetKey: string) : boolean {
   // State for keeping track of whether key is pressed
   const [keyPressed, setKeyPressed] = useState<boolean>(false);
   // Add event listeners
