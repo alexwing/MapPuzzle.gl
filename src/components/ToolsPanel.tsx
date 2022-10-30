@@ -46,7 +46,7 @@ function ToolsPanel({
   const showTimer =
   winner || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
 
-  return !puzzleSelected ? (<React.Fragment></React.Fragment>) : (
+  return loading ? (<React.Fragment></React.Fragment>) : (
     <React.Fragment>
       <Accordion defaultActiveKey="0">
         <Card>

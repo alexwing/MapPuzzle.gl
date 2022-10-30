@@ -24,8 +24,9 @@ import CustomCentroids from "../backend/src/models/customCentroids";
 import CustomWiki from "../backend/src/models/customWiki";
 import CustomTranslations from "../backend/src/models/customTranslations";
 import Puzzles from "../backend/src/models/puzzles";
+import { mapResultToPuzzle } from "./lib/mappings/modelMappers";
 
-function MapPuzzle() : JSX.Element  {
+function MapPuzzle(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
   const [puzzleSelected, setPuzzleSelected] = useState(1);
   const [puzzleSelectedData, setPuzzleSelectedData] = useState({} as Puzzles);
@@ -52,10 +53,11 @@ function MapPuzzle() : JSX.Element  {
   const [lang, setLang] = useState("");
 
   useEffect(() => {
+
     if (window.location.pathname) {
       const puzzleUrl = window.location.search.substring(5);
       PuzzleService.getPuzzleIdByUrl(puzzleUrl).then((content: number) => {
-          loadGame(content);
+        loadGame(content);
       });
     } else {
       loadGame(1);
@@ -68,6 +70,10 @@ function MapPuzzle() : JSX.Element  {
 
   /* load game from db */
   const loadGame = (puzzleId: number) => {
+    const langAux = getCookie("puzzleLanguage") || ConfigService.defaultLang;
+    setPieces([]);
+    setFounds([]);    
+    setLang(langAux);
     setLoading(true);
     //get puzzle data from db
     PuzzleService.getPuzzle(puzzleId).then((puzzleData: Puzzles) => {
@@ -101,13 +107,10 @@ function MapPuzzle() : JSX.Element  {
           setPuzzleSelectedData(puzzleData);
           setPuzzleSelected(puzzleId);
           setViewState(viewStateCopy);
-          setPieces(piecesAux);
           setData(response);
-          setLoading(false);
+
+          loadPiecesByLang(puzzleId,piecesAux, langAux);
         }
-        //restore game status from coockie
-        restoreCookies(puzzleId);
-        setLang(getCookie("puzzleLanguage") || ConfigService.defaultLang);
       });
     });
   };
@@ -132,18 +135,16 @@ function MapPuzzle() : JSX.Element  {
       GameTime.seconds = 0;
     }
   };
-  const changeLang = async () => {
-    PuzzleService.getCustomTranslations(puzzleSelected, lang).then(
+  
+   function loadPiecesByLang(puzzleSelectedAux:number,piecesAux: PieceProps[], langAux: string) {
+    //force refresh of pieces
+    setPieces([]);
+    PuzzleService.getCustomTranslations(puzzleSelectedAux, langAux).then(
       (customTranslations: CustomTranslations[]) => {
-        //clone pieces
-        const piecesAux = [...pieces];
-        //empty pieces to force update
-        setPieces([]);
         piecesAux.forEach((piece: PieceProps) => {
           //find from CustomTranslations[]
           const customTranslation = customTranslations.find(
-            (e: CustomTranslations) =>
-              e.cartodb_id === piece.properties.cartodb_id && e.lang === lang
+            (e: CustomTranslations) => e.cartodb_id === piece.properties.cartodb_id && e.lang === langAux
           )?.translation;
           if (customTranslation) {
             piece.properties.name = customTranslation;
@@ -162,12 +163,15 @@ function MapPuzzle() : JSX.Element  {
           return 0;
         });
         setPieces(piecesAux);
+        setLoading(false);
+          //restore game status from coockie
+        restoreCookies(puzzleSelectedAux); 
       }
     );
-  };
+  }
 
   useEffect(() => {
-    changeLang();
+    loadPiecesByLang(puzzleSelected, pieces, lang);
   }, [lang]);
 
   const onLangChangeHandler = (lang: string) => {
@@ -392,7 +396,7 @@ function MapPuzzle() : JSX.Element  {
       <ReactFullscreeen>
         {({ onToggle }) => (
           <div>
-            <LoadingDialog show={loading}  delay={1000} />
+            <LoadingDialog show={loading} delay={1000} />
             <DeckMap
               onClickMap={onClickMapHandler}
               onHoverMap={onHoverMapHandler}
