@@ -1,10 +1,10 @@
+import 'mapbox-gl/dist/mapbox-gl.css';
 import React, { useEffect } from "react";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import { StaticMap, ViewState } from "react-map-gl";
 import { AlphaColor, colorStroke, hexToRgb, lineWidth, setColor } from "../lib/Utils";
 import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
-
 
 interface DeckMapProps {
   onClickMap: (e: PieceEvent) => void;
