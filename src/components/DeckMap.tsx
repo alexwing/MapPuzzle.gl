@@ -27,7 +27,6 @@ function DeckMap({
   const [layers, setLayers] = React.useState([] as Array<GeoJsonLayer>);
 
   useEffect(() => {
-    if (viewState.latitude && viewState.longitude && data) {
       setLayers(
         new GeoJsonLayer({
           data: data,
@@ -54,10 +53,9 @@ function DeckMap({
           onHover: (info: PieceEvent) => onHoverMap(info),
         })
       );
-    }
   }, [data, founds, onClickMap, onHoverMap, viewState]);
 
-  return !viewState.latitude ? null : (
+  return !viewState.zoom || !data ? null : (
     <React.Fragment>
       <DeckGL
         width="100%"

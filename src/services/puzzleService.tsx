@@ -47,16 +47,15 @@ export class PuzzleService {
 
   public static getPuzzleIdByUrl(url: string): Promise<number> {
     return query(
-      `SELECT p.id  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id WHERE p.url = '${url}'`
+      `SELECT p.id FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id WHERE p.url = '${url}'`
     )
       .then((result: QueryExecResult[]) => {
-        let id = 1;
         result.forEach((row) => {
           row.values.forEach((value) => {
-            id = parseInt(value[0] ? value[0].toString() : "1");
+            return parseInt(value[0] ? value[0].toString() : "1");
           });
         });
-        return id;
+        return 1;
       })
       .catch((err) => {
         console.log(err);
