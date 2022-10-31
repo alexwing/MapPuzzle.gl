@@ -3,8 +3,8 @@ import { createDbWorker, WorkerHttpvfs } from "sql.js-httpvfs";
 import { SplitFileConfig } from "sql.js-httpvfs/dist/sqlite.worker";
 import { ConfigService } from "../../services/configService";
 
-const workerUrl: string = "sqlite.worker.js";
-const wasmUrl: string = "sql-wasm.wasm";
+const workerUrl = "sqlite.worker.js";
+const wasmUrl = "sql-wasm.wasm";
 
 // the config is either the url to the create_db script, or a inline configuration:
 const config: SplitFileConfig = {

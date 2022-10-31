@@ -7,8 +7,27 @@ import Alert from "react-bootstrap/Alert";
 import Accordion from "react-bootstrap/Accordion";
 import Timer from "./Timer";
 import PieceList from "./PieceList";
+import { PieceProps } from "../models/Interfaces";
 
-//translate to hooks
+
+interface ToolsPanelProps {
+  name: string;
+  puzzleSelected: number;
+  pieceSelected: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onPieceSelected: (pieceId: any) => void;
+  handleUp: () => void;
+  handleDown: () => void;
+  pieces: Array<PieceProps>;
+  height: number;
+  founds: Array<number>;
+  fails: number;
+  winner: boolean;
+  lang: string;
+  loading: boolean;
+}
+
+
 function ToolsPanel({
   name,
   puzzleSelected,
@@ -20,14 +39,14 @@ function ToolsPanel({
   height,
   founds,
   fails,
-  YouWin,
+  winner,
   lang,
   loading,
-}: any) {
+}: ToolsPanelProps) : JSX.Element {
   const showTimer =
-    YouWin || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
+  winner || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
 
-  return (
+  return loading ? (<React.Fragment></React.Fragment>) : (
     <React.Fragment>
       <Accordion defaultActiveKey="0">
         <Card>

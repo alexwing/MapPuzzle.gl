@@ -3,6 +3,13 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { AlertModel } from "../models/Interfaces";
 
+interface AlertMessageProps {
+  show: boolean;
+  alertMessage: AlertModel;
+  onHide: () => void;
+  autoClose?: number ;
+}
+
 function AlertMessage({
   show = false,
   alertMessage = {
@@ -12,7 +19,7 @@ function AlertMessage({
   } as AlertModel,
   onHide,
   autoClose = 1000,
-}: any) {
+}: AlertMessageProps) : JSX.Element {
   const [showIn, setShowIn] = useState(false);
   const [alert, setAlert] = useState(alertMessage);
   //on load show modal

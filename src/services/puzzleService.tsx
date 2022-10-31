@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { query } from "../lib/db/dbFactory";
 import { QueryExecResult } from "sql.js";
 import { ConfigService } from "./configService";
@@ -30,7 +31,7 @@ export class PuzzleService {
       "SELECT p.*, vs.latitude, vs.longitude, vs.zoom  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id ORDER BY p.name"
     )
       .then((result: QueryExecResult[]) => {
-        let puzzles: Puzzles[] = [];
+        const puzzles: Puzzles[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
             puzzles.push(mapResultToPuzzle(value));
@@ -43,6 +44,26 @@ export class PuzzleService {
         return Promise.resolve([]);
       });
   }
+
+  public static getPuzzleIdByUrl(url: string): Promise<number> {
+    return query(
+      `SELECT p.id  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id WHERE p.url = '${url}'`
+    )
+      .then((result: QueryExecResult[]) => {
+        let id = 1;
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            id = parseInt(value[0] ? value[0].toString() : "1");
+          });
+        });
+        return id;
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve(0);
+      });
+  }
+
   //get a puzzle by id
   public static getPuzzle(id: number): Promise<Puzzles> {
     return query(
@@ -68,15 +89,14 @@ export class PuzzleService {
       },
     })
       .then((response) => {
-        //response is a xml 
-        return response.text();      
+        //response is a xml
+        return response.text();
       })
       .catch((err) => {
         console.log(err);
         return Promise.reject("Error generating sitemap");
       });
   }
-
 
   //get a puzzles by filters (region, subregion)
   public static getPuzzlesByFilters(
@@ -98,7 +118,7 @@ export class PuzzleService {
       `SELECT p.*, c.regioncode, c.region, c.subregioncode, c.subregion FROM puzzles p INNER JOIN countries c ON p.countrycode = c.countrycode WHERE 1=1 ${where} ORDER BY p.name`
     )
       .then((result: QueryExecResult[]) => {
-        let puzzles: Puzzles[] = [];
+        const puzzles: Puzzles[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
             const puzzle: Puzzles = mapResultToPuzzle(value);
@@ -127,7 +147,7 @@ export class PuzzleService {
       `SELECT DISTINCT c.regioncode, c.region, c.subregioncode, c.subregion FROM countries c ORDER BY c.region, c.subregion`
     )
       .then((result: QueryExecResult[]) => {
-        let regions: Regions[] = [];
+        const regions: Regions[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
             regions.push({
@@ -149,7 +169,7 @@ export class PuzzleService {
   public static getLanguages(): Promise<Languages[]> {
     return query(`SELECT * FROM languages WHERE active = 1 ORDER BY langname`)
       .then((result: QueryExecResult[]) => {
-        let languages: Languages[] = [];
+        const languages: Languages[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
             languages.push(mapResultToLanguage(value));
@@ -168,7 +188,7 @@ export class PuzzleService {
       `SELECT DISTINCT l.* from custom_translations ct INNER JOIN languages l ON l.lang = ct.lang WHERE ct.id = ${id} AND l.active = 1 ORDER BY l.langname`
     )
       .then((result: QueryExecResult[]) => {
-        let languages: Languages[] = [];
+        const languages: Languages[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
             languages.push(mapResultToLanguage(value));
@@ -186,7 +206,7 @@ export class PuzzleService {
   public static getCustomCentroids(id: number): Promise<CustomCentroids[]> {
     return query(`SELECT * FROM custom_centroids WHERE id = ${id}`)
       .then((result: QueryExecResult[]) => {
-        let centroids: CustomCentroids[] = [];
+        const centroids: CustomCentroids[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
             centroids.push(mapResultToCustomCentroids(value));
@@ -232,7 +252,7 @@ export class PuzzleService {
   public static async getCustomWikis(id: number): Promise<CustomWiki[]> {
     try {
       const result = await query(`SELECT * FROM custom_wiki WHERE id = ${id}`);
-      let wikis: CustomWiki[] = [];
+      const wikis: CustomWiki[] = [];
       result.forEach((row) => {
         row.values.forEach((value) => {
           wikis.push(mapResultToCustomWiki(value));
@@ -332,13 +352,13 @@ export class PuzzleService {
     });
     return response.json();
   }
-  //generate translation for a piece
+  //generate translation for a pieces
   public static async generateTranslation(
     pieces: PieceProps[],
     id: number
   ): Promise<any> {
-    let languages: Languages[] = [];
-    let translations: CustomTranslations[] = [];
+    const languages: Languages[] = [];
+    const translations: CustomTranslations[] = [];
 
     for await (const piece of pieces) {
       piece.id = id;
@@ -348,46 +368,7 @@ export class PuzzleService {
         piece.customWiki ? piece.customWiki.wiki : ""
       );
       //get wikiService getWikiInfo
-      await getWikiInfo(wiki)
-        .then((wikiInfo: WikiInfoPiece) => {
-          if (wikiInfo.langs.length > 0) {
-            wikiInfo.langs.forEach((lang: WikiInfoLang) => {
-              //if not exist in languages, add it
-              if (!languages.some((l) => l.lang === lang.lang)) {
-                languages.push({
-                  lang: lang.lang,
-                  langname: lang.langname,
-                  autonym: lang.autonym,
-                } as Languages);
-              }
-              if (piece.id) {
-                translations.push({
-                  id: piece.id,
-                  cartodb_id: piece.properties.cartodb_id,
-                  lang: lang.lang,
-                  translation: lang.id,
-                } as CustomTranslations);
-              }
-            });
-          } else {
-            if (!languages.some((l) => l.lang === "error")) {
-              languages.push({
-                lang: "error",
-                langname: "Error",
-                autonym: "Error",
-              } as Languages);
-            }
-            translations.push({
-              id: piece.id,
-              cartodb_id: piece.properties.cartodb_id,
-              lang: "Error",
-              translation: piece.name,
-            } as CustomTranslations);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await PuzzleService.getWikiInfo(wiki, languages, piece, translations);
     }
     //await 5 seconds to wait for the translations to be generated
     //await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -410,6 +391,54 @@ export class PuzzleService {
     return response.json();
   }
 
+  private static async getWikiInfo(
+    wiki: string,
+    languages: Languages[],
+    piece: PieceProps,
+    translations: CustomTranslations[]
+  ) {
+    await getWikiInfo(wiki)
+      .then((wikiInfo: WikiInfoPiece) => {
+        if (wikiInfo.langs.length > 0) {
+          wikiInfo.langs.forEach((lang: WikiInfoLang) => {
+            //if not exist in languages, add it
+            if (!languages.some((l) => l.lang === lang.lang)) {
+              languages.push({
+                lang: lang.lang,
+                langname: lang.langname,
+                autonym: lang.autonym,
+              } as Languages);
+            }
+            if (piece.id) {
+              translations.push({
+                id: piece.id,
+                cartodb_id: piece.properties.cartodb_id,
+                lang: lang.lang,
+                translation: lang.id,
+              } as CustomTranslations);
+            }
+          });
+        } else {
+          if (!languages.some((l) => l.lang === "error")) {
+            languages.push({
+              lang: "error",
+              langname: "Error",
+              autonym: "Error",
+            } as Languages);
+          }
+          translations.push({
+            id: piece.id,
+            cartodb_id: piece.properties.cartodb_id,
+            lang: "Error",
+            translation: piece.name,
+          } as CustomTranslations);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   //get pieces translations in a language
   public static async getCustomTranslations(
     id: number,
@@ -417,9 +446,9 @@ export class PuzzleService {
   ): Promise<CustomTranslations[]> {
     try {
       const result = await query(
-        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ("${lang}","en")`
+        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ('${lang}','${ConfigService.defaultLang}')`
       );
-      let customTranslations: CustomTranslations[] = [];
+      const customTranslations: CustomTranslations[] = [];
       result.forEach((row) => {
         row.values.forEach((value) => {
           customTranslations.push(mapResultToCustomTranslations(value));
@@ -432,7 +461,7 @@ export class PuzzleService {
     }
   }
 
-  public static async getLangIsRtl(lang: string) {
+  public static async getLangIsRtl(lang: string) : Promise<boolean> {
     try {
       const result = await query(
         `SELECT rtl FROM languages WHERE lang = "${lang}"`

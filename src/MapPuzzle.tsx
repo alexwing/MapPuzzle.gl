@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import "./MapPuzzle.css";
@@ -13,84 +13,73 @@ import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
 import { Col, Row } from "react-bootstrap";
-import { PieceProps } from "./models/Interfaces";
+import { PieceEvent, PieceProps, ViewStateEvent } from "./models/Interfaces";
 import WikiInfo from "./components/WikiInfo";
 import { ViewState } from "react-map-gl";
 import LoadingDialog from "./components/LoadingDialog";
 import { PuzzleService } from "./services/puzzleService";
 import { ConfigService } from "./services/configService";
 import EditorDialog from "./editor/editorDialog";
-import Puzzles from "../backend/src/models/puzzles";
 import CustomCentroids from "../backend/src/models/customCentroids";
 import CustomWiki from "../backend/src/models/customWiki";
 import CustomTranslations from "../backend/src/models/customTranslations";
+import Puzzles from "../backend/src/models/puzzles";
 
-class MapPuzzle extends Component<any, any> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      puzzles: null,
-      data: null,
-      puzzleSelected: 1,
-      puzzleSelectedData: null,
-      puzzleCustomCentroids: null,
-      puzzleCustomWiki: null,
-      lineWidth: 1,
-      colorStroke: [150, 150, 150],
-      zoom: 2,
-      pieceSelected: null,
-      pieceSelectedData: null,
-      pieceSelectedCentroid: null,
-      pieces: new Array<PieceProps>(),
-      founds: new Array<any>(),
-      fails: 0,
-      time: {},
-      loading: true,
-      height: 0,
-      win: false,
-      isMouseTooltipVisible: false,
-      tooltipValue: "",
-      YouWin: false,
-      showWikiInfo: false,
-      wikiInfoUrl: "",
-      wikiInfoId: -1,
-    };
-  }
-  componentDidMount(): void {
-    PuzzleService.getPuzzles().then((content: Puzzles[]) => {
-      let puzzleSelected = 1;
-      this.setState({ content: content });
+function MapPuzzle(): JSX.Element {
+  const [data, setData] = useState({} as GeoJSON.FeatureCollection);
+  const [puzzleSelected, setPuzzleSelected] = useState(1);
+  const [puzzleSelectedData, setPuzzleSelectedData] = useState({} as Puzzles);
+  const [puzzleCustomCentroids, setPuzzleCustomCentroids] = useState(
+    [] as CustomCentroids[]
+  );
+  const [puzzleCustomWiki, setPuzzleCustomWiki] = useState([] as CustomWiki[]);
+  const [pieceSelected, setPieceSelected] = useState(-1);
+  const [pieceSelectedData, setPieceSelectedData] = useState({} as PieceProps);
+  const [pieceSelectedCentroid, setPieceSelectedCentroid] = useState(
+    {} as CustomCentroids
+  );
+  const [pieces, setPieces] = useState([] as Array<PieceProps>);
+  const [founds, setFounds] = useState([] as Array<number>);
+  const [fails, setFails] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [height, setHeight] = useState(0);
+  const [winner, setWinner] = useState(false);
+  const [tooltipValue, setTooltipValue] = useState("");
+  const [showWikiInfo, setShowWikiInfo] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
+  const [wikiInfoUrl, setWikiInfoUrl] = useState("");
+  const [viewState, setViewState] = useState({} as ViewState);
+  const [lang, setLang] = useState("");
 
-      if (window.location.pathname) {
-        this.state.content.forEach(function (value: Puzzles, index: number) {
-          if (value.url === window.location.search.substring(5)) {
-            puzzleSelected = value.id;
-          }
-        });
-        if (!puzzleSelected) {
-          puzzleSelected = getCookie("puzzleSelected");
-        }
-      } else {
-        puzzleSelected = getCookie("puzzleSelected");
-      }
-      if (!puzzleSelected) {
-        puzzleSelected = 1;
-      }
-      this.loadGame(puzzleSelected);
-    });
-  }
+  useEffect(() => {
+
+    if (window.location.pathname) {
+      const puzzleUrl = window.location.search.substring(5);
+      PuzzleService.getPuzzleIdByUrl(puzzleUrl).then((content: number) => {
+        loadGame(content);
+      });
+    } else {
+      loadGame(1);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (height !== window.innerHeight) setHeight(window.innerHeight);
+  }, [height]);
+
   /* load game from db */
-  loadGame(puzzleSelected: number): void {
-    this.setState({
-      loading: true,
-    });
+  const loadGame = (puzzleId: number) => {
+    const langAux = getCookie("puzzleLanguage") || ConfigService.defaultLang;
+    setPieces([]);
+    setFounds([]);    
+    setLang(langAux);
+    setLoading(true);
     //get puzzle data from db
-    PuzzleService.getPuzzle(puzzleSelected).then((puzzleData: any) => {
+    PuzzleService.getPuzzle(puzzleId).then((puzzleData: Puzzles) => {
       //get map data from geojson
       Jsondb(puzzleData.data).then((response) => {
-        this.getCustomCentroids(puzzleData.id);
-        this.getCustomWikis(puzzleData.id);
-
+        getCustomCentroids(puzzleData.id);
+        getCustomWikis(puzzleData.id);
         //// change path  route to "./?map=" + puzzleData.url
         window.history.pushState(
           {},
@@ -98,76 +87,63 @@ class MapPuzzle extends Component<any, any> {
           "./?map=" + puzzleData.url
         );
         //change title
-        document.title = 'MapPuzzle.xyz - '+ puzzleData.name;
-        
+        document.title = "MapPuzzle.xyz - " + puzzleData.name;
 
-        let viewStateCopy: ViewState = copyViewState(
-          puzzleData.view_state,
-          this.state.viewState
-        );
-        const pieces: PieceProps[] = response.features;
-
-        //set name to pieces from pieces.properties.name
-        pieces.forEach((piece: PieceProps) => {
-          piece.name = piece.properties.name;
-        });
-
-        this.setState({
-          puzzleSelectedData: puzzleData,
-          puzzleSelected: puzzleSelected,
-          zoom: viewStateCopy.zoom,
-          viewState: viewStateCopy,
-          pieces: pieces,
-          data: response,
-          loading: false,
-        });
-        //restore game status from coockie
-        const cookieFounds = getCookie("founds" + puzzleSelected);
-        if (cookieFounds) {
-          this.setState({
-            founds: cookieFounds.split(",").map((e: any) => parseInt(e)),
+        if (
+          puzzleData.view_state !== null &&
+          puzzleData.view_state !== undefined
+        ) {
+          const viewStateCopy: ViewState = copyViewState(
+            puzzleData.view_state,
+            viewState
+          );
+          const piecesAux: PieceProps[] = response.features;
+          //set name to pieces from pieces.properties.name
+          piecesAux.forEach((piece: PieceProps) => {
+            piece.name = piece.properties.name;
           });
-        } else {
-          this.setState({ founds: [] });
-        }
 
-        const cookieFails = getCookie("fails" + puzzleSelected);
-        if (cookieFails) {
-          this.setState({ fails: parseInt(cookieFails) });
-        } else {
-          this.setState({ fails: 0 });
-        }
+          setPuzzleSelectedData(puzzleData);
+          setPuzzleSelected(puzzleId);
+          setViewState(viewStateCopy);
+          setData(response);
 
-        const cookieSeconds = getCookie("seconds" + puzzleSelected);
-        if (cookieSeconds) {
-          GameTime.seconds = parseInt(cookieSeconds);
-        } else {
-          GameTime.seconds = 0;
+          loadPiecesByLang(puzzleId,piecesAux, langAux);
         }
-
-        setCookie(
-          "puzzleSelected",
-          puzzleSelected.toString(),
-          ConfigService.cookieDays
-        );
-        this.checkGameStatus();
-        this.onLangChangeHandler(getCookie("puzzleLanguage") || "en");
       });
     });
-  }
+  };
 
-  onLangChangeHandler = (lang: string) => {
-    this.setState({
-      lang: lang,
-    });
-    PuzzleService.getCustomTranslations(this.state.puzzleSelected, lang).then(
+  const restoreCookies = (puzzleId: number) => {
+    const cookieFounds = getCookie("founds" + puzzleId);
+    if (cookieFounds) {
+      setFounds(cookieFounds.split(",").map(Number));
+    } else {
+      setFounds([]);
+    }
+    const cookieFails = getCookie("fails" + puzzleId);
+    if (cookieFails) {
+      setFails(parseInt(cookieFails));
+    } else {
+      setFails(0);
+    }
+    const cookieSeconds = getCookie("seconds" + puzzleId);
+    if (cookieSeconds) {
+      GameTime.seconds = parseInt(cookieSeconds);
+    } else {
+      GameTime.seconds = 0;
+    }
+  };
+  
+   function loadPiecesByLang(puzzleSelectedAux:number,piecesAux: PieceProps[], langAux: string) {
+    //force refresh of pieces
+    setPieces([]);
+    PuzzleService.getCustomTranslations(puzzleSelectedAux, langAux).then(
       (customTranslations: CustomTranslations[]) => {
-        const pieces = this.state.pieces;
-        pieces.forEach((piece: PieceProps) => {
+        piecesAux.forEach((piece: PieceProps) => {
           //find from CustomTranslations[]
           const customTranslation = customTranslations.find(
-            (e: CustomTranslations) =>
-              e.cartodb_id === piece.properties.cartodb_id && e.lang === lang
+            (e: CustomTranslations) => e.cartodb_id === piece.properties.cartodb_id && e.lang === langAux
           )?.translation;
           if (customTranslation) {
             piece.properties.name = customTranslation;
@@ -176,7 +152,7 @@ class MapPuzzle extends Component<any, any> {
           }
         });
         //sort pieces by name
-        pieces.sort((a: PieceProps, b: PieceProps) => {
+        piecesAux.sort((a: PieceProps, b: PieceProps) => {
           if (a.properties.name < b.properties.name) {
             return -1;
           }
@@ -185,348 +161,311 @@ class MapPuzzle extends Component<any, any> {
           }
           return 0;
         });
-        this.setState({ pieces: pieces });
+        setPieces(piecesAux);
+        //restore game status from coockie
+        restoreCookies(puzzleSelectedAux); 
+        setLoading(false);
       }
     );
+  }
+
+  useEffect(() => {
+    loadPiecesByLang(puzzleSelected, pieces, lang);
+  }, [lang]);
+
+  const onLangChangeHandler = (lang: string) => {
+    setLang(lang);
   };
 
-  private getCustomCentroids(id: number) {
-    PuzzleService.getCustomCentroids(id).then(
+  const getCustomCentroids = (puzzleId: number) => {
+    PuzzleService.getCustomCentroids(puzzleId).then(
       (customCentroids: CustomCentroids[]) => {
-        this.setState({
-          puzzleCustomCentroids: customCentroids,
-        });
+        setPuzzleCustomCentroids(customCentroids);
       }
     );
-  }
+  };
 
-  private getCustomWikis(id: number) {
-    PuzzleService.getCustomWikis(id).then((customWiki: CustomWiki[]) => {
-      this.setState({
-        puzzleCustomWiki: customWiki,
-      });
+  const getCustomWikis = (puzzleId: number) => {
+    PuzzleService.getCustomWikis(puzzleId).then((customWiki: CustomWiki[]) => {
+      setPuzzleCustomWiki(customWiki);
     });
-  }
+  };
 
-  /* Check remains pieces and update game status */
-  checkGameStatus() {
-    if (
-      parseInt(this.state.pieces.length) - parseInt(this.state.founds.length) <=
-        0 &&
-      parseInt(this.state.pieces.length) > 0
-    ) {
-      this.setState({ YouWin: true });
+  useEffect(() => {
+    if (pieces.length - founds.length <= 0 && pieces.length > 0) {
+      setWinner(true);
     } else {
-      this.setState({ YouWin: false });
+      setWinner(false);
     }
-  }
+  }, [founds]);
 
-  componentDidUpdate() {
-    if (this.state.height !== window.innerHeight)
-      this.setState({ height: window.innerHeight });
-  }
-  /* Piece is selected on list */
-  onPieceSelectedHandler = (val: any) => {
-    this.selectPiece(val.target.parentNode.id);
-  };
-
-  selectPiece = (pieceId: number) => {
-    if (this.state.pieceSelected !== pieceId) {
-      this.setState({ pieceSelected: pieceId });
-      this.state.pieces.forEach((piece: PieceProps) => {
-        if (
-          String(piece.properties.cartodb_id).trim() === String(pieceId).trim()
-        ) {
-          this.setState({ pieceSelectedData: piece });
-          this.findCustomCentroids(piece);
-        }
-      });
-    } else {
-      this.setState({ pieceSelected: null, pieceSelectedData: null });
-    }
-  };
-
-  /* handleUp on pieceList */
-  //find previous piece from pieces list and select it
-  onPieceUpHandler = () => {
-    //finde pieces withou founds
-    const pieces = this.state.pieces.filter(
-      (e: PieceProps) => !this.state.founds.includes(e.properties.cartodb_id)
-    );
-    //find selected piece index
-    const pieceIndex = pieces.findIndex(
-      (e: PieceProps) =>
-        e.properties.cartodb_id === parseInt(this.state.pieceSelected)
-    );
-    //find previous piece index
-    if (pieceIndex > 0) {
-      this.selectPiece(pieces[pieceIndex - 1].properties.cartodb_id);
-    }
-  };
-
-  /* handleDown on pieceList */
-  //find next piece from pieces list and select it
-  onPieceDownHandler = () => {
-    //finde pieces withou founds
-    const pieces = this.state.pieces.filter(
-      (e: PieceProps) => !this.state.founds.includes(e.properties.cartodb_id)
-    );
-    //find selected piece index
-    const pieceIndex = pieces.findIndex(
-      (e: PieceProps) =>
-        e.properties.cartodb_id === parseInt(this.state.pieceSelected)
-    );
-    //find next piece index
-    if (pieceIndex < pieces.length - 1) {
-      this.selectPiece(pieces[pieceIndex + 1].properties.cartodb_id);
-    }
-  };
-
-  /* find the custom centroid of the piece from content.json */
-  findCustomCentroids(piece: PieceProps) {
-    let found = false;
-    if (this.state.puzzleCustomCentroids) {
-      this.state.puzzleCustomCentroids.forEach((centroid: any) => {
-        if (centroid.cartodb_id === piece.properties.cartodb_id) {
-          this.setState({ pieceSelectedCentroid: centroid });
-          found = true;
-        }
-      });
-    }
-    if (!found) {
-      this.setState({ pieceSelectedCentroid: null });
-    }
-  }
-
-  onSelectMapHandler = (val: number) => {
-    if (val) {
-      this.setState({
-        puzzleSelected: val,
-        pieceSelectedData: null,
-        pieceSelected: null,
-      });
-
-      this.loadGame(val);
-    }
-  };
-
-  /* Reset the Game */
-  onResetGameHandler = () => {
-    this.onRefocusMapHandler();
-    removeCookie("founds" + this.state.puzzleSelected);
-    removeCookie("fails" + this.state.puzzleSelected);
-    removeCookie("seconds" + this.state.puzzleSelected);
-    this.setState({
-      pieceSelected: null,
-      pieceSelectedData: null,
-      founds: [],
-      fails: 0,
-      YouWin: false,
-    });
-    GameTime.seconds = 0;
-  };
-  onHoverMapHandler = (info: any) => {
+  const onClickMapHandler = (info: PieceEvent) => {
     if (info.object) {
-      if (this.state.founds.includes(info.object.properties.cartodb_id)) {
-        this.setState({
-          isMouseTooltipVisible: true,
-          tooltipValue: info.object.properties.name,
-        });
-      } else {
-        this.setState({ isMouseTooltipVisible: false, tooltipValue: "" });
-      }
-    } else {
-      this.setState({ isMouseTooltipVisible: false, tooltipValue: "" });
-    }
-  };
-
-  onViewStateChangeHandler = (viewState: any) => {
-    this.setState({
-      zoom: viewState.viewState.zoom,
-      viewState: viewState.viewState,
-    });
-  };
-
-  onRefocusMapHandler = () => {
-    let viewStateCopy: ViewState = copyViewState(
-      this.state.puzzleSelectedData.view_state,
-      this.state.viewState
-    );
-
-    this.setState({
-      zoom: viewStateCopy.zoom,
-      viewState: viewStateCopy,
-    });
-  };
-
-  onShowWikiInfoHandler = (val: any) => {
-    if (val) {
-      this.setState({
-        showWikiInfo: true,
-        wikiInfoUrl: this.state.puzzleSelectedData.wiki,
-        wikiInfoId: this.state.puzzleSelectedData.id,
-      });
-    } else {
-      this.setState({
-        showWikiInfo: false,
-        wikiInfoUrl: "",
-        wikiInfoId: -1,
-      });
-    }
-  };
-
-  onShowEditorHandler = (val: any) => {
-    if (val) {
-      this.setState({
-        showEditor: true,
-      });
-    } else {
-      this.setState({
-        showEditor: false,
-      });
-    }
-  };
-
-  onClickMapHandler = (info: any) => {
-    if (info.object && !this.state.pieceSelected) {
       //if the piece is found, show the wiki info on click
-      if (this.state.founds.includes(info.object.properties.cartodb_id)) {
-        let wiki_url = getWiki(
+      if (founds.includes(info.object.properties.cartodb_id)) {
+        const wiki_url = getWiki(
           info.object.properties.cartodb_id,
           info.object.name,
-          this.state.puzzleCustomWiki
+          puzzleCustomWiki
         );
-        this.setState({
-          showWikiInfo: true,
-          wikiInfoUrl: wiki_url,
-          wikiInfoId: info.object.properties.cartodb_id,
-        });
+        setShowWikiInfo(true);
+        setWikiInfoUrl(wiki_url);
+        return;
       }
     }
-    if (info && this.state.pieceSelected) {
+    if (info && pieceSelected) {
       if (
-        String(this.state.pieceSelectedData.properties.cartodb_id).trim() ===
+        String(pieceSelectedData.properties.cartodb_id).trim() ===
         String(info.object.properties.cartodb_id).trim()
       ) {
-        if (
-          !this.state.founds.includes(
-            this.state.pieceSelectedData.properties.cartodb_id
-          )
-        ) {
-          this.setState((prevState: any) => ({
-            founds: [
-              ...prevState.founds,
-              this.state.pieceSelectedData.properties.cartodb_id,
-            ],
-            pieceSelected: null,
-            pieceSelectedData: null,
-          }));
-          this.checkGameStatus();
+        if (!founds.includes(pieceSelectedData.properties.cartodb_id)) {
+          const auxFounds = [
+            ...founds,
+            pieceSelectedData.properties.cartodb_id,
+          ];
+          setFounds(auxFounds);
+          setPieceSelected(-1);
+          setPieceSelectedData({} as PieceProps);
           setCookie(
-            "founds" + this.state.puzzleSelected,
-            this.state.founds.join(),
+            "founds" + puzzleSelected,
+            auxFounds.join(),
             ConfigService.cookieDays
           );
         }
       } else {
-        this.setState({ fails: this.state.fails + 1 });
+        const auxFails = fails + 1;
+        setFails(auxFails);
         setCookie(
-          "fails" + this.state.puzzleSelected,
-          this.state.fails,
+          "fails" + puzzleSelected,
+          auxFails.toString(),
           ConfigService.cookieDays
         );
       }
     }
   };
 
-  render() {
-    let YouWinScreen: any = null;
-    if (this.state.YouWin) {
-      YouWinScreen = !this.state.content ? null : (
-        <YouWin
-          founds={this.state.founds}
-          fails={this.state.fails}
-          onResetGame={this.onResetGameHandler}
-          path={this.state.puzzleSelectedData.url}
-          name={this.state.puzzleSelectedData.name}
-        />
-      );
+  const onHoverMapHandler = (info: PieceEvent) => {
+    if (info.object) {
+      if (founds.includes(info.object.properties.cartodb_id)) {
+        setTooltipValue(info.object.properties.name);
+      } else {
+        setTooltipValue("");
+      }
+    } else {
+      setTooltipValue("");
     }
-    return !this.state.puzzleSelectedData ? null : (
-      <React.Fragment>
-        <ReactFullscreeen>
-          {({ onToggle }) => (
-            <div>
-              <LoadingDialog show={this.state.loading} delay={1000} />
-              <DeckMap
-                lineWidth={this.state.lineWidth}
-                colorStroke={this.state.colorStroke}
-                onClickMap={this.onClickMapHandler}
-                onHoverMap={this.onHoverMapHandler}
-                onViewStateChange={this.onViewStateChangeHandler}
-                viewState={this.state.viewState}
-                founds={this.state.founds}
-                data={this.state.data}
-              />
-              <MenuTop
-                name="MapPuzzle.xyz"
-                onSelectMap={this.onSelectMapHandler}
-                content={this.state.content}
-                onResetGame={this.onResetGameHandler}
-                onFullScreen={() => onToggle()}
-                onRefocus={this.onRefocusMapHandler}
-                onShowWikiInfo={this.onShowWikiInfoHandler}
-                onShowEditor={this.onShowEditorHandler}
-                onLangChange={this.onLangChangeHandler}
-              />
+  };
 
-              {YouWinScreen}
-              <Container fluid style={{ paddingTop: 15 + "px" }}>
-                <Row>
-                  <Col xs={8} md={4} lg={4} xl={3}>
-                    <ToolsPanel
-                      name={this.state.puzzleSelectedData.name}
-                      puzzleSelected={this.state.puzzleSelected}
-                      pieceSelected={this.state.pieceSelected}
-                      onPieceSelected={this.onPieceSelectedHandler}
-                      handleUp={this.onPieceUpHandler}
-                      handleDown={this.onPieceDownHandler}
-                      pieces={this.state.pieces}
-                      height={this.state.height}
-                      founds={this.state.founds}
-                      fails={this.state.fails}
-                      YouWin={this.state.YouWin}
-                      lang={this.state.lang}
-                      loading={this.state.loading}
-                    />
-                  </Col>
-                </Row>
-              </Container>
-              <AnimatedCursor
-                clickScale={0.95}
-                zoom={this.state.zoom}
-                selected={this.state.pieceSelectedData}
-                centroid={this.state.pieceSelectedCentroid}
-                tooltip={this.state.tooltipValue}
-              />
-              <WikiInfo
-                id={this.state.wikiInfoId}
-                show={this.state.showWikiInfo}
-                url={this.state.wikiInfoUrl}
-                onHide={this.onShowWikiInfoHandler}
-              />
-              <EditorDialog
-                show={this.state.showEditor}
-                onHide={this.onShowEditorHandler}
-                puzzleSelected={this.state.puzzleSelectedData}
-                pieces={this.state.pieces}
-              />
-            </div>
-          )}
-        </ReactFullscreeen>
-      </React.Fragment>
+  const onViewStateChangeHandler = (viewState: ViewStateEvent) => {
+    setViewState(viewState.viewState);
+  };
+
+  const onSelectMapHandler = (val: number) => {
+    if (val) {
+      setPuzzleSelected(val);
+      setPieceSelectedData({} as PieceProps);
+      setPieceSelected(-1);
+      loadGame(val);
+    }
+  };
+
+  /* Reset the Game */
+  const onResetGameHandler = () => {
+    onRefocusMapHandler();
+    removeCookie("founds" + puzzleSelected);
+    removeCookie("fails" + puzzleSelected);
+    removeCookie("seconds" + puzzleSelected);
+    setPieceSelected(-1);
+    setPieceSelectedData({} as PieceProps);
+    setFounds([]);
+    setFails(0);
+    setWinner(false);
+
+    GameTime.seconds = 0;
+  };
+
+  const onRefocusMapHandler = () => {
+    if (
+      puzzleSelectedData.view_state !== null &&
+      puzzleSelectedData.view_state !== undefined
+    ) {
+      const viewStateCopy: ViewState = copyViewState(
+        puzzleSelectedData.view_state,
+        viewState
+      );
+      setViewState(viewStateCopy);
+    }
+  };
+
+  const onShowWikiInfoHandler = (val: boolean) => {
+    if (
+      val &&
+      puzzleSelectedData !== null &&
+      puzzleSelectedData !== undefined
+    ) {
+      setShowWikiInfo(true);
+      setWikiInfoUrl(puzzleSelectedData.wiki ? puzzleSelectedData.wiki : "");
+    } else {
+      setShowWikiInfo(false);
+      setWikiInfoUrl("");
+    }
+  };
+
+  const onShowEditorHandler = (val: boolean) => {
+    setShowEditor(val);
+  };
+
+  /* Piece is selected on list */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onPieceSelectedHandler = (val: any) => {
+    if (val?.target?.parentNode) {
+      selectPiece(parseInt(val.target.parentNode.id));
+    }
+  };
+
+  const selectPiece = (pieceId: number) => {
+    if (pieceSelected !== pieceId) {
+      setPieceSelected(pieceId);
+      pieces.forEach((piece: PieceProps) => {
+        if (
+          String(piece.properties.cartodb_id).trim() === String(pieceId).trim()
+        ) {
+          setPieceSelectedData(piece);
+          findCustomCentroids(piece);
+        }
+      });
+    } else {
+      setPieceSelected(-1);
+      setPieceSelectedData({} as PieceProps);
+    }
+  };
+
+  /* find the custom centroid of the piece from content.json */
+  const findCustomCentroids = (piece: PieceProps) => {
+    let found = false;
+    if (puzzleCustomCentroids) {
+      puzzleCustomCentroids.forEach((centroid: CustomCentroids) => {
+        if (centroid.cartodb_id === piece.properties.cartodb_id) {
+          setPieceSelectedCentroid(centroid);
+          found = true;
+        }
+      });
+    }
+    if (!found) {
+      setPieceSelectedCentroid({} as CustomCentroids);
+    }
+  };
+
+  /* handleUp on pieceList */
+  //find previous piece from pieces list and select it
+  const onPieceUpHandler = () => {
+    //finde pieces withou founds
+    const piecesAux = pieces.filter(
+      (e: PieceProps) => !founds.includes(e.properties.cartodb_id)
     );
-  }
+    //find selected piece index
+    const pieceIndex = piecesAux.findIndex(
+      (e: PieceProps) => e.properties.cartodb_id === pieceSelected
+    );
+    //find previous piece index
+    if (pieceIndex > 0) {
+      selectPiece(piecesAux[pieceIndex - 1].properties.cartodb_id);
+    }
+  };
+
+  /* handleDown on pieceList */
+  //find next piece from pieces list and select it
+  const onPieceDownHandler = () => {
+    //finde pieces withou founds
+    const piecesAux = pieces.filter(
+      (e: PieceProps) => !founds.includes(e.properties.cartodb_id)
+    );
+    //find selected piece index
+    const pieceIndex = piecesAux.findIndex(
+      (e: PieceProps) => e.properties.cartodb_id === pieceSelected
+    );
+    //find next piece index
+    if (pieceIndex < pieces.length - 1) {
+      selectPiece(pieces[pieceIndex + 1].properties.cartodb_id);
+    }
+  };
+
+  return (
+    <React.Fragment>
+      <ReactFullscreeen>
+        {({ onToggle }) => (
+          <div>
+            <LoadingDialog show={loading} delay={1000} />
+            <DeckMap
+              onClickMap={onClickMapHandler}
+              onHoverMap={onHoverMapHandler}
+              onViewStateChange={onViewStateChangeHandler}
+              viewState={viewState}
+              founds={founds}
+              data={data}
+            />
+            <MenuTop
+              name="MapPuzzle.xyz"
+              onSelectMap={onSelectMapHandler}
+              onResetGame={onResetGameHandler}
+              onFullScreen={onToggle}
+              onRefocus={onRefocusMapHandler}
+              onShowWikiInfo={onShowWikiInfoHandler}
+              onShowEditor={onShowEditorHandler}
+              onLangChange={onLangChangeHandler}
+            />
+            <YouWin
+              winner={winner}
+              founds={founds}
+              fails={fails}
+              onResetGame={onResetGameHandler}
+              path={puzzleSelectedData?.url}
+              name={puzzleSelectedData?.name}
+            />
+            <Container fluid style={{ paddingTop: 15 + "px" }}>
+              <Row>
+                <Col xs={8} md={4} lg={4} xl={3}>
+                  <ToolsPanel
+                    name={puzzleSelectedData?.name}
+                    puzzleSelected={puzzleSelected}
+                    pieceSelected={pieceSelected}
+                    onPieceSelected={onPieceSelectedHandler}
+                    handleUp={onPieceUpHandler}
+                    handleDown={onPieceDownHandler}
+                    pieces={pieces}
+                    height={height}
+                    founds={founds}
+                    fails={fails}
+                    winner={winner}
+                    lang={lang}
+                    loading={loading}
+                  />
+                </Col>
+              </Row>
+            </Container>
+            <AnimatedCursor
+              clickScale={0.95}
+              zoom={viewState?.zoom}
+              selected={pieceSelectedData}
+              centroid={pieceSelectedCentroid}
+              tooltip={tooltipValue}
+            />
+            <WikiInfo
+              show={showWikiInfo}
+              url={wikiInfoUrl}
+              onHide={onShowWikiInfoHandler}
+            />
+            <EditorDialog
+              show={showEditor}
+              onHide={onShowEditorHandler}
+              puzzleSelected={puzzleSelectedData}
+              pieces={pieces}
+            />
+          </div>
+        )}
+      </ReactFullscreeen>
+    </React.Fragment>
+  );
 }
 
 export default MapPuzzle;

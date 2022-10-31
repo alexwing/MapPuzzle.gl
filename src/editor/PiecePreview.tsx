@@ -1,5 +1,7 @@
 import React, { useRef } from "react";
+import CustomCentroids from "../../backend/src/models/customCentroids";
 import { setColor } from "../lib/Utils";
+import { PieceProps } from "../models/Interfaces";
 
 /**
  * PiecePreview
@@ -9,20 +11,26 @@ import { setColor } from "../lib/Utils";
  *
  *
  */
-function PiecePreview({ selected = null, centroid = null }: any) {
+interface PiecePreviewProps {
+  selected: PieceProps;
+  centroid?: CustomCentroids;
+}
+
+function PiecePreview({ selected, centroid }: PiecePreviewProps): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const PiecePreviewRef: any = useRef();
 
   let RenderPiecePreview;
-  if (selected) {
-    let marginTop = -1 * centroid.top;
-    let marginLeft = -1 * centroid.left ;
+  if (selected && centroid) {
+    const marginTop = -1 * centroid.top;
+    const marginLeft = -1 * centroid.left;
     RenderPiecePreview = (
       <div>
         <div
           className="piece-poi"
           style={{
-            marginLeft:marginLeft+ "px",
-            marginTop: marginTop+ "px"
+            marginLeft: marginLeft + "px",
+            marginTop: marginTop + "px",
           }}
         ></div>
         <svg

@@ -7,10 +7,15 @@ import { AlertModel, PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
 import ErrorList from "./errorList";
 
+interface EditorDialogProps {
+  puzzle: Puzzles;
+  pieces: PieceProps[];
+}
+
 function EditMap({
   puzzle = {} as Puzzles,
   pieces = new Array<PieceProps>(),
-}: any) {
+}: EditorDialogProps) : JSX.Element | null {
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [langErrors, setLangErrors] = useState([]);
@@ -69,6 +74,7 @@ function EditMap({
       piecesToSend.push(await PuzzleService.updatePieceProps(piece));
     }
     await PuzzleService.generateTranslation(piecesToSend, puzzle.id)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((res: any) => {
         setLoading(false);
         setAlert({
@@ -80,6 +86,7 @@ function EditMap({
         setShowAlert(true);
         setLangErrors(res.langErrors);
       })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .catch((errorMessage: any) => {
         setLoading(false);
         setAlert({
@@ -93,7 +100,7 @@ function EditMap({
   return (
     <React.Fragment>
       <Col xs={12} lg={12}>
-        <LoadingDialog show={loading} delay={1000} />
+        <LoadingDialog show={loading} delay={1000}/>
         <AlertMessage
           show={showAlert}
           alertMessage={alert}

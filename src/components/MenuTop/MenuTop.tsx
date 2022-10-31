@@ -13,17 +13,28 @@ import { ConfigService } from "../../services/configService";
 import { getCurrentLang, languagesToWikiInfoLang } from "../../lib/Utils";
 import { Button, Nav } from "react-bootstrap";
 
+
+interface MenuTopProps {
+  name: string;
+  onSelectMap: (any) => void;
+  onResetGame: () => void;
+  onFullScreen: () => void;
+  onRefocus: () => void;
+  onShowWikiInfo: (val: boolean) => void;
+  onShowEditor: (val: boolean) => void;
+  onLangChange: (lang: string) => void;
+}
+
 function MenuTop({
   name,
   onSelectMap,
-  content,
   onResetGame,
   onFullScreen,
   onRefocus,
   onShowWikiInfo,
   onShowEditor,
   onLangChange,
-}: any) {
+}: MenuTopProps) : JSX.Element {
   const [show, setShow] = React.useState(false);
   const [showInfo, setShowInfo] = React.useState(false);
   const [showSelectPuzzle, setShowSelectPuzzle] = React.useState(false);
@@ -34,7 +45,7 @@ function MenuTop({
     setShow(false);
     setShowInfo(false);
     getLanguages();
-  }, [content]);
+  }, []);
 
   const getLanguages = () => {
     PuzzleService.getLanguages().then((languages: Languages[]) => {
@@ -63,6 +74,7 @@ function MenuTop({
     setShow(false);
     setShowInfo(true);
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleLangChange = (e: any) => {
     const lang = e.target.id;
     setCookie("puzzleLanguage", lang, ConfigService.cookieDays);
@@ -95,7 +107,6 @@ function MenuTop({
             </Button>
             <PuzzleSelector
               show={showSelectPuzzle}
-              puzzles={content}
               onSelectMap={onSelectMap}
               onHidePuzzleSelector={handleHideSelectPuzzle}
             />
@@ -115,7 +126,7 @@ function MenuTop({
           />
         </Navbar.Collapse>
       </Navbar>
-      <Info show={showInfo} content={content} InfoClose={handleCancel} />
+      <Info name={name} show={showInfo} InfoClose={handleCancel} />
       <ConfirmDialog
         show={show}
         handleCancel={handleCancel}

@@ -1,13 +1,10 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import MapPuzzle from "./MapPuzzle";
+import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
-
-ReactDOM.render(
-  <React.StrictMode>
-    <Router>
-      <MapPuzzle/>
-    </Router>
-  </React.StrictMode>,
-  document.getElementById("root")
+const container = createRoot(document.getElementById("root") as HTMLElement);
+container.render(
+  <Router>
+    <MapPuzzle />
+  </Router>
 );

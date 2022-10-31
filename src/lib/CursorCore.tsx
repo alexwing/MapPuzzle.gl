@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import CustomCentroids from "../../backend/src/models/customCentroids";
+import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
 import { setColor } from "./Utils";
 /**
@@ -12,13 +15,22 @@ import { setColor } from "./Utils";
  * @param {number} clickScale - inner cursor scale amount
  *
  */
+
+interface CursorCoreProps {
+  clickScale: number;
+  selected: PieceProps;
+  centroid: CustomCentroids;
+  tooltip: string;
+  zoom: number;
+}
+
 function CursorCore({
   clickScale = 0.7,
-  selected = null,
-  centroid = null,
+  selected,
+  centroid,
   tooltip = "",
   zoom = 2,
-}: any) {
+}: CursorCoreProps): JSX.Element {
   const pieceCursorRef: any = useRef();
   const tooltipRef: any = useRef();
   const requestRef: any = useRef();
@@ -27,11 +39,11 @@ function CursorCore({
   const [isVisible, setIsVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [isActiveClickable, setIsActiveClickable] = useState(false);
-  let endX = useRef(0);
-  let endY = useRef(0);
+  const endX = useRef(0);
+  const endY = useRef(0);
 
   // Primary Mouse Move event
-  const onMouseMove = useCallback(({ clientX, clientY }:any) => {
+  const onMouseMove = useCallback(({ clientX, clientY }: any) => {
     setCoords({ x: clientX, y: clientY });
     tooltipRef.current.style.top = clientY + "px";
     tooltipRef.current.style.left = clientX + "px";
@@ -41,7 +53,7 @@ function CursorCore({
 
   // Outer Cursor Animation Delay
   const animateOuterCursor = useCallback(
-    (time:any) => {
+    (time: any) => {
       if (previousTimeRef)
         if (previousTimeRef.current !== undefined && pieceCursorRef && coords) {
           coords.x += (endX.current - coords.x) / 8;
@@ -90,7 +102,7 @@ function CursorCore({
 
   // Cursors Hover/Active State
   useEffect(() => {
-    if (isActive ) {
+    if (isActive) {
       tooltipRef.current.style.transform = `translateZ(0) scale(${clickScale})`;
       pieceCursorRef.current.style.transform = `translateZ(0) scale(${clickScale})`;
     } else {
@@ -123,26 +135,28 @@ function CursorCore({
     const clickables = document.querySelectorAll(
       'a, input[type="submit"], input[type="image"], label[for], select, button, .link'
     );
-    clickables.forEach((el: any) => {
-      el.style.cursor = "none";
+    clickables.forEach((el: unknown): void => {
+      if (el instanceof HTMLElement) {
+        el.style.cursor = "none";
 
-      el.addEventListener("mouseover", () => {
-        setIsActive(true);
-      });
-      el.addEventListener("click", () => {
-        setIsActive(true);
-        setIsActiveClickable(false);
-      });
-      el.addEventListener("mousedown", () => {
-        setIsActiveClickable(true);
-      });
-      el.addEventListener("mouseup", () => {
-        setIsActive(true);
-      });
-      el.addEventListener("mouseout", () => {
-        setIsActive(false);
-        setIsActiveClickable(false);
-      });
+        el.addEventListener("mouseover", () => {
+          setIsActive(true);
+        });
+        el.addEventListener("click", () => {
+          setIsActive(true);
+          setIsActiveClickable(false);
+        });
+        el.addEventListener("mousedown", () => {
+          setIsActiveClickable(true);
+        });
+        el.addEventListener("mouseup", () => {
+          setIsActive(true);
+        });
+        el.addEventListener("mouseout", () => {
+          setIsActive(false);
+          setIsActiveClickable(false);
+        });
+      }
     });
 
     return () => {
@@ -172,17 +186,17 @@ function CursorCore({
   //document.body.style.cursor = 'none'
 
   let PieceCursor;
-  if (selected) {
+  if (selected.properties?.box) {
     const scale = Math.pow(2, zoom);
-    let sizeX =
-      (parseInt(selected.properties.box.split(" ")[2]) * scale) / 78000;
-    let sizeY =
-      (parseInt(selected.properties.box.split(" ")[3]) * scale) / 78000;
+    const sizeX =
+      (parseInt(selected.properties.box.split(" ")[2]) * scale) / 74000;
+    const sizeY =
+      (parseInt(selected.properties.box.split(" ")[3]) * scale) / 74000;
     let marginLeft = "-50%";
     let marginTop = "-50%";
-    if (centroid) {
-      marginLeft =  centroid.left +"%";
-      marginTop = centroid.top +"%";
+    if (centroid.id) {
+      marginLeft = centroid.left + "%";
+      marginTop = centroid.top + "%";
     }
     PieceCursor = (
       <svg
@@ -206,11 +220,7 @@ function CursorCore({
   } else {
     PieceCursor = <span></span>;
   }
-
-  let TooltipCursor;
-  if (tooltip) {
-    TooltipCursor = <span>{tooltip}</span>;
-  }
+  const TooltipCursor = tooltip ? <span>{tooltip}</span> : undefined;
 
   return (
     <React.Fragment>

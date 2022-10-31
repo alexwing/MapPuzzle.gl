@@ -2,11 +2,15 @@ import GameTime from "../lib/GameTime";
 import React from "react";
 import { ViewState } from "react-map-gl";
 import CustomWiki from "../../backend/src/models/customWiki";
-import { WikiInfoLang } from "../models/Interfaces";
+import { PieceProps, WikiInfoLang } from "../models/Interfaces";
 import { getCookie } from "react-simple-cookie-store";
 import Languages from "../../backend/src/models/languages";
+import { ConfigService } from "../services/configService";
 
-export const colorScale = function (x: any) {
+export const colorStroke = [150, 150, 150];
+export const lineWidth = 1;
+
+export const colorScale = function (x: number): number[] {
   const COLOR_SCALE = [
     // negative
     [65, 182, 196],
@@ -44,7 +48,10 @@ export const hexToRgb = function (hex: string | null): Array<number> {
     : [0, 0, 0];
 };
 
-export const LightenDarkenColor = function (col: string, amt: number) {
+export const LightenDarkenColor = function (
+  col: string,
+  amt: number
+): Array<number> {
   if (col[0] === "#") {
     col = col.slice(1);
   }
@@ -106,7 +113,11 @@ export const setColor = function (col: number): string {
   }
 };
 
-export const AlphaColor = function (col: any | string, alpha = 255) {
+export const AlphaColor = function (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  col: any | string,
+  alpha = 255
+): Array<number> {
   if (col[0] === "#") {
     col = col.slice(1);
   }
@@ -125,7 +136,7 @@ export const AlphaColor = function (col: any | string, alpha = 255) {
   return [r, g, b, alpha];
 };
 
-export function ST_ExtentToVieport(box: string) {
+export function ST_ExtentToVieport(box: string): string {
   box = box.replace("BOX(", "").replace(")", "").replace(",", " ");
   const arrayBox = box.split(" ");
   return (
@@ -142,7 +153,7 @@ export function ST_ExtentToVieport(box: string) {
   );
 }
 
-export function LazyRound(num: string) {
+export function LazyRound(num: string): string {
   const parts = num.split(".");
   return parts.length > 1
     ? Math.round(
@@ -151,7 +162,8 @@ export function LazyRound(num: string) {
     : parts[0];
 }
 
-export async function Jsondb(filepath: string) : Promise<any> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function Jsondb(filepath: string): Promise<any> {
   return fetch(filepath, {
     method: "GET",
     headers: new Headers({
@@ -162,7 +174,7 @@ export async function Jsondb(filepath: string) : Promise<any> {
     .catch((error) => console.log(error));
 }
 
-export async function Querydb(sql: string) {
+export async function Querydb(sql: string): Promise<Response> {
   return fetch("https://public.carto.com/api/v2/sql?q=" + sql, {
     method: "GET",
     headers: new Headers({
@@ -173,7 +185,11 @@ export async function Querydb(sql: string) {
     .catch((error) => console.log(error));
 }
 
-export function secondsToTime(secs: number) {
+export function secondsToTime(secs: number): {
+  h: number;
+  m: number;
+  s: number;
+} {
   const hours = Math.floor(secs / (60 * 60));
 
   const divisor_for_minutes = secs % (60 * 60);
@@ -188,7 +204,7 @@ export function secondsToTime(secs: number) {
   };
 }
 
-export function getTime() {
+export function getTime(): JSX.Element | undefined {
   const time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
     return (
@@ -212,7 +228,7 @@ export function getTime() {
   }
 }
 
-export function getTexTime() {
+export function getTexTime(): string | undefined {
   const time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
     return (
@@ -225,15 +241,15 @@ export function getTexTime() {
   }
 }
 
-export function getUrl() {
-  let url = window.location.href.split("/")[2];
+export function getUrl(): string {
+  const url = window.location.href.split("/")[2];
   if (url.includes("localhost")) {
     return "mappuzzle.xyz";
   }
   return url;
 }
 
-function cleanNameToWiki(name: string) {
+function cleanNameToWiki(name: string): string {
   let wiki_url = name.trim();
   wiki_url = wiki_url.replace("(disputed)", "");
   //if include string " - " split and take the first part
@@ -248,14 +264,15 @@ function cleanNameToWiki(name: string) {
 }
 
 export function getWiki(
-  cartodb_id: string,
+  cartodb_id: number,
   name: string,
   custom_wiki: CustomWiki[]
-) {
-  let wiki_url: string = "";
+): string {
+  let wiki_url = "";
   if (custom_wiki) {
     wiki_url =
-      custom_wiki.find((x: any) => x.cartodb_id === cartodb_id)?.wiki || "";
+      custom_wiki.find((x: CustomWiki) => x.cartodb_id === cartodb_id)?.wiki ||
+      "";
   }
   if (wiki_url !== "") {
     return wiki_url;
@@ -263,8 +280,8 @@ export function getWiki(
     return cleanNameToWiki(name);
   }
 }
-export function getWikiSimple(name: string, custom_wiki: string) {
-  let wiki_url: string = "";
+export function getWikiSimple(name: string, custom_wiki: string): string {
+  let wiki_url = "";
   if (custom_wiki) {
     wiki_url = custom_wiki;
   }
@@ -278,20 +295,20 @@ export function getWikiSimple(name: string, custom_wiki: string) {
 export function copyViewState(
   viewStateOrigin: ViewState,
   viewStateDestination: ViewState
-) {
+): ViewState {
   if (!viewStateDestination) {
     viewStateDestination = {
-      latitude: parseFloat( viewStateOrigin.latitude.toString()) ,
-      longitude: parseFloat( viewStateOrigin.longitude.toString()) ,
-      zoom: parseFloat(viewStateOrigin.zoom.toString()) ,
+      latitude: parseFloat(viewStateOrigin.latitude.toString()),
+      longitude: parseFloat(viewStateOrigin.longitude.toString()),
+      zoom: parseFloat(viewStateOrigin.zoom.toString()),
       bearing: 0,
       pitch: 0,
     };
   } else {
     viewStateDestination = {
-      latitude: parseFloat( viewStateOrigin.latitude.toString()) ,
-      longitude: parseFloat( viewStateOrigin.longitude.toString()) ,
-      zoom: parseFloat(viewStateOrigin.zoom.toString()) ,
+      latitude: parseFloat(viewStateOrigin.latitude.toString()),
+      longitude: parseFloat(viewStateOrigin.longitude.toString()),
+      zoom: parseFloat(viewStateOrigin.zoom.toString()),
       bearing: viewStateDestination.bearing,
       pitch: viewStateDestination.pitch,
     };
@@ -299,13 +316,11 @@ export function copyViewState(
   return viewStateDestination;
 }
 
-export const className = (c: any, pieceSelected: number) => {
-  return parseInt(c.properties.cartodb_id) === pieceSelected
-    ? "table-primary"
-    : "";
-};
+export function className(c: PieceProps, pieceSelected: number): string {
+  return c.properties.cartodb_id === pieceSelected ? "table-primary" : "";
+}
 
-export function langName(piece: WikiInfoLang) {
+export function langName(piece: WikiInfoLang): string {
   if (piece.autonym === "") {
     return piece.langname;
   } else {
@@ -317,14 +332,17 @@ export function langName(piece: WikiInfoLang) {
   }
 }
 
-export function getCurrentLang(langs: WikiInfoLang[]) {
-  const puzzleLanguage = getCookie("puzzleLanguage") || "en";
+export function getCurrentLang(langs: WikiInfoLang[]): string {
+  const puzzleLanguage =
+    getCookie("puzzleLanguage") || ConfigService.defaultLang;
   //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
-  let pieceLang = langs.find((x: any) => x.lang === puzzleLanguage);
+  let pieceLang = langs.find((x: WikiInfoLang) => x.lang === puzzleLanguage);
   if (typeof pieceLang === "object" && pieceLang !== null) {
     return langName(pieceLang);
   } else {
-    pieceLang = langs.find((x: any) => x.lang === "en");
+    pieceLang = langs.find(
+      (x: WikiInfoLang) => x.lang === ConfigService.defaultLang
+    );
     if (typeof pieceLang === "object" && pieceLang !== null) {
       return langName(pieceLang);
     } else {
@@ -348,7 +366,7 @@ export function languagesToWikiInfoLang(
 }
 
 export function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
-  langs.sort((a: any, b: any) => {
+  langs.sort((a: WikiInfoLang, b: WikiInfoLang) => {
     if (a.langname < b.langname) {
       return -1;
     }
@@ -359,4 +377,3 @@ export function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
   });
   return langs;
 }
-

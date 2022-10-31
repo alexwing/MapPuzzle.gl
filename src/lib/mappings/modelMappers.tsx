@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueryExecResult, SqlValue } from "sql.js";
 import CustomCentroids from "../../../backend/src/models/customCentroids";
 import CustomTranslations from "../../../backend/src/models/customTranslations";
@@ -9,13 +10,14 @@ import { sortLangs } from "../Utils";
 
 //map the result data to a QueryExecResult[]
 export function mapResultToQueryExecResult(data: any[]): QueryExecResult[] {
-  let queryExecResults: QueryExecResult[] = [];
+  const queryExecResults: QueryExecResult[] = [];
   let columns: string[] = [];
-  let values: SqlValue[][] = [];
-  let first: boolean = true;
+  let first = true;
+  const values: SqlValue[][] = [];
   data.forEach((element) => {
-    let value: SqlValue[] = [];
-    for (let prop in element) {
+    const value: SqlValue[] = [];
+    for (const prop in element) {
+      // eslint-disable-next-line no-prototype-builtins
       if (element.hasOwnProperty(prop)) {
         value.push(element[prop] as SqlValue);
       }
@@ -101,8 +103,9 @@ export function  mapResultToLanguage(result: SqlValue[]): Languages {
 
 
 //map wiki response to wiki info
-export function mapWikiResponseToWikiInfo(_response: any): WikiInfoPiece {
-    const { pages } = _response.query;
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function mapWikiResponseToWikiInfo(response: any): WikiInfoPiece {
+    const { pages } = response.query;
     const page = pages[Object.keys(pages)[0]];
     const title = page.title;
     const contents = page.extract.split("\n");

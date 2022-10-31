@@ -4,7 +4,11 @@ import GameTime from "../lib/GameTime";
 import { setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
 
-function Timer({ puzzleSelected }: any) {
+interface TimerProps {
+  puzzleSelected: number;
+}
+
+function Timer({ puzzleSelected }: TimerProps) : JSX.Element {
   const [time, setTime] = useState({
     h: 0,
     m: 0,

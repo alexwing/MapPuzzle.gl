@@ -13,13 +13,21 @@ import { PuzzleService } from "../services/puzzleService";
 import EditPiece from "./editPiece";
 import "./editorDialog.css";
 import AlertMessage from "../components/AlertMessage";
+import { ConfigService } from "../services/configService";
+
+interface EditorDialogProps {
+  show: boolean;
+  onHide: (val:boolean) => void;
+  puzzleSelected: Puzzles;
+  pieces: PieceProps[];
+}
 
 function EditorDialog({
   show = false,
   onHide,
   puzzleSelected = {} as Puzzles,
   pieces = new Array<PieceProps>(),
-}: any) {
+}: EditorDialogProps) : JSX.Element | null {
   const [loading, setLoading] = useState(false);
   const [showIn, setShowIn] = useState(false);
   const [pieceSelected, setPieceSelected] = useState(-1);
@@ -53,6 +61,7 @@ function EditorDialog({
   }, [showIn, puzzleSelected]);
 
   /* Piece is selected on list */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onPieceSelectedHandler = async (val: any) => {
     selectPiece(parseInt(val.target.parentNode.id));
   };
@@ -71,12 +80,12 @@ function EditorDialog({
   };
 
   const handleClose = () => {
-    onHide();
+    onHide(false);
   };
 
   const handleSiteMap = () => {
     PuzzleService.generateSitemap()
-      .then((res) => {
+      .then(() => {
         setAlert({
           title: "Success",
           message: "Sitemap generated",
@@ -116,8 +125,8 @@ function EditorDialog({
     }
   };
 
-  if (loading) return <LoadingDialog show={loading} delay={1000} />;
-  return (
+  if (loading) return <LoadingDialog show={loading} delay={1000}/>;
+  return !puzzleSelected ? null : (
     <React.Fragment>
       <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
       <Modal
@@ -160,8 +169,9 @@ function EditorDialog({
                       onPieceSelected={onPieceSelectedHandler}
                       pieceSelected={pieceSelected}
                       handleUp={onPieceUpHandler}
-                      handleDown={onPieceDownHandler}
-                    />
+                      handleDown={onPieceDownHandler} 
+                      lang={ConfigService.defaultLang}                    
+                      />
                   </div>
                 </Col>
                 <Col xs={8} lg={8}>
@@ -172,8 +182,11 @@ function EditorDialog({
           </Tabs>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleSiteMap}
-          style={{marginRight: "auto"}}>
+          <Button
+            variant="secondary"
+            onClick={handleSiteMap}
+            style={{ marginRight: "auto" }}
+          >
             Generate Sitemap
           </Button>
           <Button onClick={handleClose}>Ok</Button>

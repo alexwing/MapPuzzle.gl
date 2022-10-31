@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getCookie } from "react-simple-cookie-store";
 import { mapWikiResponseToWikiInfo } from "../lib/mappings/modelMappers";
-import { WikiInfoPiece } from "../models/Interfaces";
+import { WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
+import { ConfigService } from "./configService";
 
 //get wiki info for a piece
 export async function getWikiInfo(piece: string): Promise<WikiInfoPiece> {
@@ -8,10 +10,10 @@ export async function getWikiInfo(piece: string): Promise<WikiInfoPiece> {
     const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts|langlinks&llprop=langname|autonym&lllimit=500&format=json&exintro=&titles=${piece}`;
     const response = await fetch(url);
     const json = await response.json();
-    let wikiInfo: WikiInfoPiece = mapWikiResponseToWikiInfo(json);
+    const wikiInfo: WikiInfoPiece = mapWikiResponseToWikiInfo(json);
     
-    const puzzleLanguage = getCookie("puzzleLanguage") || "en";
-    if (puzzleLanguage !== "en") {
+    const puzzleLanguage = getCookie("puzzleLanguage") || ConfigService.defaultLang;
+    if (puzzleLanguage !== ConfigService.defaultLang) {
       wikiInfo.contents = await changeLanguage(wikiInfo, puzzleLanguage);     
     }
     return wikiInfo;
@@ -28,7 +30,7 @@ export async function changeLanguage(
   lang: string
 ): Promise<string[]> {
   try {
-    const pieceLang: any = piece.langs.find((x: any) => x.lang === lang);
+    const pieceLang: WikiInfoLang | undefined = piece.langs.find((x: WikiInfoLang) => x.lang === lang);
     if (typeof pieceLang === "object" && pieceLang !== null) {
       const url = `https://${lang}.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&format=json&exintro=&titles=${pieceLang.id}`;
       const response = await fetch(url);

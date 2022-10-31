@@ -8,7 +8,11 @@ import { AlertModel, PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
 import PiecePreview from "./PiecePreview";
 
-function EditPiece({ piece = {} as PieceProps }: any) {
+interface EditPieceProps {
+  piece: PieceProps;
+}
+
+function EditPiece({ piece = {} as PieceProps }: EditPieceProps): JSX.Element | null {
   const [alert, setAlert] = useState({
     title: "",
     message: "",
@@ -36,10 +40,11 @@ function EditPiece({ piece = {} as PieceProps }: any) {
     } as AlertModel);
     setShowAlert(false);
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const NumericOnly = (e: any) => {
     // Allow only numbers . + -
     const reg = /^[0-9.-]+$/;
-    let preval = e.target.value;
+    const preval = e.target.value;
     if (e.target.value === "" || reg.test(e.target.value)) return true;
     else e.target.value = preval.substring(0, preval.length - 1);
   };
@@ -151,6 +156,7 @@ function EditPiece({ piece = {} as PieceProps }: any) {
                   max="10"
                   step={0.1}
                   value={intensity}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onChange={(e: any) => {
                     if (!e.target.onInputHasBeenCalled) {
                       setIntensity(parseFloat(e.target.value.toString()));
@@ -237,7 +243,6 @@ function EditPiece({ piece = {} as PieceProps }: any) {
             <PiecePreview
               selected={PieceEdited}
               centroid={PieceEdited.customCentroid}
-              zoom={3}
             />
           </Col>
         </Row>

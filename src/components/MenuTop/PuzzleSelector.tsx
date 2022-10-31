@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react/display-name */
 import React, { useEffect, useState, useRef } from "react";
 import { Button, Col, Form, Modal, NavDropdown, Row } from "react-bootstrap";
 import "./PuzzleSelector.css";
@@ -11,11 +14,17 @@ import BootstrapTable, {
 } from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
+interface PuzzleSelectorProps {
+  show: boolean;
+  onSelectMap: (puzzle: number) => void;
+  onHidePuzzleSelector: () => void;
+}
+
 function PuzzleSelector({
   show = false,
   onSelectMap,
   onHidePuzzleSelector,
-}: any) {
+}: PuzzleSelectorProps): JSX.Element {
   const [selectedPuzzle, setSelectedPuzzle] = useState(0);
   const [selectedRegion, setSelectedRegion] = useState(0);
   const [selectedSubRegion, setSelectedSubRegion] = useState(0);
@@ -67,7 +76,7 @@ function PuzzleSelector({
   const loadRegions = () => {
     PuzzleService.getRegions().then((data: Regions[]) => {
       //get regions from subregions
-      let regions: Regions[] = [];
+      const regions: Regions[] = [];
       data.forEach((element) => {
         if (regions.findIndex((x) => x.regionCode === element.regionCode) < 0) {
           regions.push({
@@ -88,7 +97,7 @@ function PuzzleSelector({
       setSubregions(allregions);
     } else {
       setSelectedRegion(parseInt(val.target.id));
-      let subregions: Regions[] = [];
+      const subregions: Regions[] = [];
       allregions.forEach((element) => {
         if (element.regionCode === parseInt(val.target.id)) {
           subregions.push(element);

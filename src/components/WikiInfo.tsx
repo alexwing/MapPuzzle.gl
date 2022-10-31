@@ -14,7 +14,15 @@ import LangSelector from "./LangSelector";
 import { getCurrentLang } from "../lib/Utils";
 import { PuzzleService } from "../services/puzzleService";
 
-function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
+
+interface WikiInfoProps {
+  show: boolean;
+  onHide: (val:boolean) => void;
+  url: string;
+}
+
+
+function WikiInfo({ show = false, onHide, url = "Berlin" }: WikiInfoProps) : JSX.Element {
   const [pieceInfo, setPieceInfo] = useState({
     title: "",
     contents: [],
@@ -37,7 +45,8 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
   }, [show]);
   //on init load if rtl lang
   useEffect(() => {
-    const puzzleLanguage = getCookie("puzzleLanguage") || "en";
+    const puzzleLanguage =
+      getCookie("puzzleLanguage") || ConfigService.defaultLang;
     PuzzleService.getLangIsRtl(puzzleLanguage)
       .then((isRtl) => {
         setRtlClass(isRtl ? "rtl" : "");
@@ -69,6 +78,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
             setShowIn(true);
           }
         })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .catch((errorRecived: any) => {
           setShowAlert(true);
           setAlertModal({
@@ -86,36 +96,39 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
           setLoading(false);
         });
     }
-  }, [url,show]);
+  }, [url, show]);
 
-  function onSelectLang(e: any) {
-    const lang = e.target.id;
-    changeLanguage(pieceInfo, lang)
-      .then((extract) => {
-        const newPieceInfo = { ...pieceInfo };
-        newPieceInfo.contents = extract;
-        setCookie("puzzleLanguage", lang, ConfigService.cookieDays);
-        setPieceInfo(newPieceInfo);
-        setCurrentLang(getCurrentLang(newPieceInfo.langs));
-      })
-      .catch((errorRecived: any) => {
-        setShowAlert(true);
-        setAlertModal({
-          title: "Not found data on Wikipedia",
-          message: errorRecived.message,
-          type: "danger",
-        } as AlertModel);
-        setPieceInfo({
-          title: "Not found data on Wikipedia",
-          contents: [errorRecived.message],
-          langs: [],
-        } as WikiInfoPiece);
-      });
+  function onSelectLang(e: MouseEvent) {
+    if (e.target instanceof HTMLButtonElement) {
+      const lang = e.target.id;
+      changeLanguage(pieceInfo, lang)
+        .then((extract) => {
+          const newPieceInfo = { ...pieceInfo };
+          newPieceInfo.contents = extract;
+          setCookie("puzzleLanguage", lang, ConfigService.cookieDays);
+          setPieceInfo(newPieceInfo);
+          setCurrentLang(getCurrentLang(newPieceInfo.langs));
+        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .catch((errorRecived: any) => {
+          setShowAlert(true);
+          setAlertModal({
+            title: "Not found data on Wikipedia",
+            message: errorRecived.message,
+            type: "danger",
+          } as AlertModel);
+          setPieceInfo({
+            title: "Not found data on Wikipedia",
+            contents: [errorRecived.message],
+            langs: [],
+          } as WikiInfoPiece);
+        });
+    }
   }
 
   function handleClose() {
     clearAlert();
-    onHide();
+    onHide(false);
   }
   const wikiTitle = () => {
     if (pieceInfo.title !== "") {
@@ -128,7 +141,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
         </span>
       );
     } else {
-      return <span>"Not found data on Wikipedia"</span>;
+      return <span>Not found data on Wikipedia</span>;
     }
   };
 
@@ -141,7 +154,13 @@ function WikiInfo({ show = false, onHide, url = "Berlin", id = -1 }: any) {
     setShowAlert(false);
   };
 
-  if (loading) return <LoadingDialog show={loading} delay={1000} />;
+  if (loading)
+    return (
+      <LoadingDialog
+        show={loading}
+        delay={1000}      
+      />
+    );
   const LangSelectorContainer = !ConfigService.langWikiSelector ? (
     ""
   ) : (

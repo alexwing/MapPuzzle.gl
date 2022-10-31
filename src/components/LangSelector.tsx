@@ -5,7 +5,15 @@ import { Nav, NavDropdown } from "react-bootstrap";
 import { langName } from "../lib/Utils";
 
 
-function LangSelector({ langs = [] as WikiInfoLang[],currentLang, onSelectLang }: any) {
+interface LangSelectorProps {
+  langs: WikiInfoLang[];
+  currentLang: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSelectLang: (event : any) => void;
+}
+
+
+function LangSelector({ langs = [] as WikiInfoLang[],currentLang, onSelectLang }: LangSelectorProps) : JSX.Element {
 
   const navDropdownTitle = (
     <span>
@@ -22,7 +30,7 @@ function LangSelector({ langs = [] as WikiInfoLang[],currentLang, onSelectLang }
           title={navDropdownTitle}
           id="puzzle"
         >
-          {langs.map((c: any) => (
+          {langs.map((c: WikiInfoLang) => (
             <NavDropdown.Item id={c.lang} key={c.lang} onClick={onSelectLang}>
               {langName(c)}
             </NavDropdown.Item>

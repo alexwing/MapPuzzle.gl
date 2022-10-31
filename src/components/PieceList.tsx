@@ -2,18 +2,29 @@ import React, { useState, useEffect, useId } from "react";
 import Table from "react-bootstrap/Table";
 import { useKeyPress } from "../lib/useKeyPress";
 import { className, setColor } from "../lib/Utils";
+import { PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
 
-export default function PieceList(props: any) {
-  const {
-    pieces,
-    founds,
-    onPieceSelected,
-    handleUp,
-    handleDown,
-    pieceSelected,
-    lang,
-  } = props;
+interface PieceListProps {
+  pieces: Array<PieceProps>;
+  founds: Array<number>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onPieceSelected: (pieceId: any) => void;
+  handleUp: () => void;
+  handleDown: () => void;
+  pieceSelected: number;
+  lang: string;
+}
+
+export default function PieceList({
+  pieces,
+  founds,
+  onPieceSelected,
+  handleUp,
+  handleDown,
+  pieceSelected,
+  lang,
+}: PieceListProps): JSX.Element {
   const [rtlClass, setRtlClass] = useState("");
   const upPress = useKeyPress("ArrowUp");
   const downPress = useKeyPress("ArrowDown");
@@ -39,27 +50,29 @@ export default function PieceList(props: any) {
       handleUp();
       scrollToSelected();
     }
-  // eslint-disable-next-line
-  }, [upPress,enablePress]);
+    // eslint-disable-next-line
+  }, [upPress, enablePress]);
 
   useEffect(() => {
     if (downPress && enablePress) {
       handleDown();
       scrollToSelected();
     }
-  // eslint-disable-next-line
-  }, [downPress,enablePress]);
+    // eslint-disable-next-line
+  }, [downPress, enablePress]);
 
   //scroll to piece selected selected
   const scrollToSelected = () => {
-      if (concernedElement) {
-        // get element id identify and get class table-primary selected 
-        const element = document.querySelector("#" + identify + " .table-primary");
-        //if element exist scroll to element
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "center"});
-        }
+    if (concernedElement) {
+      // get element id identify and get class table-primary selected
+      const element = document.querySelector(
+        "#" + identify + " .table-primary"
+      );
+      //if element exist scroll to element
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
       }
+    }
   };
 
   const enablePressHandler = () => {
@@ -70,9 +83,9 @@ export default function PieceList(props: any) {
     setEnablePress(false);
   };
   useEffect(() => {
-    document.addEventListener("mouseup", (event: any) => {
+    document.addEventListener("mouseup", (event: MouseEvent) => {
       if (concernedElement && event) {
-        if (concernedElement.contains(event.target)) {
+        if (concernedElement.contains(event.target ? event.target as Element : null)) {
           // Clicked in box
           enablePressHandler();
         } else {
@@ -96,13 +109,13 @@ export default function PieceList(props: any) {
         id={identify}
       >
         <tbody>
-          {pieces.map((c: any) =>
+          {pieces.map((c: PieceProps) =>
             founds.includes(c.properties.cartodb_id) ? null : (
               <tr
                 key={c.properties.cartodb_id}
                 onClick={onPieceSelected}
-                id={c.properties.cartodb_id}
-                className={className(c, parseInt(pieceSelected))}
+                id={c.properties.cartodb_id.toString()}
+                className={className(c, pieceSelected)}
               >
                 <td width="80%">{c.properties.name}</td>
                 <td width="20%" align="right" className="legendPiece">
