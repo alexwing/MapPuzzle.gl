@@ -70,6 +70,7 @@ The "png" extension is used to fix the problem of the sqlite3 database, with ser
 ```json
 "build":  "env-cmd -f ./environments/.env react-scripts build",
 ```
+Build the frontend in production mode, and connect to local sqlite3 database, without backend server. the database is allocated in the "public" folder.
 
 ```json
     "build-php": "env-cmd -f ./environments/.env.phpbackend react-scripts build",
