@@ -42,19 +42,22 @@ This backend use "typeorm" and sqlite3 databases, the entities are defined in th
 
 The backend use Sqlite3 as a database, so it is necessary to install it. the database is allocated in the "db" folder.
 
+The Front use the entities classes from the backend, if you can't use the backend, you can copy the entities from the backend to the Frontend.
+
+
 ```json
 "dev": "ts-node-dev src/index.ts",
 ```
 Use dev to run the server in development mode.
 
-### Front
+### Frontend
 
-The fontend is built with React, it is a client that sends requests to the backend and receives the response.
+The frontend is built with React, it is a client that sends requests to the server and receives the response, it also has a database with the information of the puzzles.
 
 ```json
 "dev": "env-cmd -f ./environments/.env.development react-scripts start",
 ```
-Run the frontend in development mode, with backend running in the background.
+Run the frontend in development mode, is necessary to have the backend running.
 
 ```json
 "pro": "env-cmd -f ./environments/.env react-scripts start",
@@ -67,7 +70,14 @@ The "png" extension is used to fix the problem of the sqlite3 database, with ser
 ```json
 "build":  "env-cmd -f ./environments/.env react-scripts build",
 ```
-Build the app with "build" with pro configuration.
+
+```json
+    "build-php": "env-cmd -f ./environments/.env.phpbackend react-scripts build",
+```
+Build the frontend and copy the files to the backend folder, to be used in the backend server. The php backend server is as simple script to execute querys to the sqlite3 database, equals to the sqlite front version. The php backend server is used to deploy the application in a php server.
+
+This PHP script is limit to SELECT querys, not support INSERT, UPDATE or DELETE query and prevent SQL injection.
+
 
 ### Deck.gl
 
@@ -133,8 +143,10 @@ This project was developed by Alejandro Aranda, and is a part of the [MapPuzzle.
 
 This project is licensed under the MIT license, is free to use, modify and distribute.
 
-
 ## contact
 
 If you have any questions, you can contact me at: https://aaranda.es/en/contact/
 
+## Donate
+
+If you want to support the project, you can donate at: https://github.com/sponsors/alexwing
