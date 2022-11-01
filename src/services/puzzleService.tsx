@@ -124,10 +124,10 @@ export class PuzzleService {
             const puzzle: Puzzles = mapResultToPuzzle(value);
 
             puzzle.region = {
-              regionCode: value[8],
-              region: value[9],
-              subregionCode: value[10],
-              subregion: value[11],
+              regionCode: value[9],
+              region: value[10],
+              subregionCode: value[11],
+              subregion: value[12],
             } as Regions;
 
             puzzles.push(puzzle);
