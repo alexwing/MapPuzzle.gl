@@ -34,7 +34,10 @@ export default class Puzzles {
     @Column({ name: 'countrycode', type: 'text', nullable: false })
     countryCode?: number;
 
-    region?: Regions;
+    @Column({ name: 'enablewiki', type: 'boolean', nullable: false , default: true})
+    enableWiki?: boolean;
+
+    region!: Regions;
 }
 
 

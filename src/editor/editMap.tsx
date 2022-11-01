@@ -202,7 +202,19 @@ function EditMap({
                   </Button>
                 </InputGroup>
               </Form.Group>
-
+              <Form.Group className="mb-3" controlId="formEnableWiki">
+                <Form.Check              
+                type="checkbox"
+                label="Enable Wiki"
+                checked={puzzleEdited.enableWiki}
+                onChange={(e) => {
+                  setPuzzleEdited({
+                    ...puzzleEdited,
+                    enableWiki: e.target.checked,
+                  });
+                }}
+              />
+            </Form.Group>
               <Form.Group className="mb-3" controlId="formDescription">
                 <Form.Label>Puzzles Description</Form.Label>
                 <Form.Control

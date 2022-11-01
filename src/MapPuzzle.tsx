@@ -201,8 +201,8 @@ function MapPuzzle(): JSX.Element {
 
   const onClickMapHandler = (info: PieceEvent) => {
     if (info.object) {
-      //if the piece is found, show the wiki info on click
-      if (founds.includes(info.object.properties.cartodb_id)) {
+      //if the piece is found and wiki is enabled in puzzle, show the wiki info on click
+      if (founds.includes(info.object.properties.cartodb_id) && puzzleSelectedData.enableWiki) {
         const wiki_url = getWiki(
           info.object.properties.cartodb_id,
           info.object.name,
