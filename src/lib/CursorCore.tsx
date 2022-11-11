@@ -4,7 +4,7 @@ import CustomCentroids from "../../backend/src/models/customCentroids";
 import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
 import { setColor } from "./Utils";
-import { getSvgFromGeometry } from "./UtilsMap";
+import { getExtendFromGeometry, getSvgFromGeometry } from "./UtilsMap";
 /**
  * Cursor Core
  * Replaces the native cursor with a custom animated cursor, consisting
@@ -187,12 +187,17 @@ function CursorCore({
   //document.body.style.cursor = 'none'
 
   let PieceCursor;
-  if (selected.properties?.box) {
+  if (selected.properties) {
+    const extend = getExtendFromGeometry(selected);
+    const width = extend.right - extend.left;
+    const height = extend.top - extend.bottom;
+
+    const scaleFactor = 74000;
     const scale = Math.pow(2, zoom);
     const sizeX =
-      (parseInt(selected.properties.box.split(" ")[2]) * scale) / 74000;
+      (width * scale)/ scaleFactor;
     const sizeY =
-      (parseInt(selected.properties.box.split(" ")[3]) * scale) / 74000;
+      (height * scale) / scaleFactor;
     let marginLeft = "-50%";
     let marginTop = "-50%";
     if (centroid.id) {
@@ -201,27 +206,14 @@ function CursorCore({
     }
     PieceCursor = (
       <div
-      style={{
-        width:sizeX + "px",
-        height:sizeY + "px",
-        border: "0px solid lightgray",
-        marginLeft: marginLeft,
-        marginTop: marginTop,        
-      }}
+        style={{
+          width: sizeX + "px",
+          height: sizeY + "px",
+          border: "0px solid lightgray",
+          marginLeft: marginLeft,
+          marginTop: marginTop,
+        }}
       >
-        <svg
-          viewBox={selected ? selected.properties.box : ""}
-          style={{
-
-          }}
-        >
-          <path
-            d={selected ? selected.properties.poly : ""}
-            stroke="black"
-            strokeWidth="0"
-            fill={setColor(selected.properties.mapcolor)}
-          />
-        </svg>
         {getSvgFromGeometry(selected)}
       </div>
     );

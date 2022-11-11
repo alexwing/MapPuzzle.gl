@@ -29,6 +29,7 @@ export interface ViewStateEvent {
 }
 
 export interface PieceProps {
+  [x: string]: any;
   id?: number;
   geometry: MultiPolygon;
   name: string;
