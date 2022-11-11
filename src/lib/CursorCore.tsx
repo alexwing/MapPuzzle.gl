@@ -200,16 +200,19 @@ function CursorCore({
       marginTop = centroid.top + "%";
     }
     PieceCursor = (
-      <div>
-       
+      <div
+      style={{
+        width:sizeX + "px",
+        height:sizeY + "px",
+        border: "0px solid lightgray",
+        marginLeft: marginLeft,
+        marginTop: marginTop,        
+      }}
+      >
         <svg
-          width={sizeX + "px"}
-          height={sizeY + "px"}
           viewBox={selected ? selected.properties.box : ""}
           style={{
-            border: "0px solid lightgray",
-            marginLeft: marginLeft,
-            marginTop: marginTop,
+
           }}
         >
           <path
@@ -219,7 +222,7 @@ function CursorCore({
             fill={setColor(selected.properties.mapcolor)}
           />
         </svg>
-        {getSvgFromGeometry(selected,selected ? selected.properties.box : "0 0 100 100")}
+        {getSvgFromGeometry(selected)}
       </div>
     );
   } else {
