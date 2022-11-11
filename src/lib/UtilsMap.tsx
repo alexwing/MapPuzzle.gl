@@ -10,41 +10,23 @@ export const get_ST_EnvelopeFromGeometry = (
 ): MapExtent => {
   const geom: number[][][] = geometry.geometry.coordinates;
 
-  let minX = 0;
-  let maxX = 0;
-  let minY = 0;
-  let maxY = 0;
+  //get all x and y
+  const allX: number[] = [];
+  const allY: number[] = [];
+  geom.forEach((multiPolygon) => {
+    multiPolygon.forEach((polygon) => {
+      polygon.forEach((point) => {
+        allX.push(point[0]);
+        allY.push(point[1]);
+      });      
+    });
+  });
 
-  for (let i = 0; i < geom.length; i++) {
-    const item = geom[i];
-    for (let j = 0; j < item.length; j++) {
-      const item2 = item[j];
-      for (let k = 0; k < item2.length; k++) {
-        const item3 = item2[k];
-        const x = item3[0];
-        const y = item3[1];
-        if (i === 0 && j === 0 && k === 0) {
-          minX = x;
-          maxX = x;
-          minY = y;
-          maxY = y;
-        } else {
-          if (x < minX) {
-            minX = x;
-          }
-          if (x > maxX) {
-            maxX = x;
-          }
-          if (y < minY) {
-            minY = y;
-          }
-          if (y > maxY) {
-            maxY = y;
-          }
-        }
-      }
-    }
-  }
+  //get min and max
+  const minX = Math.min(...allX);
+  const minY = Math.min(...allY);
+  const maxX = Math.max(...allX);
+  const maxY = Math.max(...allY);
 
   return {
     top: maxY,
