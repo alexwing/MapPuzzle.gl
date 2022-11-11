@@ -2,6 +2,7 @@ import React, { useState, useEffect, useId } from "react";
 import Table from "react-bootstrap/Table";
 import { useKeyPress } from "../lib/useKeyPress";
 import { className, setColor } from "../lib/Utils";
+import { getSvgFromGeometry } from "../lib/UtilsMap";
 import { PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
 
@@ -85,7 +86,11 @@ export default function PieceList({
   useEffect(() => {
     document.addEventListener("mouseup", (event: MouseEvent) => {
       if (concernedElement && event) {
-        if (concernedElement.contains(event.target ? event.target as Element : null)) {
+        if (
+          concernedElement.contains(
+            event.target ? (event.target as Element) : null
+          )
+        ) {
           // Clicked in box
           enablePressHandler();
         } else {
@@ -119,14 +124,15 @@ export default function PieceList({
               >
                 <td width="80%">{c.properties.name}</td>
                 <td width="20%" align="right" className="legendPiece">
-                  <svg viewBox={c.properties.box}>
+                  {getSvgFromGeometry(c)}
+                   <svg viewBox={c.properties.box}>
                     <path
                       d={c.properties.poly}
                       stroke="black"
                       strokeWidth="0"
                       fill={setColor(c.properties.mapcolor)}
                     />
-                  </svg>
+                  </svg> 
                 </td>
               </tr>
             )

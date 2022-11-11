@@ -43,6 +43,14 @@ export interface PieceProps {
   customWiki?: CustomWiki;
 }
 
+export interface MapExtent {
+  top: number;
+  left: number;
+  bottom: number;
+  right: number;
+}
+
+
 export interface MultiPolygon {
   type: string;
   coordinates: number[][][];
