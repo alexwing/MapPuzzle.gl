@@ -51,7 +51,7 @@ export const get_ST_EnvelopeFromGeometry = (geometry: PieceProps):MapExtent => {
   };
 };
 
-export const getSvgFromGeometry = (c: PieceProps): JSX.Element => {
+export const getSvgFromGeometry = (c: PieceProps, viewBox = "0 0 100 100"): JSX.Element => {
 
   const converter = geojson2svg({
     attributes: {
@@ -68,6 +68,6 @@ export const getSvgFromGeometry = (c: PieceProps): JSX.Element => {
   });
 
   return (
-    <svg viewBox="0 0 100 100" dangerouslySetInnerHTML={{ __html: svgStr }} />
+    <svg viewBox={viewBox} dangerouslySetInnerHTML={{ __html: svgStr }} />
   );
 };

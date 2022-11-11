@@ -4,6 +4,7 @@ import CustomCentroids from "../../backend/src/models/customCentroids";
 import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
 import { setColor } from "./Utils";
+import { getSvgFromGeometry } from "./UtilsMap";
 /**
  * Cursor Core
  * Replaces the native cursor with a custom animated cursor, consisting
@@ -199,23 +200,27 @@ function CursorCore({
       marginTop = centroid.top + "%";
     }
     PieceCursor = (
-      <svg
-        width={sizeX + "px"}
-        height={sizeY + "px"}
-        viewBox={selected ? selected.properties.box : ""}
-        style={{
-          border: "0px solid lightgray",
-          marginLeft: marginLeft,
-          marginTop: marginTop,
-        }}
-      >
-        <path
-          d={selected ? selected.properties.poly : ""}
-          stroke="black"
-          strokeWidth="0"
-          fill={setColor(selected.properties.mapcolor)}
-        />
-      </svg>
+      <div>
+       
+        <svg
+          width={sizeX + "px"}
+          height={sizeY + "px"}
+          viewBox={selected ? selected.properties.box : ""}
+          style={{
+            border: "0px solid lightgray",
+            marginLeft: marginLeft,
+            marginTop: marginTop,
+          }}
+        >
+          <path
+            d={selected ? selected.properties.poly : ""}
+            stroke="black"
+            strokeWidth="0"
+            fill={setColor(selected.properties.mapcolor)}
+          />
+        </svg>
+        {getSvgFromGeometry(selected,selected ? selected.properties.box : "0 0 100 100")}
+      </div>
     );
   } else {
     PieceCursor = <span></span>;
