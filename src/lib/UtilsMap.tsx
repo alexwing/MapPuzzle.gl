@@ -20,7 +20,11 @@ export const get_ST_EnvelopeFromGeometry = (
         allY.push(point[1]);
       });      
     });
-  });
+  }); 
+  //sort x and y
+ // allX.sort((a, b) => a - b);
+  //allY.sort((a, b) => a - b);
+
 
   //get min and max
   const minX = Math.min(...allX);
@@ -28,11 +32,27 @@ export const get_ST_EnvelopeFromGeometry = (
   const maxX = Math.max(...allX);
   const maxY = Math.max(...allY);
 
+  //with & height
+
+
+
+//Console log to compare with ST_EnvelopeFromText  and geometry.properties.box
+/*  
+console.log("minX", minX);
+  console.log("minY", minY);
+  console.log("maxX", maxX);
+  console.log("maxY", maxY);
+
+  console.log("geometry.properties.box", geometry.properties.box);
+*/
+
   return {
     top: maxY,
     left: minX,
     right: maxX,
     bottom: minY,
+    with: maxX - minX,
+    height: maxY - minY,
   };
 };
 
@@ -49,6 +69,8 @@ export const getExtendFromGeometry = (
     left: 0,
     right: 0,
     bottom: 0,
+    with: 0,
+    height: 0,
   };
   
 };
@@ -64,6 +86,7 @@ export const getSvgFromGeometry = (
   };
   const geomDest = reproject(geomOrigin, "EPSG:4326", "EPSG:3857");
 
+  //console.log("geomDest", geomDest);
   const converter = geojson2svg({
     attributes: {
       fill: setColor(c.properties.mapcolor),

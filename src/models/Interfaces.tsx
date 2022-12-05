@@ -49,6 +49,8 @@ export interface MapExtent {
   left: number;
   bottom: number;
   right: number;
+  with: number;
+  height: number;
 }
 
 

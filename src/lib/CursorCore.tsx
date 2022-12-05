@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import CustomCentroids from "../../backend/src/models/customCentroids";
 import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
@@ -42,6 +42,25 @@ function CursorCore({
   const [isActiveClickable, setIsActiveClickable] = useState(false);
   const endX = useRef(0);
   const endY = useRef(0);
+ const [extend, setExtend] = useState({
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    with: 0,
+    height: 0,
+  }); 
+  const [svg, setSvg] = useState(<span></span>);
+  const [selectedChanged, setSelectedChanged] = useState({} as PieceProps);
+  
+
+  useMemo(() => {
+    if (selectedChanged !== selected && selected.geometry) {
+      setExtend(getExtendFromGeometry(selected));
+      setSelectedChanged(selected);
+      setSvg(getSvgFromGeometry(selected));
+    }
+  }, [selected]);
 
   // Primary Mouse Move event
   const onMouseMove = useCallback(({ clientX, clientY }: any) => {
@@ -188,7 +207,6 @@ function CursorCore({
 
   let PieceCursor;
   if (selected.properties) {
-    const extend = getExtendFromGeometry(selected);
     const width = extend.right - extend.left;
     const height = extend.top - extend.bottom;
 
@@ -214,7 +232,7 @@ function CursorCore({
           marginTop: marginTop,
         }}
       >
-        {getSvgFromGeometry(selected)}
+        {svg}
       </div>
     );
   } else {
