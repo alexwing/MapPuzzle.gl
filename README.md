@@ -6,9 +6,13 @@ MapPuzzle.gl is an experimental website, developed with React and Deck.gl. It is
 
 ## Description of the game
 
-We have a list on the left side of the screen, with the list of puzzle pieces which, depending on the map, could be countries, states, cities, provinces, etc. Each map piece is shown with an illustration of the map. When you click on it, it follows the mouse and you will have to look for its equivalent on the map.
+MapPuzzle.xyz is a fun way to learn geography in a playful way. The game features a list of puzzle pieces on the left side of the screen, which can be countries, states, cities, or provinces, among others. Each piece is shown with a map illustration and when clicked, it follows the mouse and the player must find its match on the map. It also has a counter for found pieces, pieces to be found, and mistakes made. Players can choose the map they want to play and filter it by continent and region.
 
-It also has a counter of pieces found, pieces to be searched for and faults committed.
+One of the interesting features of the game is that it allows players to translate the names of the puzzle pieces into different languages. This allows them to learn the names of the places in different languages, enriching their gaming experience and helping them develop their language skills.
+
+In addition, every time a piece is placed on the map, players can access Wikipedia data about the place they are exploring. This allows them to obtain additional information about the geography, history, culture, and other areas related to the place, helping them learn more about the world around them.
+
+In summary, the map puzzle game offers a complete and fun educational experience for all ages. Don’t miss out on trying it!
 
 ## How to play
 
@@ -18,15 +22,15 @@ You can play the game in the following link: [MapPuzzle.xyz](http://mappuzzle.xy
 
 ## Code description
 
-The source code is available on Github, it has a basic structure of a React project and Deck.gl, that is, a mappuzzle.js file where the dependencies, code and functions corresponding to the interface are defined and another file that contains the configuration for Deck.gl.
+To develop the game, the Deck.gl library was used, which allows creating interactive maps on the web using JavaScript and WebGL. This library is a powerful and versatile tool that facilitates the development of map applications on the web, offering a wide variety of components and layers that can be used to create custom and highly interactive maps.
 
-The mappuzzle.js file initializes the application and has a list of dependencies that are installed at the beginning of the application, it is also in charge of connecting Deck.gl, so in this file we find the functions to initialize the library and load the map images. The interface shows the map and a list of puzzle pieces that are extracted from the configuration of the puzzles.sqlite3.png file.
-This db sqlite file is a plain sqlite database, with a table called "puzzles", containing the information of the puzzle maps and the the parameters of the application.
+In addition, other technologies and tools such as React, sqlite, PHP, typeorm, and node.js have been used to implement different functionalities and improve the game experience. React has been used as a user interface development framework, sqlite has been used to store and retrieve data in a local database, PHP has been used to develop server scripts, typeorm has been used to manage the database, and node.js has been used as an execution environment to run the server scripts.
 
+In terms of the project structure, the game is divided into different components and modules that are responsible for different tasks. For example, there are components that are responsible for displaying the puzzle piece list and the map, others that manage the game logic and interact with players, and others that are responsible for obtaining and processing Wikipedia and translation data.
 
-You can download it at:
-https://github.com/alexwing/MapPuzzle.gl
+In summary, the map puzzle game has been developed using advanced technologies and web development tools, and is structured in a modular and efficient way to facilitate its maintenance and expansion.
 
+The project repository can be found at: https://github.com/alexwing/MapPuzzle.gl
 
 ## Build
 
@@ -54,42 +58,15 @@ Use dev to run the server in development mode.
 
 The frontend is built with React, it is a client that sends requests to the server and receives the response, it also has a database with the information of the puzzles.
 
-```json
-"dev": "env-cmd -f ./environments/.env.development react-scripts start",
-```
-Run the frontend in development mode, is necessary to have the backend running.
+The following lines of code refer to different ways of starting the project:
 
-```json
-"pro": "env-cmd -f ./environments/.env react-scripts start",
-```
-Run "pro" frontend in development mode, and connect to local sqlite3 database, without backend server. the database is allocated in the "public" folder.
+* **"dev"**: "env-cmd -f ./environments/.env.development react-scripts start", This option allows you to run the frontend in development mode, it needs to have the Node.js backend running to work properly.
+* **"pro"**: "env-cmd -f ./environments/.env react-scripts start", This option allows you to run the frontend in development mode and connect it to a local sqlite3 database, without the need of the backend. The database is located in the "public" folder.
+* **"dev-php-backend"**: "env-cmd -f ./environments/.env.devphpbackend react-scripts start", This option allows you to run the frontend in development mode and connect it to a local PHP backend running.
+* **"pro-php-backend"**: "env-cmd -f ./environments/.env.phpbackend react-scripts start", This option allows you to run the frontend in production mode and connect it to the production PHP backend running.
+* **"build"**: "env-cmd -f ./environments/.env react-scripts build", This option allows you to build the frontend in production mode and connect it to a local sqlite3 database, without the need of a backend. The database is located in the "public" folder.
+* **"build-php"**: "env-cmd -f ./environments/.env.phpbackend react-scripts build", This option allows you to build the frontend and copy the files to the backend folder for use in a PHP server. This PHP server is a simple script to execute queries to the sqlite3 database, similar to the frontend version. It is used to deploy the application on a PHP server. This PHP script is limited to SELECT queries, does not support INSERT, UPDATE or DELETE query and prevents SQL injection.
 
-The sqlite3 database has a extension called "sqlite3.png", this file is a plain sqlite database, with a table called "puzzles", containing the information of the puzzle maps and the the parameters of the application.
-
-The "png" extension is used to fix the problem of the sqlite3 database, with server gzip compression, the sqlite3 database is not readable by the browser.
-```json
-"build":  "env-cmd -f ./environments/.env react-scripts build",
-```
-Build the frontend in production mode, and connect to local sqlite3 database, without backend server. the database is allocated in the "public" folder.
-
-```json
-    "build-php": "env-cmd -f ./environments/.env.phpbackend react-scripts build",
-```
-Build the frontend and copy the files to the backend folder, to be used in the backend server. The php backend server is as simple script to execute querys to the sqlite3 database, equals to the sqlite front version. The php backend server is used to deploy the application in a php server.
-
-This PHP script is limit to SELECT querys, not support INSERT, UPDATE or DELETE query and prevent SQL injection.
-
-
-### Deck.gl
-
-Deck.gl is a free library, developed by Vis.gl and has an open source API and well explained documentation. It is a geographic data view library, an alternative to Mapbox and other libraries. It is based on WebGL and is in charge of map rendering. It also has a development API that allows for the generation of interactive maps; Deck.gl is in charge of generating the map layers, the user interface and the control of user mobility.
-### React
-
-React is a web interface development framework, created by Facebook and based on JAVS components. React’s components are modularized, this means that they are functional and independent entities.
-
-### Typescript
-
-Typescript is a programming language that is a superset of JavaScript, it is a typed language, which means that it has a type system that allows you to define the type of data that a variable can contain. It is a language that is compiled to JavaScript, so it is necessary to compile it to be able to use it in the browser.
 
 ## Query Example for Postgis shape table export to Geojson
 
