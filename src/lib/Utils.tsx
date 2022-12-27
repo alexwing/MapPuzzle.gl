@@ -249,6 +249,24 @@ export function getUrl(): string {
   return url;
 }
 
+
+export function cleanWikiComment(html: string[]): string[] {
+  //remove comment
+  let htmlAux = cleanHtmlComment(html.join(""));
+
+  //remove references <sup>...</sup>
+  htmlAux = htmlAux.replace(/<sup[\s\S]*?<\/sup>/g, "");
+  //remove <span>(<span><span><span></span>listen</span></span>)</span>
+  htmlAux = htmlAux.replace("<span>(<span><span><span></span>listen</span></span>)</span>", "");
+
+  //convert string to array
+  return [htmlAux]
+}
+
+function cleanHtmlComment(html: string): string {
+  return html.replace(/<!--[\s\S]*?-->/g, "");
+}
+
 function cleanNameToWiki(name: string): string {
   let wiki_url = name.trim();
   wiki_url = wiki_url.replace("(disputed)", "");

@@ -11,7 +11,7 @@ import { setCookie, getCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
 import AlertMessage from "./AlertMessage";
 import LangSelector from "./LangSelector";
-import { getCurrentLang } from "../lib/Utils";
+import { getCurrentLang, cleanWikiComment } from "../lib/Utils";
 import { PuzzleService } from "../services/puzzleService";
 
 
@@ -223,7 +223,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: WikiInfoProps) : JSX
     }
     return (
       <Col lg={12} className="infoWiki">
-        {pieceInfo.contents.map((content, index: number) => (
+        {cleanWikiComment(pieceInfo.contents).map((content, index: number) => (
           <div key={index} dangerouslySetInnerHTML={{ __html: content }} />
         ))}
       </Col>
