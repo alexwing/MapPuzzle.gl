@@ -58,6 +58,7 @@ export interface Regions {
 export interface WikiInfoPiece {
   title: string;
   contents: string[];
+  image?: string;
   langs: WikiInfoLang[];
 }
 

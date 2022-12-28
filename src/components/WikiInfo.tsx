@@ -4,7 +4,11 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import "./WikiInfo.css";
-import { changeLanguage, getWikiInfo } from "../services/wikiService";
+import {
+  changeLanguage,
+  getWikiInfo,
+  getWikiImage,
+} from "../services/wikiService";
 import { AlertModel, WikiInfoPiece } from "../models/Interfaces";
 import LoadingDialog from "./LoadingDialog";
 import { setCookie, getCookie } from "react-simple-cookie-store";
@@ -14,15 +18,17 @@ import LangSelector from "./LangSelector";
 import { getCurrentLang, cleanWikiComment } from "../lib/Utils";
 import { PuzzleService } from "../services/puzzleService";
 
-
 interface WikiInfoProps {
   show: boolean;
-  onHide: (val:boolean) => void;
+  onHide: (val: boolean) => void;
   url: string;
 }
 
-
-function WikiInfo({ show = false, onHide, url = "Berlin" }: WikiInfoProps) : JSX.Element {
+function WikiInfo({
+  show = false,
+  onHide,
+  url = "Berlin",
+}: WikiInfoProps): JSX.Element {
   const [pieceInfo, setPieceInfo] = useState({
     title: "",
     contents: [],
@@ -154,13 +160,7 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: WikiInfoProps) : JSX
     setShowAlert(false);
   };
 
-  if (loading)
-    return (
-      <LoadingDialog
-        show={loading}
-        delay={1000}      
-      />
-    );
+  if (loading) return <LoadingDialog show={loading} delay={1000} />;
   const LangSelectorContainer = !ConfigService.langWikiSelector ? (
     ""
   ) : (
@@ -223,6 +223,13 @@ function WikiInfo({ show = false, onHide, url = "Berlin" }: WikiInfoProps) : JSX
     }
     return (
       <Col lg={12} className="infoWiki">
+        {pieceInfo.image !== undefined && pieceInfo.image !== "" && (
+          <img
+            src={pieceInfo.image}
+            alt={pieceInfo.title}
+            className="imgWiki"
+          />
+        )}
         {cleanWikiComment(pieceInfo.contents).map((content, index: number) => (
           <div key={index} dangerouslySetInnerHTML={{ __html: content }} />
         ))}
