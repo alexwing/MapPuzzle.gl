@@ -15,7 +15,7 @@ interface EditorDialogProps {
 function EditMap({
   puzzle = {} as Puzzles,
   pieces = new Array<PieceProps>(),
-}: EditorDialogProps) : JSX.Element | null {
+}: EditorDialogProps): JSX.Element | null {
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [langErrors, setLangErrors] = useState([]);
@@ -66,6 +66,40 @@ function EditMap({
       });
   };
 
+  const generateFlagsHandler = async () => {
+    setLoading(true);
+    const piecesToSend: number[] = [];
+    for (const piece of pieces) {
+      if (piece.id) {
+        piecesToSend.push(piece.id);
+      }
+    }
+
+    await PuzzleService.generateFlags(piecesToSend, puzzle.id)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then((res: any) => {
+        setLoading(false);
+        setAlert({
+          title: "Success",
+          message: "Flags generated successfully",
+          type: "success",
+        } as AlertModel);
+
+        setShowAlert(true);
+        setLangErrors(res.langErrors);
+      })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .catch((errorMessage: any) => {
+        setLoading(false);
+        setAlert({
+          title: "Error",
+          message: errorMessage.message,
+          type: "danger",
+        } as AlertModel);
+        setAlert(errorMessage);
+      });
+  };
+
   const generateTranslationHandler = async () => {
     setLoading(true);
     const piecesToSend: PieceProps[] = [];
@@ -100,7 +134,7 @@ function EditMap({
   return (
     <React.Fragment>
       <Col xs={12} lg={12}>
-        <LoadingDialog show={loading} delay={1000}/>
+        <LoadingDialog show={loading} delay={1000} />
         <AlertMessage
           show={showAlert}
           alertMessage={alert}
@@ -203,18 +237,18 @@ function EditMap({
                 </InputGroup>
               </Form.Group>
               <Form.Group className="mb-3" controlId="formEnableWiki">
-                <Form.Check              
-                type="checkbox"
-                label="Enable Wiki"
-                checked={puzzleEdited.enableWiki}
-                onChange={(e) => {
-                  setPuzzleEdited({
-                    ...puzzleEdited,
-                    enableWiki: e.target.checked,
-                  });
-                }}
-              />
-            </Form.Group>
+                <Form.Check
+                  type="checkbox"
+                  label="Enable Wiki"
+                  checked={puzzleEdited.enableWiki}
+                  onChange={(e) => {
+                    setPuzzleEdited({
+                      ...puzzleEdited,
+                      enableWiki: e.target.checked,
+                    });
+                  }}
+                />
+              </Form.Group>
               <Form.Group className="mb-3" controlId="formDescription">
                 <Form.Label>Puzzles Description</Form.Label>
                 <Form.Control
@@ -249,6 +283,14 @@ function EditMap({
                 onClick={generateTranslationHandler}
               >
                 Generate translations from Wikipedia
+              </Button>
+              <Button
+                style={{ marginTop: "10px", marginLeft: "10px" }}
+                variant="primary"
+                type="button"
+                onClick={generateFlagsHandler}
+              >
+                Generate flags from Wikipedia
               </Button>
             </Col>
           </Row>

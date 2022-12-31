@@ -7,7 +7,6 @@ import "./WikiInfo.css";
 import {
   changeLanguage,
   getWikiInfo,
-  getWikiImage,
 } from "../services/wikiService";
 import { AlertModel, WikiInfoPiece } from "../models/Interfaces";
 import LoadingDialog from "./LoadingDialog";

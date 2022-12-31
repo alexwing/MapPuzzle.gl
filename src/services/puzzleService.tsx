@@ -352,6 +352,28 @@ export class PuzzleService {
     });
     return response.json();
   }
+
+  //generate flags for a pieces
+  public static async generateFlags(
+    pieces: number[],
+    id: number
+  ): Promise<any> {
+    const response = await fetch(ConfigService.backendUrl + "/generateFlags", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+        pieces,
+      }),
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error generating flags");
+    });
+    return response.json();
+  }
+
   //generate translation for a pieces
   public static async generateTranslation(
     pieces: PieceProps[],
@@ -461,7 +483,7 @@ export class PuzzleService {
     }
   }
 
-  public static async getLangIsRtl(lang: string) : Promise<boolean> {
+  public static async getLangIsRtl(lang: string): Promise<boolean> {
     try {
       const result = await query(
         `SELECT rtl FROM languages WHERE lang = "${lang}"`

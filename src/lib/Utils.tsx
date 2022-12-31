@@ -256,8 +256,9 @@ export function cleanWikiComment(html: string[]): string[] {
 
   //remove references <sup>...</sup>
   htmlAux = htmlAux.replace(/<sup[\s\S]*?<\/sup>/g, "");
-  //remove <span>(<span><span><span></span>listen</span></span>)</span>
+  //remove audio description
   htmlAux = htmlAux.replace("<span>(<span><span><span></span>listen</span></span>)</span>", "");
+  htmlAux = htmlAux.replace('<small class="nowrap">&nbsp;( escuchar)</small>', "");
 
   //convert string to array
   return [htmlAux]

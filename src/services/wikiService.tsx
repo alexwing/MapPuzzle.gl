@@ -12,12 +12,7 @@ export async function getWikiInfo(piece: string): Promise<WikiInfoPiece> {
     const json = await response.json();
     const wikiInfo: WikiInfoPiece = mapWikiResponseToWikiInfo(json);
     try {
-      const urlImage = `https://en.wikipedia.org/w/api.php?action=query&origin=*&formatversion=2&piprop=original&format=json&prop=pageimages&titles=${piece}`;
-      const responseImage = await fetch(urlImage);
-      const jsonImage = await responseImage.json();
-      const { pages } = jsonImage.query;
-      const page = pages[0];
-      wikiInfo.image = page.original.source;
+      wikiInfo.image = await getWikiImage(piece);
     } catch (e: any) {
       console.log(e);
     }
