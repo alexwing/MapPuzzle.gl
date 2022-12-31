@@ -355,7 +355,7 @@ export class PuzzleService {
 
   //generate flags for a pieces
   public static async generateFlags(
-    pieces: number[],
+    pieces: PieceProps[],
     id: number
   ): Promise<any> {
     const response = await fetch(ConfigService.backendUrl + "/generateFlags", {

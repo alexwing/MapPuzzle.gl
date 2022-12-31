@@ -9,6 +9,8 @@ import Languages from "../models/languages";
 import { securizeQuery } from "../../../src/lib/Commons";
 import { SitemapStream, streamToPromise } from "sitemap";
 import { Readable } from "stream";
+import fetch from "node-fetch";
+import path from "path";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -119,7 +121,7 @@ router.get("/generateSitemap", async (_req, res) => {
   //send sitemap
   res.header("Content-Type", "application/xml");
   res.send(sitemap);
-  
+
   //save to disk in ../public/sitemap.xml
   const fs = require("fs");
   fs.writeFile("../public/sitemap.xml", sitemap, function (err: any) {
@@ -273,4 +275,97 @@ router.post("/generateTranslation", async (req, res) => {
   });
 });
 
+router.post("/generateFlags", async (req, res) => {
+  const generateFlags = req.body;
+  const fs = require("fs");
+  if (generateFlags) {
+    const pieces: PieceProps[] = generateFlags.pieces as PieceProps[];
+    const id: number = generateFlags.id as number;
+
+    let success = true;
+    let error: any;
+    for (const piece of pieces) {
+      try {
+        let pieceId = piece.name;
+        if (piece.customWiki && piece.customWiki.wiki !== "") {
+          pieceId = piece.customWiki.wiki;
+        }
+
+        if (piece) {
+          const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&formatversion=2&piprop=original&format=json&prop=pageimages&titles=${pieceId}`;
+          const response = await fetch(url);
+          console.log(response);
+          const json = (await response.json()) as any;
+          if (json) {
+            const { pages } = json.query;
+            const page = pages[0];
+            const urlFlagImage = page.original.source;
+            console.log("urlFlagImage:", urlFlagImage);
+            //save flag image to file
+            //get file extension
+            const ext = urlFlagImage.split(".").pop();
+            const fileName = `${pieceId}.${ext}`;
+            const filePath = path.join(
+              __dirname,
+              `../../../public/customFlags/${id}/${fileName}`
+            );
+            console.log("filePath:", filePath);
+            const response = await fetch(urlFlagImage, {
+              headers: {
+                "User-Agent":
+                  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
+              },
+            });
+            //create subfolder if not exists
+            const dir = path.join(
+              __dirname,
+              `../../../public/customFlags/${id}`
+            );
+            if (!fs.existsSync(dir)) {
+              fs.mkdirSync(dir);
+            }
+            const writer = fs.createWriteStream(filePath);
+            response.body.pipe(writer);
+            await new Promise((resolve, reject) => {
+              writer.on("finish", resolve);
+              writer.on("error", reject);
+            });
+            //set time to wait for file to be saved
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            //save flag image to db
+            /*
+            const customFlagsRepository =
+              connection!.getRepository(CustomFlags);
+            const customFlag = new CustomFlags();
+            customFlag.id = id;
+            customFlag.cartodb_id = pieceId;
+            customFlag.flag = fileName;
+            await customFlagsRepository.save(customFlag);
+
+            console.log("Flag saved successfully");
+            */
+          }
+        }
+      } catch (e) {
+        success = false;
+        error = e;
+      }
+    }
+
+    if (success) {
+      res.json({
+        success: true,
+        msg: "Generate Flags saved successfully",
+      });
+    } else {
+      res.json({
+        success: false,
+        msg: "Error saving flags",
+        error: error,
+      });
+    }
+    console.log("Success:", success); 
+    console.log("Error:", error);
+  }
+});
 export default router;

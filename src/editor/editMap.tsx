@@ -68,14 +68,7 @@ function EditMap({
 
   const generateFlagsHandler = async () => {
     setLoading(true);
-    const piecesToSend: number[] = [];
-    for (const piece of pieces) {
-      if (piece.id) {
-        piecesToSend.push(piece.id);
-      }
-    }
-
-    await PuzzleService.generateFlags(piecesToSend, puzzle.id)
+    await PuzzleService.generateFlags(pieces, puzzle.id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((res: any) => {
         setLoading(false);
@@ -86,7 +79,6 @@ function EditMap({
         } as AlertModel);
 
         setShowAlert(true);
-        setLangErrors(res.langErrors);
       })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .catch((errorMessage: any) => {
