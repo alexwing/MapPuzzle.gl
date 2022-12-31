@@ -103,15 +103,11 @@ export default function PieceList({
     const flag = `../customFlags/1/${c.properties.name}.svg`
 
     return (
-      <svg
-        width="30"
-        height="20"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <image href={flag} width="20" height="20" />
-      </svg>
+      <img
+      src={flag}
+      alt={c.properties.name}
       
+    />
     );
   };
 
@@ -136,10 +132,12 @@ export default function PieceList({
                 id={c.properties.cartodb_id.toString()}
                 className={className(c, pieceSelected)}
               >
-                <td width="10%" align="left">
+                <td className="imgflag">
+                  <div style={{}}>
                   { paintFlag(c)}
+                  </div>
                 </td>
-                <td width="70%">{c.properties.name}</td>
+                <td width="85%">{c.properties.name}</td>
                 <td width="20%" align="right" className="legendPiece">
                   <svg viewBox={c.properties.box}>
                     <path

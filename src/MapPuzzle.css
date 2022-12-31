@@ -48,6 +48,25 @@ table.legend th {
   border: none !important;
   cursor: default;
 }
+table.legend .imgflag img {
+  height: 25px;
+  width: 45px;
+  max-width: 45px;
+  min-width: 45px; 
+}
+table.legend .imgflag {
+  max-width: 45px;
+  min-width: 45px; 
+  overflow: hidden;
+}
+table.legend .imgflag div {
+  max-width: 45px;
+  min-width: 45px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 
 .legendPiece {
   padding: 1px 3px !important;
