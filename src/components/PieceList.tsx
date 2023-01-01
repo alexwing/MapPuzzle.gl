@@ -100,13 +100,12 @@ export default function PieceList({
 
   const paintFlag = (c: PieceProps) => {
     //create svg flag from piece name on public\customFlags\{id}\{piece.name}.svg
-    const flag = `../customFlags/1/${c.properties.name}.svg`
+    const flag = `../customFlags/1/64/${c.properties.cartodb_id}.png`
 
     return (
       <img
       src={flag}
       alt={c.properties.name}
-      
     />
     );
   };

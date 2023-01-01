@@ -66,6 +66,32 @@ function EditMap({
       });
   };
 
+  const generateThumbnailHandler = async () => {
+    setLoading(true);
+    await PuzzleService.generateThumbnail(puzzle.id)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then((res: any) => {
+        setLoading(false);
+        setAlert({
+          title: "Success",
+          message: "Thumbnail generated successfully",
+          type: "success",
+        } as AlertModel);
+
+        setShowAlert(true);
+      })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .catch((errorMessage: any) => {
+        setLoading(false);
+        setAlert({
+          title: "Error",
+          message: errorMessage.message,
+          type: "danger",
+        } as AlertModel);
+        setAlert(errorMessage);
+      });
+  };
+
   const generateFlagsHandler = async () => {
     setLoading(true);
     await PuzzleService.generateFlags(pieces, puzzle.id)
@@ -228,19 +254,6 @@ function EditMap({
                   </Button>
                 </InputGroup>
               </Form.Group>
-              <Form.Group className="mb-3" controlId="formEnableWiki">
-                <Form.Check
-                  type="checkbox"
-                  label="Enable Wiki"
-                  checked={puzzleEdited.enableWiki}
-                  onChange={(e) => {
-                    setPuzzleEdited({
-                      ...puzzleEdited,
-                      enableWiki: e.target.checked,
-                    });
-                  }}
-                />
-              </Form.Group>
               <Form.Group className="mb-3" controlId="formDescription">
                 <Form.Label>Puzzles Description</Form.Label>
                 <Form.Control
@@ -252,6 +265,32 @@ function EditMap({
                     setPuzzleEdited({
                       ...puzzleEdited,
                       comment: e.target.value,
+                    });
+                  }}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formEnableWiki">
+                <Form.Check
+                  type="checkbox"
+                  label="Wikipedia Info"
+                  checked={puzzleEdited.enableWiki}
+                  onChange={(e) => {
+                    setPuzzleEdited({
+                      ...puzzleEdited,
+                      enableWiki: e.target.checked,
+                    });
+                  }}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formEnableFlags">
+                <Form.Check
+                  type="checkbox"
+                  label="Flags Icons"
+                  checked={puzzleEdited.enableFlags}
+                  onChange={(e) => {
+                    setPuzzleEdited({
+                      ...puzzleEdited,
+                      enableFlags: e.target.checked,
                     });
                   }}
                 />
@@ -274,7 +313,7 @@ function EditMap({
                 type="button"
                 onClick={generateTranslationHandler}
               >
-                Generate translations from Wikipedia
+                Generate translations
               </Button>
               <Button
                 style={{ marginTop: "10px", marginLeft: "10px" }}
@@ -282,7 +321,15 @@ function EditMap({
                 type="button"
                 onClick={generateFlagsHandler}
               >
-                Generate flags from Wikipedia
+                Generate flags
+              </Button>
+              <Button
+                style={{ marginTop: "10px", marginLeft: "10px" }}
+                variant="primary"
+                type="button"
+                onClick={generateThumbnailHandler}
+              >
+                Generate thumbnails
               </Button>
             </Col>
           </Row>

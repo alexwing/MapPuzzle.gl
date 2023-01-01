@@ -353,6 +353,22 @@ export class PuzzleService {
     return response.json();
   }
 
+  //generate thumbnail for a pieces
+  public static async generateThumbnail(id: number): Promise<any> {
+    const response = await fetch(ConfigService.backendUrl + "/generateThumbs", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: id }),
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error generating thumbnails");
+    });
+    return response.json();
+  }
+
+
   //generate flags for a pieces
   public static async generateFlags(
     pieces: PieceProps[],

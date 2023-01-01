@@ -36,6 +36,9 @@ export default class Puzzles {
 
     @Column({ name: 'enablewiki', type: 'boolean', nullable: false , default: true})
     enableWiki?: boolean;
+    
+    @Column({ name: 'enableflags', type: 'boolean', nullable: false , default: true})
+    enableFlags?: boolean;
 
     region!: Regions;
 }

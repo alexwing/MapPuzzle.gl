@@ -49,22 +49,22 @@ table.legend th {
   cursor: default;
 }
 table.legend .imgflag img {
-  height: 25px;
-  width: 45px;
-  max-width: 45px;
-  min-width: 45px; 
+	height: 25px;
+	width: 40px;
+	max-width: 40px;
+	min-width: 40px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 1px;
+  border: 1px solid  rgba(0, 0, 0, 0.15)
 }
 table.legend .imgflag {
-  max-width: 45px;
-  min-width: 45px; 
-  overflow: hidden;
+	max-width: 45px;
+	min-width: 50px;
+  
 }
 table.legend .imgflag div {
-  max-width: 45px;
-  min-width: 45px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+	max-width: 55px;
+	min-width: 55px;
+  
 }
 
 
