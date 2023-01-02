@@ -48,6 +48,7 @@ function MapPuzzle(): JSX.Element {
   const [showWikiInfo, setShowWikiInfo] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [wikiInfoUrl, setWikiInfoUrl] = useState("");
+  const [wikiInfoId, setWikiInfoId] = useState(-1);
   const [viewState, setViewState] = useState({} as ViewState);
   const [lang, setLang] = useState("");
 
@@ -211,6 +212,7 @@ function MapPuzzle(): JSX.Element {
         );
         setShowWikiInfo(true);
         setWikiInfoUrl(wiki_url);
+        setWikiInfoId(info.object.properties.cartodb_id);
         return;
       }
     }
@@ -438,6 +440,7 @@ function MapPuzzle(): JSX.Element {
                     founds={founds}
                     fails={fails}
                     winner={winner}
+                    enableFlags={puzzleSelectedData.enableFlags ? puzzleSelectedData.enableFlags : false}
                     lang={lang}
                     loading={loading}
                   />
@@ -455,6 +458,9 @@ function MapPuzzle(): JSX.Element {
               show={showWikiInfo}
               url={wikiInfoUrl}
               onHide={onShowWikiInfoHandler}
+              piece={wikiInfoId}
+              enableFlags={puzzleSelectedData.enableFlags ? puzzleSelectedData.enableFlags : false}
+              puzzleSelected={puzzleSelected}
             />
             <EditorDialog
               show={showEditor}

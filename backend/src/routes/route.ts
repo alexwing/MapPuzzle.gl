@@ -299,48 +299,84 @@ router.post("/generateFlags", async (req, res) => {
         //if not exist as PNG or SVG
         if (
           !fs.existsSync(filePathPiece + ".png") &&
-          !fs.existsSync(filePathPiece + ".svg")
+          !fs.existsSync(filePathPiece + ".svg") &&
+          !fs.existsSync(filePathPiece + ".jpg")
         ) {
           if (piece) {
-            const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&formatversion=2&piprop=original&format=json&prop=pageimages&titles=${pieceId}`;
-            const response = await fetch(url);
-            console.log(response);
-            const json = (await response.json()) as any;
-            if (json) {
-              const { pages } = json.query;
-              const page = pages[0];
-              //if page.original exists
-              if (page.original) {
-                const urlFlagImage = page.original.source;
-                console.log("urlFlagImage:", urlFlagImage);
-                //save flag image to file
-                //get file extension
-                const ext = urlFlagImage.split(".").pop();
-                const fileName = `${piece.properties.cartodb_id}.${ext}`;
-                const filePath = path.join(
-                  __dirname,
-                  `../../../public/customFlags/${id}/${fileName}`
-                );
-                console.log("filePath:", filePath);
+            const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&generator=images&gimlimit=50&prop=imageinfo&iiprop=url&format=json&titles=${pieceId}`;
+            const response = await fetch(url, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+              },
+            });
+            try {
+              const json = (await response.json()) as any;
 
-                //if filePath not exists
-                if (!fs.existsSync(filePath)) {
-                  const response = await fetch(urlFlagImage, {
-                    headers: {
-                      "User-Agent":
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
-                    },
-                  });
-                  //create subfolder if not exists
-                  const dir = path.join(
-                    __dirname,
-                    `../../../public/customFlags/${id}`
-                  );
-                  if (!fs.existsSync(dir)) {
-                    fs.mkdirSync(dir);
+              if (json) {
+                const { pages } = json.query;
+                let urlFlagImage = "";
+                if (pages) {
+                  for (const page in pages) {
+                    try {
+                      if (pages[page].imageinfo) {
+                        const url = pages[page].imageinfo[0].url
+                          .toString()
+                          .toLowerCase();
+                        try {
+                          const lastWordPiece = pieceId
+                            .split("_")
+                            .pop()
+                            ?.toLocaleLowerCase();
+                          if (
+                            (url.includes("flag") || url.includes("bandera"))
+                             &&
+                            url.includes(lastWordPiece)
+                          ) {
+                            urlFlagImage = pages[page].imageinfo[0].url;
+                            break;
+                          }
+                        } catch (err: any) {
+                          if (url.includes("flag")) {
+                            urlFlagImage = pages[page].imageinfo[0].url;
+                            break;
+                          }
+                        }
+                      }
+                    } catch (err: any) {
+                      console.error("Error parsing imageinfo: " + err.message);
+                    }
                   }
+                }
+                if (urlFlagImage !== "") {
+                  console.log("urlFlagImage:", urlFlagImage);
+                  //save flag image to file
+                  //get file extension
+                  const ext = urlFlagImage.split(".").pop();
+                  const fileName = `${piece.properties.cartodb_id}.${ext}`;
+                  const filePath = path.join(
+                    __dirname,
+                    `../../../public/customFlags/${id}/${fileName}`
+                  );
+                  console.log("filePath:", filePath);
 
-                  {
+                  //if filePath not exists
+                  if (!fs.existsSync(filePath)) {
+                    const response = await fetch(urlFlagImage, {
+                      headers: {
+                        "User-Agent":
+                          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
+                      },
+                    });
+                    //create subfolder if not exists
+                    const dir = path.join(
+                      __dirname,
+                      `../../../public/customFlags/${id}`
+                    );
+                    if (!fs.existsSync(dir)) {
+                      fs.mkdirSync(dir);
+                    }
                     const writer = fs.createWriteStream(filePath);
                     response.body.pipe(writer);
                     await new Promise((resolve, reject) => {
@@ -349,32 +385,22 @@ router.post("/generateFlags", async (req, res) => {
                     });
                     //set time to wait for file to be saved
                     await new Promise((resolve) => setTimeout(resolve, 2000));
+                  } else {
+                    console.log(
+                      "File already exists in path: " +
+                        filePath +
+                        " Piece: " +
+                        piece.name
+                    );
                   }
                 } else {
                   console.log(
-                    "File already exists in path: " +
-                      filePath +
-                      " Piece: " +
-                      piece.name
+                    "No original image found for piece: " + piece.name
                   );
                 }
-
-                //save flag image to db
-              } else {
-                console.log("No original image found for piece: " + piece.name);
               }
-
-              /*
-            const customFlagsRepository =
-              connection!.getRepository(CustomFlags);
-            const customFlag = new CustomFlags();
-            customFlag.id = id;
-            customFlag.cartodb_id = pieceId;
-            customFlag.flag = fileName;
-            await customFlagsRepository.save(customFlag);
-
-            console.log("Flag saved successfully");
-            */
+            } catch (err: any) {
+              console.error("Error parsing json: " + err.message);
             }
           }
         }
@@ -420,15 +446,12 @@ router.post("/generateThumbs", async (req, res) => {
         const files = fs.readdirSync(dir);
         //for each file
         for (const file of files) {
-          if (file.includes("163") || file.includes("61")) {
-            console.log("File existe: " + file);
-          }
-
           //get file extension
           const ext = file.split(".").pop();
           const extOut = "png";
           const fileOut = ext ? file.replace(ext, extOut) : file;
           const sizes = [64, 128, 256, 512, 1024];
+          //const sizes = [64];
           //if file size 64 not exists
           if (!fs.existsSync(path.join(dir, `${sizes[0]}`, fileOut))) {
             //if file is not a png

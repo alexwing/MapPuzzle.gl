@@ -94,7 +94,13 @@ function EditMap({
 
   const generateFlagsHandler = async () => {
     setLoading(true);
-    await PuzzleService.generateFlags(pieces, puzzle.id)
+
+    const piecesToSend: PieceProps[] = [];
+    for (const piece of pieces) {
+      piece.id = puzzleEdited.id;
+      piecesToSend.push(await PuzzleService.updatePieceProps(piece));
+    }
+    await PuzzleService.generateFlags(piecesToSend, puzzle.id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((res: any) => {
         setLoading(false);
@@ -298,18 +304,10 @@ function EditMap({
             </Col>
           </Row>
           <Row>
-            <Col xs={12} lg={12}>
-              <Button
-                style={{ marginTop: "10px", marginRight: "10px" }}
-                variant="primary"
-                type="button"
-                onClick={onSaveHandler}
-              >
-                Save
-              </Button>
+            <Col xs={12} lg={12} style={{ textAlign: "center" , marginTop: "50px"}}>
               <Button
                 style={{ marginTop: "10px" }}
-                variant="primary"
+                variant="secondary"
                 type="button"
                 onClick={generateTranslationHandler}
               >
@@ -317,7 +315,7 @@ function EditMap({
               </Button>
               <Button
                 style={{ marginTop: "10px", marginLeft: "10px" }}
-                variant="primary"
+                variant="secondary"
                 type="button"
                 onClick={generateFlagsHandler}
               >
@@ -325,12 +323,20 @@ function EditMap({
               </Button>
               <Button
                 style={{ marginTop: "10px", marginLeft: "10px" }}
-                variant="primary"
+                variant="secondary"
                 type="button"
                 onClick={generateThumbnailHandler}
               >
                 Generate thumbnails
               </Button>
+              <Button
+                style={{ marginTop: "10px", marginLeft: "30px" }}
+                variant="primary"
+                type="button"
+                onClick={onSaveHandler}
+              >
+                Save
+              </Button>              
             </Col>
           </Row>
           <Row>

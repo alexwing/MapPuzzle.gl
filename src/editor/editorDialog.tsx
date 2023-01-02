@@ -170,7 +170,9 @@ function EditorDialog({
                       pieceSelected={pieceSelected}
                       handleUp={onPieceUpHandler}
                       handleDown={onPieceDownHandler} 
-                      lang={ConfigService.defaultLang}                    
+                      puzzleId={puzzleSelected.id}
+                      lang={ConfigService.defaultLang}  
+                      enableFlags={puzzleSelected.enableFlags ? puzzleSelected.enableFlags : false}              
                       />
                   </div>
                 </Col>
