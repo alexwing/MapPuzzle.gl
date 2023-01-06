@@ -8,7 +8,6 @@ import Accordion from "react-bootstrap/Accordion";
 import Timer from "./Timer";
 import PieceList from "./PieceList";
 import { PieceProps } from "../models/Interfaces";
-import Puzzles from "../../backend/src/models/puzzles";
 
 
 interface ToolsPanelProps {

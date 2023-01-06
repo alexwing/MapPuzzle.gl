@@ -70,7 +70,7 @@ function EditMap({
     setLoading(true);
     await PuzzleService.generateThumbnail(puzzle.id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then((res: any) => {
+      .then(() => {
         setLoading(false);
         setAlert({
           title: "Success",
@@ -102,7 +102,7 @@ function EditMap({
     }
     await PuzzleService.generateFlags(piecesToSend, puzzle.id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then((res: any) => {
+      .then(() => {
         setLoading(false);
         setAlert({
           title: "Success",

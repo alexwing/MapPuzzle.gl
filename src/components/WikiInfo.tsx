@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import "./WikiInfo.css";
 import { changeLanguage, getWikiInfo } from "../services/wikiService";
-import { AlertModel, PieceProps, WikiInfoPiece } from "../models/Interfaces";
+import { AlertModel, WikiInfoPiece } from "../models/Interfaces";
 import LoadingDialog from "./LoadingDialog";
 import { setCookie, getCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
