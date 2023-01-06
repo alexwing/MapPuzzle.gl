@@ -25,6 +25,7 @@ interface ToolsPanelProps {
   winner: boolean;
   lang: string;
   loading: boolean;
+  enableFlags: boolean;
 }
 
 
@@ -42,6 +43,7 @@ function ToolsPanel({
   winner,
   lang,
   loading,
+  enableFlags,
 }: ToolsPanelProps) : JSX.Element {
   const showTimer =
   winner || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
@@ -93,6 +95,8 @@ function ToolsPanel({
                     pieceSelected={pieceSelected}
                     handleUp={handleUp}
                     handleDown={handleDown}
+                    puzzleId={puzzleSelected}
+                    enableFlags={enableFlags}
                     lang={lang}
                   />
                 </div>

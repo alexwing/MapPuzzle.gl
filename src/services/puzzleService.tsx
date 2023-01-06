@@ -124,10 +124,10 @@ export class PuzzleService {
             const puzzle: Puzzles = mapResultToPuzzle(value);
 
             puzzle.region = {
-              regionCode: value[9],
-              region: value[10],
-              subregionCode: value[11],
-              subregion: value[12],
+              regionCode: value[10],
+              region: value[11],
+              subregionCode: value[12],
+              subregion: value[13],
             } as Regions;
 
             puzzles.push(puzzle);
@@ -353,9 +353,25 @@ export class PuzzleService {
     return response.json();
   }
 
+  //generate thumbnail for a pieces
+  public static async generateThumbnail(id: number): Promise<any> {
+    const response = await fetch(ConfigService.backendUrl + "/generateThumbs", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: id }),
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error generating thumbnails");
+    });
+    return response.json();
+  }
+
+
   //generate flags for a pieces
   public static async generateFlags(
-    pieces: number[],
+    pieces: PieceProps[],
     id: number
   ): Promise<any> {
     const response = await fetch(ConfigService.backendUrl + "/generateFlags", {

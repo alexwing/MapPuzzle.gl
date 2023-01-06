@@ -13,6 +13,8 @@ interface PieceListProps {
   handleUp: () => void;
   handleDown: () => void;
   pieceSelected: number;
+  puzzleId: number;
+  enableFlags: boolean;
   lang: string;
 }
 
@@ -23,6 +25,8 @@ export default function PieceList({
   handleUp,
   handleDown,
   pieceSelected,
+  puzzleId,
+  enableFlags,
   lang,
 }: PieceListProps): JSX.Element {
   const [rtlClass, setRtlClass] = useState("");
@@ -85,7 +89,11 @@ export default function PieceList({
   useEffect(() => {
     document.addEventListener("mouseup", (event: MouseEvent) => {
       if (concernedElement && event) {
-        if (concernedElement.contains(event.target ? event.target as Element : null)) {
+        if (
+          concernedElement.contains(
+            event.target ? (event.target as Element) : null
+          )
+        ) {
           // Clicked in box
           enablePressHandler();
         } else {
@@ -97,6 +105,19 @@ export default function PieceList({
       event.preventDefault();
     });
   }, [concernedElement]);
+
+  const paintFlag = (c: PieceProps) => {
+    if (!enableFlags) return null;
+    //create flag image from piece id
+    const flag = `../customFlags/${puzzleId.toString()}/64/${c.properties.cartodb_id}.png`;
+    return (
+      <td className="imgflag">
+        <div>
+          <img src={flag} alt={c.properties.name} />
+        </div>
+      </td>
+    );
+  };
 
   return (
     <React.Fragment>
@@ -117,6 +138,7 @@ export default function PieceList({
                 id={c.properties.cartodb_id.toString()}
                 className={className(c, pieceSelected)}
               >
+                {paintFlag(c)}
                 <td width="80%">{c.properties.name}</td>
                 <td width="20%" align="right" className="legendPiece">
                   <svg viewBox={c.properties.box}>

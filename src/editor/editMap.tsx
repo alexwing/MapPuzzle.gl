@@ -66,18 +66,43 @@ function EditMap({
       });
   };
 
+  const generateThumbnailHandler = async () => {
+    setLoading(true);
+    await PuzzleService.generateThumbnail(puzzle.id)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then(() => {
+        setLoading(false);
+        setAlert({
+          title: "Success",
+          message: "Thumbnail generated successfully",
+          type: "success",
+        } as AlertModel);
+
+        setShowAlert(true);
+      })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .catch((errorMessage: any) => {
+        setLoading(false);
+        setAlert({
+          title: "Error",
+          message: errorMessage.message,
+          type: "danger",
+        } as AlertModel);
+        setAlert(errorMessage);
+      });
+  };
+
   const generateFlagsHandler = async () => {
     setLoading(true);
-    const piecesToSend: number[] = [];
-    for (const piece of pieces) {
-      if (piece.id) {
-        piecesToSend.push(piece.id);
-      }
-    }
 
+    const piecesToSend: PieceProps[] = [];
+    for (const piece of pieces) {
+      piece.id = puzzleEdited.id;
+      piecesToSend.push(await PuzzleService.updatePieceProps(piece));
+    }
     await PuzzleService.generateFlags(piecesToSend, puzzle.id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then((res: any) => {
+      .then(() => {
         setLoading(false);
         setAlert({
           title: "Success",
@@ -86,7 +111,6 @@ function EditMap({
         } as AlertModel);
 
         setShowAlert(true);
-        setLangErrors(res.langErrors);
       })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .catch((errorMessage: any) => {
@@ -236,19 +260,6 @@ function EditMap({
                   </Button>
                 </InputGroup>
               </Form.Group>
-              <Form.Group className="mb-3" controlId="formEnableWiki">
-                <Form.Check
-                  type="checkbox"
-                  label="Enable Wiki"
-                  checked={puzzleEdited.enableWiki}
-                  onChange={(e) => {
-                    setPuzzleEdited({
-                      ...puzzleEdited,
-                      enableWiki: e.target.checked,
-                    });
-                  }}
-                />
-              </Form.Group>
               <Form.Group className="mb-3" controlId="formDescription">
                 <Form.Label>Puzzles Description</Form.Label>
                 <Form.Control
@@ -264,34 +275,68 @@ function EditMap({
                   }}
                 />
               </Form.Group>
+              <Form.Group className="mb-3" controlId="formEnableWiki">
+                <Form.Check
+                  type="checkbox"
+                  label="Wikipedia Info"
+                  checked={puzzleEdited.enableWiki}
+                  onChange={(e) => {
+                    setPuzzleEdited({
+                      ...puzzleEdited,
+                      enableWiki: e.target.checked,
+                    });
+                  }}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formEnableFlags">
+                <Form.Check
+                  type="checkbox"
+                  label="Flags Icons"
+                  checked={puzzleEdited.enableFlags}
+                  onChange={(e) => {
+                    setPuzzleEdited({
+                      ...puzzleEdited,
+                      enableFlags: e.target.checked,
+                    });
+                  }}
+                />
+              </Form.Group>
             </Col>
           </Row>
           <Row>
-            <Col xs={12} lg={12}>
+            <Col xs={12} lg={12} style={{ textAlign: "center" , marginTop: "50px"}}>
               <Button
-                style={{ marginTop: "10px", marginRight: "10px" }}
+                style={{ marginTop: "10px" }}
+                variant="secondary"
+                type="button"
+                onClick={generateTranslationHandler}
+              >
+                Generate translations
+              </Button>
+              <Button
+                style={{ marginTop: "10px", marginLeft: "10px" }}
+                variant="secondary"
+                type="button"
+                onClick={generateFlagsHandler}
+              >
+                Generate flags
+              </Button>
+              <Button
+                style={{ marginTop: "10px", marginLeft: "10px" }}
+                variant="secondary"
+                type="button"
+                onClick={generateThumbnailHandler}
+              >
+                Generate thumbnails
+              </Button>
+              <Button
+                style={{ marginTop: "10px", marginLeft: "30px" }}
                 variant="primary"
                 type="button"
                 onClick={onSaveHandler}
               >
                 Save
-              </Button>
-              <Button
-                style={{ marginTop: "10px" }}
-                variant="primary"
-                type="button"
-                onClick={generateTranslationHandler}
-              >
-                Generate translations from Wikipedia
-              </Button>
-              <Button
-                style={{ marginTop: "10px", marginLeft: "10px" }}
-                variant="primary"
-                type="button"
-                onClick={generateFlagsHandler}
-              >
-                Generate flags from Wikipedia
-              </Button>
+              </Button>              
             </Col>
           </Row>
           <Row>

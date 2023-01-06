@@ -4,10 +4,7 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import "./WikiInfo.css";
-import {
-  changeLanguage,
-  getWikiInfo,
-} from "../services/wikiService";
+import { changeLanguage, getWikiInfo } from "../services/wikiService";
 import { AlertModel, WikiInfoPiece } from "../models/Interfaces";
 import LoadingDialog from "./LoadingDialog";
 import { setCookie, getCookie } from "react-simple-cookie-store";
@@ -21,12 +18,18 @@ interface WikiInfoProps {
   show: boolean;
   onHide: (val: boolean) => void;
   url: string;
+  piece:  number;
+  enableFlags?: boolean;
+  puzzleSelected?: number;
 }
 
 function WikiInfo({
   show = false,
   onHide,
   url = "Berlin",
+  piece,
+  enableFlags = false,
+  puzzleSelected = 0,
 }: WikiInfoProps): JSX.Element {
   const [pieceInfo, setPieceInfo] = useState({
     title: "",
@@ -222,10 +225,21 @@ function WikiInfo({
     }
     return (
       <Col lg={12} className="infoWiki">
-        {pieceInfo.image !== undefined && pieceInfo.image !== "" && (
+        {!enableFlags &&
+          pieceInfo.image !== undefined &&
+          pieceInfo.image !== "" && (
+            <img
+              src={pieceInfo.image}
+              alt={pieceInfo.title}
+              className="imgWiki"
+            />
+          )}
+        {enableFlags && (
           <img
-            src={pieceInfo.image}
-            alt={pieceInfo.title}
+            src={`../customFlags/${puzzleSelected.toString()}/512/${
+              piece.toString()
+            }.png`}
+            alt={currentLang}
             className="imgWiki"
           />
         )}
