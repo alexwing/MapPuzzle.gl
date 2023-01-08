@@ -50,11 +50,11 @@ function PuzzleOptions({
           <span className="navbar-wiki-icon"></span>
         </Button>
         <Button id="reset" variant="outline-primary" onClick={handleShow}>
-        {t("resetGame")}
+        {t("topMenu.resetGame")}
         </Button>
         {ConfigService.editorEnabled ? (
           <Button id="editor" variant="outline-primary" onClick={onShowEditorHandler}>
-            {t("editor")}
+            {t("topMenu.editor")}
           </Button>
         ) : null}
       </Form>

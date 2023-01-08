@@ -40,13 +40,13 @@ function Timer({ puzzleSelected }: TimerProps) : JSX.Element {
       return (
         <ul id="hours">
           <li>
-            <b>{time.h} </b> {t("hours")}
+            <b>{time.h} </b> {t("toolsPanel.hours")}
           </li>
           <li>
-            <b>{time.m}</b> {t("minutes")}
+            <b>{time.m}</b> {t("toolsPanel.minutes")}
           </li>
           <li>
-            <b>{time.s}</b> {t("seconds")}
+            <b>{time.s}</b> {t("toolsPanel.seconds")}
           </li>
         </ul>
       );
@@ -54,10 +54,10 @@ function Timer({ puzzleSelected }: TimerProps) : JSX.Element {
       return (
         <ul id="minutes">
           <li>
-            <b>{time.m}</b> {t("minutes")}
+            <b>{time.m}</b> {t("toolsPanel.minutes")}
           </li>
           <li>
-            <b>{time.s}</b> {t("seconds")}
+            <b>{time.s}</b> {t("toolsPanel.seconds")}
           </li>
         </ul>
       );
@@ -65,7 +65,7 @@ function Timer({ puzzleSelected }: TimerProps) : JSX.Element {
       return (
         <ul id="seconds">
           <li>
-            <b>{time.s}</b> {t("seconds")}
+            <b>{time.s}</b> {t("toolsPanel.seconds")}
           </li>
         </ul>
       );

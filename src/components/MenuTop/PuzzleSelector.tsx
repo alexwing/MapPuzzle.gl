@@ -7,6 +7,8 @@ import "./PuzzleSelector.css";
 import Puzzles from "../../../backend/src/models/puzzles";
 import { Regions } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
+import { useTranslation } from "react-i18next";
+
 import BootstrapTable, {
   ColumnDescription,
   PaginationOptions,
@@ -25,6 +27,7 @@ function PuzzleSelector({
   onSelectMap,
   onHidePuzzleSelector,
 }: PuzzleSelectorProps): JSX.Element {
+  const { t } = useTranslation();
   const [selectedPuzzle, setSelectedPuzzle] = useState(0);
   const [selectedRegion, setSelectedRegion] = useState(0);
   const [selectedSubRegion, setSelectedSubRegion] = useState(0);
@@ -115,7 +118,7 @@ function PuzzleSelector({
     <span>
       <span className="d-none d-lg-inline d-lg-none">
         {selectedRegion === 0
-          ? "Regions"
+          ? t("puzzleSelector.filters.region")
           : regions.find((x) => x.regionCode === selectedRegion)?.region}
       </span>
     </span>
@@ -125,7 +128,7 @@ function PuzzleSelector({
     <span>
       <span className="d-none d-lg-inline d-lg-none">
         {selectedSubRegion === 0
-          ? "Sub Regions"
+          ? t("puzzleSelector.filters.subregion")
           : subregions.find((x) => x.subregionCode === selectedSubRegion)
               ?.subregion}
       </span>
@@ -149,7 +152,7 @@ function PuzzleSelector({
     },
     {
       dataField: "name",
-      text: "Name",
+      text: t("puzzleSelector.table.name"),
       sort: false,
       classes: "name",
       headerClasses: "name-header",
@@ -157,7 +160,7 @@ function PuzzleSelector({
     },
     {
       dataField: "region.region",
-      text: "Region",
+      text: t("puzzleSelector.table.region"),
       sort: false,
       classes: "region",
       headerClasses: "region-header",
@@ -165,7 +168,7 @@ function PuzzleSelector({
     },
     {
       dataField: "region.subregion",
-      text: "Sub Region",
+      text: t("puzzleSelector.table.subregion"),
       sort: false,
       classes: "subregion",
       headerClasses: "subregion-header",
@@ -183,6 +186,15 @@ function PuzzleSelector({
     },
   } as SelectRowProps<any>;
 
+  const customTotal = (from, to, size) => (
+    <span className="react-bootstrap-table-pagination-total">
+      {t("puzzleSelector.table.pageInfo.showing")} {from}{" "}
+      {t("puzzleSelector.table.pageInfo.to")} {to}{" "}
+      {t("puzzleSelector.table.pageInfo.of")} {size}{" "}
+      {t("puzzleSelector.table.pageInfo.puzzles")}
+    </span>
+  );
+
   const paginationOptions: PaginationOptions = {
     sizePerPage: 10,
     showTotal: true,
@@ -190,6 +202,7 @@ function PuzzleSelector({
     hidePageListOnlyOnePage: true,
     withFirstAndLast: false,
     alwaysShowAllBtns: true,
+    paginationTotalRenderer: customTotal,
   } as PaginationOptions;
 
   const onSearchNameChange = (e: any) => {
@@ -232,10 +245,10 @@ function PuzzleSelector({
             onClick={handleOK}
             disabled={selectedPuzzle === 0}
           >
-            Play
+            {t("puzzleSelector.buttons.play")}
           </Button>
           <Button variant="secondary" onClick={handleCancel}>
-            Cancel
+            {t("puzzleSelector.buttons.cancel")}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -278,7 +291,7 @@ function PuzzleSelector({
         <Form.Control
           ref={inputRef}
           type="text"
-          placeholder="Find by name"
+          placeholder={t("puzzleSelector.filters.name")}
           value={searchName}
           onChange={(e) => onSearchNameChange(e)}
         />
@@ -294,7 +307,7 @@ function PuzzleSelector({
       return (
         <NavDropdown title={navDropdownRegionsTitle} id="nav-dropdown">
           <NavDropdown.Item id="0" onClick={onSelectRegion}>
-            All
+            {t("puzzleSelector.filters.all")}
           </NavDropdown.Item>
           {regions.map((region) => (
             <NavDropdown.Item
@@ -316,7 +329,7 @@ function PuzzleSelector({
       return (
         <NavDropdown title={navDropdownSubRegionsTitle} id="nav-dropdown">
           <NavDropdown.Item id="0" onClick={onSelectSubRegion}>
-            All
+            {t("puzzleSelector.filters.all")}
           </NavDropdown.Item>
           {subregions.map((subregion) => (
             <NavDropdown.Item

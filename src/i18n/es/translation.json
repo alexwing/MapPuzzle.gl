@@ -1,11 +1,38 @@
 {
-  "selectPuzzle": "Seleccionar Puzzle",
-  "resetGame": "Reiniciar juego",
-  "editor": "Editor",
-  "founds": "Encontrados:",
-  "remaining": "Restantes:",
-  "fails": "Errores:",
-  "hours": "Horas",
-  "minutes": "Minutos",
-  "seconds": "Segundos"
+  "topMenu": {
+    "selectPuzzle": "Seleccionar Puzzle",
+    "resetGame": "Reiniciar",
+    "editor": "Editor"
+  },
+  "toolsPanel": {
+    "founds": "Encontrados:",
+    "remaining": "Restantes:",
+    "fails": "Errores:",
+    "hours": "Horas",
+    "minutes": "Minutos",
+    "seconds": "Segundos"
+  },
+  "puzzleSelector":{
+    "table":{
+      "name": "Nombre",
+      "region": "Región",
+      "subregion": "Subregión",
+      "pageInfo": {
+        "showing": "Mostrando del",
+        "to": "al",
+        "of": "de",
+        "puzzles": "puzzles"
+      }
+    },
+    "filters":{
+      "name": "Buscar por nombre",
+      "region": "Regiones",
+      "subregion": "Subregiones",
+      "all": "Todos"
+    },
+    "buttons":{
+      "play": "Jugar",
+      "cancel": "Cancelar"
+    }
+  }
 }

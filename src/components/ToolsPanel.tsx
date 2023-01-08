@@ -63,21 +63,21 @@ function ToolsPanel({
                 <Row className="score">
                   <Col xs={4} lg={4}>
                     <Alert variant="success">
-                      <Alert.Heading>{t("founds")}</Alert.Heading>
+                      <Alert.Heading>{t("toolsPanel.founds")}</Alert.Heading>
                       <hr />
                       <p className="mb-0">{founds.length}</p>
                     </Alert>
                   </Col>
                   <Col xs={4} lg={4}>
                     <Alert variant="warning">
-                      <Alert.Heading>{t("remaining")}</Alert.Heading>
+                      <Alert.Heading>{t("toolsPanel.remaining")}</Alert.Heading>
                       <hr />
                       <p className="mb-0">{pieces.length - founds.length}</p>
                     </Alert>
                   </Col>
                   <Col xs={4} lg={4}>
                     <Alert variant="danger">
-                      <Alert.Heading>{t("fails")}</Alert.Heading>
+                      <Alert.Heading>{t("toolsPanel.fails")}</Alert.Heading>
                       <hr />
                       <p className="mb-0">{fails}</p>
                     </Alert>

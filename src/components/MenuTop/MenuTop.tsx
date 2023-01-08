@@ -107,7 +107,7 @@ function MenuTop({
               variant="outline-primary"
               onClick={handleShowSelectPuzzle}
             >
-              {t("selectPuzzle")}
+              {t("topMenu.selectPuzzle")}
             </Button>
             <PuzzleSelector
               show={showSelectPuzzle}

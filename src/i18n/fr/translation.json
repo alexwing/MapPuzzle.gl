@@ -1,0 +1,38 @@
+{
+  "topMenu": {
+    "selectPuzzle": "Sélectionner un puzzle",
+    "resetGame": "Redémarrer",
+    "editor": "Éditeur"
+  },
+  "toolsPanel": {
+    "founds": "Trouvés:",
+    "remaining": "Restants:",
+    "fails": "Erreurs:",
+    "hours": "Heures",
+    "minutes": "Minutes",
+    "seconds": "Secondes"
+  },
+  "puzzleSelector":{
+    "table":{
+      "name": "Nom",
+      "region": "Région",
+      "subregion": "Sous-région",
+      "pageInfo": {
+        "showing": "Affichage du",
+        "to": "à",
+        "of": "de",
+        "puzzles": "casse-têtes"
+      }
+    },
+    "filters":{
+      "name": "Rechercher par nom",
+      "region": "Régions",
+      "subregion": "Sous-régions",
+      "all": "Tous"
+    },
+    "buttons":{
+      "play": "Jouer",
+      "cancel": "Annuler"
+    }
+  }
+}
