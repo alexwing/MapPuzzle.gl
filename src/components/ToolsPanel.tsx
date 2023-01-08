@@ -8,7 +8,7 @@ import Accordion from "react-bootstrap/Accordion";
 import Timer from "./Timer";
 import PieceList from "./PieceList";
 import { PieceProps } from "../models/Interfaces";
-
+import { useTranslation } from "react-i18next";
 
 interface ToolsPanelProps {
   name: string;
@@ -28,7 +28,6 @@ interface ToolsPanelProps {
   enableFlags: boolean;
 }
 
-
 function ToolsPanel({
   name,
   puzzleSelected,
@@ -44,11 +43,13 @@ function ToolsPanel({
   lang,
   loading,
   enableFlags,
-}: ToolsPanelProps) : JSX.Element {
+}: ToolsPanelProps): JSX.Element {
+  const { t } = useTranslation();
   const showTimer =
-  winner || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
-
-  return loading ? (<React.Fragment></React.Fragment>) : (
+    winner || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
+  return loading ? (
+    <React.Fragment></React.Fragment>
+  ) : (
     <React.Fragment>
       <Accordion defaultActiveKey="0">
         <Card>
@@ -62,21 +63,21 @@ function ToolsPanel({
                 <Row className="score">
                   <Col xs={4} lg={4}>
                     <Alert variant="success">
-                      <Alert.Heading>Founds:</Alert.Heading>
+                      <Alert.Heading>{t("founds")}</Alert.Heading>
                       <hr />
                       <p className="mb-0">{founds.length}</p>
                     </Alert>
                   </Col>
                   <Col xs={4} lg={4}>
                     <Alert variant="warning">
-                      <Alert.Heading>Remaining:</Alert.Heading>
+                      <Alert.Heading>{t("remaining")}</Alert.Heading>
                       <hr />
                       <p className="mb-0">{pieces.length - founds.length}</p>
                     </Alert>
                   </Col>
                   <Col xs={4} lg={4}>
                     <Alert variant="danger">
-                      <Alert.Heading>Fails:</Alert.Heading>
+                      <Alert.Heading>{t("fails")}</Alert.Heading>
                       <hr />
                       <p className="mb-0">{fails}</p>
                     </Alert>

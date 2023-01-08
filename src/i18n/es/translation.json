@@ -1,3 +1,11 @@
 {
-  "selectPuzzle": "Seleccionar Puzzle"
+  "selectPuzzle": "Seleccionar Puzzle",
+  "resetGame": "Reiniciar juego",
+  "editor": "Editor",
+  "founds": "Encontrados:",
+  "remaining": "Restantes:",
+  "fails": "Errores:",
+  "hours": "Horas",
+  "minutes": "Minutos",
+  "seconds": "Segundos"
 }

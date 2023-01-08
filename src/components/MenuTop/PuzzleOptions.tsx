@@ -2,6 +2,7 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { ConfigService } from "../../services/configService";
+import { useTranslation } from "react-i18next";
 
 interface PuzzleOptionsProps {
   onRefocus: () => void;
@@ -27,6 +28,7 @@ function PuzzleOptions({
   const onShowEditorHandler = () => {
     onShowEditor(true);
   }
+  const { t } = useTranslation();
 
   return (
     <React.Fragment>
@@ -48,11 +50,11 @@ function PuzzleOptions({
           <span className="navbar-wiki-icon"></span>
         </Button>
         <Button id="reset" variant="outline-primary" onClick={handleShow}>
-          Reset Game
+        {t("resetGame")}
         </Button>
         {ConfigService.editorEnabled ? (
           <Button id="editor" variant="outline-primary" onClick={onShowEditorHandler}>
-            Editor
+            {t("editor")}
           </Button>
         ) : null}
       </Form>
