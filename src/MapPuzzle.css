@@ -9,8 +9,10 @@ body {
 }
 
 .navbar-brand > img {
-  max-height: 32px;
-  padding-right: 15px;
+	max-height: 32px;
+	padding-right: 15px;
+	height: 32px;
+	width: 47px;
 }
 
 .dropdown-menu.show > .dropdown-item img {

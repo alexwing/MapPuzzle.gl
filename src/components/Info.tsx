@@ -172,17 +172,32 @@ function Info({
                 structured in a modular and efficient way to facilitate its
                 maintenance and expansion.
               </p>
+              <h2>Credits</h2>
+              {infoPuzzles}
 
               <p>
                 The project repository can be found at:&nbsp;
-                <a href="https://github.com/alexwing/MapPuzzle.gl">
+                <a
+                  href="https://github.com/alexwing/MapPuzzle.gl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   https://github.com/alexwing/MapPuzzle.gl
                 </a>
               </p>
-              <h2>Credits</h2>
-              {infoPuzzles}
               <p>
-                More info in{" "}
+                If you want to support the project, you can donate at this
+                link:&nbsp;
+                <a
+                  href="https://github.com/sponsors/alexwing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  https://github.com/sponsors/alexwing
+                </a>
+              </p>
+              <p>
+                More info in:&nbsp;
                 <a
                   href="https://aaranda.es/en/mappuzzle-gl-en/"
                   target="_blank"
