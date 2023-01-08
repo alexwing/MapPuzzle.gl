@@ -12,7 +12,8 @@ import Languages from "../../../backend/src/models/languages";
 import { ConfigService } from "../../services/configService";
 import { getCurrentLang, languagesToWikiInfoLang } from "../../lib/Utils";
 import { Button, Nav } from "react-bootstrap";
-
+import "../../i18n/config";
+import { useTranslation } from "react-i18next";
 
 interface MenuTopProps {
   name: string;
@@ -34,12 +35,13 @@ function MenuTop({
   onShowWikiInfo,
   onShowEditor,
   onLangChange,
-}: MenuTopProps) : JSX.Element {
+}: MenuTopProps): JSX.Element {
   const [show, setShow] = React.useState(false);
   const [showInfo, setShowInfo] = React.useState(false);
   const [showSelectPuzzle, setShowSelectPuzzle] = React.useState(false);
   const [langs, setLangs] = React.useState([] as WikiInfoLang[]);
   const [currentLang, setCurrentLang] = React.useState("");
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     setShow(false);
@@ -78,6 +80,8 @@ function MenuTop({
   const handleLangChange = (e: any) => {
     const lang = e.target.id;
     setCookie("puzzleLanguage", lang, ConfigService.cookieDays);
+    //change lang in i18n
+    i18n.changeLanguage(lang);
     setCurrentLang(getCurrentLang(langs));
     onLangChange(lang);
   };
@@ -103,7 +107,7 @@ function MenuTop({
               variant="outline-primary"
               onClick={handleShowSelectPuzzle}
             >
-              Select Puzzle
+              {t("selectPuzzle")}
             </Button>
             <PuzzleSelector
               show={showSelectPuzzle}

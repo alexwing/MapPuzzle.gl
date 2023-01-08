@@ -352,8 +352,7 @@ export function langName(piece: WikiInfoLang): string {
 }
 
 export function getCurrentLang(langs: WikiInfoLang[]): string {
-  const puzzleLanguage =
-    getCookie("puzzleLanguage") || ConfigService.defaultLang;
+  const puzzleLanguage = getLang();
   //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
   let pieceLang = langs.find((x: WikiInfoLang) => x.lang === puzzleLanguage);
   if (typeof pieceLang === "object" && pieceLang !== null) {
@@ -395,4 +394,8 @@ export function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
     return 0;
   });
   return langs;
+}
+
+export function getLang(): string {
+  return getCookie("puzzleLanguage") || ConfigService.defaultLang;
 }

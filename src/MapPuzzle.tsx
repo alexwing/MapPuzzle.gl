@@ -8,7 +8,7 @@ import MenuTop from "./components/MenuTop/MenuTop";
 import DeckMap from "./components/DeckMap";
 import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
-import { Jsondb, getWiki, copyViewState } from "./lib/Utils";
+import { Jsondb, getWiki, copyViewState,getLang } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
@@ -24,6 +24,7 @@ import CustomCentroids from "../backend/src/models/customCentroids";
 import CustomWiki from "../backend/src/models/customWiki";
 import CustomTranslations from "../backend/src/models/customTranslations";
 import Puzzles from "../backend/src/models/puzzles";
+import { useTranslation } from "react-i18next";
 
 function MapPuzzle(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
@@ -51,7 +52,7 @@ function MapPuzzle(): JSX.Element {
   const [wikiInfoId, setWikiInfoId] = useState(-1);
   const [viewState, setViewState] = useState({} as ViewState);
   const [lang, setLang] = useState("");
-
+  const { i18n } = useTranslation();
   useEffect(() => {
 
     if (window.location.pathname) {
@@ -70,7 +71,8 @@ function MapPuzzle(): JSX.Element {
 
   /* load game from db */
   const loadGame = (puzzleId: number) => {
-    const langAux = getCookie("puzzleLanguage") || ConfigService.defaultLang;
+    const langAux = getLang();
+    i18n.changeLanguage(langAux);
     setPieces([]);
     setFounds([]);    
     setLang(langAux);

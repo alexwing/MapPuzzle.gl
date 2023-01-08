@@ -7,11 +7,11 @@ import "./WikiInfo.css";
 import { changeLanguage, getWikiInfo } from "../services/wikiService";
 import { AlertModel, WikiInfoPiece } from "../models/Interfaces";
 import LoadingDialog from "./LoadingDialog";
-import { setCookie, getCookie } from "react-simple-cookie-store";
+import { setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
 import AlertMessage from "./AlertMessage";
 import LangSelector from "./LangSelector";
-import { getCurrentLang, cleanWikiComment } from "../lib/Utils";
+import { getCurrentLang, cleanWikiComment, getLang } from "../lib/Utils";
 import { PuzzleService } from "../services/puzzleService";
 
 interface WikiInfoProps {
@@ -54,7 +54,7 @@ function WikiInfo({
   //on init load if rtl lang
   useEffect(() => {
     const puzzleLanguage =
-      getCookie("puzzleLanguage") || ConfigService.defaultLang;
+    getLang();
     PuzzleService.getLangIsRtl(puzzleLanguage)
       .then((isRtl) => {
         setRtlClass(isRtl ? "rtl" : "");
