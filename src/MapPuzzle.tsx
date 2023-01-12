@@ -415,9 +415,9 @@ function MapPuzzle(): JSX.Element {
               onResetGame={onResetGameHandler}
               onFullScreen={onToggle}
               onRefocus={onRefocusMapHandler}
-              onShowWikiInfo={onShowWikiInfoHandler}
               onShowEditor={onShowEditorHandler}
               onLangChange={onLangChangeHandler}
+              puzzleSelected={puzzleSelected}              
             />
             <YouWin
               winner={winner}

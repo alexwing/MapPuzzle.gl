@@ -80,6 +80,21 @@ export class PuzzleService {
         return Promise.reject("Puzzles not found");
       });
   }
+  //get a puzzle wiki by id
+  public static getPuzzleWiki(id: number): Promise<string> {
+    return query(`SELECT p.wiki FROM puzzles p WHERE p.id = ${id}`)
+      .then((result: QueryExecResult[]) => {
+        if (result.length > 0) {
+          return result[0].values[0][0] ? result[0].values[0][0].toString() : "";
+        }
+        return Promise.reject("Puzzles not found");
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.reject("Puzzles not found");
+      });
+  }
+
   //call endpoint get generateSitemap return xml sitemap
   public static generateSitemap(): Promise<any> {
     return fetch(ConfigService.backendUrl + "/generateSitemap", {
@@ -367,7 +382,6 @@ export class PuzzleService {
     });
     return response.json();
   }
-
 
   //generate flags for a pieces
   public static async generateFlags(
