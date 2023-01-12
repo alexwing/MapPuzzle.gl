@@ -188,10 +188,7 @@ function PuzzleSelector({
 
   const customTotal = (from, to, size) => (
     <span className="react-bootstrap-table-pagination-total">
-      {t("puzzleSelector.table.pageInfo.showing")} {from}{" "}
-      {t("puzzleSelector.table.pageInfo.to")} {to}{" "}
-      {t("puzzleSelector.table.pageInfo.of")} {size}{" "}
-      {t("puzzleSelector.table.pageInfo.puzzles")}
+      {t("puzzleSelector.table.pageInfo", { from, to, size })}
     </span>
   );
 

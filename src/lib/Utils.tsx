@@ -249,7 +249,6 @@ export function getUrl(): string {
   return url;
 }
 
-
 export function cleanWikiComment(html: string[]): string[] {
   //remove comment
   let htmlAux = cleanHtmlComment(html.join(""));
@@ -257,11 +256,17 @@ export function cleanWikiComment(html: string[]): string[] {
   //remove references <sup>...</sup>
   htmlAux = htmlAux.replace(/<sup[\s\S]*?<\/sup>/g, "");
   //remove audio description
-  htmlAux = htmlAux.replace("<span>(<span><span><span></span>listen</span></span>)</span>", "");
-  htmlAux = htmlAux.replace('<small class="nowrap">&nbsp;( escuchar)</small>', "");
+  htmlAux = htmlAux.replace(
+    "<span>(<span><span><span></span>listen</span></span>)</span>",
+    ""
+  );
+  htmlAux = htmlAux.replace(
+    '<small class="nowrap">&nbsp;( escuchar)</small>',
+    ""
+  );
 
   //convert string to array
-  return [htmlAux]
+  return [htmlAux];
 }
 
 function cleanHtmlComment(html: string): string {
@@ -397,5 +402,19 @@ export function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
 }
 
 export function getLang(): string {
-  return getCookie("puzzleLanguage") || ConfigService.defaultLang;
+  const lang = getCookie("puzzleLanguage");
+  if (lang === undefined || lang === "") {
+    let browserLang = navigator.language;
+    if (browserLang.includes("-")) {
+      browserLang = navigator.language.split("-")[0];
+    }
+    const lang = ConfigService.langs.find((x: string) => x === browserLang);
+    if (lang !== undefined) {
+      return lang;
+    } else {
+      return ConfigService.defaultLang;
+    }
+  } else {
+    return lang;
+  }
 }

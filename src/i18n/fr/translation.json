@@ -2,7 +2,9 @@
   "topMenu": {
     "selectPuzzle": "Sélectionner un puzzle",
     "resetGame": "Redémarrer",
-    "editor": "Éditeur"
+    "editor": "Éditeur",
+    "surrenderTitle": "Abandonner?",
+    "surrenderMessage": "Cliquez sur oui, si vous voulez commencer une nouvelle partie"
   },
   "toolsPanel": {
     "founds": "Trouvés:",
@@ -17,12 +19,7 @@
       "name": "Nom",
       "region": "Région",
       "subregion": "Sous-région",
-      "pageInfo": {
-        "showing": "Affichage du",
-        "to": "à",
-        "of": "de",
-        "puzzles": "casse-têtes"
-      }
+      "pageInfo": "Affichage de {{from}} à {{to}} sur {{size}} puzzles"
     },
     "filters":{
       "name": "Rechercher par nom",

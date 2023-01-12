@@ -148,8 +148,8 @@ function MenuTop({
         show={show}
         handleCancel={handleCancel}
         handleOK={handleOK}
-        title="Do you surrender?"
-        message="Click yes, if you want to start a new game"
+        title={t("topMenu.surrenderTitle")}
+        message={t("topMenu.surrenderMessage")}
       />
       <WikiInfo
         show={showWikiInfo}

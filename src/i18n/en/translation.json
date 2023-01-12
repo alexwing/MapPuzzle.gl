@@ -2,7 +2,9 @@
   "topMenu": {
     "selectPuzzle": "Select Puzzle",
     "resetGame": "Reset Game",
-    "editor": "Editor"
+    "editor": "Editor",
+    "surrenderTitle": "Do you surrender?",
+    "surrenderMessage": "Click yes, if you want to start a new game"
   },
   "toolsPanel": {
     "founds": "Founds:",
@@ -17,12 +19,7 @@
       "name": "Name",
       "region": "Region",
       "subregion": "Sub Region",
-      "pageInfo": {
-        "showing": "Showing",
-        "to": "to",
-        "of": "of",
-        "puzzles": "puzzles"
-      }
+      "pageInfo": "Showing {{from}} to {{to}} of {{size}} puzzles"
     },
     "filters":{
       "name": "Find by name",

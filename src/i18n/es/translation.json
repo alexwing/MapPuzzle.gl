@@ -2,7 +2,9 @@
   "topMenu": {
     "selectPuzzle": "Seleccionar Puzzle",
     "resetGame": "Reiniciar",
-    "editor": "Editor"
+    "editor": "Editor",
+    "surrenderTitle": "¿Te rindes?",
+    "surrenderMessage": "Haz click en sí, si quieres empezar un nuevo juego"
   },
   "toolsPanel": {
     "founds": "Encontrados:",
@@ -17,12 +19,7 @@
       "name": "Nombre",
       "region": "Región",
       "subregion": "Subregión",
-      "pageInfo": {
-        "showing": "Mostrando del",
-        "to": "al",
-        "of": "de",
-        "puzzles": "puzzles"
-      }
+      "pageInfo": "Mostrando del {{from}} a {{to}} de {{size}} puzzles"
     },
     "filters":{
       "name": "Buscar por nombre",
