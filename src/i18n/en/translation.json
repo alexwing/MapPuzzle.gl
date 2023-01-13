@@ -47,6 +47,14 @@
       "playAgain": "Play Again"
     }
   },
+  "info": {
+    "share": "Share MapPuzzle.xyz",
+    "quote" : "MapPuzzle.xyz is an experimental website, it is an accessible way to learn cartography, through this project we try to offer an interactive learning experience with maps."
+  },
+  "wikiInfo": {
+    "title": "Wikipedia article for",
+    "notFound": "Not found data on Wikipedia"
+  },
   "common": {
     "loading": "Loading...",
     "time": {
@@ -54,10 +62,10 @@
       "minutes": "{{minutes}} Minutes {{seconds}} Seconds",
       "seconds": "{{seconds}} Seconds"
     },
-    "share":{
+    "share": {
       "title": "MapPuzzle.xyz - Puzzle game based in maps",
       "quote": "I completed the puzzle game of the {{name}}, in {{time}}, with {{fails}} failures out of {{founds}} pieces found.",
       "hashtag": "education,cartography,puzzle,countries"
-    }    
+    }
   }
 }

@@ -11,8 +11,10 @@ import { setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
 import AlertMessage from "./AlertMessage";
 import LangSelector from "./LangSelector";
-import { getCurrentLang, cleanWikiComment, getLang } from "../lib/Utils";
+import { getCurrentLang,getTitleFromLang, cleanWikiComment, getLang } from "../lib/Utils";
 import { PuzzleService } from "../services/puzzleService";
+import "../i18n/config";
+import { useTranslation } from "react-i18next";
 
 interface WikiInfoProps {
   show: boolean;
@@ -41,12 +43,14 @@ function WikiInfo({
   const [showIn, setShowIn] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [currentLang, setCurrentLang] = React.useState("");
+  const [titleLang, setTitleLang] = React.useState("");
   const [alertModal, setAlertModal] = useState({
     title: "",
     message: "",
     type: "danger",
   } as AlertModel);
   const [rtlClass, setRtlClass] = useState("");
+  const { t } = useTranslation();
   //on load show modal
   useEffect(() => {
     setShowIn(show);
@@ -73,7 +77,7 @@ function WikiInfo({
         .then((wikiInfo: WikiInfoPiece) => {
           if (wikiInfo.title === "Not found data on Wikipedia") {
             setAlertModal({
-              title: "Not found data on Wikipedia",
+              title: t("wikiInfo.notFound"),
               message: wikiInfo.title,
               type: "danger",
             } as AlertModel);
@@ -82,6 +86,13 @@ function WikiInfo({
           } else {
             setPieceInfo(wikiInfo);
             setCurrentLang(getCurrentLang(wikiInfo.langs));
+            const title = getTitleFromLang(wikiInfo.langs);
+            if (title !== "") {
+              setTitleLang(title);
+            }else{
+              setTitleLang(wikiInfo.title);
+            }
+            //find name wiki
             setShowAlert(false);
             setShowIn(true);
           }
@@ -90,12 +101,12 @@ function WikiInfo({
         .catch((errorRecived: any) => {
           setShowAlert(true);
           setAlertModal({
-            title: "Not found data on Wikipedia",
+            title: t("wikiInfo.notFound"),
             message: errorRecived.message,
             type: "danger",
           } as AlertModel);
           setPieceInfo({
-            title: "Not found data on Wikipedia",
+            title: t("wikiInfo.notFound"),
             contents: [errorRecived.message],
             langs: [],
           } as WikiInfoPiece);
@@ -121,12 +132,12 @@ function WikiInfo({
         .catch((errorRecived: any) => {
           setShowAlert(true);
           setAlertModal({
-            title: "Not found data on Wikipedia",
+            title: t("wikiInfo.notFound"),
             message: errorRecived.message,
             type: "danger",
           } as AlertModel);
           setPieceInfo({
-            title: "Not found data on Wikipedia",
+            title: t("wikiInfo.notFound"),
             contents: [errorRecived.message],
             langs: [],
           } as WikiInfoPiece);
@@ -143,13 +154,13 @@ function WikiInfo({
       return (
         <span>
           <span className="d-none d-lg-inline d-lg-none">
-            Wikipedia article for{" "}
+            {t("wikiInfo.title")}{" "}
           </span>
-          {pieceInfo.title}
+          {titleLang}
         </span>
       );
     } else {
-      return <span>Not found data on Wikipedia</span>;
+      return <span>{t("wikiInfo.notFound")}</span>;
     }
   };
 

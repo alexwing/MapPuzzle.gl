@@ -47,6 +47,14 @@
       "playAgain": "Jugar de nuevo"
     }
   },
+  "info": {
+    "share": "Comparte MapPuzzle.xyz",
+    "quote": "MapPuzzle.xyz es un sitio web experimental, es una forma accesible de aprender cartografía, a través de este proyecto intentamos ofrecer una experiencia de aprendizaje interactiva con mapas."
+  },
+  "wikiInfo": {
+    "title": "Artículo de la Wikipedia para",
+    "notFound": "No se encontraron datos en la Wikipedia"
+  },
   "common": {
     "loading": "Cargando...",
     "time": {
@@ -55,7 +63,7 @@
       "seconds": "{{seconds}} Segundos"
     },
     "share": {
-      "title": "MapPuzzle.xyz - Juego de puzles basado en mapas",
+      "title": "MapPuzzle.xyz - Rompecabezas basado en mapas",
       "quote": "He completado el rompecabezas de {{name}}, en {{time}}, con {{fails}} errores y {{founds}} piezas encontradas.",
       "hashtag": "educación,cartografía,puzle,países,rompecabezas"
     }

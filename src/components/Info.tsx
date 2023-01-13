@@ -4,6 +4,8 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
+import "../i18n/config";
+import { useTranslation } from "react-i18next";
 
 import { getUrl } from "../lib/Utils";
 import "./Info.css";
@@ -38,6 +40,7 @@ function Info({
 }: InfoProps): JSX.Element | null {
   const [showIn, setShowIn] = useState(false);
   const [content, setContent] = useState([] as Puzzles[]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     PuzzleService.getPuzzles().then((data) => {
@@ -51,10 +54,9 @@ function Info({
   }
 
   const url = "http://" + getUrl();
-  const quote =
-    "MapPuzzle.gl is an experimental website, it is an accessible way to learn cartography, through this project we try to offer an interactive learning experience with maps.";
-  const hashtag = "education,cartography,puzzle,countries";
-  const title = "MapPuzzle.xyz - Puzzle game based in maps";
+  const quote = t("info.quote");
+  const hashtag = t("common.share.hashtag");
+  const title = t("common.share.title");
   const infoPuzzles = !content ? null : (
     <Table striped bordered size="sm" className="legendInfo">
       <thead>
@@ -92,7 +94,7 @@ function Info({
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
-            MapPuzzle.xyz - Puzzle game based in maps
+            {t("common.share.title")}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -210,7 +212,7 @@ function Info({
           </Row>
           <Row>
             <Col lg={12} className="share">
-              <h4>Share MapPuzzle.xyz</h4>
+              <h4>{t("info.share")}</h4>
               <EmailShareButton url={url} subject={title} body={quote}>
                 <EmailIcon size={48} round={true} />
               </EmailShareButton>

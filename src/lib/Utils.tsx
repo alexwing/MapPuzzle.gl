@@ -233,13 +233,11 @@ export function getTime(t: TFunction): JSX.Element | undefined {
 export function getTexTime(t: TFunction): string | undefined {
   const time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
-    return (
-      t("common.time.hours", {
-        hours: time.h,
-        minutes: time.m,
-        seconds: time.s,
-      })
-    );
+    return t("common.time.hours", {
+      hours: time.h,
+      minutes: time.m,
+      seconds: time.s,
+    });
   } else if (time.m > 0) {
     return t("common.time.minutes", { minutes: time.m, seconds: time.s });
   } else if (time.s > 0) {
@@ -377,6 +375,17 @@ export function getCurrentLang(langs: WikiInfoLang[]): string {
     } else {
       return "Unknown";
     }
+  }
+}
+
+export function getTitleFromLang(langs: WikiInfoLang[]): string {
+  //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
+  const lang = getLang();
+  const pieceLang = langs.find((x: WikiInfoLang) => x.lang === lang);
+  if (typeof pieceLang === "object" && pieceLang !== null) {
+    return pieceLang.id;
+  } else {
+    return "";
   }
 }
 
