@@ -6,6 +6,7 @@ import { PieceProps, WikiInfoLang } from "../models/Interfaces";
 import { getCookie } from "react-simple-cookie-store";
 import Languages from "../../backend/src/models/languages";
 import { ConfigService } from "../services/configService";
+import { TFunction } from "i18next";
 
 export const colorStroke = [150, 150, 150];
 export const lineWidth = 1;
@@ -204,40 +205,45 @@ export function secondsToTime(secs: number): {
   };
 }
 
-export function getTime(): JSX.Element | undefined {
+export function getTime(t: TFunction): JSX.Element | undefined {
   const time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
     return (
       <span id="hours">
-        {" "}
-        <b>{time.h} </b>Hours <b>{time.m}</b> Minutes <b>{time.s}</b> Seconds
+        {t("common.time.hours", {
+          hours: time.h,
+          minutes: time.m,
+          seconds: time.s,
+        })}
       </span>
     );
   } else if (time.m > 0) {
     return (
       <span id="minutes">
-        <b>{time.m}</b> Minutes <b>{time.s}</b> Seconds
+        {t("common.time.minutes", { minutes: time.m, seconds: time.s })}
       </span>
     );
   } else if (time.s > 0) {
     return (
-      <span id="seconds">
-        <b>{time.s}</b> Seconds
-      </span>
+      <span id="seconds">{t("common.time.seconds", { seconds: time.s })}</span>
     );
   }
 }
 
-export function getTexTime(): string | undefined {
+export function getTexTime(t: TFunction): string | undefined {
   const time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
     return (
-      time.h + " hours and " + time.m + " minutes and " + time.s + " seconds"
+      t("common.time.hours", {
+        hours: time.h,
+        minutes: time.m,
+        seconds: time.s,
+      })
     );
   } else if (time.m > 0) {
-    return time.m + " minutes and " + time.s + " seconds";
+    return t("common.time.minutes", { minutes: time.m, seconds: time.s });
   } else if (time.s > 0) {
-    return time.s + " seconds";
+    return t("common.time.seconds", { seconds: time.s });
   }
 }
 

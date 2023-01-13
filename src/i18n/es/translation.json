@@ -1,6 +1,6 @@
 {
   "topMenu": {
-    "selectPuzzle": "Seleccionar Puzzle",
+    "selectPuzzle": "Seleccionar Puzle",
     "resetGame": "Reiniciar",
     "editor": "Editor",
     "surrenderTitle": "¿Te rindes?",
@@ -14,22 +14,50 @@
     "minutes": "Minutos",
     "seconds": "Segundos"
   },
-  "puzzleSelector":{
-    "table":{
+  "puzzleSelector": {
+    "table": {
       "name": "Nombre",
       "region": "Región",
       "subregion": "Subregión",
-      "pageInfo": "Mostrando del {{from}} a {{to}} de {{size}} puzzles"
+      "pageInfo": "Mostrando del {{from}} a {{to}} de {{size}} puzles"
     },
-    "filters":{
+    "filters": {
       "name": "Buscar por nombre",
       "region": "Regiones",
       "subregion": "Subregiones",
       "all": "Todos"
     },
-    "buttons":{
+    "buttons": {
       "play": "Jugar",
       "cancel": "Cancelar"
+    }
+  },
+  "ConfirmDialog": {
+    "yes": "Sí",
+    "no": "No"
+  },
+  "YouWin": {
+    "title": "¡Felicidades! Has terminado.",
+    "share": "Comparte tu puntuación",
+    "founds": "Encontrados:",
+    "time": "Tiempo:",
+    "fails": "Errores:",
+    "buttons": {
+      "explore": "Explorar",
+      "playAgain": "Jugar de nuevo"
+    }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "time": {
+      "hours": "{{hours}}  Horas {{minutes}} Minutos {{seconds}} Segundos",
+      "minutes": "{{minutes}} Minutos {{seconds}} Segundos",
+      "seconds": "{{seconds}} Segundos"
+    },
+    "share": {
+      "title": "MapPuzzle.xyz - Juego de puzles basado en mapas",
+      "quote": "He completado el rompecabezas de {{name}}, en {{time}}, con {{fails}} errores y {{founds}} piezas encontradas.",
+      "hashtag": "educación,cartografía,puzle,países,rompecabezas"
     }
   }
 }

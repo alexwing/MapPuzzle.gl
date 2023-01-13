@@ -14,22 +14,50 @@
     "minutes": "Minutes",
     "seconds": "Secondes"
   },
-  "puzzleSelector":{
-    "table":{
+  "puzzleSelector": {
+    "table": {
       "name": "Nom",
       "region": "Région",
       "subregion": "Sous-région",
       "pageInfo": "Affichage de {{from}} à {{to}} sur {{size}} puzzles"
     },
-    "filters":{
+    "filters": {
       "name": "Rechercher par nom",
       "region": "Régions",
       "subregion": "Sous-régions",
       "all": "Tous"
     },
-    "buttons":{
+    "buttons": {
       "play": "Jouer",
       "cancel": "Annuler"
+    }
+  },
+  "ConfirmDialog": {
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "YouWin": {
+    "title": "Félicitations! Vous avez terminé.",
+    "share": "Partager votre score",
+    "founds": "Trouvés:",
+    "time": "Temps:",
+    "fails": "Erreurs:",
+    "buttons": {
+      "explore": "Explorer",
+      "playAgain": "Rejouer"
+    }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "time": {
+      "hours": "{{hours}}  Heures {{minutes}} Minutes {{seconds}} Secondes",
+      "minutes": "{{minutes}} Minutes {{seconds}} Secondes",
+      "seconds": "{{seconds}} Secondes"
+    },
+    "share": {
+      "title": "MapPuzzle.xyz - Jeu de puzzle basé sur les cartes",
+      "quote": "J'ai terminé le jeu de puzzle de la {{name}}, en {{time}}, avec {{fails}} erreurs sur {{founds}} pièces trouvées.",
+      "hashtag": "education,cartographie,puzzle,pays"
     }
   }
 }
