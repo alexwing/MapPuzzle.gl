@@ -1,0 +1,71 @@
+{
+  "topMenu": {
+    "selectPuzzle": "Selecione o quebra-cabeça",
+    "resetGame": "Reinicie o jogo",
+    "editor": "Editor",
+    "surrenderTitle": "Você se rende?",
+    "surrenderMessage": "Clique em sim se você deseja iniciar um novo jogo"
+  },
+  "toolsPanel": {
+    "founds": "Encontrados:",
+    "remaining": "Faltando:",
+    "fails": "Erros:",
+    "hours": "Horas",
+    "minutes": "Minutos",
+    "seconds": "Segundos"
+  },
+  "puzzleSelector": {
+    "table": {
+      "name": "Nome",
+      "region": "Região",
+      "subregion": "SubRegião",
+      "pageInfo": "Mostrando {{from}} a {{to}} de {{size}} quebra-cabeças"
+    },
+    "filters": {
+      "name": "Encontre pelo nome",
+      "region": "Regiões",
+      "subregion": "SubRegiões",
+      "all": "Todos"
+    },
+    "buttons": {
+      "play": "Jogar",
+      "cancel": "Cancelar"
+    }
+  },
+  "ConfirmDialog": {
+    "yes": "Sim",
+    "no": "Não"
+  },
+  "YouWin": {
+    "title": "Parabéns! Você terminou.",
+    "share": "Compartilhe sua pontuação",
+    "founds": "Encontrados:",
+    "time": "Tempo:",
+    "fails": "Erros:",
+    "buttons": {
+      "explore": "Explorar",
+      "playAgain": "Jogar Novamente"
+    }
+  },
+  "info": {
+    "share": "Compartilhar MapPuzzle.xyz",
+    "quote": "MapPuzzle.xyz é um site experimental, é uma maneira acessível de aprender cartografia, através deste projeto tentamos oferecer uma experiência de aprendizado interativa com mapas."
+  },
+  "wikiInfo": {
+    "title": "Artigo da Wikipedia para",
+    "notFound": "Dados não encontrados na Wikipedia"
+  },
+  "common": {
+    "loading": "Carregando...",
+    "time": {
+      "hours": "{{hours}} Horas {{minutes}} Minutos {{seconds}} Segundos",
+      "minutes": "{{minutes}} Minutos {{seconds}} Segundos",
+      "seconds": "{{seconds}} Segundos"
+    },
+    "share": {
+      "title": "MapPuzzle.xyz - Jogo de quebra-cabeça baseado em mapas",
+      "quote": "Completei o jogo de quebra-cabeça do {{name}}, em {{time}}, com {{fails}} falhas em {{founds}} peças encontradas.",
+      "hashtag": "educação,cartografia,quebra-cabeça,países"
+    }
+  }
+}
