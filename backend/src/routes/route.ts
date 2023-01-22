@@ -325,14 +325,23 @@ router.post("/generateFlags", async (req, res) => {
                           .toString()
                           .toLowerCase();
                         try {
+                          //const country = ["germany", "europe"];
+                          const formats = ["png", "svg"];
+                          const firstWordPiece = pieceId
+                            .split("_")
+                            .shift()
+                            ?.toLocaleLowerCase();
+
                           const lastWordPiece = pieceId
                             .split("_")
                             .pop()
                             ?.toLocaleLowerCase();
                           if (
-                            (url.includes("flag") || url.includes("bandera"))
-                             &&
-                            url.includes(lastWordPiece)
+                            (url.includes("flag") || url.includes("bandera")) &&
+                            (url.includes(lastWordPiece) ||
+                              url.includes(firstWordPiece)) &&
+                            formats.includes(url.split(".").pop()!) 
+                            //&& !url.includes(country)
                           ) {
                             urlFlagImage = pages[page].imageinfo[0].url;
                             break;
@@ -350,7 +359,10 @@ router.post("/generateFlags", async (req, res) => {
                   }
                 }
                 if (urlFlagImage !== "") {
-                  console.log("urlFlagImage:", urlFlagImage);
+                  console.log(
+                    "urlFlagImage:",
+                    urlFlagImage + " pieceId: " + pieceId
+                  );
                   //save flag image to file
                   //get file extension
                   const ext = urlFlagImage.split(".").pop();

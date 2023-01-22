@@ -3,12 +3,14 @@ import { secondsToTime } from "../lib/Utils";
 import GameTime from "../lib/GameTime";
 import { setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
+import { useTranslation } from "react-i18next";
 
 interface TimerProps {
   puzzleSelected: number;
 }
 
 function Timer({ puzzleSelected }: TimerProps) : JSX.Element {
+  const { t } = useTranslation();
   const [time, setTime] = useState({
     h: 0,
     m: 0,
@@ -38,14 +40,13 @@ function Timer({ puzzleSelected }: TimerProps) : JSX.Element {
       return (
         <ul id="hours">
           <li>
-            {" "}
-            <b>{time.h} </b>Hours{" "}
+            <b>{time.h} </b> {t("toolsPanel.hours")}
           </li>
           <li>
-            <b>{time.m}</b> Minutes{" "}
+            <b>{time.m}</b> {t("toolsPanel.minutes")}
           </li>
           <li>
-            <b>{time.s}</b> Seconds
+            <b>{time.s}</b> {t("toolsPanel.seconds")}
           </li>
         </ul>
       );
@@ -53,10 +54,10 @@ function Timer({ puzzleSelected }: TimerProps) : JSX.Element {
       return (
         <ul id="minutes">
           <li>
-            <b>{time.m}</b> Minutes{" "}
+            <b>{time.m}</b> {t("toolsPanel.minutes")}
           </li>
           <li>
-            <b>{time.s}</b> Seconds
+            <b>{time.s}</b> {t("toolsPanel.seconds")}
           </li>
         </ul>
       );
@@ -64,7 +65,7 @@ function Timer({ puzzleSelected }: TimerProps) : JSX.Element {
       return (
         <ul id="seconds">
           <li>
-            <b>{time.s}</b> Seconds
+            <b>{time.s}</b> {t("toolsPanel.seconds")}
           </li>
         </ul>
       );

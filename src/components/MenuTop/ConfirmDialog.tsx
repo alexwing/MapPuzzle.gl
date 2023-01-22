@@ -1,7 +1,8 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-
+import "../../i18n/config";
+import { useTranslation } from "react-i18next";
 
 interface ConfirmDialogProps {
   title: string;
@@ -18,6 +19,8 @@ function ConfirmDialog({
     handleCancel,
     handleOK,
  }: ConfirmDialogProps) : JSX.Element {
+  const { t } = useTranslation();
+
   return (
     <React.Fragment>
       <Modal show={show} onHide={handleCancel}>
@@ -27,10 +30,10 @@ function ConfirmDialog({
           <Modal.Body>{message}</Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={handleOK}>
-              Yes
+              {t("ConfirmDialog.yes")}
             </Button>
             <Button variant="secondary" onClick={handleCancel}>
-              Cancel
+            {t("ConfirmDialog.no")}
             </Button>
           </Modal.Footer>
         </Modal>

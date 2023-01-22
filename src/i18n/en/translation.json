@@ -1,0 +1,71 @@
+{
+  "topMenu": {
+    "selectPuzzle": "Select Puzzle",
+    "resetGame": "Reset Game",
+    "editor": "Editor",
+    "surrenderTitle": "Do you surrender?",
+    "surrenderMessage": "Click yes, if you want to start a new game"
+  },
+  "toolsPanel": {
+    "founds": "Founds:",
+    "remaining": "Remaining:",
+    "fails": "Fails:",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
+  },
+  "puzzleSelector": {
+    "table": {
+      "name": "Name",
+      "region": "Region",
+      "subregion": "Sub Region",
+      "pageInfo": "Showing {{from}} to {{to}} of {{size}} puzzles"
+    },
+    "filters": {
+      "name": "Find by name",
+      "region": "Regions",
+      "subregion": "Sub Regions",
+      "all": "All"
+    },
+    "buttons": {
+      "play": "Play",
+      "cancel": "Cancel"
+    }
+  },
+  "ConfirmDialog": {
+    "yes": "Yes",
+    "no": "No"
+  },
+  "YouWin": {
+    "title": "Congratulations! You're done.",
+    "share": "Share your score",
+    "founds": "Founds:",
+    "time": "Time:",
+    "fails": "Fails:",
+    "buttons": {
+      "explore": "Explore",
+      "playAgain": "Play Again"
+    }
+  },
+  "info": {
+    "share": "Share MapPuzzle.xyz",
+    "quote" : "MapPuzzle.xyz is an experimental website, it is an accessible way to learn cartography, through this project we try to offer an interactive learning experience with maps."
+  },
+  "wikiInfo": {
+    "title": "Wikipedia article for",
+    "notFound": "Not found data on Wikipedia"
+  },
+  "common": {
+    "loading": "Loading...",
+    "time": {
+      "hours": "{{hours}}  Hours {{minutes}} Minutes {{seconds}} Seconds",
+      "minutes": "{{minutes}} Minutes {{seconds}} Seconds",
+      "seconds": "{{seconds}} Seconds"
+    },
+    "share": {
+      "title": "MapPuzzle.xyz - Puzzle game based in maps",
+      "quote": "I completed the puzzle game of the {{name}}, in {{time}}, with {{fails}} failures out of {{founds}} pieces found.",
+      "hashtag": "education,cartography,puzzle,countries"
+    }
+  }
+}

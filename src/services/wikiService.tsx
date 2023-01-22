@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getCookie } from "react-simple-cookie-store";
 import { mapWikiResponseToWikiInfo } from "../lib/mappings/modelMappers";
+import { getLang } from "../lib/Utils";
 import { WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
 import { ConfigService } from "./configService";
 
@@ -17,8 +17,7 @@ export async function getWikiInfo(piece: string): Promise<WikiInfoPiece> {
       console.log(e);
     }
 
-    const puzzleLanguage =
-      getCookie("puzzleLanguage") || ConfigService.defaultLang;
+    const puzzleLanguage = getLang();
     if (puzzleLanguage !== ConfigService.defaultLang) {
       wikiInfo.contents = await changeLanguage(wikiInfo, puzzleLanguage);
     }

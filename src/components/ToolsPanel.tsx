@@ -8,10 +8,11 @@ import Accordion from "react-bootstrap/Accordion";
 import Timer from "./Timer";
 import PieceList from "./PieceList";
 import { PieceProps } from "../models/Interfaces";
-
+import { useTranslation } from "react-i18next";
 
 interface ToolsPanelProps {
   name: string;
+  flag: string;
   puzzleSelected: number;
   pieceSelected: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,9 +29,9 @@ interface ToolsPanelProps {
   enableFlags: boolean;
 }
 
-
 function ToolsPanel({
   name,
+  flag,
   puzzleSelected,
   pieceSelected,
   onPieceSelected,
@@ -44,17 +45,39 @@ function ToolsPanel({
   lang,
   loading,
   enableFlags,
-}: ToolsPanelProps) : JSX.Element {
-  const showTimer =
-  winner || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
+}: ToolsPanelProps): JSX.Element {
+  const { t } = useTranslation();
 
-  return loading ? (<React.Fragment></React.Fragment>) : (
+  const accordionTitle = (): JSX.Element => {
+    if (flag) {
+      return (
+        <React.Fragment>
+          <div className="flagGradient">
+            <img src={flag}/>
+          </div>
+          <div className="mapName">{name}</div>
+          {showTimer}
+        </React.Fragment>
+      );
+    }
+    return (
+      <div>
+        <span className="mapName">{name}</span>
+        {showTimer}
+      </div>
+    );
+  };
+
+  const showTimer =
+    winner || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
+  return loading ? (
+    <React.Fragment></React.Fragment>
+  ) : (
     <React.Fragment>
-      <Accordion defaultActiveKey="0">
+      <Accordion defaultActiveKey="0" >
         <Card>
           <Accordion.Toggle as={Card.Header} eventKey="0">
-            {name}
-            {showTimer}
+            {accordionTitle()}         
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="0">
             <Card.Body>
@@ -62,21 +85,21 @@ function ToolsPanel({
                 <Row className="score">
                   <Col xs={4} lg={4}>
                     <Alert variant="success">
-                      <Alert.Heading>Founds:</Alert.Heading>
+                      <Alert.Heading>{t("toolsPanel.founds")}</Alert.Heading>
                       <hr />
                       <p className="mb-0">{founds.length}</p>
                     </Alert>
                   </Col>
                   <Col xs={4} lg={4}>
                     <Alert variant="warning">
-                      <Alert.Heading>Remaining:</Alert.Heading>
+                      <Alert.Heading>{t("toolsPanel.remaining")}</Alert.Heading>
                       <hr />
                       <p className="mb-0">{pieces.length - founds.length}</p>
                     </Alert>
                   </Col>
                   <Col xs={4} lg={4}>
                     <Alert variant="danger">
-                      <Alert.Heading>Fails:</Alert.Heading>
+                      <Alert.Heading>{t("toolsPanel.fails")}</Alert.Heading>
                       <hr />
                       <p className="mb-0">{fails}</p>
                     </Alert>

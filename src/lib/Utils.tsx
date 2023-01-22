@@ -6,6 +6,7 @@ import { PieceProps, WikiInfoLang } from "../models/Interfaces";
 import { getCookie } from "react-simple-cookie-store";
 import Languages from "../../backend/src/models/languages";
 import { ConfigService } from "../services/configService";
+import { TFunction } from "i18next";
 
 export const colorStroke = [150, 150, 150];
 export const lineWidth = 1;
@@ -204,40 +205,43 @@ export function secondsToTime(secs: number): {
   };
 }
 
-export function getTime(): JSX.Element | undefined {
+export function getTime(t: TFunction): JSX.Element | undefined {
   const time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
     return (
       <span id="hours">
-        {" "}
-        <b>{time.h} </b>Hours <b>{time.m}</b> Minutes <b>{time.s}</b> Seconds
+        {t("common.time.hours", {
+          hours: time.h,
+          minutes: time.m,
+          seconds: time.s,
+        })}
       </span>
     );
   } else if (time.m > 0) {
     return (
       <span id="minutes">
-        <b>{time.m}</b> Minutes <b>{time.s}</b> Seconds
+        {t("common.time.minutes", { minutes: time.m, seconds: time.s })}
       </span>
     );
   } else if (time.s > 0) {
     return (
-      <span id="seconds">
-        <b>{time.s}</b> Seconds
-      </span>
+      <span id="seconds">{t("common.time.seconds", { seconds: time.s })}</span>
     );
   }
 }
 
-export function getTexTime(): string | undefined {
+export function getTexTime(t: TFunction): string | undefined {
   const time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
-    return (
-      time.h + " hours and " + time.m + " minutes and " + time.s + " seconds"
-    );
+    return t("common.time.hours", {
+      hours: time.h,
+      minutes: time.m,
+      seconds: time.s,
+    });
   } else if (time.m > 0) {
-    return time.m + " minutes and " + time.s + " seconds";
+    return t("common.time.minutes", { minutes: time.m, seconds: time.s });
   } else if (time.s > 0) {
-    return time.s + " seconds";
+    return t("common.time.seconds", { seconds: time.s });
   }
 }
 
@@ -249,7 +253,6 @@ export function getUrl(): string {
   return url;
 }
 
-
 export function cleanWikiComment(html: string[]): string[] {
   //remove comment
   let htmlAux = cleanHtmlComment(html.join(""));
@@ -257,11 +260,17 @@ export function cleanWikiComment(html: string[]): string[] {
   //remove references <sup>...</sup>
   htmlAux = htmlAux.replace(/<sup[\s\S]*?<\/sup>/g, "");
   //remove audio description
-  htmlAux = htmlAux.replace("<span>(<span><span><span></span>listen</span></span>)</span>", "");
-  htmlAux = htmlAux.replace('<small class="nowrap">&nbsp;( escuchar)</small>', "");
+  htmlAux = htmlAux.replace(
+    "<span>(<span><span><span></span>listen</span></span>)</span>",
+    ""
+  );
+  htmlAux = htmlAux.replace(
+    '<small class="nowrap">&nbsp;( escuchar)</small>',
+    ""
+  );
 
   //convert string to array
-  return [htmlAux]
+  return [htmlAux];
 }
 
 function cleanHtmlComment(html: string): string {
@@ -352,8 +361,7 @@ export function langName(piece: WikiInfoLang): string {
 }
 
 export function getCurrentLang(langs: WikiInfoLang[]): string {
-  const puzzleLanguage =
-    getCookie("puzzleLanguage") || ConfigService.defaultLang;
+  const puzzleLanguage = getLang();
   //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
   let pieceLang = langs.find((x: WikiInfoLang) => x.lang === puzzleLanguage);
   if (typeof pieceLang === "object" && pieceLang !== null) {
@@ -367,6 +375,17 @@ export function getCurrentLang(langs: WikiInfoLang[]): string {
     } else {
       return "Unknown";
     }
+  }
+}
+
+export function getTitleFromLang(langs: WikiInfoLang[]): string {
+  //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
+  const lang = getLang();
+  const pieceLang = langs.find((x: WikiInfoLang) => x.lang === lang);
+  if (typeof pieceLang === "object" && pieceLang !== null) {
+    return pieceLang.id;
+  } else {
+    return "";
   }
 }
 
@@ -395,4 +414,22 @@ export function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
     return 0;
   });
   return langs;
+}
+
+export function getLang(): string {
+  const lang = getCookie("puzzleLanguage");
+  if (lang === undefined || lang === "") {
+    let browserLang = navigator.language;
+    if (browserLang.includes("-")) {
+      browserLang = navigator.language.split("-")[0];
+    }
+    const lang = ConfigService.langs.find((x: string) => x === browserLang);
+    if (lang !== undefined) {
+      return lang;
+    } else {
+      return ConfigService.defaultLang;
+    }
+  } else {
+    return lang;
+  }
 }

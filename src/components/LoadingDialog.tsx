@@ -4,6 +4,8 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import "./LoadingDialog.css";
 import { Spinner } from "react-bootstrap";
+import "../i18n/config";
+import { useTranslation } from "react-i18next";
 
 interface LoadingDialogProps {
   show: boolean;
@@ -12,6 +14,7 @@ interface LoadingDialogProps {
 
 function LoadingDialog({ show = false, delay = 0 }: LoadingDialogProps) : JSX.Element {
   const [showIn, setShowIn] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -32,7 +35,7 @@ function LoadingDialog({ show = false, delay = 0 }: LoadingDialogProps) : JSX.El
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
-            Loading...
+            {t("common.loading")}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

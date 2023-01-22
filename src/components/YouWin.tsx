@@ -5,6 +5,8 @@ import Fireworks from "../lib/Fireworks";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Alert from "react-bootstrap/Alert";
+import "../i18n/config";
+import { useTranslation } from "react-i18next";
 
 import { getUrl, getTexTime, getTime } from "../lib/Utils";
 import "./YouWin.css";
@@ -32,7 +34,6 @@ interface YouWinProps {
   winner: boolean;
 }
 
-
 export default function YouWin({
   founds,
   fails,
@@ -40,8 +41,9 @@ export default function YouWin({
   path,
   name,
   winner = false,
-}: YouWinProps) : JSX.Element | null {
+}: YouWinProps): JSX.Element | null {
   const [show, setShow] = React.useState(true);
+  const { t } = useTranslation();
 
   const handleClose = () => {
     setShow(false);
@@ -54,18 +56,14 @@ export default function YouWin({
   }, [winner]);
 
   const url = "http://" + getUrl() + "/?map=" + path;
-  const quote =
-    "I completed the puzzle game of the " +
-    name +
-    ", in " +
-    getTexTime() +
-    ", with " +
-    fails +
-    " failures out of " +
-    founds.length +
-    " pieces found.";
-  const hashtag = "education,cartography,puzzle,countries";
-  const title = "MapPuzzle.xyz - Puzzle game based in maps";
+  const quote = t("common.share.quote", {
+    name,
+    time: getTexTime(t),
+    fails,
+    founds: founds.length,
+  });
+  const hashtag = t("common.share.hashtag");
+  const title = t("common.share.title");
   return !winner ? null : (
     <React.Fragment>
       <Modal
@@ -77,28 +75,28 @@ export default function YouWin({
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
-            Congratulations! You&apos;re done.
+            {t("YouWin.title")}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row className="scorewin">
             <Col xs={4} lg={4}>
               <Alert variant="success">
-                <Alert.Heading>Founds:</Alert.Heading>
+                <Alert.Heading>{t("YouWin.founds")}</Alert.Heading>
                 <hr />
                 <p className="mb-0">{founds.length}</p>
               </Alert>
             </Col>
             <Col xs={4} lg={4}>
               <Alert variant="warning">
-                <Alert.Heading>Time:</Alert.Heading>
+                <Alert.Heading>{t("YouWin.time")}</Alert.Heading>
                 <hr />
-                <p className="mb-0">{getTime()}</p>
+                <p className="mb-0">{getTime(t)}</p>
               </Alert>
             </Col>
             <Col xs={4} lg={4}>
               <Alert variant="danger">
-                <Alert.Heading>Fails:</Alert.Heading>
+                <Alert.Heading>{t("YouWin.fails")}</Alert.Heading>
                 <hr />
                 <p className="mb-0">{fails}</p>
               </Alert>
@@ -106,7 +104,7 @@ export default function YouWin({
           </Row>
           <Row>
             <Col lg={12} className="share">
-              <h4>Share your score</h4>
+              <h4>{t("YouWin.share")}</h4>
               <EmailShareButton url={url} subject={title} body={quote}>
                 <EmailIcon size={48} round={true} />
               </EmailShareButton>
@@ -139,9 +137,9 @@ export default function YouWin({
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-primary" onClick={handleClose}>
-            Explore
+            {t("YouWin.buttons.explore")}
           </Button>
-          <Button onClick={onResetGame}>New Game</Button>
+          <Button onClick={onResetGame}>{t("YouWin.buttons.playAgain")}</Button>
         </Modal.Footer>
       </Modal>
       {show && <Fireworks />}

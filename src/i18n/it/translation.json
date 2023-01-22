@@ -1,0 +1,71 @@
+{
+  "topMenu": {
+    "selectPuzzle": "Seleziona il puzzle",
+    "resetGame": "Riavvia il gioco",
+    "editor": "Editor",
+    "surrenderTitle": "Ti arrendi?",
+    "surrenderMessage": "Clicca su sì se vuoi iniziare un nuovo gioco"
+  },
+  "toolsPanel": {
+    "founds": "Trovati:",
+    "remaining": "Rimanenti:",
+    "fails": "Errori:",
+    "hours": "Ore",
+    "minutes": "Minuti",
+    "seconds": "Secondi"
+  },
+  "puzzleSelector": {
+    "table": {
+      "name": "Nome",
+      "region": "Regione",
+      "subregion": "Sottoregione",
+      "pageInfo": "Mostrando {{from}} a {{to}} di {{size}} puzzle"
+    },
+    "filters": {
+      "name": "Cerca per nome",
+      "region": "Regioni",
+      "subregion": "Sottoregioni",
+      "all": "Tutti"
+    },
+    "buttons": {
+      "play": "Gioca",
+      "cancel": "Annulla"
+    }
+  },
+  "ConfirmDialog": {
+    "yes": "Sì",
+    "no": "No"
+  },
+  "YouWin": {
+    "title": "Complimenti! Hai finito.",
+    "share": "Condividi il tuo punteggio",
+    "founds": "Trovati:",
+    "time": "Tempo:",
+    "fails": "Errori:",
+    "buttons": {
+      "explore": "Esplora",
+      "playAgain": "Gioca di nuovo"
+    }
+  },
+  "info": {
+    "share": "Condividi MapPuzzle.xyz",
+    "quote": "MapPuzzle.xyz è un sito sperimentale, è un modo accessibile per imparare la cartografia, attraverso questo progetto cerchiamo di offrire un'esperienza di apprendimento interattiva con le mappe."
+  },
+  "wikiInfo": {
+    "title": "Articolo di Wikipedia per",
+    "notFound": "Dati non trovati su Wikipedia"
+  },
+  "common": {
+    "loading": "Caricamento in corso...",
+    "time": {
+      "hours": "{{hours}} Ore {{minutes}} Minuti {{seconds}} Secondi",
+      "minutes": "{{minutes}} Minuti {{seconds}} Secondi",
+      "seconds": "{{seconds}} Secondi"
+    },
+    "share": {
+      "title": "MapPuzzle.xyz - Gioco di puzzle basato su mappe",
+      "quote": "Ho completato il gioco del puzzle di {{name}}, in {{time}}, con {{fails}} errori su {{founds}} pezzi trovati.",
+      "hashtag": "educazione,cartografia,puzzle,paesi"
+    }
+  }
+}
