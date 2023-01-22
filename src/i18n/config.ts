@@ -31,6 +31,7 @@ export const resources = {
     translation: it,
   },
 };
+//los idiomas incluidos son inglés, español, francés, portugués, alemán, griego e italiano
 
 i18next.use(initReactI18next).init({
   lng: "en", // if you're using a language detector, do not define the lng option

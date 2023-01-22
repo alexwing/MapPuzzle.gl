@@ -69,7 +69,43 @@ table.legend .imgflag div {
   
 }
 
-
+.mapName {
+	font-weight: 600;
+	margin: -.75rem -0.25rem;
+	height: 3em;
+	position: absolute;
+	width: calc(100% - 5.5rem);
+	display: flex;
+	justify-content: center;
+  	align-content: center;
+	flex-direction: column;
+	line-height: 0.95em;
+}
+.card-header{
+  min-height: 3em;
+}
+.flagGradient img {
+	width: 76px;
+	height: 76px;
+	padding: 0;
+	display: block;
+	position: absolute;
+	opacity: 0.25;
+  z-index: -2;
+}
+.flagGradient {
+	position: absolute;
+	margin-top: -26px;
+	margin-left: -24px;
+}
+.flagGradient::after{
+  content: " ";
+  position: absolute;
+	width: 76px;
+	height: 76px;
+  background: linear-gradient(to right, rgba(255,255,255,0) 25%, rgba(255,255,255,1) 90%);
+  z-index: -1;
+}
 .legendPiece {
   padding: 1px 3px !important;
 }

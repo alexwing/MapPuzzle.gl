@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 
 interface ToolsPanelProps {
   name: string;
+  flag: string;
   puzzleSelected: number;
   pieceSelected: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,6 +31,7 @@ interface ToolsPanelProps {
 
 function ToolsPanel({
   name,
+  flag,
   puzzleSelected,
   pieceSelected,
   onPieceSelected,
@@ -45,17 +47,37 @@ function ToolsPanel({
   enableFlags,
 }: ToolsPanelProps): JSX.Element {
   const { t } = useTranslation();
+
+  const accordionTitle = (): JSX.Element => {
+    if (flag) {
+      return (
+        <React.Fragment>
+          <div className="flagGradient">
+            <img src={flag}/>
+          </div>
+          <div className="mapName">{name}</div>
+          {showTimer}
+        </React.Fragment>
+      );
+    }
+    return (
+      <div>
+        <span className="mapName">{name}</span>
+        {showTimer}
+      </div>
+    );
+  };
+
   const showTimer =
     winner || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
   return loading ? (
     <React.Fragment></React.Fragment>
   ) : (
     <React.Fragment>
-      <Accordion defaultActiveKey="0">
+      <Accordion defaultActiveKey="0" >
         <Card>
           <Accordion.Toggle as={Card.Header} eventKey="0">
-            {name}
-            {showTimer}
+            {accordionTitle()}         
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="0">
             <Card.Body>

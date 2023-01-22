@@ -26,6 +26,7 @@ import CustomTranslations from "../backend/src/models/customTranslations";
 import Puzzles from "../backend/src/models/puzzles";
 import { useTranslation } from "react-i18next";
 
+
 function MapPuzzle(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
   const [puzzleSelected, setPuzzleSelected] = useState(1);
@@ -432,6 +433,7 @@ function MapPuzzle(): JSX.Element {
                 <Col xs={8} md={4} lg={4} xl={3}>
                   <ToolsPanel
                     name={puzzleSelectedData?.name}
+                    flag={puzzleSelectedData?.icon}
                     puzzleSelected={puzzleSelected}
                     pieceSelected={pieceSelected}
                     onPieceSelected={onPieceSelectedHandler}
