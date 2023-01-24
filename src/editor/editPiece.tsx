@@ -114,7 +114,7 @@ function EditPiece({ piece = {} as PieceProps }: EditPieceProps): JSX.Element | 
           <Col xs={12} lg={12}>
             <h2>{PieceEdited.name}</h2>
             <Form.Group className="mb-3" controlId="formWiki">
-              <Form.Label>Wikipedia url id:</Form.Label>
+              <Form.Label>Wikipedia url id: {PieceEdited.properties.cartodb_id}</Form.Label>
               <InputGroup>
                 <Form.Control
                   type="input"

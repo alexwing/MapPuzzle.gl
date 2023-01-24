@@ -321,27 +321,32 @@ router.post("/generateFlags", async (req, res) => {
                   for (const page in pages) {
                     try {
                       if (pages[page].imageinfo) {
-                        const url = pages[page].imageinfo[0].url
+                        // @ts-ignore
+                        const url = decodeURI(pages[page].imageinfo[0].url)
+                          .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
                           .toString()
                           .toLowerCase();
                         try {
-                          //const country = ["germany", "europe"];
+                          //const exclude = [""];
                           const formats = ["png", "svg"];
                           const firstWordPiece = pieceId
                             .split("_")
-                            .shift()
-                            ?.toLocaleLowerCase();
-
-                          const lastWordPiece = pieceId
+                            .pop()
+                            ?.toLocaleLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                          console.log("url:" + url, "firstWordPiece:" + firstWordPiece);
+                          /*const lastWordPiece = pieceId
                             .split("_")
                             .pop()
-                            ?.toLocaleLowerCase();
+                            ?.toLocaleLowerCase();*/
+                            // @ts-ignore
                           if (
                             (url.includes("flag") || url.includes("bandera")) &&
-                            (url.includes(lastWordPiece) ||
+                            (/*url.includes(lastWordPiece) ||*/
+                            // @ts-ignore
                               url.includes(firstWordPiece)) &&
-                            formats.includes(url.split(".").pop()!) 
-                            //&& !url.includes(country)
+                            formats.includes(url.split(".").pop()!)
+                            // @ts-ignore
+                            // && !url.includes(exclude)
                           ) {
                             urlFlagImage = pages[page].imageinfo[0].url;
                             break;

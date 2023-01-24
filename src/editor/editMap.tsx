@@ -168,7 +168,7 @@ function EditMap({
           <Row>
             <Col xs={6} lg={6}>
               <Form.Group className="mb-12" controlId="formname">
-                <Form.Label>Puzzle Name</Form.Label>
+                <Form.Label>Puzzle Name: {puzzleEdited.id}</Form.Label>
                 <Form.Control
                   size="sm"
                   type="input"
