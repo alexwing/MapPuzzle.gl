@@ -331,7 +331,7 @@ router.post("/generateFlags", async (req, res) => {
                           const formats = ["png", "svg"];
                           const firstWordPiece = pieceId
                             .split("_")
-                            .pop()
+                            .shift()
                             ?.toLocaleLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                           console.log("url:" + url, "firstWordPiece:" + firstWordPiece);
                           /*const lastWordPiece = pieceId

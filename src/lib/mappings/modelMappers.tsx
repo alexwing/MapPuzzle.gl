@@ -6,7 +6,7 @@ import CustomWiki from "../../../backend/src/models/customWiki";
 import Languages from "../../../backend/src/models/languages";
 import Puzzles from "../../../backend/src/models/puzzles";
 import { WikiInfoLang, WikiInfoPiece } from "../../models/Interfaces";
-import { sortLangs } from "../Utils";
+import { convertToNumber, sortLangs } from "../Utils";
 
 //map the result data to a QueryExecResult[]
 export function mapResultToQueryExecResult(data: any[]): QueryExecResult[] {
@@ -72,9 +72,9 @@ export function mapResultToPuzzle(result: SqlValue[]): Puzzles {
     enableWiki: parseInt(result[8] as string) === 1,
     enableFlags: parseInt(result[9] as string) === 1,
     view_state: {
-      latitude: parseFloat((result[10] as string)),
-      longitude: parseFloat((result[11] as string)),
-      zoom: parseFloat((result[12] as string)),
+      latitude: convertToNumber(result[10]),
+      longitude: convertToNumber(result[11]),
+      zoom: convertToNumber(result[12]),
     },
   } as Puzzles;
 }
@@ -98,8 +98,8 @@ export function  mapResultToLanguage(result: SqlValue[]): Languages {
     return {
       id: result[0],
       cartodb_id: result[1],
-      left: parseFloat((result[2] as string)),
-      top:  parseFloat((result[3] as string))
+      left: convertToNumber(result[2]),
+      top: convertToNumber(result[3]),
     } as CustomCentroids;
   }
 
