@@ -530,4 +530,26 @@ export class PuzzleService {
       return false;
     }
   }
+
+  //import shapefile to cartodb
+  public static async importShapefile(
+    file: File,
+    name: string,
+  ) : Promise<any> {
+    //importShapefile post request, body file and name
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("name", name);
+    const response = await fetch(ConfigService.backendUrl + "/importShapefile", {
+      method: "POST",
+      body: formData,
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error importing shapefile");
+    }
+    );
+    return response.json();
+
+  }
+
 }

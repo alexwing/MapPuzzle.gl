@@ -1,6 +1,7 @@
 import { Pool, ClientConfig } from "pg";
 import { exec } from "child_process";
 import fs from "fs";
+import path from "path";
 
 export class MapGenerator {
   private clientConfig: ClientConfig;
@@ -102,10 +103,10 @@ export class MapGenerator {
   //get all columns from table
   public async getColumns(table: string): Promise<any> {
     const client = await this.pool.connect();
+    let sql = `SELECT column_name FROM information_schema.columns WHERE table_name = '[table]'`;
+    sql = sql.replace("[table]", table);
     try {
-      const res = await client.query(
-        `SELECT column_name FROM information_schema.columns WHERE table_name = '[table]'`
-      );
+      const res = await client.query(sql);
       return res.rows;
     } catch (e) {
       console.log(e);
@@ -115,20 +116,20 @@ export class MapGenerator {
   }
   //run  shp2pgsql.exe for import shapefile from folder
   public async importShapefile(shapeFile: string, table: string): Promise<any> {
-    let command = `C:\\Program Files\\PostgreSQL\\9.6\\bin\\shp2pgsql.exe -s 4326 -I -W "latin1" -g geom -c -D -a -t 2D [shapefile] public.[table] | psql -h [host] -p [port] -U [user] -d [database] -P [password]`;
-    
+    // let command = `"C:\\Program Files\\PostgreSQL\\9.6\\bin\\shp2pgsql.exe" -s 4326 -I -W "latin1" -g geom -c -D -a -t 2D [shapefile] public.[table] | psql -h [host] -p [port] -U [user] -d [database] -P [password]`;
+    //in utf8
+    let command = `"[PGPATH]shp2pgsql.exe" -s 4326  -I [shapefile] > [sqlfile]`;
+
+    // @ts-ignore
+    command = command.replace("[PGPATH]", process.env.PGPATH);
+
+    //replace table name
     command = command.replace("[shapefile]", shapeFile);
-    command = command.replace("[table]", table);
-    // @ts-ignore
-    command = command.replace("[host]", process.env.PGHOST);
-    // @ts-ignore
-    command = command.replace("[port]", process.env.PGPORT);
-    // @ts-ignore
-    command = command.replace("[user]", process.env.PGUSER);
-    // @ts-ignore
-    command = command.replace("[database]", process.env.PGDATABASE);
-    // @ts-ignore
-    command = command.replace("[password]", process.env.PGPASSWORD);
+    //to temp folder
+    command = command.replace(
+      "[sqlfile]",
+      path.join(__dirname, `../../../temp/` + table + `.sql`)
+    );
 
     exec(command, (error, stdout, stderr) => {
       if (error) {
@@ -137,9 +138,45 @@ export class MapGenerator {
       }
       if (stderr) {
         console.log(`stderr: ${stderr}`);
-        return;
+        // return;
       }
       console.log(`stdout: ${stdout}`);
+
+      //run sql
+      let commandSql = `"[PGPATH]psql.exe" -h [host] -p [port] -U [user] -d [database]  -f [sqlfile]`;
+
+      // @ts-ignore
+      commandSql = commandSql.replace("[PGPATH]", process.env.PGPATH);
+      // @ts-ignore
+      commandSql = commandSql.replace("[host]", process.env.PGHOST);
+      // @ts-ignore
+      commandSql = commandSql.replace("[port]", process.env.PGPORT);
+      // @ts-ignore
+      commandSql = commandSql.replace("[user]", process.env.PGUSER);
+      // @ts-ignore
+      commandSql = commandSql.replace("[database]", process.env.PGDATABASE);
+      // @ts-ignore
+      commandSql = commandSql.replace("[password]", process.env.PGPASSWORD);
+      // @ts-ignore
+      //to tempDir folder with table name .sql
+      commandSql = commandSql.replace(
+        "[sqlfile]",
+        path.join(__dirname, `../../../temp/` + table + `.sql`)
+      );
+
+      exec(commandSql, (error, stdout, stderr) => {
+        if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+        const tempDir = path.join(__dirname, `../../../temp`);
+        fs.rmdirSync(tempDir, { recursive: true });
+      });
     });
   }
 }

@@ -5,6 +5,7 @@ import cors from 'cors';
 import express from 'express';
 import passport from 'passport';
 import bodyParser from 'body-parser';
+import fileUpload from 'express-fileupload';
 
 import routes from '../routes/route';
 import { connect } from './database';
@@ -21,11 +22,13 @@ server.use(passport.initialize());
 if (process.env.NODE_ENV !== 'test') {
   connect();
 }
-
+server.use(fileUpload());
 server.use(cors());
 server.use(express.json());
 
 // Initialize routes middleware
 server.use('/api/', routes);
+
+
 
 export default server;

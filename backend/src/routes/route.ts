@@ -2,6 +2,7 @@ import { PieceProps } from "../../../src/models/Interfaces";
 import express from "express";
 import Puzzles from "../models/puzzles";
 import { connection } from "../server/database";
+import { MapGenerator } from "../server/MapGenerator";
 import CustomWiki from "../models/customWiki";
 import CustomCentroids from "../models/customCentroids";
 import CustomTranslations from "../models/customTranslations";
@@ -14,10 +15,13 @@ import path from "path";
 import * as fs from "fs";
 import svg2png from "svg2png";
 import sharp from "sharp";
+import AdmZip from "adm-zip";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
 // Route: <HOST>:PORT/api/users/
+
+//express enable upload files
 
 express.json({ limit: "125mb" });
 express.urlencoded({ limit: "125mb", extended: true });
@@ -323,7 +327,8 @@ router.post("/generateFlags", async (req, res) => {
                       if (pages[page].imageinfo) {
                         // @ts-ignore
                         const url = decodeURI(pages[page].imageinfo[0].url)
-                          .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                          .normalize("NFD")
+                          .replace(/[\u0300-\u036f]/g, "")
                           .toString()
                           .toLowerCase();
                         try {
@@ -332,18 +337,25 @@ router.post("/generateFlags", async (req, res) => {
                           const firstWordPiece = pieceId
                             .split("_")
                             .shift()
-                            ?.toLocaleLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                          console.log("url:" + url, "firstWordPiece:" + firstWordPiece);
+                            ?.toLocaleLowerCase()
+                            .normalize("NFD")
+                            .replace(/[\u0300-\u036f]/g, "");
+                          console.log(
+                            "url:" + url,
+                            "firstWordPiece:" + firstWordPiece
+                          );
                           /*const lastWordPiece = pieceId
                             .split("_")
                             .pop()
                             ?.toLocaleLowerCase();*/
-                            // @ts-ignore
+                          // @ts-ignore
                           if (
-                            (url.includes("flag") || url.includes("bandera")) &&
-                            (/*url.includes(lastWordPiece) ||*/
+                            (url.includes("flag") ||
+                              url.includes(
+                                "bandera"
+                              )) /*url.includes(lastWordPiece) ||*/ &&
                             // @ts-ignore
-                              url.includes(firstWordPiece)) &&
+                            url.includes(firstWordPiece) &&
                             formats.includes(url.split(".").pop()!)
                             // @ts-ignore
                             // && !url.includes(exclude)
@@ -537,6 +549,66 @@ router.post("/generateThumbs", async (req, res) => {
     }
     console.log("Success:", success);
     console.log("Error:", error);
+  }
+});
+
+//mapGenerator endpoint
+router.post("/importShapefile", async (req, res) => {
+  
+  /* from     const formData = new FormData();
+    formData.append("file", file);
+    formData.append("name", name);
+    */
+
+  if (!req.files) return res.status(400).send('No files were uploaded.');
+
+  const file = req.files.file;
+  const name = req.body.name;
+  const ext = name.split(".").pop();
+
+  //if zip file
+  if (ext.toLowerCase() === "zip" && file !== undefined) {
+    //unzip file in temp folder
+     // @ts-ignore
+    const zip = new AdmZip(file.data);
+    //const zipEntries = zip.getEntries();
+    const tempDir = path.join(__dirname, `../../../temp`);
+    fs.rmdirSync(tempDir, { recursive: true });
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir);
+    }
+    zip.extractAllTo(tempDir, true);
+    //get all files in temp folder
+    const files = fs.readdirSync(tempDir);
+    //for each file
+    for (const file of files) {
+      //get file extension
+      const ext = file.split(".").pop();
+      const fileName = file.split(".").shift();
+      //if file is a shapefile
+      // @ts-ignore
+      if (ext.toLowerCase() === "shp") {
+        //import shapefile
+        const mapGenerator = new MapGenerator();
+        const mapGeneratorResult = await mapGenerator.importShapefile(
+          path.join(tempDir, file),
+          // @ts-ignore
+          fileName
+        ).then((result) => {
+        
+          return result;
+        });
+
+        console.log("mapGeneratorResult", mapGeneratorResult);
+      }
+    }
+    //delete temp folder
+
+    res.json({
+      success: true,
+      msg: "Shapefile imported successfully",
+    });
+
   }
 });
 

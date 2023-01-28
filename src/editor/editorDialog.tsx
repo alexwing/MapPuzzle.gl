@@ -14,10 +14,11 @@ import EditPiece from "./editPiece";
 import "./editorDialog.css";
 import AlertMessage from "../components/AlertMessage";
 import { ConfigService } from "../services/configService";
+import NewMap from "./newMap";
 
 interface EditorDialogProps {
   show: boolean;
-  onHide: (val:boolean) => void;
+  onHide: (val: boolean) => void;
   puzzleSelected: Puzzles;
   pieces: PieceProps[];
 }
@@ -27,7 +28,7 @@ function EditorDialog({
   onHide,
   puzzleSelected = {} as Puzzles,
   pieces = new Array<PieceProps>(),
-}: EditorDialogProps) : JSX.Element | null {
+}: EditorDialogProps): JSX.Element | null {
   const [loading, setLoading] = useState(false);
   const [showIn, setShowIn] = useState(false);
   const [pieceSelected, setPieceSelected] = useState(-1);
@@ -125,7 +126,7 @@ function EditorDialog({
     }
   };
 
-  if (loading) return <LoadingDialog show={loading} delay={1000}/>;
+  if (loading) return <LoadingDialog show={loading} delay={1000} />;
   return !puzzleSelected ? null : (
     <React.Fragment>
       <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
@@ -149,6 +150,11 @@ function EditorDialog({
             id="uncontrolled-tab-example"
             className="mb-3"
           >
+            <Tab eventKey="newMap" title="New Map">
+              <Row>
+                <NewMap puzzle={puzzleSelected} />
+              </Row>
+            </Tab>
             <Tab eventKey="puzzle" title="Puzzle">
               <Row>
                 <EditMap puzzle={puzzleSelected} pieces={pieces} />
@@ -169,11 +175,15 @@ function EditorDialog({
                       onPieceSelected={onPieceSelectedHandler}
                       pieceSelected={pieceSelected}
                       handleUp={onPieceUpHandler}
-                      handleDown={onPieceDownHandler} 
+                      handleDown={onPieceDownHandler}
                       puzzleId={puzzleSelected.id}
-                      lang={ConfigService.defaultLang}  
-                      enableFlags={puzzleSelected.enableFlags ? puzzleSelected.enableFlags : false}              
-                      />
+                      lang={ConfigService.defaultLang}
+                      enableFlags={
+                        puzzleSelected.enableFlags
+                          ? puzzleSelected.enableFlags
+                          : false
+                      }
+                    />
                   </div>
                 </Col>
                 <Col xs={8} lg={8}>
