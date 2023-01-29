@@ -152,7 +152,7 @@ function EditorDialog({
           >
             <Tab eventKey="newMap" title="New Map">
               <Row>
-                <NewMap puzzle={puzzleSelected} />
+                <NewMap />
               </Row>
             </Tab>
             <Tab eventKey="puzzle" title="Puzzle">

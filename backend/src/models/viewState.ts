@@ -3,15 +3,13 @@
 */
 
 
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
-import Puzzles from './puzzles';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export default class ViewState {
 
-    @OneToOne(() => Puzzles, { nullable: false })
-    @JoinColumn({ name: 'id' })
-    puzzle!: Puzzles;
+    @PrimaryColumn({ type: 'integer', nullable: false })
+    id!: number;
 
     @Column({ type: 'real', nullable: false })
     latitude!: number;

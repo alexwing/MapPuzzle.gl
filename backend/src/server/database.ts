@@ -9,6 +9,7 @@ import CustomCentroids from "../models/customCentroids";
 import CustomWiki from "../models/customWiki";
 import CustomTranslations from "../models/customTranslations";
 import Languages from "../models/languages";
+import ViewState from "../models/viewState";
 
 if (!process.env.SQLITE_PATH) {
   throw new Error("SQLITE_PATH environment variable is not set.");
@@ -24,7 +25,8 @@ const options: ConnectionOptions = {
     CustomCentroids,
     CustomWiki,
     CustomTranslations,
-    Languages
+    Languages,
+    ViewState,
   ],
   logging: true,
 };

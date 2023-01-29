@@ -8,6 +8,7 @@ import CustomWiki from "../../backend/src/models/customWiki";
 import CustomTranslations from "../../backend/src/models/customTranslations";
 import Languages from "../../backend/src/models/languages";
 import {
+  MapGeneratorModel,
   PieceProps,
   Regions,
   WikiInfoLang,
@@ -85,7 +86,9 @@ export class PuzzleService {
     return query(`SELECT p.wiki FROM puzzles p WHERE p.id = ${id}`)
       .then((result: QueryExecResult[]) => {
         if (result.length > 0) {
-          return result[0].values[0][0] ? result[0].values[0][0].toString() : "";
+          return result[0].values[0][0]
+            ? result[0].values[0][0].toString()
+            : "";
         }
         return Promise.reject("Puzzles not found");
       })
@@ -531,25 +534,71 @@ export class PuzzleService {
     }
   }
 
-  //import shapefile to cartodb
-  public static async importShapefile(
-    file: File,
-    name: string,
-  ) : Promise<any> {
+  //import shapefile to postgis
+  public static async importShapefile(file: File, name: string): Promise<any> {
     //importShapefile post request, body file and name
     const formData = new FormData();
     formData.append("file", file);
     formData.append("name", name);
-    const response = await fetch(ConfigService.backendUrl + "/importShapefile", {
-      method: "POST",
-      body: formData,
-    }).catch((err) => {
+    const response = await fetch(
+      ConfigService.backendUrl + "/importShapefile",
+      {
+        method: "POST",
+        body: formData,
+      }
+    ).catch((err) => {
       console.log(err);
       return Promise.reject("Error importing shapefile");
-    }
-    );
+    });
     return response.json();
-
   }
+
+  //get tables from postgis
+  public static async getTables(): Promise<any> {
+    const response = await fetch(ConfigService.backendUrl + "/getTables", {
+      method: "GET",
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error getting tables");
+    });
+    return response.json();
+  }
+
+  //get all columns from table
+  public static async getColumns(table: string): Promise<any> {
+    if (!table) {
+      return Promise.resolve([]);
+    }
+    const response = await fetch(ConfigService.backendUrl + "/getColumns", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        table: table,
+      }),    
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error getting columns");
+    });
+    return response.json();
+  }
+
+
+  //generate json from mapGeneratorModel
+  public static async generateJson(data: MapGeneratorModel): Promise<any> {
+    const response = await fetch(ConfigService.backendUrl + "/generateJson", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error generating json");
+    });
+    return response.json();
+  }
+    
 
 }
