@@ -212,6 +212,75 @@ function EditMap({
                   }}
                 />
               </Form.Group>
+              <Form.Group className="mb-3" controlId="formLatitude">
+                <Form.Label>Puzzle Latitude</Form.Label>
+                <Form.Control
+                  size="sm"
+                  type="input"
+                  placeholder="Enter puzzle latitude"                  
+                  value={puzzleEdited.view_state?.latitude.toFixed(3)}
+                  onChange={(e) => {
+                    if (
+                      puzzleEdited.view_state !== undefined &&
+                      puzzleEdited.view_state !== null
+                    ) {
+                      setPuzzleEdited({
+                        ...puzzleEdited,
+                        view_state: {
+                          ...puzzleEdited.view_state,
+                          latitude: parseFloat(e.target.value),
+                        },
+                      });
+                    }
+                  }}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formLongitude">
+                <Form.Label>Puzzle Longitude</Form.Label>
+                <Form.Control
+                  size="sm"
+                  type="input"
+                  placeholder="Enter puzzle longitude"
+                  value={puzzleEdited.view_state?.longitude.toFixed(3)}
+                  onChange={(e) => {
+                    if (
+                      puzzleEdited.view_state !== undefined &&
+                      puzzleEdited.view_state !== null
+                    ) {
+                      setPuzzleEdited({
+                        ...puzzleEdited,
+                        view_state: {
+                          ...puzzleEdited.view_state,
+                          longitude: parseFloat(e.target.value),
+                        },
+                      });
+                    }
+                  }}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formZoom">
+                <Form.Label>Puzzle Zoom</Form.Label>
+                <Form.Control
+                  size="sm"
+                  type="input"
+                  placeholder="Enter puzzle zoom"
+                  value={puzzleEdited.view_state?.zoom}
+                  onChange={(e) => {
+                    if (
+                      puzzleEdited.view_state !== undefined &&
+                      puzzleEdited.view_state !== null
+                    ) {
+                      setPuzzleEdited({
+                        ...puzzleEdited,
+                        view_state: {
+                          ...puzzleEdited.view_state,
+                          zoom: parseFloat(e.target.value),
+                        },
+                      });
+                    }
+                  }}
+                />
+              </Form.Group>              
             </Col>
             <Col xs={6} lg={6}>
               <Form.Group className="mb-3" controlId="formData">
@@ -304,7 +373,11 @@ function EditMap({
             </Col>
           </Row>
           <Row>
-            <Col xs={12} lg={12} style={{ textAlign: "center" , marginTop: "50px"}}>
+            <Col
+              xs={12}
+              lg={12}
+              style={{ textAlign: "center", marginTop: "50px" }}
+            >
               <Button
                 style={{ marginTop: "10px" }}
                 variant="secondary"
@@ -336,7 +409,7 @@ function EditMap({
                 onClick={onSaveHandler}
               >
                 Save
-              </Button>              
+              </Button>
             </Col>
           </Row>
           <Row>

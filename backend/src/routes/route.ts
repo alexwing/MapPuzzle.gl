@@ -73,19 +73,31 @@ router.post("/savePuzzle", (req, res) => {
   console.log("puzzle:" + JSON.stringify(puzzle));
   const puzzleRepository = connection!.getRepository(Puzzles);
   puzzleRepository
-    .save(puzzle)
-    .then(() => {
-      res.json({
-        success: true,
-        msg: "Puzzle saved successfully",
-      });
-    })
-    .catch((err) => {
-      res.json({
-        success: false,
-        msg: err.message,
-      });
-    });
+    .save(puzzle);
+    const viewState = new ViewState();
+    viewState.id = puzzle.id;
+    viewState.latitude = puzzle.view_state.latitude;
+    viewState.longitude = puzzle.view_state.longitude;
+    viewState.zoom = puzzle.view_state.zoom;
+    //save view state
+    const viewStateRepository = connection!.getRepository(ViewState);
+    viewStateRepository
+      .save(viewState)
+      .then(() => {
+        res.json({
+          success: true,
+          msg: "Puzzle saved successfully",
+        });
+      }
+      )
+      .catch((err) => {
+        res.json({
+          success: false,
+          msg: err.message,
+        });
+      }
+      );
+
 });
 
 router.post("/savePiece", async (req, res) => {
