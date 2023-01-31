@@ -3,9 +3,8 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import AlertMessage from "../components/AlertMessage";
 import LoadingDialog from "../components/LoadingDialog";
 import { AlertModel, MapGeneratorModel } from "../models/Interfaces";
-import { PuzzleService } from "../services/puzzleService";
 //import { setCookie, getCookie } from "react-simple-cookie-store";
-import { ConfigService } from "../services/configService";
+import { BackMapCreatorService } from "../services/BackMapCreatorService";
 
 function NewMap(): JSX.Element | null {
   const [loading, setLoading] = useState(false);
@@ -30,7 +29,7 @@ function NewMap(): JSX.Element | null {
   } as MapGeneratorModel);
 
   const loadTables = async () => {
-    const tables = await PuzzleService.getTables();
+    const tables = await BackMapCreatorService.getTables();
     if (tables.data) {
       setTableList(tables.data);
     }
@@ -48,7 +47,7 @@ function NewMap(): JSX.Element | null {
   //load columns when table is selected
   useEffect(() => {
     const loadColumns = async () => {
-      const columns = await PuzzleService.getColumns(data.table);
+      const columns = await BackMapCreatorService.getColumns(data.table);
       if (columns.data) {
         setColumnList(columns.data);
       }
@@ -75,7 +74,7 @@ function NewMap(): JSX.Element | null {
     setLoading(true);
     if (data.table !== "") {
       //PuzzleService.generateJson
-      const result = await PuzzleService.generateJson(data);
+      const result = await BackMapCreatorService.generateJson(data);
       setLoading(false);
       if (result) {
         setShowAlert(true);
@@ -106,7 +105,7 @@ function NewMap(): JSX.Element | null {
       } as AlertModel);
       setLoading(false);
     } else {
-      const result = await PuzzleService.importShapefile(
+      const result = await BackMapCreatorService.importShapefile(
         shpFile,
         data.fileJson
       );

@@ -8,6 +8,9 @@ import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
 
 import routes from '../routes/route';
+import mapCreator from '../routes/mapCreator';
+import mapEditor from '../routes/mapEditor';
+import wikiImport from '../routes/wikiImport';
 import { connect } from './database';
 
 // Instantiate express
@@ -28,6 +31,11 @@ server.use(express.json());
 
 // Initialize routes middleware
 server.use('/api/', routes);
+server.use('/api/mapCreator', mapCreator);
+server.use('/api/mapEditor', mapEditor);
+server.use('/api/wikiImport', wikiImport);
+
+// backend route for edit puzzles
 
 
 

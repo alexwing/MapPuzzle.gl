@@ -4,7 +4,8 @@ import Puzzles from "../../backend/src/models/puzzles";
 import AlertMessage from "../components/AlertMessage";
 import LoadingDialog from "../components/LoadingDialog";
 import { AlertModel, PieceProps } from "../models/Interfaces";
-import { PuzzleService } from "../services/puzzleService";
+import { BackMapEditorService } from "../services/BackMapEditorService";
+import { BackWikiService } from "../services/BackWikiService";
 import ErrorList from "./errorList";
 
 interface EditorDialogProps {
@@ -46,7 +47,7 @@ function EditMap({
 
   const onSaveHandler = () => {
     clearAlert();
-    PuzzleService.savePuzzle(puzzleEdited)
+    BackMapEditorService.savePuzzle(puzzleEdited)
       .then((result) => {
         setShowAlert(true);
         setAlert({
@@ -68,7 +69,7 @@ function EditMap({
 
   const generateThumbnailHandler = async () => {
     setLoading(true);
-    await PuzzleService.generateThumbnail(puzzle.id)
+    await BackWikiService.generateThumbnail(puzzle.id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then(() => {
         setLoading(false);
@@ -98,9 +99,9 @@ function EditMap({
     const piecesToSend: PieceProps[] = [];
     for (const piece of pieces) {
       piece.id = puzzleEdited.id;
-      piecesToSend.push(await PuzzleService.updatePieceProps(piece));
+      piecesToSend.push(await BackMapEditorService.updatePieceProps(piece));
     }
-    await PuzzleService.generateFlags(piecesToSend, puzzle.id)
+    await BackWikiService.generateFlags(piecesToSend, puzzle.id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then(() => {
         setLoading(false);
@@ -129,9 +130,9 @@ function EditMap({
     const piecesToSend: PieceProps[] = [];
     for (const piece of pieces) {
       piece.id = puzzleEdited.id;
-      piecesToSend.push(await PuzzleService.updatePieceProps(piece));
+      piecesToSend.push(await BackMapEditorService.updatePieceProps(piece));
     }
-    await PuzzleService.generateTranslation(piecesToSend, puzzle.id)
+    await BackWikiService.generateTranslation(piecesToSend, puzzle.id)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((res: any) => {
         setLoading(false);

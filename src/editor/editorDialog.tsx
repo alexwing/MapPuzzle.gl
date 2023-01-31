@@ -9,12 +9,12 @@ import { AlertModel, PieceProps } from "../models/Interfaces";
 import EditMap from "./editMap";
 import Puzzles from "../../backend/src/models/puzzles";
 import { Tab, Tabs } from "react-bootstrap";
-import { PuzzleService } from "../services/puzzleService";
 import EditPiece from "./editPiece";
 import "./editorDialog.css";
 import AlertMessage from "../components/AlertMessage";
 import { ConfigService } from "../services/configService";
 import NewMap from "./newMap";
+import { BackMapEditorService } from "../services/BackMapEditorService";
 
 interface EditorDialogProps {
   show: boolean;
@@ -74,7 +74,7 @@ function EditorDialog({
     );
     if (piece) {
       piece.id = puzzleSelected.id;
-      piece = await PuzzleService.updatePieceProps(piece);
+      piece = await BackMapEditorService.updatePieceProps(piece);
       setPieceSelectedData(piece);
       setPieceSelected(pieceId);
     }
@@ -85,7 +85,7 @@ function EditorDialog({
   };
 
   const handleSiteMap = () => {
-    PuzzleService.generateSitemap()
+    BackMapEditorService.generateSitemap()
       .then(() => {
         setAlert({
           title: "Success",
