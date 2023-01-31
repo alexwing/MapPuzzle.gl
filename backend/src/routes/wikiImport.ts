@@ -11,10 +11,9 @@ import sharp from "sharp";
 
 // eslint-disable-next-line new-cap
 const wikiImport = express.Router();
-// Route: <HOST>:PORT/api/users/
+// Route: <HOST>:PORT/api/wikiImport
 
 //express enable upload files
-
 express.json({ limit: "125mb" });
 express.urlencoded({ limit: "125mb", extended: true });
 

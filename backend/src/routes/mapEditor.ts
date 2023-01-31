@@ -11,10 +11,9 @@ import ViewState from "../models/viewState";
 
 // eslint-disable-next-line new-cap
 const mapEditor = express.Router();
-// Route: <HOST>:PORT/api/
+// Route: <HOST>:PORT/api/mapEditor
 
 //express enable upload files
-
 express.json({ limit: "125mb" });
 express.urlencoded({ limit: "125mb", extended: true });
 

@@ -4,7 +4,7 @@ import { securizeQuery } from "../../../src/lib/Commons";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
-// Route: <HOST>:PORT/api/
+// Route: <HOST>:PORT/api/query
 
 //express enable upload files
 

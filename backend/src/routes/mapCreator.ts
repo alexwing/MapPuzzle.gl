@@ -11,10 +11,9 @@ import ViewState from "../models/viewState";
 
 // eslint-disable-next-line new-cap
 const mapCreator = express.Router();
-// Route: <HOST>:PORT/api/users/
+// Route: <HOST>:PORT/api/mapCreator
 
 //express enable upload files
-
 express.json({ limit: "125mb" });
 express.urlencoded({ limit: "125mb", extended: true });
 
@@ -38,7 +37,6 @@ mapCreator.post("/importShapefile", async (req, res) => {
     //unzip file in temp folder
     // @ts-ignore
     const zip = new AdmZip(file.data);
-    //const zipEntries = zip.getEntries();
     const tempDir = path.join(__dirname, `../../../temp`);
     //delete temp folder if exists
     if (fs.existsSync(tempDir)) {
