@@ -11,7 +11,12 @@ import { setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
 import AlertMessage from "./AlertMessage";
 import LangSelector from "./LangSelector";
-import { getCurrentLang,getTitleFromLang, cleanWikiComment, getLang } from "../lib/Utils";
+import {
+  getCurrentLang,
+  getTitleFromLang,
+  cleanWikiComment,
+  getLang,
+} from "../lib/Utils";
 import { PuzzleService } from "../services/puzzleService";
 import "../i18n/config";
 import { useTranslation } from "react-i18next";
@@ -20,7 +25,7 @@ interface WikiInfoProps {
   show: boolean;
   onHide: (val: boolean) => void;
   url: string;
-  piece:  number;
+  piece: number;
   enableFlags?: boolean;
   puzzleSelected?: number;
 }
@@ -57,8 +62,7 @@ function WikiInfo({
   }, [show]);
   //on init load if rtl lang
   useEffect(() => {
-    const puzzleLanguage =
-    getLang();
+    const puzzleLanguage = getLang();
     PuzzleService.getLangIsRtl(puzzleLanguage)
       .then((isRtl) => {
         setRtlClass(isRtl ? "rtl" : "");
@@ -89,7 +93,7 @@ function WikiInfo({
             const title = getTitleFromLang(wikiInfo.langs);
             if (title !== "") {
               setTitleLang(title);
-            }else{
+            } else {
               setTitleLang(wikiInfo.title);
             }
             //find name wiki
@@ -247,9 +251,7 @@ function WikiInfo({
           )}
         {enableFlags && (
           <img
-            src={`../customFlags/${puzzleSelected.toString()}/512/${
-              piece.toString()
-            }.png`}
+            src={`../customFlags/${puzzleSelected.toString()}/512/${piece.toString()}.png`}
             alt={currentLang}
             className="imgWiki"
           />

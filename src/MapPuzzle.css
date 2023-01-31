@@ -22,6 +22,10 @@ body {
   pointer-events: none;
 }
 
+select {
+  cursor: auto !important;
+}
+
 button,
 .btn,
 .navbar-nav .dropdown-menu,

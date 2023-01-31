@@ -5,7 +5,7 @@ import CustomWiki from "../../backend/src/models/customWiki";
 import AlertMessage from "../components/AlertMessage";
 import { getWikiSimple } from "../lib/Utils";
 import { AlertModel, PieceProps } from "../models/Interfaces";
-import { PuzzleService } from "../services/puzzleService";
+import { BackMapEditorService } from "../services/BackMapEditorService";
 import PiecePreview from "./PiecePreview";
 
 interface EditPieceProps {
@@ -70,7 +70,7 @@ function EditPiece({ piece = {} as PieceProps }: EditPieceProps): JSX.Element | 
     const pieceSend = updatePieceInfo(PieceEdited);
     setPieceEdited(pieceSend);
 
-    PuzzleService.savePiece(pieceSend)
+    BackMapEditorService.savePiece(pieceSend)
       .then((result) => {
         setAlert({
           title: "Success",

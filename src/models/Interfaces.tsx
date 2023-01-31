@@ -75,3 +75,11 @@ export interface AlertModel {
   message: string;
   type: "danger" | "success" | "warning";
 }
+
+export interface MapGeneratorModel {
+  table: string;
+  id: string;
+  name: string;
+  mapColor: string;
+  fileJson: string;
+}

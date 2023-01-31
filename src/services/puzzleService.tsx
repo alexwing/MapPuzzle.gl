@@ -1,20 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { query } from "../lib/db/dbFactory";
 import { QueryExecResult } from "sql.js";
-import { ConfigService } from "./configService";
 import Puzzles from "../../backend/src/models/puzzles";
 import CustomCentroids from "../../backend/src/models/customCentroids";
 import CustomWiki from "../../backend/src/models/customWiki";
-import CustomTranslations from "../../backend/src/models/customTranslations";
 import Languages from "../../backend/src/models/languages";
-import {
-  PieceProps,
-  Regions,
-  WikiInfoLang,
-  WikiInfoPiece,
-} from "../models/Interfaces";
-import { getWikiInfo } from "./wikiService";
-import { getWikiSimple } from "../lib/Utils";
+import { Regions } from "../models/Interfaces";
 import {
   mapResultToCustomCentroids,
   mapResultToCustomTranslations,
@@ -23,6 +14,8 @@ import {
   mapResultToPuzzle,
 } from "../lib/mappings/modelMappers";
 import { securizeTextParameter } from "../lib/Commons";
+import CustomTranslations from "../../backend/src/models/customTranslations";
+import { ConfigService } from "./configService";
 
 export class PuzzleService {
   //get all puzzles
@@ -85,7 +78,9 @@ export class PuzzleService {
     return query(`SELECT p.wiki FROM puzzles p WHERE p.id = ${id}`)
       .then((result: QueryExecResult[]) => {
         if (result.length > 0) {
-          return result[0].values[0][0] ? result[0].values[0][0].toString() : "";
+          return result[0].values[0][0]
+            ? result[0].values[0][0].toString()
+            : "";
         }
         return Promise.reject("Puzzles not found");
       })
@@ -94,25 +89,6 @@ export class PuzzleService {
         return Promise.reject("Puzzles not found");
       });
   }
-
-  //call endpoint get generateSitemap return xml sitemap
-  public static generateSitemap(): Promise<any> {
-    return fetch(ConfigService.backendUrl + "/generateSitemap", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/xml",
-      },
-    })
-      .then((response) => {
-        //response is a xml
-        return response.text();
-      })
-      .catch((err) => {
-        console.log(err);
-        return Promise.reject("Error generating sitemap");
-      });
-  }
-
   //get a puzzles by filters (region, subregion)
   public static getPuzzlesByFilters(
     regioncode: number,
@@ -196,6 +172,45 @@ export class PuzzleService {
         console.log(err);
         return Promise.resolve([]);
       });
+  }
+
+  //get pieces translations in a language
+  public static async getCustomTranslations(
+    id: number,
+    lang: string
+  ): Promise<CustomTranslations[]> {
+    try {
+      const result = await query(
+        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ('${lang}','${ConfigService.defaultLang}')`
+      );
+      const customTranslations: CustomTranslations[] = [];
+      result.forEach((row) => {
+        row.values.forEach((value) => {
+          customTranslations.push(mapResultToCustomTranslations(value));
+        });
+      });
+      return customTranslations;
+    } catch (err) {
+      console.log(err);
+      return Promise.resolve([]);
+    }
+  }
+  public static async getLangIsRtl(lang: string): Promise<boolean> {
+    try {
+      const result = await query(
+        `SELECT rtl FROM languages WHERE lang = "${lang}"`
+      );
+      let rtl = false;
+      result.forEach((row) => {
+        row.values.forEach((value) => {
+          rtl = value[0] === 1 ? true : false;
+        });
+      });
+      return rtl;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
   public static getLanguagesByPuzzle(id: number): Promise<Languages[]> {
@@ -305,229 +320,6 @@ export class PuzzleService {
     } catch (err) {
       console.log(err);
       return customWiki;
-    }
-  }
-
-  //update pieceProps with wiki info and centroids
-  public static async updatePieceProps(piece: PieceProps): Promise<PieceProps> {
-    const wikiInfo = await this.getCustomWiki(
-      piece.id ? piece.id : -1,
-      piece.properties.cartodb_id
-    );
-    if (wikiInfo) {
-      piece.customWiki = wikiInfo;
-    }
-    const customCentroid = await this.getCustomCentroid(
-      piece.id ? piece.id : -1,
-      piece.properties.cartodb_id
-    );
-    if (customCentroid) {
-      piece.customCentroid = customCentroid;
-    }
-    return piece;
-  }
-
-  //save a puzzle
-  public static async savePuzzle(puzzle: Puzzles): Promise<any> {
-    const response = await fetch(ConfigService.backendUrl + "/savePuzzle", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ puzzle }),
-    }).catch((err) => {
-      console.log(err);
-      return Promise.reject("Error saving puzzle");
-    });
-    return response.json();
-  }
-  //save piece
-  public static async savePiece(piece: PieceProps): Promise<any> {
-    // remove geometry from piece, to not send it to the backend
-    const pieceToSend = {
-      id: piece.id,
-      properties: {
-        cartodb_id: piece.properties.cartodb_id,
-        name: piece.name,
-        box: piece.properties.box,
-      },
-      customWiki: piece.customWiki,
-      customCentroid: piece.customCentroid,
-    } as PieceProps;
-
-    const response = await fetch(ConfigService.backendUrl + "/savePiece", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ pieceToSend }),
-    }).catch((err) => {
-      console.log(err);
-      return Promise.reject("Error saving piece");
-    });
-    return response.json();
-  }
-
-  //generate thumbnail for a pieces
-  public static async generateThumbnail(id: number): Promise<any> {
-    const response = await fetch(ConfigService.backendUrl + "/generateThumbs", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: id }),
-    }).catch((err) => {
-      console.log(err);
-      return Promise.reject("Error generating thumbnails");
-    });
-    return response.json();
-  }
-
-  //generate flags for a pieces
-  public static async generateFlags(
-    pieces: PieceProps[],
-    id: number
-  ): Promise<any> {
-    const response = await fetch(ConfigService.backendUrl + "/generateFlags", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: id,
-        pieces,
-      }),
-    }).catch((err) => {
-      console.log(err);
-      return Promise.reject("Error generating flags");
-    });
-    return response.json();
-  }
-
-  //generate translation for a pieces
-  public static async generateTranslation(
-    pieces: PieceProps[],
-    id: number
-  ): Promise<any> {
-    const languages: Languages[] = [];
-    const translations: CustomTranslations[] = [];
-
-    for await (const piece of pieces) {
-      piece.id = id;
-      //get custom wiki info
-      const wiki = getWikiSimple(
-        piece.name,
-        piece.customWiki ? piece.customWiki.wiki : ""
-      );
-      //get wikiService getWikiInfo
-      await PuzzleService.getWikiInfo(wiki, languages, piece, translations);
-    }
-    //await 5 seconds to wait for the translations to be generated
-    //await new Promise((resolve) => setTimeout(resolve, 5000));
-    const response = await fetch(
-      ConfigService.backendUrl + "/generateTranslation",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          languages: languages,
-          translations: translations,
-        }),
-      }
-    ).catch((err) => {
-      console.log(err);
-      return Promise.reject("Error generating translation");
-    });
-    return response.json();
-  }
-
-  private static async getWikiInfo(
-    wiki: string,
-    languages: Languages[],
-    piece: PieceProps,
-    translations: CustomTranslations[]
-  ) {
-    await getWikiInfo(wiki)
-      .then((wikiInfo: WikiInfoPiece) => {
-        if (wikiInfo.langs.length > 0) {
-          wikiInfo.langs.forEach((lang: WikiInfoLang) => {
-            //if not exist in languages, add it
-            if (!languages.some((l) => l.lang === lang.lang)) {
-              languages.push({
-                lang: lang.lang,
-                langname: lang.langname,
-                autonym: lang.autonym,
-              } as Languages);
-            }
-            if (piece.id) {
-              translations.push({
-                id: piece.id,
-                cartodb_id: piece.properties.cartodb_id,
-                lang: lang.lang,
-                translation: lang.id,
-              } as CustomTranslations);
-            }
-          });
-        } else {
-          if (!languages.some((l) => l.lang === "error")) {
-            languages.push({
-              lang: "error",
-              langname: "Error",
-              autonym: "Error",
-            } as Languages);
-          }
-          translations.push({
-            id: piece.id,
-            cartodb_id: piece.properties.cartodb_id,
-            lang: "Error",
-            translation: piece.name,
-          } as CustomTranslations);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  //get pieces translations in a language
-  public static async getCustomTranslations(
-    id: number,
-    lang: string
-  ): Promise<CustomTranslations[]> {
-    try {
-      const result = await query(
-        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ('${lang}','${ConfigService.defaultLang}')`
-      );
-      const customTranslations: CustomTranslations[] = [];
-      result.forEach((row) => {
-        row.values.forEach((value) => {
-          customTranslations.push(mapResultToCustomTranslations(value));
-        });
-      });
-      return customTranslations;
-    } catch (err) {
-      console.log(err);
-      return Promise.resolve([]);
-    }
-  }
-
-  public static async getLangIsRtl(lang: string): Promise<boolean> {
-    try {
-      const result = await query(
-        `SELECT rtl FROM languages WHERE lang = "${lang}"`
-      );
-      let rtl = false;
-      result.forEach((row) => {
-        row.values.forEach((value) => {
-          rtl = value[0] === 1 ? true : false;
-        });
-      });
-      return rtl;
-    } catch (err) {
-      console.log(err);
-      return false;
     }
   }
 }
