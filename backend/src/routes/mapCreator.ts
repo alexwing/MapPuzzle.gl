@@ -17,7 +17,6 @@ const mapCreator = express.Router();
 express.json({ limit: "125mb" });
 express.urlencoded({ limit: "125mb", extended: true });
 
-
 //mapGenerator endpoint
 mapCreator.post("/importShapefile", async (req, res) => {
   /* from     const formData = new FormData();
@@ -149,7 +148,14 @@ mapCreator.post("/generateJson", async (req, res) => {
               puzzle.enableFlags = false;
               puzzle.countryCode = 1;
               puzzle.comment = "http://www.diva-gis.org/datadown";
-              puzzle.wiki = mapGeneratorData.fileJson;
+              //if first separated _ mapGeneratorData.fileJson and capitalize first letter
+              if (mapGeneratorData.fileJson.split("_").length > 1) {
+                puzzle.wiki = mapGeneratorData.fileJson
+                  .split("_")[0]
+                  .replace(/^\w/, (c) => c.toUpperCase());
+              } else {
+                puzzle.wiki = mapGeneratorData.fileJson;
+              }
               puzzle.icon = "flags/_unknown.png";
               puzzleRepository.save(puzzle).then((puzzle) => {
                 //get puzzle

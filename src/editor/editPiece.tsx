@@ -12,7 +12,9 @@ interface EditPieceProps {
   piece: PieceProps;
 }
 
-function EditPiece({ piece = {} as PieceProps }: EditPieceProps): JSX.Element | null {
+function EditPiece({
+  piece = {} as PieceProps,
+}: EditPieceProps): JSX.Element | null {
   const [alert, setAlert] = useState({
     title: "",
     message: "",
@@ -23,6 +25,7 @@ function EditPiece({ piece = {} as PieceProps }: EditPieceProps): JSX.Element | 
   const [top, setTop] = useState(50);
   const [left, setLeft] = useState(50);
   const [intensity, setIntensity] = useState(2.5);
+  const [subfix, setSubfix] = useState("");
   //oninit
   useEffect(() => {
     setPieceEdited(piece);
@@ -112,9 +115,46 @@ function EditPiece({ piece = {} as PieceProps }: EditPieceProps): JSX.Element | 
         />
         <Row>
           <Col xs={12} lg={12}>
-            <h2>{PieceEdited.name}</h2>
+            <Row>
+              <Col xs={6} lg={6}>
+                <h2>{PieceEdited.name}</h2>
+              </Col>
+              <Col xs={6} lg={6}>
+                <Form.Group className="mb-3" controlId="formSubfix">
+                  <Form.Label>Subfix</Form.Label>
+                  <Form.Control
+                    type="input"
+                    size="sm"
+                    placeholder="Enter subfix"
+                    value={subfix}
+                    onChange={(e) => {
+                      setSubfix(e.target.value);
+                    }}
+                  />
+                  <Button
+                    variant="outline-secondary"
+                    id="button-addon2"
+                    size="sm"
+                    onClick={() => {
+                      setPieceEdited({
+                        ...PieceEdited,
+                        customWiki: {
+                          ...PieceEdited.customWiki,
+                          wiki: PieceEdited.name + "_" + subfix,
+                        } as CustomWiki,
+                      });
+                    }}
+                  >
+                    Genereate
+                  </Button>
+                </Form.Group>
+              </Col>
+            </Row>
+
             <Form.Group className="mb-3" controlId="formWiki">
-              <Form.Label>Wikipedia url id: {PieceEdited.properties.cartodb_id}</Form.Label>
+              <Form.Label>
+                Wikipedia url id: {PieceEdited.properties.cartodb_id}
+              </Form.Label>
               <InputGroup>
                 <Form.Control
                   type="input"
