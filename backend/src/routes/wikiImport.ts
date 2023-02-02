@@ -8,6 +8,7 @@ import path from "path";
 import * as fs from "fs";
 import svg2png from "svg2png";
 import sharp from "sharp";
+import CustomWiki from "../models/customWiki";
 
 // eslint-disable-next-line new-cap
 const wikiImport = express.Router();
@@ -266,7 +267,6 @@ wikiImport.post("/generateFlags", async (req, res) => {
   }
 });
 
-
 wikiImport.post("/generateThumbs", async (req, res) => {
   const generateFlags = req.body;
   if (generateFlags) {
@@ -360,6 +360,93 @@ wikiImport.post("/generateThumbs", async (req, res) => {
     }
     console.log("Success:", success);
     console.log("Error:", error);
+  }
+});
+
+wikiImport.post("/generateWikiLinks", async (req, res) => {
+  const generateTranslation = req.body;
+
+  const langErrors: CustomTranslations[] = [];
+  if (generateTranslation) {
+    const id: number = generateTranslation.id as number;
+    const pieces: PieceProps[] = generateTranslation.pieces as PieceProps[];
+    const subFix: string = generateTranslation.subFix as string;
+    //get custom wiki repository
+    const wikiRepository = connection!.getRepository(CustomWiki);
+    //find all pieces by puzzle id
+    const wikiPieces = await wikiRepository.find({
+      where: { id: id },
+    });
+    //for each piece
+    for (const piece of pieces) {
+      //if piece not exist in wikiPieces
+      if (
+        !wikiPieces.find(
+          (wikiPiece) => wikiPiece.cartodb_id === piece.properties.cartodb_id
+        )
+      ) {
+        //new CustomWiki
+        const wikiPiece = new CustomWiki();
+        //set id
+        wikiPiece.id = id;
+        wikiPiece.cartodb_id = piece.properties.cartodb_id;
+        wikiPiece.wiki = piece.properties.name + subFix;
+        //wait 1 second
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        //wipedia get request for find wiki page
+        const wikiResponse = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=info&generator=allpages&inprop=url&gaplimit=5&gapfrom=${wikiPiece.wiki}`
+        );
+        //https://en.wikipedia.org/w/api.php?action=query&origin=*&gimlimit=50&format=json&titles=Zambales_Province&redirects&prop=redirects&rdlimit=max
+        //get json from response
+        const wikiJson = await wikiResponse.json();
+        //get pages from json
+        if (wikiJson.query) {
+          const wikiPages = wikiJson.query.pages;
+          //for each page
+          for (const wikiPage of Object.values(wikiPages)) {
+            //if page title is equal to wikiPiece.wiki separated by _
+            if (wikiPage) {
+              /// @ts-ignore
+              if (wikiPage.title.replace(/ /g, "_") === wikiPiece.wiki || wikiPage.title.toLowerCase() === wikiPiece.wiki.toLowerCase()) {
+                //last value after / in fullurl
+                // @ts-ignore
+                wikiPiece.wiki = wikiPage.fullurl.split("/").pop();
+                //save wikiPiece
+                await wikiRepository.save(wikiPiece);
+                break;
+              }
+            } else {
+              const customTranslations = new CustomTranslations();
+              customTranslations.id = wikiPiece.id;
+              customTranslations.cartodb_id = wikiPiece.cartodb_id;
+              customTranslations.translation = wikiPiece.wiki;
+              customTranslations.lang = "en";
+              langErrors.push(customTranslations);
+            }
+          }
+        } else {
+          const customTranslations = new CustomTranslations();
+          customTranslations.id = id;
+          customTranslations.cartodb_id = piece.properties.cartodb_id;
+          customTranslations.translation = piece.properties.name + subFix;
+          customTranslations.lang = "en";
+          langErrors.push(customTranslations);
+        }
+      }
+    }
+    if (langErrors.length > 0) {
+      res.json({
+        success: false,
+        msg: "Error saving translations",
+        error: langErrors,
+      });
+    } else {
+      res.json({
+        success: true,
+        msg: "Translations saved successfully",
+      });
+    }
   }
 });
 

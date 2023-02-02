@@ -129,4 +129,30 @@ export class BackWikiService {
         console.log(err);
       });
   }
+
+  //generate wikilins for a pieces
+  public static async generateWikiLinks(
+    pieces: PieceProps[],
+    id: number,
+    subFix: string
+  ): Promise<any> {
+    const response = await fetch(
+      ConfigService.backendUrl + "/wikiImport/generateWikiLinks",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+          pieces,
+          subFix: subFix,
+        }),
+      }
+    ).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error generating wiki links");
+    });
+    return response.json();
+  }
 }

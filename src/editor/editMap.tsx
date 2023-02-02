@@ -28,6 +28,7 @@ function EditMap({
   const [puzzleEdited, setPuzzleEdited] = useState({
     ...puzzle,
   } as Puzzles);
+  const [subfix, setSubfix] = useState("");
 
   //oninit
   useEffect(() => {
@@ -58,6 +59,30 @@ function EditMap({
       })
       .catch((errorMessage) => {
         setShowAlert(true);
+        setAlert({
+          title: "Error",
+          message: errorMessage,
+          type: "danger",
+        } as AlertModel);
+        setAlert(errorMessage);
+      });
+  };
+
+  const generateWikiLinksHandler = () => {
+  //setLoading(true);
+    BackWikiService.generateWikiLinks(pieces, puzzle.id, subfix)
+      .then((res) => {
+        setLoading(false);
+        setAlert({
+          title: "Success",
+          message: "Wiki links generated successfully",
+          type: "success",
+        } as AlertModel);
+        setLangErrors(res.langErrors);
+        setShowAlert(true);
+      })
+      .catch((errorMessage) => {
+        setLoading(false);
         setAlert({
           title: "Error",
           message: errorMessage,
@@ -218,7 +243,7 @@ function EditMap({
                 <Form.Control
                   size="sm"
                   type="input"
-                  placeholder="Enter puzzle latitude"                  
+                  placeholder="Enter puzzle latitude"
                   value={puzzleEdited.view_state?.latitude.toFixed(3)}
                   onChange={(e) => {
                     if (
@@ -281,7 +306,7 @@ function EditMap({
                     }
                   }}
                 />
-              </Form.Group>              
+              </Form.Group>
             </Col>
             <Col xs={6} lg={6}>
               <Form.Group className="mb-3" controlId="formData">
@@ -377,10 +402,27 @@ function EditMap({
             <Col
               xs={12}
               lg={12}
-              style={{ textAlign: "center", marginTop: "50px" }}
+              style={{ textAlign: "center", marginTop: "50px", display: "flex", justifyContent: "center" }}
             >
+              <Form.Control
+                style={{ width: "150px" }}
+                type="input"
+                placeholder="Enter piece subfix"
+                value={subfix}
+                onChange={(e) => {
+                  setSubfix(e.target.value);
+                }}
+              />
               <Button
-                style={{ marginTop: "10px" }}
+                style={{ marginLeft: "10px" }}
+                variant="secondary"
+                type="button"
+                onClick={generateWikiLinksHandler}
+              >
+                Generate wikiLinks
+              </Button>
+              <Button
+                style={{ marginLeft: "10px" }}
                 variant="secondary"
                 type="button"
                 onClick={generateTranslationHandler}
@@ -388,7 +430,7 @@ function EditMap({
                 Generate translations
               </Button>
               <Button
-                style={{ marginTop: "10px", marginLeft: "10px" }}
+                style={{ marginLeft: "10px" }}
                 variant="secondary"
                 type="button"
                 onClick={generateFlagsHandler}
@@ -396,15 +438,16 @@ function EditMap({
                 Generate flags
               </Button>
               <Button
-                style={{ marginTop: "10px", marginLeft: "10px" }}
+                style={{ marginLeft: "10px" }}
                 variant="secondary"
                 type="button"
                 onClick={generateThumbnailHandler}
               >
                 Generate thumbnails
               </Button>
+
               <Button
-                style={{ marginTop: "10px", marginLeft: "30px" }}
+                style={{ marginLeft: "30px" }}
                 variant="primary"
                 type="button"
                 onClick={onSaveHandler}
