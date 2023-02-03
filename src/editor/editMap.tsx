@@ -92,7 +92,7 @@ function EditMap({
   };
 
   const generateWikiLinksHandler = () => {
-    //setLoading(true);
+    setLoading(true);
     BackWikiService.generateWikiLinks(pieces, puzzle.id, subfix)
       .then((res) => {
         setLoading(false);
