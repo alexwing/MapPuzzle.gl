@@ -9,6 +9,9 @@ interface ErrorListProps {
 export default function ErrorList({
   customTranslations,
 }: ErrorListProps): JSX.Element | null {
+  if ( customTranslations === undefined) {
+    return null;
+  }
   if (customTranslations.length === 0) {
     return null;
   }

@@ -9,6 +9,7 @@ import * as fs from "fs";
 import svg2png from "svg2png";
 import sharp from "sharp";
 import CustomWiki from "../models/customWiki";
+import { Repository } from "typeorm";
 
 // eslint-disable-next-line new-cap
 const wikiImport = express.Router();
@@ -144,6 +145,7 @@ wikiImport.post("/generateFlags", async (req, res) => {
                           .toLowerCase();
                         try {
                           //const exclude = [""];
+                          const includes = ["flag", "bandera", "bandeira"];
                           const formats = ["png", "svg"];
                           const firstWordPiece = pieceId
                             .split("_")
@@ -161,10 +163,7 @@ wikiImport.post("/generateFlags", async (req, res) => {
                               ?.toLocaleLowerCase();*/
                           // @ts-ignore
                           if (
-                            (url.includes("flag") ||
-                              url.includes(
-                                "bandera"
-                              )) /*url.includes(lastWordPiece) ||*/ &&
+                            (includes.some((word) => url.includes(word))) /*url.includes(lastWordPiece) ||*/ &&
                             // @ts-ignore
                             url.includes(firstWordPiece) &&
                             formats.includes(url.split(".").pop()!)
@@ -397,7 +396,7 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
         const wikiResponse = await fetch(
           `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=info&generator=allpages&inprop=url&gaplimit=5&gapfrom=${wikiPiece.wiki}`
         );
-        //https://en.wikipedia.org/w/api.php?action=query&origin=*&gimlimit=50&format=json&titles=Zambales_Province&redirects&prop=redirects&rdlimit=max
+
         //get json from response
         const wikiJson = await wikiResponse.json();
         //get pages from json
@@ -407,8 +406,12 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
           for (const wikiPage of Object.values(wikiPages)) {
             //if page title is equal to wikiPiece.wiki separated by _
             if (wikiPage) {
-              /// @ts-ignore
-              if (wikiPage.title.replace(/ /g, "_") === wikiPiece.wiki || wikiPage.title.toLowerCase() === wikiPiece.wiki.toLowerCase()) {
+              if (
+                /// @ts-ignore
+                wikiPage.title.replace(/ /g, "_") === wikiPiece.wiki ||
+                /// @ts-ignore
+                wikiPage.title.toLowerCase() === wikiPiece.wiki.toLowerCase()
+              ) {
                 //last value after / in fullurl
                 // @ts-ignore
                 wikiPiece.wiki = wikiPage.fullurl.split("/").pop();
@@ -434,6 +437,7 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
           langErrors.push(customTranslations);
         }
       }
+      await verifyRedirection(wikiRepository, id, piece, subFix, langErrors);
     }
     if (langErrors.length > 0) {
       res.json({
@@ -451,3 +455,59 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
 });
 
 export default wikiImport;
+
+async function verifyRedirection(
+  wikiRepository: Repository<CustomWiki>,
+  id: number,
+  piece: PieceProps,
+  subFix: string,
+  langErrors: CustomTranslations[]
+) {
+  const wikiPieces = await wikiRepository.find({
+    where: { id: id, cartodb_id: piece.properties.cartodb_id },
+  });
+  for (const wikiPiece of wikiPieces) {
+    if (wikiPiece) {
+      try {
+        //wait 1 second
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const wikiResponse = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&origin=*&gimlimit=50&format=json&redirects&prop=redirects&rdlimit=max&titles=${wikiPiece.wiki}`
+        );
+        const wikiJson = await wikiResponse.json();
+        if (wikiJson.query) {
+          if (wikiJson.query.redirects) {
+            const wikiRedirects = wikiJson.query.redirects;
+            for (const wikiRedirect of Object.values(wikiRedirects)) {
+              if (wikiRedirect) {
+                // @ts-ignore
+                console.log(
+                  "wikiPiece.wiki: " +
+                    // @ts-ignore
+                    wikiPiece.wiki +
+                    " wikiRedirect.to: " +
+                    // @ts-ignore
+                    wikiRedirect.to
+                );
+                // @ts-ignore
+                wikiPiece.wiki = decodeURI(wikiRedirect.to.replace(/ /g, "_"))
+                await wikiRepository.save(wikiPiece);
+                break;
+              }
+            }
+          }
+        } else {
+          const customTranslations = new CustomTranslations();
+          customTranslations.id = id;
+          customTranslations.cartodb_id = piece.properties.cartodb_id;
+          customTranslations.translation = piece.properties.name + subFix;
+          customTranslations.lang = "en";
+          langErrors.push(customTranslations);
+        }
+      } catch (e) {
+        console.log("Error piece: " + piece.properties.name);
+        console.log(e);
+      }
+    }
+  }
+}

@@ -4,6 +4,7 @@ import Puzzles from "../models/puzzles";
 import { connection } from "../server/database";
 import CustomWiki from "../models/customWiki";
 import CustomCentroids from "../models/customCentroids";
+import Countries from "../models/countries";
 import { SitemapStream, streamToPromise } from "sitemap";
 import { Readable } from "stream";
 import * as fs from "fs";
@@ -63,6 +64,23 @@ mapEditor.post("/savePiece", async (req, res) => {
     });
   });
 });
+
+//get countries
+mapEditor.get("/getCountries", async (_req, res) => {
+  const countriesRepository = connection!.getRepository(Countries);
+//sorted by name
+  const countries = await countriesRepository.find({
+    order: {
+      name: "ASC",
+    },
+  });
+  res.json({
+    success: true,
+    msg: "Tables retrieved successfully",
+    data: countries,
+  });
+});
+
 
 //save custom wiki
 async function saveCustomWiki(pieceProps: PieceProps): Promise<any> {

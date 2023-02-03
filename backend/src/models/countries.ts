@@ -8,7 +8,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export default class Countries {
     @PrimaryGeneratedColumn()
-    id!: number;
+    countrycode!: number;
 
     @Column({ type: 'text', nullable: false })
     name!: string;

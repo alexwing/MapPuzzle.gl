@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Puzzles from "../../backend/src/models/puzzles";
+import Countries from "../../backend/src/models/countries";
 import AlertMessage from "../components/AlertMessage";
 import LoadingDialog from "../components/LoadingDialog";
 import { AlertModel, PieceProps } from "../models/Interfaces";
@@ -29,13 +30,20 @@ function EditMap({
     ...puzzle,
   } as Puzzles);
   const [subfix, setSubfix] = useState("");
+  const [countryList, setCountryList] = useState([] as Countries[]);
+  //oninit     loadCountries();
 
-  //oninit
+  useEffect(() => {
+    loadCountries();
+  }, []);
+
   useEffect(() => {
     setPuzzleEdited({
       ...puzzle,
     } as Puzzles);
   }, [puzzle]);
+
+
 
   const clearAlert = () => {
     setAlert({
@@ -68,8 +76,23 @@ function EditMap({
       });
   };
 
+  const loadCountries = () => {
+    BackMapEditorService.getCountries()
+      .then((result) => {
+        setCountryList(result.data);
+      })
+      .catch((errorMessage) => {
+        setAlert({
+          title: "Error",
+          message: errorMessage,
+          type: "danger",
+        } as AlertModel);
+        setAlert(errorMessage);
+      });
+  };
+
   const generateWikiLinksHandler = () => {
-  //setLoading(true);
+    //setLoading(true);
     BackWikiService.generateWikiLinks(pieces, puzzle.id, subfix)
       .then((res) => {
         setLoading(false);
@@ -396,13 +419,38 @@ function EditMap({
                   }}
                 />
               </Form.Group>
+              <Form.Group className="mb-3" controlId="formZoom">
+                <Form.Label>Country</Form.Label>
+                <Form.Control
+                  size="sm"
+                  as="select"
+                  value={puzzleEdited.countryCode}
+                  onChange={(e) => {
+                    setPuzzleEdited({
+                      ...puzzleEdited,
+                      countryCode: parseInt(e.target.value),
+                    });
+                  }}
+                >
+                  {countryList.map((country) => (
+                    <option key={country.countrycode} value={country.countrycode}>
+                      {country.name}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
             </Col>
           </Row>
           <Row>
             <Col
               xs={12}
               lg={12}
-              style={{ textAlign: "center", marginTop: "50px", display: "flex", justifyContent: "center" }}
+              style={{
+                textAlign: "center",
+                marginTop: "50px",
+                display: "flex",
+                justifyContent: "center",
+              }}
             >
               <Form.Control
                 style={{ width: "150px" }}
