@@ -1,4 +1,4 @@
-import { PieceProps } from "../../../src/models/Interfaces";
+import { FlagsIcons, PieceProps } from "../../../src/models/Interfaces";
 import express from "express";
 import Puzzles from "../models/puzzles";
 import { connection } from "../server/database";
@@ -9,6 +9,7 @@ import { SitemapStream, streamToPromise } from "sitemap";
 import { Readable } from "stream";
 import * as fs from "fs";
 import ViewState from "../models/viewState";
+import path from "path";
 
 // eslint-disable-next-line new-cap
 const mapEditor = express.Router();
@@ -68,7 +69,7 @@ mapEditor.post("/savePiece", async (req, res) => {
 //get countries
 mapEditor.get("/getCountries", async (_req, res) => {
   const countriesRepository = connection!.getRepository(Countries);
-//sorted by name
+  //sorted by name
   const countries = await countriesRepository.find({
     order: {
       name: "ASC",
@@ -81,6 +82,50 @@ mapEditor.get("/getCountries", async (_req, res) => {
   });
 });
 
+//get countries flags
+mapEditor.get("/getFlags", async (_req, res) => {
+  const countriesRepository = connection!.getRepository(Countries);
+  const countries = await countriesRepository.find({
+    order: {
+      name: "ASC",
+    },
+  });
+  //find flags icons in public folder flags and compare filename with country alpha2
+  const flagsPath = path.join(__dirname, `../../../public/flags`);
+  const flags = [] as FlagsIcons[];
+  const flagsFiles = fs.readdirSync(flagsPath);
+  flagsFiles.forEach((flag) => {
+    const country = countries.find((country) => {
+      return flag.slice(0, flag.indexOf(".")).toUpperCase()==country.alpha2;
+    });
+    if (country) {
+      flags.push({
+        name: country.name,
+        url: "flags/" + flag,
+      } as FlagsIcons);
+    } else {
+      flags.push({
+        name: flag.slice(0, flag.indexOf(".")),
+        url: "flags/" + flag,
+      } as FlagsIcons);
+    }
+  });
+  //sort flags by name
+  flags.sort((a, b) => {
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return 1;
+    }
+    return 0;
+  });
+  res.json({
+    success: true,
+    msg: "Flags retrieved successfully",
+    data: flags,
+  });
+});
 
 //save custom wiki
 async function saveCustomWiki(pieceProps: PieceProps): Promise<any> {

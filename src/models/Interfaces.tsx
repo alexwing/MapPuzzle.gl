@@ -83,3 +83,8 @@ export interface MapGeneratorModel {
   mapColor: string;
   fileJson: string;
 }
+export interface FlagsIcons {
+  name: string;
+  url: string;
+}
+  

@@ -40,3 +40,25 @@
 .full-height{
     height: calc(30vh);
 }
+
+.flag-selector > .dropdown-menu {
+  max-height: calc(40vh);
+  max-width: calc(95vw);
+  overflow-y: auto;
+}
+.flag-selector > .nav-link{
+  padding: 0;
+  margin: -3px;
+}
+.flag-selector.dropdown-item {
+  padding: 0px 0px 4px 3px;
+  border-bottom: 1px solid lightgray;
+}
+
+.flag-selector-icon {
+  display: inline-block;
+  width: 3em;
+  height: 2.5em;
+  vertical-align: middle;
+  margin: -0.3em 0.5em -0.3em -0em;
+}

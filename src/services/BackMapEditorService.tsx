@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConfigService } from "./configService";
 import Puzzles from "../../backend/src/models/puzzles";
-import { PieceProps } from "../models/Interfaces";
+import { PieceProps,FlagsIcons } from "../models/Interfaces";
 import { PuzzleService } from "./puzzleService";
 import Countries from "../../backend/src/models/countries";
 
@@ -36,6 +36,23 @@ export class BackMapEditorService {
     });
     return response.json();
   }
+
+  //get all countrieFlags
+  public static async getCountryFlags(): Promise<any> {
+    //getFlags
+    const response = await fetch(ConfigService.backendUrl + "/mapEditor/getFlags", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error getting flags");
+    });
+    return response.json();
+  }
+  
+
   
 
   //update pieceProps with wiki info and centroids

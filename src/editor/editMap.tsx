@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Dropdown,
+  DropdownButton,
+  Form,
+  InputGroup,
+  NavDropdown,
+  Row,
+} from "react-bootstrap";
 import Puzzles from "../../backend/src/models/puzzles";
 import Countries from "../../backend/src/models/countries";
 import AlertMessage from "../components/AlertMessage";
 import LoadingDialog from "../components/LoadingDialog";
-import { AlertModel, PieceProps } from "../models/Interfaces";
+import { AlertModel, FlagsIcons, PieceProps } from "../models/Interfaces";
 import { BackMapEditorService } from "../services/BackMapEditorService";
 import { BackWikiService } from "../services/BackWikiService";
 import ErrorList from "./errorList";
@@ -31,10 +40,12 @@ function EditMap({
   } as Puzzles);
   const [subfix, setSubfix] = useState("");
   const [countryList, setCountryList] = useState([] as Countries[]);
+  const [countryFlags, setCountryFlags] = useState([] as FlagsIcons[]);
   //oninit     loadCountries();
 
   useEffect(() => {
     loadCountries();
+    loadFlags();
   }, []);
 
   useEffect(() => {
@@ -42,8 +53,6 @@ function EditMap({
       ...puzzle,
     } as Puzzles);
   }, [puzzle]);
-
-
 
   const clearAlert = () => {
     setAlert({
@@ -80,6 +89,21 @@ function EditMap({
     BackMapEditorService.getCountries()
       .then((result) => {
         setCountryList(result.data);
+      })
+      .catch((errorMessage) => {
+        setAlert({
+          title: "Error",
+          message: errorMessage,
+          type: "danger",
+        } as AlertModel);
+        setAlert(errorMessage);
+      });
+  };
+
+  const loadFlags = () => {
+    BackMapEditorService.getCountryFlags()
+      .then((result) => {
+        setCountryFlags(result.data);
       })
       .catch((errorMessage) => {
         setAlert({
@@ -204,6 +228,20 @@ function EditMap({
         setShowAlert(true);
       });
   };
+
+  const navDropdownTitle = (
+    <span>
+      <img
+        alt="flag"
+        src={puzzleEdited.icon}
+        className="flag-selector-icon"
+      ></img>
+      <span className="d-none d-lg-inline d-lg-none">
+        {countryFlags.find((flag) => flag.url === puzzleEdited.icon)?.name}
+      </span>
+    </span>
+  );
+
   return (
     <React.Fragment>
       <Col xs={12} lg={12}>
@@ -248,18 +286,31 @@ function EditMap({
               </Form.Group>
               <Form.Group className="mb-3" controlId="formIcon">
                 <Form.Label>Puzzle Icon</Form.Label>
-                <Form.Control
-                  size="sm"
-                  type="input"
-                  placeholder="Enter puzzle icon"
-                  value={puzzleEdited.icon}
-                  onChange={(e) => {
-                    setPuzzleEdited({
-                      ...puzzleEdited,
-                      icon: e.target.value,
-                    });
-                  }}
-                />
+                <NavDropdown
+                  className="flag-selector form-control"
+                  title={navDropdownTitle}
+                  id="dropdown-basic-button"
+                >
+                  {countryFlags.map((country) => (
+                    <Dropdown.Item
+                      className="flag-selector"
+                      key={country.url}
+                      onClick={() => {
+                        setPuzzleEdited({
+                          ...puzzleEdited,
+                          icon: country.url,
+                        });
+                      }}
+                    >
+                      <img
+                        alt="flag"
+                        src={country.url}
+                        className="flag-selector-icon"
+                      />
+                      {country.name}
+                    </Dropdown.Item>
+                  ))}
+                </NavDropdown>
               </Form.Group>
               <Form.Group className="mb-3" controlId="formLatitude">
                 <Form.Label>Puzzle Latitude</Form.Label>
@@ -433,7 +484,10 @@ function EditMap({
                   }}
                 >
                   {countryList.map((country) => (
-                    <option key={country.countrycode} value={country.countrycode}>
+                    <option
+                      key={country.countrycode}
+                      value={country.countrycode}
+                    >
                       {country.name}
                     </option>
                   ))}
