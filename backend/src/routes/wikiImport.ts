@@ -6,7 +6,6 @@ import Languages from "../models/languages";
 import fetch from "node-fetch";
 import path from "path";
 import * as fs from "fs";
-import svg2png from "svg2png";
 import sharp from "sharp";
 import CustomWiki from "../models/customWiki";
 import { Repository } from "typeorm";
@@ -163,7 +162,9 @@ wikiImport.post("/generateFlags", async (req, res) => {
                               ?.toLocaleLowerCase();*/
                           // @ts-ignore
                           if (
-                            (includes.some((word) => url.includes(word))) /*url.includes(lastWordPiece) ||*/ &&
+                            includes.some((word) =>
+                              url.includes(word)
+                            ) /*url.includes(lastWordPiece) ||*/ &&
                             // @ts-ignore
                             url.includes(firstWordPiece) &&
                             formats.includes(url.split(".").pop()!)
@@ -293,24 +294,7 @@ wikiImport.post("/generateThumbs", async (req, res) => {
           //const sizes = [64];
           //if file size 64 not exists
           if (!fs.existsSync(path.join(dir, `${sizes[0]}`, fileOut))) {
-            //if file is not a png
-            let pngBuffer: Buffer = Buffer.alloc(0);
-            switch (ext) {
-              case "svg":
-                //read file
-                const svgBuffer = fs.readFileSync(path.join(dir, file));
-                //convert to PNG
-                try {
-                  pngBuffer = await svg2png(svgBuffer);
-                } catch (e) {
-                  console.log("Error converting svg to png:", e);
-                }
-                break;
-              case "png":
-                //read file
-                pngBuffer = fs.readFileSync(path.join(dir, file));
-                break;
-            }
+            const pngBuffer: Buffer = fs.readFileSync(path.join(dir, file));
             if (pngBuffer && pngBuffer.length > 0) {
               //for each width
               for (const size of sizes) {
@@ -326,7 +310,7 @@ wikiImport.post("/generateThumbs", async (req, res) => {
                 await sharp(pngBuffer)
                   .resize({
                     height: size,
-                    withoutEnlargement: true,
+                    withoutEnlargement: false,
                   })
                   .toFile(pngFilePath);
               }
@@ -389,7 +373,7 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
         //set id
         wikiPiece.id = id;
         wikiPiece.cartodb_id = piece.properties.cartodb_id;
-        wikiPiece.wiki = piece.properties.name + subFix;
+        wikiPiece.wiki = piece.properties.name.replace(/ /g, "_") + subFix;
         //wait 1 second
         await new Promise((resolve) => setTimeout(resolve, 1000));
         //wipedia get request for find wiki page
@@ -414,9 +398,11 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
               ) {
                 //last value after / in fullurl
                 // @ts-ignore
-                wikiPiece.wiki = wikiPage.fullurl.split("/").pop();
+                wikiPiece.wiki = decodeURI(wikiPage.fullurl.split("/").pop());
                 //save wikiPiece
-                await wikiRepository.save(wikiPiece);
+                if (wikiPiece.wiki !== "" && wikiPiece.wiki !== undefined) {
+                  await wikiRepository.save(wikiPiece);
+                }
                 break;
               }
             } else {
@@ -490,7 +476,7 @@ async function verifyRedirection(
                     wikiRedirect.to
                 );
                 // @ts-ignore
-                wikiPiece.wiki = decodeURI(wikiRedirect.to.replace(/ /g, "_"))
+                wikiPiece.wiki = decodeURI(wikiRedirect.to.replace(/ /g, "_"));
                 await wikiRepository.save(wikiPiece);
                 break;
               }
