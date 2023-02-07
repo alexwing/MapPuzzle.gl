@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConfigService } from "./configService";
 import Puzzles from "../../backend/src/models/puzzles";
-import { PieceProps,FlagsIcons } from "../models/Interfaces";
+import { PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "./puzzleService";
-import Countries from "../../backend/src/models/countries";
 
 export class BackMapEditorService {
   //call endpoint get generateSitemap return xml sitemap

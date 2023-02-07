@@ -115,7 +115,7 @@ export class MapGenerator {
     const client = await this.pool.connect();
     try {
       const res = await client.query(
-        `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`
+        `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name`
       );
       const tables = res.rows.map((row) => row.table_name);
       //add empty table first

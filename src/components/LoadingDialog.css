@@ -5,7 +5,8 @@
     margin: auto;
 }
 .progress-dialog .modal-dialog {
-    max-width: 150px;
+    max-width: 200px;
+    min-width: 200px;
 }
 .progress-dialog .modal-body {
     padding: 1rem 1rem;

@@ -290,7 +290,7 @@ wikiImport.post("/generateThumbs", async (req, res) => {
           const ext = file.split(".").pop();
           const extOut = "png";
           const fileOut = ext ? file.replace(ext, extOut) : file;
-          const sizes = [64, 128, 256, 512, 1024];
+          const sizes = [64, 128, 256, 512, 1024];  
           //const sizes = [64];
           //if file size 64 not exists
           if (!fs.existsSync(path.join(dir, `${sizes[0]}`, fileOut))) {
