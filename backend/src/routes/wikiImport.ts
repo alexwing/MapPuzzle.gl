@@ -285,39 +285,62 @@ wikiImport.post("/generateThumbs", async (req, res) => {
         //get all files in dir
         const files = fs.readdirSync(dir);
         //for each file
+        const sizes = [64, 128, 256, 512, 1024];
+        //delete all files in dir
+        /*for (const size of sizes) {
+          const sizeDir = path.join(dir, `${size}`);
+          if (fs.existsSync(sizeDir)) {
+            try{
+            fs.rmdirSync(sizeDir, { recursive: true });
+            }catch(err){
+              console.error(err);
+            }
+          }
+        }*/
+
         for (const file of files) {
           //get file extension
           const ext = file.split(".").pop();
           const extOut = "png";
           const fileOut = ext ? file.replace(ext, extOut) : file;
-          const sizes = [64, 128, 256, 512, 1024];  
-          //const sizes = [64];
-          //if file size 64 not exists
-          if (!fs.existsSync(path.join(dir, `${sizes[0]}`, fileOut))) {
-            const pngBuffer: Buffer = fs.readFileSync(path.join(dir, file));
-            if (pngBuffer && pngBuffer.length > 0) {
-              //for each width
-              for (const size of sizes) {
-                //resize image
-                //if dir size exists
-                const sizeDir = path.join(dir, `${size}`);
-                if (!fs.existsSync(sizeDir)) {
-                  fs.mkdirSync(sizeDir);
-                }
-                const pngFilePath = path.join(sizeDir, fileOut);
 
-                //save image
+          const pngBuffer: Buffer = fs.readFileSync(path.join(dir, file));
+          if (pngBuffer && pngBuffer.length > 0) {
+            //for each width
+            for (const size of sizes) {
+              //resize image
+              //if dir size exists
+              const sizeDir = path.join(dir, `${size}`);
+              if (!fs.existsSync(sizeDir)) {
+                fs.mkdirSync(sizeDir);
+              }
+              const pngFilePath = path.join(sizeDir, fileOut);
+              /*if (fs.existsSync(pngFilePath)) {
+                //delete  file path.join(dir, `${sizes[0]}`, fileOut)
+                fs.rm(pngFilePath, (err) => {
+                  if (err) {
+                    console.error(err);
+                  }
+                });
+              }*/
+              //save image
+              if (!fs.existsSync(pngFilePath)) {
                 await sharp(pngBuffer)
                   .resize({
                     height: size,
                     withoutEnlargement: false,
                   })
-                  .toFile(pngFilePath);
+                  .toFile(pngFilePath, (err) => {
+                    if (err) {
+                      console.error(err);
+                    }
+                  });
               }
-              console.log("Thumbs saved successfully for file: " + file);
             }
-          } else {
-            console.log("File already exists in path: " + fileOut);
+            console.log(
+              "Thumbs saved successfully for file: " +
+                path.join(dir, `${sizes[0]}`, fileOut)
+            );
           }
         }
       } else {

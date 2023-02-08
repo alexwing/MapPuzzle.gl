@@ -109,8 +109,9 @@ function NewMap(): JSX.Element | null {
         shpFile,
         data.fileJson
       );
+      await new Promise((r) => setTimeout(r, 1000));
+      loadTables();
       if (result) {
-        loadTables();
         setShowAlert(true);
         setAlert({
           title: "Success",
