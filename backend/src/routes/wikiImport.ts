@@ -407,12 +407,10 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
         //wait 1 second
         await new Promise((resolve) => setTimeout(resolve, 1000));
         //wipedia get request for find wiki page
-        const wikiResponse = await fetch(
-          `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=info&generator=allpages&inprop=url&gaplimit=5&gapfrom=${wikiPiece.wiki}`
-        );
-
+        //with axios
+        const wikiResponse = await axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&prop=info&generator=allpages&inprop=url&gaplimit=5&gapfrom=${wikiPiece.wiki}`);
         //get json from response
-        const wikiJson = await wikiResponse.json();
+        const wikiJson = wikiResponse.data;
         //get pages from json
         if (wikiJson.query) {
           const wikiPages = wikiJson.query.pages;
@@ -485,12 +483,9 @@ async function verifyRedirection(
   for (const wikiPiece of wikiPieces) {
     if (wikiPiece) {
       try {
-        //wait 1 second
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        const wikiResponse = await fetch(
-          `https://en.wikipedia.org/w/api.php?action=query&origin=*&gimlimit=50&format=json&redirects&prop=redirects&rdlimit=max&titles=${wikiPiece.wiki}`
-        );
-        const wikiJson = await wikiResponse.json();
+        //with axios
+        const wikiResponse = await axios.get(`https://en.wikipedia.org/w/api.php?action=query&origin=*&gimlimit=50&format=json&redirects&prop=redirects&rdlimit=max&titles=${wikiPiece.wiki}`);
+        const wikiJson = wikiResponse.data;
         if (wikiJson.query) {
           if (wikiJson.query.redirects) {
             const wikiRedirects = wikiJson.query.redirects;
