@@ -9,6 +9,7 @@ import * as fs from "fs";
 import sharp from "sharp";
 import CustomWiki from "../models/customWiki";
 import { Repository } from "typeorm";
+import axios from "axios";
 
 // eslint-disable-next-line new-cap
 const wikiImport = express.Router();
@@ -92,6 +93,13 @@ wikiImport.post("/generateTranslation", async (req, res) => {
   });
 });
 
+/*
+    1.- Se reciben datos en el servidor con la información necesaria para descargar la imagen de la bandera (el nombre de la pieza y su identificador, entre otros).
+    2.- Se hace una llamada a la API de Wikipedia para buscar la imagen de la bandera correspondiente a la pieza dada.
+    3.- Se verifica si la imagen ya existe en el sistema de archivos. Si ya existe, se salta a la siguiente pieza.
+    4.- Si la imagen no existe, se filtran los resultados de la búsqueda en la API de Wikipedia para encontrar la URL de la imagen que se corresponde con la bandera que estamos buscando.
+    5.- Una vez que se tiene la URL de la imagen, se guarda la imagen en el sistema de archivos en una carpeta específica para la bandera correspondiente.
+*/
 wikiImport.post("/generateFlags", async (req, res) => {
   const generateFlags = req.body;
   if (generateFlags) {
@@ -119,16 +127,15 @@ wikiImport.post("/generateFlags", async (req, res) => {
         ) {
           if (piece) {
             const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&generator=images&gimlimit=50&prop=imageinfo&iiprop=url&format=json&titles=${pieceId}`;
-            const response = await fetch(url, {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-              },
-            });
             try {
-              const json = (await response.json()) as any;
+              const response = await axios.get(url, {
+                headers: {
+                  "Content-Type": "application/json",
+                  "Access-Control-Allow-Origin": "*",
+                },
+              });
 
+              const json = response.data;
               if (json) {
                 const { pages } = json.query;
                 let urlFlagImage = "";
@@ -325,7 +332,7 @@ wikiImport.post("/generateThumbs", async (req, res) => {
               }*/
               //save image
               if (!fs.existsSync(pngFilePath)) {
-                await sharp(pngBuffer)
+                sharp(pngBuffer)
                   .resize({
                     height: size,
                     withoutEnlargement: false,
