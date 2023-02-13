@@ -13,14 +13,13 @@
   opacity: 0.8;
 }
 .piece-preview {
-  border: 1px solid #ccc;
-  display: inline-flex;
-  padding: 10px;
-  margin: 10px;
-  transform: scale(2);
-  margin-top: 50%;
-  margin-left: 50%;
-  box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.15);
+	border: 1px solid #ccc;
+	display: inline-flex;
+	padding: 10px;
+	/* transform: scale(2); */
+	margin-top: 2em;
+	margin-left: 50%;
+	box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.15);
 }
 .btn-cursor{
     width: 50px;
@@ -61,4 +60,14 @@
   height: 2.5em;
   vertical-align: middle;
   margin: -0.3em 0.5em -0.3em -0em;
+}
+
+.wikiIframe {
+	margin-top: 2em;
+	height: 600px;
+  width: 100%;
+}
+.scrollable {
+	overflow-y: auto;
+	max-height: calc(100vh - 19em);
 }

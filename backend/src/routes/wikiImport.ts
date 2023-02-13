@@ -150,7 +150,7 @@ wikiImport.post("/generateFlags", async (req, res) => {
                           .toString()
                           .toLowerCase();
                         try {
-                          //const exclude = [""];
+                          const exclude = ["puerto_rico","spain","italy","france","united","mexico","poland"];
                           const includes = ["flag", "bandera", "bandeira"];
                           const formats = ["png", "svg"];
                           const firstWordPiece = pieceId
@@ -159,10 +159,10 @@ wikiImport.post("/generateFlags", async (req, res) => {
                             ?.toLocaleLowerCase()
                             .normalize("NFD")
                             .replace(/[\u0300-\u036f]/g, "");
-                          console.log(
+                          /*console.log(
                             "url:" + url,
                             "firstWordPiece:" + firstWordPiece
-                          );
+                          );*/
                           /*const lastWordPiece = pieceId
                               .split("_")
                               .pop()
@@ -170,13 +170,13 @@ wikiImport.post("/generateFlags", async (req, res) => {
                           // @ts-ignore
                           if (
                             includes.some((word) =>
-                              url.includes(word)
+                              url.toLowerCase().includes(word.toLocaleLowerCase())
                             ) /*url.includes(lastWordPiece) ||*/ &&
                             // @ts-ignore
                             url.includes(firstWordPiece) &&
-                            formats.includes(url.split(".").pop()!)
+                            formats.includes(url.split(".").pop()?.toLocaleLowerCase()!)
                             // @ts-ignore
-                            // && !url.includes(exclude)
+                             && !url.toLocaleLowerCase().includes(exclude)
                           ) {
                             urlFlagImage = pages[page].imageinfo[0].url;
                             break;

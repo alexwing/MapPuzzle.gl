@@ -25,7 +25,6 @@ function EditPiece({
   const [top, setTop] = useState(50);
   const [left, setLeft] = useState(50);
   const [intensity, setIntensity] = useState(2.5);
-  const [subfix, setSubfix] = useState("");
   //oninit
   useEffect(() => {
     setPieceEdited(piece);
@@ -106,7 +105,7 @@ function EditPiece({
   };
 
   return !PieceEdited.id ? null : (
-    <Col xs={12} lg={12}>
+    <Col xs={12} lg={12} className="scrollable">
       <Form autoComplete="off">
         <AlertMessage
           show={showAlert}
@@ -116,41 +115,10 @@ function EditPiece({
         <Row>
           <Col xs={12} lg={12}>
             <Row>
-              <Col xs={6} lg={6}>
+              <Col xs={12} lg={12}>
                 <h2>{PieceEdited.name}</h2>
               </Col>
-              <Col xs={6} lg={6}>
-                <Form.Group className="mb-3" controlId="formSubfix">
-                  <Form.Label>Subfix</Form.Label>
-                  <Form.Control
-                    type="input"
-                    size="sm"
-                    placeholder="Enter subfix"
-                    value={subfix}
-                    onChange={(e) => {
-                      setSubfix(e.target.value);
-                    }}
-                  />
-                  <Button
-                    variant="outline-secondary"
-                    id="button-addon2"
-                    size="sm"
-                    onClick={() => {
-                      setPieceEdited({
-                        ...PieceEdited,
-                        customWiki: {
-                          ...PieceEdited.customWiki,
-                          wiki: PieceEdited.name + "_" + subfix,
-                        } as CustomWiki,
-                      });
-                    }}
-                  >
-                    Genereate
-                  </Button>
-                </Form.Group>
-              </Col>
             </Row>
-
             <Form.Group className="mb-3" controlId="formWiki">
               <Form.Label>
                 Wikipedia url id: {PieceEdited.properties.cartodb_id}
@@ -296,6 +264,16 @@ function EditPiece({
             >
               Save
             </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} lg={12} className="wikiIframe">
+            <iframe
+              title="wiki"
+              src={`https://en.wikipedia.org/wiki/${PieceEdited.customWiki?.wiki}`}
+              width="100%"
+              height="100%"
+            ></iframe>
           </Col>
         </Row>
       </Form>
