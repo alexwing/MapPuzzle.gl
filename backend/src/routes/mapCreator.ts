@@ -1,5 +1,5 @@
 import { MapGeneratorModel } from "../../../src/models/Interfaces";
-import express from "express";
+import express, { Request, Response } from "express";
 import Puzzles from "../models/puzzles";
 import { connection } from "../server/database";
 import { MapGenerator } from "../server/MapGenerator";
@@ -18,7 +18,7 @@ express.json({ limit: "125mb" });
 express.urlencoded({ limit: "125mb", extended: true });
 
 //mapGenerator endpoint
-mapCreator.post("/importShapefile", async (req, res) => {
+mapCreator.post("/importShapefile", async (req: Request, res: Response) => {
   /* from     const formData = new FormData();
       formData.append("file", file);
       formData.append("name", name);
@@ -79,9 +79,9 @@ mapCreator.post("/importShapefile", async (req, res) => {
 
 //gettables endpoint
 // @ts-ignore
-mapCreator.get("/getTables", async (req, res) => {
+mapCreator.get("/getTables", async (req: Request, res: Response) => {
   const mapGenerator = new MapGenerator();
-  const mapGeneratorResult = await mapGenerator.getTables().then((result) => {
+  const mapGeneratorResult = await mapGenerator.getTables().then((result: any) => {
     return result;
   });
   console.log("mapGeneratorResult", mapGeneratorResult);
@@ -93,7 +93,7 @@ mapCreator.get("/getTables", async (req, res) => {
 });
 
 //get all columns from table
-mapCreator.post("/getColumns", async (req, res) => {
+mapCreator.post("/getColumns", async (req: Request, res: Response) => {
   const mapGenerator = new MapGenerator();
   const mapGeneratorResult = await mapGenerator
     .getColumns(req.body.table)
@@ -109,7 +109,7 @@ mapCreator.post("/getColumns", async (req, res) => {
 });
 
 //generate geojson in public map folder
-mapCreator.post("/generateJson", async (req, res) => {
+mapCreator.post("/generateJson", async (req: Request, res: Response) => {
   const mapGenerator = new MapGenerator();
   const mapGeneratorData = req.body as MapGeneratorModel;
   const mapGeneratorResult = await mapGenerator

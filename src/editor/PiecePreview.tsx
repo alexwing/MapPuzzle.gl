@@ -20,7 +20,7 @@ function PiecePreview({ selected, centroid }: PiecePreviewProps): JSX.Element {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const PiecePreviewRef: any = useRef();
 
-  let RenderPiecePreview;
+  let RenderPiecePreview: JSX.Element;
   if (selected && centroid) {
     const marginTop = -1 * centroid.top;
     const marginLeft = -1 * centroid.left;
