@@ -37,9 +37,12 @@ function PieceQuiz({
   }, [lang]);
 
   const getFlag = (puzzleId: number, c: PieceProps): string => {
-    return `../customFlags/${puzzleId.toString()}/64/${
+    //http://localhost:3000/customFlags/1/64/5.png
+    console.log("the flat complete url is: https://localhost:3000/customFlags/" + puzzleId.toString() + "/1024/" + c.properties.cartodb_id.toString() + ".png");
+    return `../customFlags/${puzzleId.toString()}/1024/${
       c.properties.cartodb_id
     }.png`;
+
   };
 
   if (pieceSelected === -1) return <div></div>;
@@ -48,8 +51,8 @@ function PieceQuiz({
       <Button id="nextPiece" variant="outline-primary" onClick={nextPiece}>
         Next
       </Button>      
-      <Canvas>
-        <Flag flagImageUrl={getFlag(pieceSelected, pieceSelectedData)} />
+      <Canvas style={{ width: "30vw", height: "20vw" }}>
+        <Flag flagImageUrl={getFlag(1, pieceSelectedData)} />
       </Canvas>
 
     </React.Fragment>

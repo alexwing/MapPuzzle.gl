@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
-import { Canvas, useFrame } from "react-three-fiber";
+
 import "./FlagQuiz.css";
 import DeckMap from "../components/DeckMap";
-import { ViewState } from "react-map-gl";
+import { FlyToInterpolator, ViewState } from "react-map-gl";
 import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 import ReactFullscreeen from "react-easyfullscreen";
 import MenuTop from "./MenuTop/MenuTop";
@@ -147,25 +147,6 @@ function FlagQuiz(): JSX.Element {
         });
         setPieces(piecesAux);
         setLoading(false);
-
-        //set first found piece
-        const randomPiece = getRandomPiece(piecesAux);
-        const pieceInit = piecesAux[randomPiece];
-        setPieceSelectedData(pieceInit);
-        setPieceSelected(pieceInit.properties.cartodb_id);
-        setFounds([pieceInit.properties.cartodb_id]);
-
-        const centroid = turf.centroid(pieceInit.geometry);
-        const zoom = calculateZoom(turf.bbox(pieceInit.geometry));
-
-        const newViewState: ViewState = {
-          ...viewState,
-          longitude: centroid.geometry.coordinates[0],
-          latitude: centroid.geometry.coordinates[1],
-          zoom: zoom * 0.8,
-        };
-        setViewState(newViewState);
-        console.log("piece init: " + pieceInit.properties.name);
       }
     );
   }
@@ -208,18 +189,30 @@ function FlagQuiz(): JSX.Element {
     foundsAux.push(pieceInit.properties.cartodb_id);
     setFounds(foundsAux);
     const centroid = turf.centroid(pieceInit.geometry);
-    const zoom = calculateZoom(turf.bbox(pieceInit.geometry));
+    let zoom = calculateZoom(turf.bbox(pieceInit.geometry)) * 0.8;
+    console.log("zoom: " + zoom);
+    if (zoom < 1) {
+      zoom = 1;
+    }
 
     const newViewState: ViewState = {
       ...viewState,
       longitude: centroid.geometry.coordinates[0],
       latitude: centroid.geometry.coordinates[1],
-      zoom: zoom * 0.8,
+      zoom: zoom,
+      transitionDuration: 1000,
+      transitionInterpolator: new FlyToInterpolator(),
     };
     setViewState(newViewState);
     console.log("piece set to: " + pieceInit.properties.name);
   };
-
+  //on loading = false
+  useEffect(() => {
+    if (!loading) {
+      //set first found piece
+      nextPiece();
+    }
+  }, [loading]);
   return (
     <React.Fragment>
       <ReactFullscreeen>

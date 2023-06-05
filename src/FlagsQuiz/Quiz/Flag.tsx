@@ -1,43 +1,74 @@
-/* eslint-disable react/no-unknown-property */
-import React, { useRef, useEffect } from 'react';
-import { Canvas, useFrame } from 'react-three-fiber';
-import * as THREE from 'three';
+    /* eslint-disable react/no-unknown-property */
+    import * as THREE from "three";
+    import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
+    import { Canvas, useFrame, useThree, extend } from "@react-three/fiber";
 
-function Flag({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
-  const flagRef = useRef<THREE.Mesh>();
+    extend({ THREE });
 
-  useEffect(() => {
-    // Crear la geometría de la bandera
-    const geometry = new THREE.PlaneGeometry(1, 1, 32, 32); // Aumentamos la resolución de la geometría
+    function Flag({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
+    const {
+        gl,
+        scene: defaultScene,
+        camera: defaultCamera,
+        size,
+        events,
+    } = useThree();
+    const [scene] = useState(() => new THREE.Scene());
+    const [camera] = useState(
+        () => new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000)
+    );
 
-    // Modificar los vértices de la geometría para la forma deseada
-    // Por ejemplo, para una bandera ondulada
-    const positionAttribute = geometry.getAttribute('position');
-    const vertices = positionAttribute.array as number[];
-    for (let i = 0; i < vertices.length; i += 3) {
-      const x = vertices[i];
-      const y = vertices[i + 1];
-      const z = Math.sin(x * 2 + y * 3) * 0.1;
-      vertices[i + 2] = z;
+    const flagRef = useRef<THREE.Mesh>();
+
+    useLayoutEffect(() => {
+        camera.left = -size.width / 2;
+        camera.right = size.width / 2;
+        camera.top = size.height / 2;
+        camera.bottom = -size.height / 2;
+        camera.position.set(0, 0, 100);
+        camera.updateProjectionMatrix();
+    }, [size]);
+
+    useEffect(() => {
+        if (flagRef.current) {
+        const loader = new THREE.TextureLoader();
+        loader.load(flagImageUrl, (texture) => {
+            console.log("Texture loaded:", texture);
+            const material = new THREE.MeshPhongMaterial({ map: texture });
+            flagRef.current!.material = material;
+        }, undefined, (error) => {
+            console.error("Error loading texture:", error);
+        });
+        }
+    }, [flagImageUrl]);
+
+    useFrame(() => {
+        const time = Date.now() * 0.003; // Cambia el factor para ajustar la velocidad del movimiento
+    
+        if (flagRef.current) {
+          const flag = flagRef.current;
+          const flagGeometry = flag.geometry;
+          const flagVertices = flagGeometry.attributes.position.array;
+    
+          // Ondula los vértices de la bandera
+          for (let i = 0; i < flagVertices.length; i += 3) {
+            const y = Math.sin(i * 0.125 + time) * 0.125;
+            flagVertices[i + 5] = y;
+          }
+    
+          flagGeometry.attributes.position.needsUpdate = true;
+        }
+      });
+    
+
+    return (
+        <React.Fragment>
+        <pointLight position={[1, 1, 1]} />
+        <mesh ref={flagRef}>
+            <planeGeometry args={[8, 5, 32, 32]} />
+        </mesh>
+        </React.Fragment>
+    );
     }
-    positionAttribute.needsUpdate = true;
 
-    // Crear el material de la bandera
-    const material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load(flagImageUrl) });
-
-    // Crear la malla de la bandera y asignarla a la referencia
-    const mesh = new THREE.Mesh(geometry, material);
-    flagRef.current = mesh;
-  }, [flagImageUrl]);
-
-
-  return (
-    <React.Fragment>
-      <ambientLight />
-      <directionalLight position={[0, 10, 0]} intensity={1} />
-      <primitive object={flagRef} />
-    </React.Fragment>
-  );
-}
-
-export default Flag;
+    export default Flag;
