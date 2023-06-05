@@ -19,6 +19,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "@turf/turf": "^6.5.0",
     "@types/jest": "26.0.24",
     "@types/node": "^15.14.0",
     "@types/react": "^18.0.21",
@@ -42,8 +43,10 @@
     "react-scripts": "4.0.0-next.98",
     "react-share": "^4.4.0",
     "react-simple-cookie-store": "^1.0.12",
+    "react-three-fiber": "^6.0.13",
     "sql.js": "^1.8.0",
-    "sql.js-httpvfs": "^0.8.12"
+    "sql.js-httpvfs": "^0.8.12",
+    "three": "^0.153.0"
   },
   "scripts": {
     "dev": "env-cmd -f ./environments/.env.development react-scripts start",
