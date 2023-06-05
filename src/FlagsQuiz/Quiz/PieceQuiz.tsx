@@ -6,6 +6,7 @@ import Flag from "./Flag";
 import { Canvas, useFrame } from "react-three-fiber";
 
 interface PieceQuizProps {
+  puzzleId: number;
   pieceSelected: number;
   pieceSelectedData: PieceProps;
   pieces: PieceProps[];
@@ -15,6 +16,7 @@ interface PieceQuizProps {
 }
 
 function PieceQuiz({
+  puzzleId,
   pieceSelected,
   pieceSelectedData,
   pieces,
@@ -52,7 +54,7 @@ function PieceQuiz({
         Next
       </Button>      
       <Canvas style={{ width: "30vw", height: "20vw" }}>
-        <Flag flagImageUrl={getFlag(1, pieceSelectedData)} />
+        <Flag flagImageUrl={getFlag(puzzleId, pieceSelectedData)} />
       </Canvas>
 
     </React.Fragment>

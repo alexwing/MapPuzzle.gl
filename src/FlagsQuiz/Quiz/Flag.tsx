@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
     /* eslint-disable react/no-unknown-property */
     import * as THREE from "three";
     import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
     import { Canvas, useFrame, useThree, extend } from "@react-three/fiber";
 
     extend({ THREE });
+
+    const SPEED = 0.003;
+    const INTENSITY = 0.125;
 
     function Flag({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
     const {
@@ -33,7 +37,6 @@
         if (flagRef.current) {
         const loader = new THREE.TextureLoader();
         loader.load(flagImageUrl, (texture) => {
-            console.log("Texture loaded:", texture);
             const material = new THREE.MeshPhongMaterial({ map: texture });
             flagRef.current!.material = material;
         }, undefined, (error) => {
@@ -43,7 +46,7 @@
     }, [flagImageUrl]);
 
     useFrame(() => {
-        const time = Date.now() * 0.003; // Cambia el factor para ajustar la velocidad del movimiento
+        const time = Date.now() * SPEED; // Cambia el factor para ajustar la velocidad del movimiento
     
         if (flagRef.current) {
           const flag = flagRef.current;
@@ -52,8 +55,10 @@
     
           // Ondula los vértices de la bandera
           for (let i = 0; i < flagVertices.length; i += 3) {
-            const y = Math.sin(i * 0.125 + time) * 0.125;
-            flagVertices[i + 5] = y;
+            if (i == 0 ) {
+                flagVertices[2] = Math.sin(i * INTENSITY + time) * INTENSITY
+            }
+            flagVertices[i + 5] = Math.sin(i * INTENSITY + time) * INTENSITY;
           }
     
           flagGeometry.attributes.position.needsUpdate = true;

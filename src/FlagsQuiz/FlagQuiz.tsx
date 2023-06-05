@@ -230,6 +230,7 @@ function FlagQuiz(): JSX.Element {
             <div className="quiz-container">
               <div className="piece-quiz">
                 <PieceQuiz
+                  puzzleId={puzzleSelected}
                   pieceSelected={pieceSelected}
                   pieceSelectedData={pieceSelectedData}
                   pieces={pieces}
