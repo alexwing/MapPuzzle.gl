@@ -348,8 +348,10 @@ table.legend .imgflag div {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  /*gradient gray background*/
-  background: linear-gradient(180deg, #E5E5E5 0%, #857878 100%);
+  background: linear-gradient(180deg, #777 0% , #fff 70%, #777 100% );
+}
+.flag-container {
+  background: linear-gradient(180deg,#777 0%, #151515 30%, #151515 70%, #cdcdcd 99%, #fff 99.5%, #cdcdcd 100% );
 }
 .deckgl-container {
   flex: 30vw;
@@ -364,6 +366,14 @@ table.legend .imgflag div {
 }
 .piece-quiz {
   flex: 70vw;
+  position: absolute;
+}
 
+.questions {
+  margin-top: 2em;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1em;
+  padding: 0 1em;
 
 }

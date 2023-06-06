@@ -8,7 +8,7 @@ import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 import ReactFullscreeen from "react-easyfullscreen";
 import MenuTop from "./MenuTop/MenuTop";
 import Puzzles from "../../backend/src/models/puzzles";
-import { getLang, Jsondb, copyViewState } from "../lib/Utils";
+import { getLang, Jsondb, copyViewState, shuffle } from "../lib/Utils";
 import { PuzzleService } from "../services/puzzleService";
 import { useTranslation } from "react-i18next";
 import CustomTranslations from "../../backend/src/models/customTranslations";
@@ -29,6 +29,9 @@ function FlagQuiz(): JSX.Element {
   const [foundsIds, setFoundsIds] = useState([] as Array<number>);
   const [lang, setLang] = useState("");
   const { i18n } = useTranslation();
+  const [fails, setFails] = useState(0);
+  const [corrects, setCorrects] = useState(0);
+  const [questions, setQuestions] = useState([] as Array<PieceProps>);
 
   const MIN_ZOOM = 2.5;
   const ZOOM_OUT_FACTOR = 0.8;
@@ -36,6 +39,8 @@ function FlagQuiz(): JSX.Element {
   const CORRECT_COLOR = 1
   const WRONG_COLOR = 4
   const SELECTED_COLOR = 0
+
+  const NUM_QUESTION = 6;
 
 
   useEffect(() => {
@@ -173,7 +178,15 @@ function FlagQuiz(): JSX.Element {
     return Math.round(zoom);
   };
 
-  const getRandomPiece = (pieces: PieceProps[]): number => {
+  const getRandomPiece = (pieces: PieceProps[], selectedPiece: number): number => {
+    const randomPiece = Math.floor(Math.random() * pieces.length);
+    if (randomPiece === selectedPiece) {
+      return getRandomPiece(pieces, selectedPiece);
+    }
+    return randomPiece;
+  };
+
+  const getRandomPieceNotFounds = (pieces: PieceProps[]): number => {
     const length = pieces.length - founds.length;
     const randomPiece = Math.floor(Math.random() * length);
 
@@ -191,17 +204,19 @@ function FlagQuiz(): JSX.Element {
   };
 
   const onCorrectAnswerHandler = () => {
+    setCorrects(corrects + 1);
     //Set piece to wrong color
     setPieceColour(pieceSelected, CORRECT_COLOR);
     nextPiece();
   };
 
   const onWrongAnswerHandler = () => {    
-    
+    setFails(fails + 1);
     //Set piece to wrong color
     setPieceColour(pieceSelected, WRONG_COLOR);
     nextPiece();
   };
+
 
 
   const setPieceColour = (pieceId: number, color: number) => {
@@ -214,12 +229,13 @@ function FlagQuiz(): JSX.Element {
     if (pieceSelected != -1) {
       setFoundsIds([...foundsIds, pieceSelected]);
     }
-    const randomPiece = getRandomPiece(pieces);
+    const randomPiece = getRandomPieceNotFounds(pieces);
     const pieceSelectedAux = pieces[randomPiece];
     setPieceSelectedData(pieceSelectedAux);
     setPieceColour(randomPiece, SELECTED_COLOR);
     setPieceSelected(randomPiece);
     setFounds([...founds, pieces[randomPiece].properties.cartodb_id]);
+    generateQuestions(pieceSelectedAux);
 
     const centroid = turf.centroid(pieceSelectedAux.geometry);
     let zoom = calculateZoom(turf.bbox(pieceSelectedAux.geometry)) * ZOOM_OUT_FACTOR;
@@ -246,6 +262,26 @@ function FlagQuiz(): JSX.Element {
     }
   }, [loading]);
 
+  const generateQuestions = (correctPiece) => {
+    const questionsAux: PieceProps[] = [];
+    //add current piece to questions
+    questionsAux.push(correctPiece);
+    //add random pieces to questions
+    while (questionsAux.length < NUM_QUESTION) {
+      const randomPiece = getRandomPiece(pieces, pieceSelected);
+      if (
+        !questionsAux.find(
+          (piece: PieceProps) =>
+            piece.properties.cartodb_id === pieces[randomPiece].properties.cartodb_id
+        )
+      ) {
+        questionsAux.push(pieces[randomPiece]);
+      }
+    }
+    //sort questions ramdomly
+    setQuestions([...shuffle(questionsAux)]);
+  };
+
   return (
     <React.Fragment>
       <ReactFullscreeen>
@@ -266,11 +302,14 @@ function FlagQuiz(): JSX.Element {
                   puzzleId={puzzleSelected}
                   pieceSelected={pieceSelected}
                   pieceSelectedData={pieceSelectedData}
+                  questions={questions}
                   pieces={pieces}
                   founds={founds}
                   lang={lang}
-                  correct={onCorrectAnswerHandler}
-                  wrong={onWrongAnswerHandler}
+                  corrects={corrects}
+                  fails={fails}
+                  onCorrect={onCorrectAnswerHandler}
+                  onWrong={onWrongAnswerHandler}
                 />
               </div>
               <div className="deckgl-container">
