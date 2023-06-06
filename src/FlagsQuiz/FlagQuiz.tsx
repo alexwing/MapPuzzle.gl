@@ -25,10 +25,18 @@ function FlagQuiz(): JSX.Element {
   const [pieces, setPieces] = useState([] as Array<PieceProps>);
   const [loading, setLoading] = useState(true);
   const [viewState, setViewState] = useState({} as ViewState);
-  const [founds, setFounds] = useState([] as Array<number>)
-  const [foundsIds, setFoundsIds] = useState([] as Array<number>)
+  const [founds, setFounds] = useState([] as Array<number>);
+  const [foundsIds, setFoundsIds] = useState([] as Array<number>);
   const [lang, setLang] = useState("");
   const { i18n } = useTranslation();
+
+  const MIN_ZOOM = 2.5;
+  const ZOOM_OUT_FACTOR = 0.8;
+
+  const CORRECT_COLOR = 1
+  const WRONG_COLOR = 4
+  const SELECTED_COLOR = 0
+
 
   useEffect(() => {
     if (window.location.pathname) {
@@ -180,26 +188,44 @@ function FlagQuiz(): JSX.Element {
         piecesNotFounds[randomPiece].properties.cartodb_id
     );
     return pieceSelectedAux;
+  };
 
+  const onCorrectAnswerHandler = () => {
+    //Set piece to wrong color
+    setPieceColour(pieceSelected, CORRECT_COLOR);
+    nextPiece();
+  };
+
+  const onWrongAnswerHandler = () => {    
+    
+    //Set piece to wrong color
+    setPieceColour(pieceSelected, WRONG_COLOR);
+    nextPiece();
+  };
+
+
+  const setPieceColour = (pieceId: number, color: number) => {
+    const piecesAux = [...pieces];
+    piecesAux[pieceId].properties.mapcolor = color;
+    setPieces(piecesAux);
   };
 
   const nextPiece = () => {
     if (pieceSelected != -1) {
-      setFoundsIds([...foundsIds, pieceSelected]);      
+      setFoundsIds([...foundsIds, pieceSelected]);
     }
     const randomPiece = getRandomPiece(pieces);
     const pieceSelectedAux = pieces[randomPiece];
     setPieceSelectedData(pieceSelectedAux);
+    setPieceColour(randomPiece, SELECTED_COLOR);
     setPieceSelected(randomPiece);
     setFounds([...founds, pieces[randomPiece].properties.cartodb_id]);
 
     const centroid = turf.centroid(pieceSelectedAux.geometry);
-    let zoom = calculateZoom(turf.bbox(pieceSelectedAux.geometry)) * 0.8;
-    console.log("Zoom: " + zoom);
-    if (zoom < 2.5) {
-      zoom = 2.5;
+    let zoom = calculateZoom(turf.bbox(pieceSelectedAux.geometry)) * ZOOM_OUT_FACTOR;
+    if (zoom < MIN_ZOOM) {
+      zoom = MIN_ZOOM;
     }
-    console.log("final Zoom: " + zoom);
 
     const newViewState: ViewState = {
       ...viewState,
@@ -243,7 +269,8 @@ function FlagQuiz(): JSX.Element {
                   pieces={pieces}
                   founds={founds}
                   lang={lang}
-                  nextPiece={nextPiece}
+                  correct={onCorrectAnswerHandler}
+                  wrong={onWrongAnswerHandler}
                 />
               </div>
               <div className="deckgl-container">

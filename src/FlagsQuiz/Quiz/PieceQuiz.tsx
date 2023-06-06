@@ -12,7 +12,8 @@ interface PieceQuizProps {
   pieces: PieceProps[];
   founds: number[];
   lang: string;
-  nextPiece: () => void;
+  correct: () => void;
+  wrong: () => void;
 }
 
 function PieceQuiz({
@@ -22,7 +23,8 @@ function PieceQuiz({
   pieces,
   founds,
   lang,
-  nextPiece,
+  correct,
+  wrong,
 }: PieceQuizProps): JSX.Element {
   const [rtlClass, setRtlClass] = useState("");
 
@@ -47,9 +49,12 @@ function PieceQuiz({
   if (pieceSelected === -1) return <div></div>;
   return (
     <React.Fragment>
-      <Button id="nextPiece" variant="outline-primary" onClick={nextPiece}>
-        Next
-      </Button>      
+      <Button id="correct" variant="outline-primary" onClick={correct}>
+        Correct
+      </Button> 
+      <Button id="wrong" variant="outline-danger" onClick={wrong}>
+        Wrong
+      </Button>         
       <Canvas style={{ width: "30vw", height: "20vw" }}>
         <Flag flagImageUrl={getFlag(puzzleId, pieceSelectedData)} />
       </Canvas>
