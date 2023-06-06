@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Container from "react-bootstrap/Container";
 
 import "./FlagQuiz.css";
 import DeckMap from "../components/DeckMap";
@@ -26,7 +25,8 @@ function FlagQuiz(): JSX.Element {
   const [pieces, setPieces] = useState([] as Array<PieceProps>);
   const [loading, setLoading] = useState(true);
   const [viewState, setViewState] = useState({} as ViewState);
-  const [founds, setFounds] = useState([] as Array<number>);
+  const [founds, setFounds] = useState([] as Array<number>)
+  const [foundsIds, setFoundsIds] = useState([] as Array<number>)
   const [lang, setLang] = useState("");
   const { i18n } = useTranslation();
 
@@ -165,35 +165,41 @@ function FlagQuiz(): JSX.Element {
     return Math.round(zoom);
   };
 
-  const getRandomPiece = (pieces: PieceProps[]) => {
-    let found = false;
-    let randomPiece = -1;
-    while (!found) {
-      randomPiece = Math.floor(Math.random() * pieces.length);
-      if (
-        pieces.find((e: PieceProps) => e.properties.cartodb_id === randomPiece)
-      ) {
-        found = true;
-      }
-    }
-    return randomPiece;
+  const getRandomPiece = (pieces: PieceProps[]): number => {
+    const length = pieces.length - founds.length;
+    const randomPiece = Math.floor(Math.random() * length);
+
+    const piecesNotFounds = pieces.filter(
+      (piece: PieceProps) => !founds.includes(piece.properties.cartodb_id)
+    );
+
+    //find position in pices array from piecesNotFounds ramdomPiece
+    const pieceSelectedAux = pieces.findIndex(
+      (piece: PieceProps) =>
+        piece.properties.cartodb_id ===
+        piecesNotFounds[randomPiece].properties.cartodb_id
+    );
+    return pieceSelectedAux;
+
   };
 
   const nextPiece = () => {
-    const piecesAux = pieces;
-    const foundsAux = founds;
-    const randomPiece = getRandomPiece(piecesAux);
-    const pieceInit = piecesAux[randomPiece];
-    setPieceSelectedData(pieceInit);
-    setPieceSelected(pieceInit.properties.cartodb_id);
-    foundsAux.push(pieceInit.properties.cartodb_id);
-    setFounds(foundsAux);
-    const centroid = turf.centroid(pieceInit.geometry);
-    let zoom = calculateZoom(turf.bbox(pieceInit.geometry)) * 0.8;
-    console.log("zoom: " + zoom);
-    if (zoom < 1) {
-      zoom = 1;
+    if (pieceSelected != -1) {
+      setFoundsIds([...foundsIds, pieceSelected]);      
     }
+    const randomPiece = getRandomPiece(pieces);
+    const pieceSelectedAux = pieces[randomPiece];
+    setPieceSelectedData(pieceSelectedAux);
+    setPieceSelected(randomPiece);
+    setFounds([...founds, pieces[randomPiece].properties.cartodb_id]);
+
+    const centroid = turf.centroid(pieceSelectedAux.geometry);
+    let zoom = calculateZoom(turf.bbox(pieceSelectedAux.geometry)) * 0.8;
+    console.log("Zoom: " + zoom);
+    if (zoom < 2.5) {
+      zoom = 2.5;
+    }
+    console.log("final Zoom: " + zoom);
 
     const newViewState: ViewState = {
       ...viewState,
@@ -204,15 +210,16 @@ function FlagQuiz(): JSX.Element {
       transitionInterpolator: new FlyToInterpolator(),
     };
     setViewState(newViewState);
-    console.log("piece set to: " + pieceInit.properties.name);
+    console.log("piece set to: " + pieceSelectedAux.properties.name);
   };
-  //on loading = false
+
   useEffect(() => {
     if (!loading) {
       //set first found piece
       nextPiece();
     }
   }, [loading]);
+
   return (
     <React.Fragment>
       <ReactFullscreeen>

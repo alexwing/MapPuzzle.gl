@@ -2,7 +2,7 @@
     /* eslint-disable react/no-unknown-property */
     import * as THREE from "three";
     import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
-    import { Canvas, useFrame, useThree, extend } from "@react-three/fiber";
+    import { useFrame, useThree, extend } from "@react-three/fiber";
 
     extend({ THREE });
 
@@ -11,13 +11,8 @@
 
     function Flag({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
     const {
-        gl,
-        scene: defaultScene,
-        camera: defaultCamera,
         size,
-        events,
     } = useThree();
-    const [scene] = useState(() => new THREE.Scene());
     const [camera] = useState(
         () => new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000)
     );
@@ -54,10 +49,7 @@
           const flagVertices = flagGeometry.attributes.position.array;
     
           // Ondula los vértices de la bandera
-          for (let i = 0; i < flagVertices.length; i += 3) {
-            if (i == 0 ) {
-                flagVertices[2] = Math.sin(i * INTENSITY + time) * INTENSITY
-            }
+          for (let i = -3; i < flagVertices.length; i += 3) {
             flagVertices[i + 5] = Math.sin(i * INTENSITY + time) * INTENSITY;
           }
     
