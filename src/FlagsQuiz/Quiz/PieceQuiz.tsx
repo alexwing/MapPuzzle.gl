@@ -6,6 +6,7 @@ import Flag from "./Flag";
 import { Canvas, useFrame } from "react-three-fiber";
 import { t } from "i18next";
 import { Row, Col, Alert } from "react-bootstrap";
+import "./PieceQuiz.css";
 
 interface PieceQuizProps {
   puzzleId: number;
@@ -40,11 +41,11 @@ function PieceQuiz({
   useEffect(() => {
     PuzzleService.getLangIsRtl(lang)
       .then((isRtl) => {
-        setRtlClass(isRtl ? "rtl" : "");
+        setRtlClass(isRtl ? "rtl btn-quiz" : "btn-quiz");
       })
       .catch((err) => {
         console.log(err);
-        setRtlClass("");
+        setRtlClass("btn-quiz");
       });
   }, [lang]);
 
@@ -53,7 +54,8 @@ function PieceQuiz({
     return (
       <Button
         key={c.properties.cartodb_id}
-        variant="outline-primary"
+        variant="primary"
+        size="lg"
         className={rtlClass}
         onClick={() => {
           if (c.properties.cartodb_id === pieceSelectedData.properties.cartodb_id) {

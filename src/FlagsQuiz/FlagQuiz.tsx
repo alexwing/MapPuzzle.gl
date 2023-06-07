@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import "./FlagQuiz.css";
+import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store";
+
 import DeckMap from "../components/DeckMap";
 import { FlyToInterpolator, ViewState } from "react-map-gl";
 import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
@@ -9,12 +11,14 @@ import ReactFullscreeen from "react-easyfullscreen";
 import MenuTop from "./MenuTop/MenuTop";
 import Puzzles from "../../backend/src/models/puzzles";
 import { getLang, Jsondb, copyViewState, shuffle } from "../lib/Utils";
+import GameTime from "../lib/GameTime";
 import { PuzzleService } from "../services/puzzleService";
 import { useTranslation } from "react-i18next";
 import CustomTranslations from "../../backend/src/models/customTranslations";
 import LoadingDialog from "../components/LoadingDialog";
 import * as turf from "@turf/turf";
 import PieceQuiz from "./Quiz/PieceQuiz";
+import YouWin from "../components/YouWin";
 
 function FlagQuiz(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
@@ -24,6 +28,7 @@ function FlagQuiz(): JSX.Element {
   const [pieceSelected, setPieceSelected] = useState(-1);
   const [pieces, setPieces] = useState([] as Array<PieceProps>);
   const [loading, setLoading] = useState(true);
+  const [winner, setWinner] = useState(false);
   const [viewState, setViewState] = useState({} as ViewState);
   const [founds, setFounds] = useState([] as Array<number>);
   const [foundsIds, setFoundsIds] = useState([] as Array<number>);
@@ -36,12 +41,11 @@ function FlagQuiz(): JSX.Element {
   const MIN_ZOOM = 2.5;
   const ZOOM_OUT_FACTOR = 0.8;
 
-  const CORRECT_COLOR = 1
-  const WRONG_COLOR = 4
-  const SELECTED_COLOR = 0
+  const CORRECT_COLOR = 1;
+  const WRONG_COLOR = 4;
+  const SELECTED_COLOR = 0;
 
   const NUM_QUESTION = 6;
-
 
   useEffect(() => {
     if (window.location.pathname) {
@@ -75,7 +79,19 @@ function FlagQuiz(): JSX.Element {
 
   /* Reset the Game */
   const onResetGameHandler = () => {
-    //TODO: reset the game
+    removeCookie("quizFounds" + puzzleSelected);
+    removeCookie("quizFails" + puzzleSelected);
+    removeCookie("quizSeconds" + puzzleSelected);
+    setPieceSelected(-1);
+    setPieceSelectedData({} as PieceProps);
+    setCorrects(0);
+    setFoundsIds([]); 
+    setFounds([]);
+    setFails(0);
+    setWinner(false);
+
+    GameTime.seconds = 0;
+    nextPiece();
   };
 
   const onLangChangeHandler = (lang: string) => {
@@ -126,6 +142,26 @@ function FlagQuiz(): JSX.Element {
       });
     });
   };
+  const restoreCookies = (puzzleId: number) => {
+    const cookieFounds = getCookie("quizFounds" + puzzleId);
+    if (cookieFounds) {
+      setFounds(cookieFounds.split(",").map(Number));
+    } else {
+      setFounds([]);
+    }
+    const cookieFails = getCookie("quizFails" + puzzleId);
+    if (cookieFails) {
+      setFails(parseInt(cookieFails));
+    } else {
+      setFails(0);
+    }
+    const cookieSeconds = getCookie("quizSeconds" + puzzleId);
+    if (cookieSeconds) {
+      GameTime.seconds = parseInt(cookieSeconds);
+    } else {
+      GameTime.seconds = 0;
+    }
+  };
 
   function loadPiecesByLang(
     puzzleSelectedAux: number,
@@ -159,6 +195,8 @@ function FlagQuiz(): JSX.Element {
           return 0;
         });
         setPieces(piecesAux);
+        //restore game status from coockie
+        restoreCookies(puzzleSelectedAux); 
         setLoading(false);
       }
     );
@@ -178,7 +216,10 @@ function FlagQuiz(): JSX.Element {
     return Math.round(zoom);
   };
 
-  const getRandomPiece = (pieces: PieceProps[], selectedPiece: number): number => {
+  const getRandomPiece = (
+    pieces: PieceProps[],
+    selectedPiece: number
+  ): number => {
     const randomPiece = Math.floor(Math.random() * pieces.length);
     if (randomPiece === selectedPiece) {
       return getRandomPiece(pieces, selectedPiece);
@@ -210,14 +251,12 @@ function FlagQuiz(): JSX.Element {
     nextPiece();
   };
 
-  const onWrongAnswerHandler = () => {    
+  const onWrongAnswerHandler = () => {
     setFails(fails + 1);
     //Set piece to wrong color
     setPieceColour(pieceSelected, WRONG_COLOR);
     nextPiece();
   };
-
-
 
   const setPieceColour = (pieceId: number, color: number) => {
     const piecesAux = [...pieces];
@@ -226,6 +265,12 @@ function FlagQuiz(): JSX.Element {
   };
 
   const nextPiece = () => {
+    //if all pieces are founds
+    if (founds.length === pieces.length) {
+      setWinner(true);
+      return;
+    }
+
     if (pieceSelected != -1) {
       setFoundsIds([...foundsIds, pieceSelected]);
     }
@@ -238,7 +283,8 @@ function FlagQuiz(): JSX.Element {
     generateQuestions(pieceSelectedAux);
 
     const centroid = turf.centroid(pieceSelectedAux.geometry);
-    let zoom = calculateZoom(turf.bbox(pieceSelectedAux.geometry)) * ZOOM_OUT_FACTOR;
+    let zoom =
+      calculateZoom(turf.bbox(pieceSelectedAux.geometry)) * ZOOM_OUT_FACTOR;
     if (zoom < MIN_ZOOM) {
       zoom = MIN_ZOOM;
     }
@@ -267,12 +313,14 @@ function FlagQuiz(): JSX.Element {
     //add current piece to questions
     questionsAux.push(correctPiece);
     //add random pieces to questions
-    while (questionsAux.length < NUM_QUESTION) {
+    const numQuestions = pieces.length -1 < NUM_QUESTION ? pieces.length -1 : NUM_QUESTION;
+    while (questionsAux.length < numQuestions) {
       const randomPiece = getRandomPiece(pieces, pieceSelected);
       if (
         !questionsAux.find(
           (piece: PieceProps) =>
-            piece.properties.cartodb_id === pieces[randomPiece].properties.cartodb_id
+            piece.properties.cartodb_id ===
+            pieces[randomPiece].properties.cartodb_id
         )
       ) {
         questionsAux.push(pieces[randomPiece]);
@@ -297,21 +345,23 @@ function FlagQuiz(): JSX.Element {
             />
             <LoadingDialog show={loading} delay={1000} />
             <div className="quiz-container">
-              <div className="piece-quiz">
-                <PieceQuiz
-                  puzzleId={puzzleSelected}
-                  pieceSelected={pieceSelected}
-                  pieceSelectedData={pieceSelectedData}
-                  questions={questions}
-                  pieces={pieces}
-                  founds={founds}
-                  lang={lang}
-                  corrects={corrects}
-                  fails={fails}
-                  onCorrect={onCorrectAnswerHandler}
-                  onWrong={onWrongAnswerHandler}
-                />
-              </div>
+              {!winner && (
+                <div className="piece-quiz">
+                  <PieceQuiz
+                    puzzleId={puzzleSelected}
+                    pieceSelected={pieceSelected}
+                    pieceSelectedData={pieceSelectedData}
+                    questions={questions}
+                    pieces={pieces}
+                    founds={founds}
+                    lang={lang}
+                    corrects={corrects}
+                    fails={fails}
+                    onCorrect={onCorrectAnswerHandler}
+                    onWrong={onWrongAnswerHandler}
+                  />
+                </div>
+              )}
               <div className="deckgl-container">
                 <DeckMap
                   onClickMap={onClickMapHandler}
@@ -322,6 +372,14 @@ function FlagQuiz(): JSX.Element {
                   data={data}
                 />
               </div>
+              <YouWin
+                winner={winner}
+                founds={founds}
+                fails={fails}
+                onResetGame={onResetGameHandler}
+                path={puzzleSelectedData?.url}
+                name={puzzleSelectedData?.name}
+              />
             </div>
           </div>
         )}
