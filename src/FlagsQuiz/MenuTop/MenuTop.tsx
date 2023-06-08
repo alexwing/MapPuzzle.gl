@@ -13,6 +13,7 @@ import "../../i18n/config";
 import { useTranslation } from "react-i18next";
 import ConfirmDialog from "../../components/MenuTop/ConfirmDialog";
 import LangSelector from "../../components/LangSelector";
+import Info from "../../components/Info";
 
 interface MenuTopProps {
   name: string;
@@ -126,6 +127,7 @@ function MenuTop({
           />
         </Navbar.Collapse>
       </Navbar>
+      <Info name={name} show={showInfo} InfoClose={handleCancel} />
       <ConfirmDialog
         show={show}
         handleCancel={handleCancel}

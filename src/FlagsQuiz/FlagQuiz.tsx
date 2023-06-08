@@ -19,6 +19,7 @@ import LoadingDialog from "../components/LoadingDialog";
 import * as turf from "@turf/turf";
 import PieceQuiz from "./Quiz/PieceQuiz";
 import YouWin from "../components/YouWin";
+import { ConfigService } from "../services/configService";
 
 function FlagQuiz(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
@@ -37,6 +38,7 @@ function FlagQuiz(): JSX.Element {
   const [fails, setFails] = useState(0);
   const [corrects, setCorrects] = useState(0);
   const [questions, setQuestions] = useState([] as Array<PieceProps>);
+  const [reset, setReset] = useState(false);
 
   const MIN_ZOOM = 2.5;
   const ZOOM_OUT_FACTOR = 0.8;
@@ -85,17 +87,27 @@ function FlagQuiz(): JSX.Element {
     setPieceSelected(-1);
     setPieceSelectedData({} as PieceProps);
     setCorrects(0);
-    setFoundsIds([]); 
+    setFoundsIds([]);
     setFounds([]);
     setFails(0);
     setWinner(false);
-
+    setReset(true);
     GameTime.seconds = 0;
-    nextPiece();
   };
+
+  /* on reset game */
+  useEffect(() => {
+    if (reset) {
+      setReset(false);
+      nextPiece();
+    }
+  }, [reset]);
+
+
 
   const onLangChangeHandler = (lang: string) => {
     setLang(lang);
+    loadPiecesByLang(puzzleSelected, pieces, lang);
   };
 
   /* load game from db */
@@ -161,6 +173,16 @@ function FlagQuiz(): JSX.Element {
     } else {
       GameTime.seconds = 0;
     }
+
+    const cookieFoundsIds = getCookie("quizFoundsIds" + puzzleId);
+    if (cookieFoundsIds) {
+      setFoundsIds(cookieFoundsIds.split(",").map(Number));
+    }
+
+    const cookieCorrects = getCookie("quizCorrects" + puzzleId);
+    if (cookieCorrects) {
+      setCorrects(parseInt(cookieCorrects));
+    }
   };
 
   function loadPiecesByLang(
@@ -196,7 +218,7 @@ function FlagQuiz(): JSX.Element {
         });
         setPieces(piecesAux);
         //restore game status from coockie
-        restoreCookies(puzzleSelectedAux); 
+        restoreCookies(puzzleSelectedAux);
         setLoading(false);
       }
     );
@@ -246,6 +268,8 @@ function FlagQuiz(): JSX.Element {
 
   const onCorrectAnswerHandler = () => {
     setCorrects(corrects + 1);
+
+
     //Set piece to wrong color
     setPieceColour(pieceSelected, CORRECT_COLOR);
     nextPiece();
@@ -253,6 +277,8 @@ function FlagQuiz(): JSX.Element {
 
   const onWrongAnswerHandler = () => {
     setFails(fails + 1);
+
+
     //Set piece to wrong color
     setPieceColour(pieceSelected, WRONG_COLOR);
     nextPiece();
@@ -266,7 +292,7 @@ function FlagQuiz(): JSX.Element {
 
   const nextPiece = () => {
     //if all pieces are founds
-    if (founds.length === pieces.length) {
+    if (founds.length === pieces.length && pieces.length !== 0) {
       setWinner(true);
       return;
     }
@@ -274,6 +300,8 @@ function FlagQuiz(): JSX.Element {
     if (pieceSelected != -1) {
       setFoundsIds([...foundsIds, pieceSelected]);
     }
+
+
     const randomPiece = getRandomPieceNotFounds(pieces);
     const pieceSelectedAux = pieces[randomPiece];
     setPieceSelectedData(pieceSelectedAux);
@@ -313,7 +341,8 @@ function FlagQuiz(): JSX.Element {
     //add current piece to questions
     questionsAux.push(correctPiece);
     //add random pieces to questions
-    const numQuestions = pieces.length -1 < NUM_QUESTION ? pieces.length -1 : NUM_QUESTION;
+    const numQuestions =
+      pieces.length - 1 < NUM_QUESTION ? pieces.length - 1 : NUM_QUESTION;
     while (questionsAux.length < numQuestions) {
       const randomPiece = getRandomPiece(pieces, pieceSelected);
       if (
