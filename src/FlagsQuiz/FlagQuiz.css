@@ -204,13 +204,17 @@ table.legend .imgflag div {
 }
 
 .timer {
-  float: right;
-  text-align: right;
-  color: darkgray;
-  font-style: italic;
+	text-align: right;
+	color: lightgray;
+	font-style: italic;
+	position: absolute;
+	z-index: 1;
+	margin-left: calc(30vw - 210px);
+	width: 200px;
+	margin-top: 10px;
 }
 .timer b {
-  color: darkred;
+  color: pink;
   font-style: normal;
 }
 .timer ul {
@@ -352,21 +356,21 @@ table.legend .imgflag div {
 }
 .flag-container {
   background: linear-gradient(180deg,#777 0%, #151515 30%, #151515 70%, #cdcdcd 99%, #fff 99.5%, #cdcdcd 100% );
+  max-height: calc(100vh - 470px);
 }
 .deckgl-container {
   flex: 30vw;
   height: 100vh;
 }
 .deckgl-container > div {
-
   height: 100vh !important;
   width: 70vw !important;
   margin-left: 30vw !important;
-
 }
 .piece-quiz {
   flex: 70vw;
   position: absolute;
+  max-width: min-content;
 }
 
 .questions {
@@ -375,5 +379,5 @@ table.legend .imgflag div {
   grid-template-columns: 1fr;
   grid-gap: 1em;
   padding: 0 1em;
-
+  max-width: 100%;
 }

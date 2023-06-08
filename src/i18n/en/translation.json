@@ -1,6 +1,7 @@
 {
   "topMenu": {
     "selectPuzzle": "Select Puzzle",
+    "selectQuiz": "Select Quiz",
     "resetGame": "Reset Game",
     "editor": "Editor",
     "surrenderTitle": "Do you surrender?",

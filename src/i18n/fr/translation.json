@@ -1,6 +1,7 @@
 {
   "topMenu": {
     "selectPuzzle": "Sélectionner un puzzle",
+    "selectQuiz": "Sélectionner un quiz",
     "resetGame": "Redémarrer",
     "editor": "Éditeur",
     "surrenderTitle": "Abandonner?",

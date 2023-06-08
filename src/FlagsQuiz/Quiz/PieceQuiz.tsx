@@ -7,15 +7,18 @@ import { Canvas, useFrame } from "react-three-fiber";
 import { t } from "i18next";
 import { Row, Col, Alert } from "react-bootstrap";
 import "./PieceQuiz.css";
+import Timer from "../../components/Timer";
 
 interface PieceQuizProps {
-  puzzleId: number;
+  puzzleSelected: number;
   pieceSelected: number;
   pieceSelectedData: PieceProps;
   questions: PieceProps[];
   pieces: PieceProps[];
   founds: number[];
+  winner: boolean;
   lang: string;
+  loading: boolean;
   corrects: number;
   fails: number;
   onCorrect: () => void;
@@ -23,13 +26,15 @@ interface PieceQuizProps {
 }
 
 function PieceQuiz({
-  puzzleId,
+  puzzleSelected,
   pieceSelected,
   pieceSelectedData,
   questions,
   pieces,
   founds,
+  winner,
   lang,
+  loading,
   corrects,
   fails,
   onCorrect,
@@ -65,7 +70,7 @@ function PieceQuiz({
           }
         }}
       >
-        {c.properties.name}
+       {c.properties.name}
       </Button>
     );
   });
@@ -75,6 +80,10 @@ function PieceQuiz({
       c.properties.cartodb_id
     }.png`;
   };
+
+  const showTimer =
+    winner || loading ? null : <Timer puzzleSelected={puzzleSelected} 
+    name="quizSeconds" />;
 
   if (pieceSelected === -1) return <div></div>;
   return (
@@ -104,11 +113,12 @@ function PieceQuiz({
           </Col>
         </Row>
       </div>
+      {showTimer  }
       <Canvas
         className="flag-container"
         style={{ width: "30vw", height: "20vw" }}
       >
-        <Flag flagImageUrl={getFlag(puzzleId, pieceSelectedData)} />
+        <Flag flagImageUrl={getFlag(puzzleSelected, pieceSelectedData)} />
       </Canvas>
       <div className="questions">{buttons}</div>
     </React.Fragment>

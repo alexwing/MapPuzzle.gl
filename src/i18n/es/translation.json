@@ -1,6 +1,7 @@
 {
   "topMenu": {
     "selectPuzzle": "Seleccionar Puzle",
+    "selectQuiz": "Seleccionar Quiz",
     "resetGame": "Reiniciar",
     "editor": "Editor",
     "surrenderTitle": "¿Te rindes?",

@@ -1,6 +1,7 @@
 {
   "topMenu": {
     "selectPuzzle": "Επιλέξτε το σχέδιο",
+    "selectQuiz": "Επιλέξτε το κουίζ",
     "resetGame": "Επαναφορά παιχνιδιού",
     "editor": "Επεξεργαστής",
     "surrenderTitle": "Εγκαταλείπετε;",

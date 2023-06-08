@@ -1,6 +1,7 @@
 {
   "topMenu": {
     "selectPuzzle": "Selecione o quebra-cabeça",
+    "selectQuiz": "Selecione o quiz",
     "resetGame": "Reinicie o jogo",
     "editor": "Editor",
     "surrenderTitle": "Você se rende?",

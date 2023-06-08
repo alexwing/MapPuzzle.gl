@@ -49,7 +49,7 @@ function FlagQuiz(): JSX.Element {
 
   useEffect(() => {
     if (window.location.pathname) {
-      const puzzleUrl = window.location.search.substring(5);
+      const puzzleUrl = window.location.search.substring(10);
       PuzzleService.getPuzzleIdByUrl(puzzleUrl).then((content: number) => {
         loadGame(content);
       });
@@ -336,7 +336,7 @@ function FlagQuiz(): JSX.Element {
         {({ onToggle }) => (
           <div>
             <MenuTop
-              name="Flag Quiz"
+              name="Flags Quiz"
               onSelectMap={onSelectMapHandler}
               onResetGame={onResetGameHandler}
               onFullScreen={onToggle}
@@ -348,13 +348,15 @@ function FlagQuiz(): JSX.Element {
               {!winner && (
                 <div className="piece-quiz">
                   <PieceQuiz
-                    puzzleId={puzzleSelected}
+                    puzzleSelected={puzzleSelected}
                     pieceSelected={pieceSelected}
                     pieceSelectedData={pieceSelectedData}
                     questions={questions}
                     pieces={pieces}
                     founds={founds}
+                    loading={loading}
                     lang={lang}
+                    winner={winner}
                     corrects={corrects}
                     fails={fails}
                     onCorrect={onCorrectAnswerHandler}

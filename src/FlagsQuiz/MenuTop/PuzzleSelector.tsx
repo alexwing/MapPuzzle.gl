@@ -20,12 +20,14 @@ interface PuzzleSelectorProps {
   show: boolean;
   onSelectMap: (puzzle: number) => void;
   onHidePuzzleSelector: () => void;
+  onlyFlags?: boolean;
 }
 
 function PuzzleSelector({
   show = false,
   onSelectMap,
   onHidePuzzleSelector,
+  onlyFlags = false,
 }: PuzzleSelectorProps): JSX.Element {
   const { t } = useTranslation();
   const [selectedPuzzle, setSelectedPuzzle] = useState(0);
@@ -72,7 +74,17 @@ function PuzzleSelector({
       selectedSubRegion,
       searchName
     ).then((data: Puzzles[]) => {
-      setPuzzles(data);
+      if (onlyFlags) {
+        const puzzles: Puzzles[] = [];
+        data.forEach((element: Puzzles) => {
+          if (element.enableFlags) {
+            puzzles.push(element);
+          }
+        });
+        setPuzzles(puzzles);
+      } else {
+        setPuzzles(data);
+      }
     });
   }, [selectedRegion, selectedSubRegion, searchName]);
 

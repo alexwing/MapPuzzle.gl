@@ -105,12 +105,13 @@ function MenuTop({
               variant="outline-primary"
               onClick={handleShowSelectPuzzle}
             >
-              {t("topMenu.selectPuzzle")}
+              {t("topMenu.selectQuiz")}
             </Button>
             <PuzzleSelector
               show={showSelectPuzzle}
               onSelectMap={onSelectMap}
               onHidePuzzleSelector={handleHideSelectPuzzle}
+              onlyFlags={true}
             />
           </Nav>
           <LangSelector
