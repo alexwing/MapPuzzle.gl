@@ -35,8 +35,8 @@ function FlagQuiz(): JSX.Element {
   const [foundsIds, setFoundsIds] = useState([] as Array<number>);
   const [lang, setLang] = useState("");
   const { i18n } = useTranslation();
-  const [fails, setFails] = useState(0);
-  const [corrects, setCorrects] = useState(0);
+  const [fails, setFails] = useState([] as Array<number>);
+  const [corrects, setCorrects] = useState([] as Array<number>);
   const [questions, setQuestions] = useState([] as Array<PieceProps>);
   const [reset, setReset] = useState(false);
 
@@ -84,12 +84,14 @@ function FlagQuiz(): JSX.Element {
     removeCookie("quizFounds" + puzzleSelected);
     removeCookie("quizFails" + puzzleSelected);
     removeCookie("quizSeconds" + puzzleSelected);
+    removeCookie("quizCorrects" + puzzleSelected);
+
     setPieceSelected(-1);
     setPieceSelectedData({} as PieceProps);
-    setCorrects(0);
+    setCorrects([]);
+    setFails([]);
     setFoundsIds([]);
     setFounds([]);
-    setFails(0);
     setWinner(false);
     setReset(true);
     GameTime.seconds = 0;
@@ -103,11 +105,19 @@ function FlagQuiz(): JSX.Element {
     }
   }, [reset]);
 
-
+  useEffect(() => {
+    if (!loading && lang !== "") {
+      loadPiecesByLang(puzzleSelected, pieces, lang);
+    }
+  }, [lang]);
+  
+  useEffect(() => {
+    restoreMapColors();
+  }, [pieces]);
+    
 
   const onLangChangeHandler = (lang: string) => {
     setLang(lang);
-    loadPiecesByLang(puzzleSelected, pieces, lang);
   };
 
   /* load game from db */
@@ -154,6 +164,22 @@ function FlagQuiz(): JSX.Element {
       });
     });
   };
+
+  //restore color corrects and fails in the map
+  const restoreMapColors = () => {
+    if (founds.length > 0) {
+      //restore color corrects
+      pieces.map((piece: PieceProps) => {
+        if (corrects.includes(piece.properties.cartodb_id)) {          
+          piece.properties.mapcolor = CORRECT_COLOR;
+        }
+        if (fails.includes(piece.properties.cartodb_id)) {
+          piece.properties.mapcolor = WRONG_COLOR;
+        }
+      });    
+    }
+  };
+
   const restoreCookies = (puzzleId: number) => {
     const cookieFounds = getCookie("quizFounds" + puzzleId);
     if (cookieFounds) {
@@ -161,19 +187,6 @@ function FlagQuiz(): JSX.Element {
     } else {
       setFounds([]);
     }
-    const cookieFails = getCookie("quizFails" + puzzleId);
-    if (cookieFails) {
-      setFails(parseInt(cookieFails));
-    } else {
-      setFails(0);
-    }
-    const cookieSeconds = getCookie("quizSeconds" + puzzleId);
-    if (cookieSeconds) {
-      GameTime.seconds = parseInt(cookieSeconds);
-    } else {
-      GameTime.seconds = 0;
-    }
-
     const cookieFoundsIds = getCookie("quizFoundsIds" + puzzleId);
     if (cookieFoundsIds) {
       setFoundsIds(cookieFoundsIds.split(",").map(Number));
@@ -181,7 +194,18 @@ function FlagQuiz(): JSX.Element {
 
     const cookieCorrects = getCookie("quizCorrects" + puzzleId);
     if (cookieCorrects) {
-      setCorrects(parseInt(cookieCorrects));
+      setCorrects(cookieCorrects.split(",").map(Number));
+    }
+
+    const cookieFails = getCookie("quizFails" + puzzleId);
+    if (cookieFails) {
+      setFails(cookieFails.split(",").map(Number));
+    }
+    const cookieSeconds = getCookie("quizSeconds" + puzzleId);
+    if (cookieSeconds) {
+      GameTime.seconds = parseInt(cookieSeconds);
+    } else {
+      GameTime.seconds = 0;
     }
   };
 
@@ -267,8 +291,13 @@ function FlagQuiz(): JSX.Element {
   };
 
   const onCorrectAnswerHandler = () => {
-    setCorrects(corrects + 1);
-
+    const correctsAux = [...corrects, pieces[pieceSelected].properties.cartodb_id]
+    setCorrects(correctsAux);
+    setCookie(
+      "quizCorrects" + puzzleSelected,
+      correctsAux.join(","),
+      ConfigService.cookieDays
+    );
 
     //Set piece to wrong color
     setPieceColour(pieceSelected, CORRECT_COLOR);
@@ -276,8 +305,13 @@ function FlagQuiz(): JSX.Element {
   };
 
   const onWrongAnswerHandler = () => {
-    setFails(fails + 1);
-
+    const failsAux = [...fails, pieces[pieceSelected].properties.cartodb_id]
+    setFails(failsAux);
+    setCookie(
+      "quizFails" + puzzleSelected,
+      failsAux.join(","),
+      ConfigService.cookieDays
+    );
 
     //Set piece to wrong color
     setPieceColour(pieceSelected, WRONG_COLOR);
@@ -298,16 +332,27 @@ function FlagQuiz(): JSX.Element {
     }
 
     if (pieceSelected != -1) {
-      setFoundsIds([...foundsIds, pieceSelected]);
+      const auxFoundsIds = [...foundsIds, pieceSelected];
+      setFoundsIds(auxFoundsIds);
+      setCookie(
+        "quizFoundsIds" + puzzleSelected,
+        auxFoundsIds.join(","),
+        ConfigService.cookieDays
+      );
     }
-
 
     const randomPiece = getRandomPieceNotFounds(pieces);
     const pieceSelectedAux = pieces[randomPiece];
     setPieceSelectedData(pieceSelectedAux);
     setPieceColour(randomPiece, SELECTED_COLOR);
     setPieceSelected(randomPiece);
-    setFounds([...founds, pieces[randomPiece].properties.cartodb_id]);
+    const auxFounds = [...founds, pieces[randomPiece].properties.cartodb_id];
+    setFounds(auxFounds);
+    setCookie(
+      "quizFounds" + puzzleSelected,
+      auxFounds.join(","),
+      ConfigService.cookieDays
+    );
     generateQuestions(pieceSelectedAux);
 
     const centroid = turf.centroid(pieceSelectedAux.geometry);
@@ -374,7 +419,7 @@ function FlagQuiz(): JSX.Element {
             />
             <LoadingDialog show={loading} delay={1000} />
             <div className="quiz-container">
-              {!winner && (
+              {!winner && !loading && (
                 <div className="piece-quiz">
                   <PieceQuiz
                     puzzleSelected={puzzleSelected}
@@ -386,8 +431,8 @@ function FlagQuiz(): JSX.Element {
                     loading={loading}
                     lang={lang}
                     winner={winner}
-                    corrects={corrects}
-                    fails={fails}
+                    corrects={corrects.length}
+                    fails={fails.length}
                     onCorrect={onCorrectAnswerHandler}
                     onWrong={onWrongAnswerHandler}
                   />
@@ -406,7 +451,7 @@ function FlagQuiz(): JSX.Element {
               <YouWin
                 winner={winner}
                 founds={founds}
-                fails={fails}
+                fails={fails.length}
                 onResetGame={onResetGameHandler}
                 path={puzzleSelectedData?.url}
                 name={puzzleSelectedData?.name}
