@@ -8,7 +8,7 @@ const container = createRoot(document.getElementById("root") as HTMLElement);
 //render MapPuzzle or FlagQuiz
 
 //if url has ?flagQuiz then render FlagQuiz
-if (window.location.search.includes("flagQuiz")) {
+if (window.location.href.includes("flagQuiz")) {
   container.render(
     <Router>
       <FlagQuiz />

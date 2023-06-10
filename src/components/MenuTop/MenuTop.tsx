@@ -104,6 +104,10 @@ function MenuTop({
       setShowWikiInfo(false)
     }
   };
+  const onOpenFlagsQuiz = () => {
+    //open new windows to play flags quiz
+    window.open("/flagQuiz", "_blank");
+  };
 
   return (
     <React.Fragment>
@@ -122,6 +126,14 @@ function MenuTop({
             >
               {t("topMenu.selectPuzzle")}
             </Button>
+            <Button
+              id="flagsQuiz"
+              variant="outline-primary"
+              onClick={onOpenFlagsQuiz}
+            >
+              <img src="./logoFlagsQuiz192.png" alt="" />
+              <span>{t("topMenu.playFlagsQuiz")}</span>
+            </Button>            
             <PuzzleSelector
               show={showSelectPuzzle}
               onSelectMap={onSelectMap}

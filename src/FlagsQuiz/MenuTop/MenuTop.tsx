@@ -95,7 +95,7 @@ function MenuTop({
     <React.Fragment>
       <Navbar bg="light" expand="lg">
         <Navbar.Brand>
-          <img src="./logo192.png" alt="" />
+          <img src="./logoFlagsQuiz192.png" alt="" />
           {name}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

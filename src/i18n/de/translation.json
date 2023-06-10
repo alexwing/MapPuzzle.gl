@@ -2,6 +2,7 @@
   "topMenu": {
     "selectPuzzle": "Wähle das Puzzle aus",
     "selectQuiz": "Wähle das Quiz aus",
+    "playFlagsQuiz": "Spiele das Flaggen-Quiz",
     "resetGame": "Spiel zurücksetzen",
     "editor": "Editor",
     "surrenderTitle": "Gibst du auf?",

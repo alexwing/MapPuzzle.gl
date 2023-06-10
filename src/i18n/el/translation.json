@@ -2,6 +2,7 @@
   "topMenu": {
     "selectPuzzle": "Επιλέξτε το σχέδιο",
     "selectQuiz": "Επιλέξτε το κουίζ",
+    "playFlagsQuiz": "Παίξτε το κουίζ σημαίες",
     "resetGame": "Επαναφορά παιχνιδιού",
     "editor": "Επεξεργαστής",
     "surrenderTitle": "Εγκαταλείπετε;",

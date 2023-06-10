@@ -2,6 +2,7 @@
   "topMenu": {
     "selectPuzzle": "Seleziona il puzzle",
     "selectQuiz": "Seleziona il quiz",
+    "playFlagsQuiz": "Gioca al quiz delle bandiere",
     "resetGame": "Riavvia il gioco",
     "editor": "Editor",
     "surrenderTitle": "Ti arrendi?",
