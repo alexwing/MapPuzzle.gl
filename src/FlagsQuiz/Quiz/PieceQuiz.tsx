@@ -7,6 +7,7 @@ import { Canvas, useFrame } from "react-three-fiber";
 import { t } from "i18next";
 import { Row, Col, Alert } from "react-bootstrap";
 import "./PieceQuiz.css";
+import "./responsive.css";
 import Timer from "../../components/Timer";
 
 interface PieceQuizProps {
@@ -88,7 +89,7 @@ function PieceQuiz({
   if (pieceSelected === -1) return <div></div>;
   return (
     <React.Fragment>
-      <div className="piece-quiz">
+      <div>
         <Row className="score">
           <Col xs={4} lg={4}>
             <Alert variant="success">

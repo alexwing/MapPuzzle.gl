@@ -48,7 +48,6 @@
   margin-left: 30vw !important;
 }
 .piece-quiz {
-  flex: 70vw;
   position: absolute;
   max-width: min-content;
 }

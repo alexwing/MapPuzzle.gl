@@ -1,0 +1,38 @@
+@media screen and (max-width: 992px) {
+  .deckgl-container > div {
+    height: 40vh !important;
+    width: 100vw !important;
+    margin-left: 0vw !important;
+    margin-top: 60vh !important;
+  }
+  .deckgl-container {
+    flex: 100vw;
+    height: 60vh;
+  }
+  .piece-quiz {
+    position: relative;
+    max-width: 100%;
+    margin-top: 0;
+  }
+  .quiz-container {
+    height: 60vh;
+  }
+  .flag-container {
+    margin: auto;
+  }
+  .questions {
+    grid-gap: 1.5vh;
+    margin-top: 0.5em;
+  }
+
+  .piece-quiz > .timer {
+    margin-left: calc(100vw - 210px);
+  }
+  .btn-quiz.btn-lg {
+    padding: 0px 10px 3px 10px;
+    font-size: 2.3vh;
+  }
+  .flag-container {
+   width: 100% !important;
+  }
+}
