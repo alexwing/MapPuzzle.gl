@@ -23,7 +23,7 @@
 .quiz-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - 56px);
   background: linear-gradient(180deg, #777 0%, #fff 70%, #777 100%);
 }
 .flag-container {
@@ -36,7 +36,9 @@
     #fff 99.5%,
     #cdcdcd 100%
   );
-  max-height: calc(100vh - 470px);
+  /*max-height: calc(100vh - 470px);*/
+  max-height: calc(42vh - 56px - 37px);
+
 }
 .deckgl-container {
   flex: 30vw;
@@ -53,10 +55,11 @@
 }
 
 .questions {
-  margin-top: 2em;
+  margin-top: 2vh;
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 1em;
   padding: 0 1em;
   max-width: 100%;
+  height: calc(60vh - 56px - 37px);
 }

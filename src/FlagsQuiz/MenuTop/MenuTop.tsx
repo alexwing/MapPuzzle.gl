@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import ConfirmDialog from "../../components/MenuTop/ConfirmDialog";
 import LangSelector from "../../components/LangSelector";
 import Info from "../../components/Info";
+import WikiInfo from "../../components/WikiInfo";
 
 interface MenuTopProps {
   name: string;
@@ -89,7 +90,16 @@ function MenuTop({
   const handleHideSelectPuzzle = () => {
     setShowSelectPuzzle(false);
   };
-
+  const onShowWikiInfoHandler = (show: boolean) => () => {
+    if (show) {
+      PuzzleService.getPuzzleWiki(puzzleSelected).then((url) => {
+        setWikiInfoUrl(url);
+        setShowWikiInfo(true);
+      });
+    } else {
+      setShowWikiInfo(false);
+    }
+  };
 
   return (
     <React.Fragment>
@@ -124,6 +134,7 @@ function MenuTop({
             onFullScreen={onFullScreen}
             handleInfo={handleShowInfo}
             handleShow={handleShow}
+            onShowWikiInfo={onShowWikiInfoHandler(true)}            
           />
         </Navbar.Collapse>
       </Navbar>
@@ -135,6 +146,14 @@ function MenuTop({
         title={t("topMenu.surrenderTitle")}
         message={t("topMenu.surrenderMessage")}
       />
+      <WikiInfo
+        show={showWikiInfo}
+        url={wikiInfoUrl}
+        onHide={onShowWikiInfoHandler(false)}
+        piece={0}
+        enableFlags={false}
+        puzzleSelected={0}
+      />      
     </React.Fragment>
   );
 }

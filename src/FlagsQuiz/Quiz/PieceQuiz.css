@@ -1,9 +1,9 @@
 .btn-quiz {
-  padding: 12px 16px;
+  padding: 0 0 0.8vh 0;
   cursor: pointer;
   border-width: 1px;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 2vh;
   font-weight: 500;
   -webkit-box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.6);
   -moz-box-shadow:0px 4px 8px 0px rgba(0, 0, 0, 0.6);
@@ -114,15 +114,4 @@
 .btn-quiz.btn-link {
   border: none;
   color: #000;
-}
-.btn-quiz.btn-sm,
-.btn-group-sm > .btn-quiz {
-  padding: 5px 20px;
-  font-size: 12px;
-}
-.btn-quiz.btn-lg,
-.btn-group-lg > .btn-quiz {
-  padding: 5px 10px 10px 10px;
-  font-size: 16px;
-  font-weight: 600;
 }

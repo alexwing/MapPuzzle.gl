@@ -7,15 +7,19 @@ import { useTranslation } from "react-i18next";
 interface PuzzleOptionsProps {
   onFullScreen: () => void;
   handleInfo: () => void;
+  onShowWikiInfo: (val:boolean) => void;
   handleShow: () => void;
 }
 
 function PuzzleOptions({
   onFullScreen,
   handleInfo,
+  onShowWikiInfo,
   handleShow,
 }: PuzzleOptionsProps) : JSX.Element {
-
+  const onShowWikiInfoHandler = () => {
+    onShowWikiInfo(true);
+  }
 
   const { t } = useTranslation();
 
@@ -32,6 +36,9 @@ function PuzzleOptions({
         <Button id="info" variant="outline-secondary" onClick={handleInfo}>
           <span className="navbar-info-icon"></span>
         </Button>
+        <Button id="wiki" variant="outline-secondary" onClick={onShowWikiInfoHandler}>
+          <span className="navbar-wiki-icon"></span>
+        </Button>        
         <Button id="reset" variant="outline-primary" onClick={handleShow}>
         {t("topMenu.resetGame")}
         </Button>

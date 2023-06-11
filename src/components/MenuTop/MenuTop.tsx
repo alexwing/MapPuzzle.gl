@@ -98,10 +98,10 @@ function MenuTop({
     if (show) {
       PuzzleService.getPuzzleWiki(puzzleSelected).then((url) => {
         setWikiInfoUrl(url);
-        setShowWikiInfo(true)
+        setShowWikiInfo(true);
       });
-    }else{
-      setShowWikiInfo(false)
+    } else {
+      setShowWikiInfo(false);
     }
   };
   const onOpenFlagsQuiz = () => {
@@ -134,7 +134,7 @@ function MenuTop({
               <img className="logo" src="./logoFlagsQuiz192.png" alt="" />
               <span>{t("topMenu.playFlagsQuiz")}</span>
               <img className="new" src="./new-icon.png" alt="" />
-            </Button>            
+            </Button>
             <PuzzleSelector
               show={showSelectPuzzle}
               onSelectMap={onSelectMap}
