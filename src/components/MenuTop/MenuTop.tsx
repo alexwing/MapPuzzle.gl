@@ -106,7 +106,7 @@ function MenuTop({
   };
   const onOpenFlagsQuiz = () => {
     //open new windows to play flags quiz
-    window.open("/flagQuiz", "_blank");
+    window.open("/?flagQuiz", "_blank");
   };
 
   return (
