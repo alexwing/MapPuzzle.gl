@@ -1,4 +1,3 @@
-
 .navbar-brand > img {
   max-height: 32px;
   padding-right: 4px;
@@ -6,17 +5,17 @@
   width: 38px;
 }
 
-.timer {
-	text-align: right;
-	color: lightgray;
-	font-style: italic;
-	position: absolute;
-	z-index: 1;
-	margin-left: calc(30vw - 210px);
-	width: 200px;
-	margin-top: 10px;
+.piece-quiz > .timer {
+  text-align: right;
+  color: lightgray;
+  font-style: italic;
+  position: absolute;
+  z-index: 1;
+  margin-left: calc(30vw - 210px);
+  width: 200px;
+  margin-top: 10px;
 }
-.timer b {
+.piece-quiz > .timer b {
   color: pink;
   font-style: normal;
 }
@@ -25,10 +24,18 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: linear-gradient(180deg, #777 0% , #fff 70%, #777 100% );
+  background: linear-gradient(180deg, #777 0%, #fff 70%, #777 100%);
 }
 .flag-container {
-  background: linear-gradient(180deg,#777 0%, #151515 30%, #151515 70%, #cdcdcd 99%, #fff 99.5%, #cdcdcd 100% );
+  background: linear-gradient(
+    180deg,
+    #777 0%,
+    #151515 30%,
+    #151515 70%,
+    #cdcdcd 99%,
+    #fff 99.5%,
+    #cdcdcd 100%
+  );
   max-height: calc(100vh - 470px);
 }
 .deckgl-container {

@@ -131,8 +131,9 @@ function MenuTop({
               variant="outline-primary"
               onClick={onOpenFlagsQuiz}
             >
-              <img src="./logoFlagsQuiz192.png" alt="" />
+              <img className="logo" src="./logoFlagsQuiz192.png" alt="" />
               <span>{t("topMenu.playFlagsQuiz")}</span>
+              <img className="new" src="./new-icon.png" alt="" />
             </Button>            
             <PuzzleSelector
               show={showSelectPuzzle}

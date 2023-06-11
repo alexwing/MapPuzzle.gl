@@ -88,7 +88,7 @@ function PieceQuiz({
   if (pieceSelected === -1) return <div></div>;
   return (
     <React.Fragment>
-      <div>
+      <div className="piece-quiz">
         <Row className="score">
           <Col xs={4} lg={4}>
             <Alert variant="success">

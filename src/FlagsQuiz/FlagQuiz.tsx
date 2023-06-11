@@ -108,9 +108,7 @@ function FlagQuiz(): JSX.Element {
   }, [reset]);
 
   useEffect(() => {
-    if (!loading && lang !== "") {
-      loadPiecesByLang(puzzleSelected, lang);
-    }
+      loadPiecesByLang(puzzleSelected, pieces, lang);
   }, [lang]);
 
   useEffect(() => {
@@ -129,6 +127,11 @@ function FlagQuiz(): JSX.Element {
     i18n.changeLanguage(langAux);
     setPieces([]);
     setFounds([]);
+    setFails([]);
+    setCorrects([]);
+    setFoundsIds([]);
+    setWinner(false);
+    
     setLang(langAux);
     setLoading(true);
     //get puzzle data from db
@@ -161,11 +164,11 @@ function FlagQuiz(): JSX.Element {
           setPuzzleSelected(puzzleId);
           setViewState(viewStateCopy);
           setData(response);
+          loadPiecesByLang(puzzleId, piecesAux, langAux);
           setPieces(piecesAux);
           //restore game status from coockie
           restoreCookies(puzzleId);
           setLoading(false);
-          loadPiecesByLang(puzzleId, langAux);
         }
       });
     });
@@ -189,6 +192,13 @@ function FlagQuiz(): JSX.Element {
       }
       });
     }
+  /* const pieceSelectedAux = pieceSelectedData;
+    if (pieceSelectedAux.properties !== undefined) {
+        pieceSelectedAux.properties.mapcolor = SELECTED_COLOR;
+        setPieceSelectedData(pieceSelectedAux);
+    }*/
+
+
   };
 
   const restoreCookies = (puzzleId: number) => {
@@ -222,12 +232,14 @@ function FlagQuiz(): JSX.Element {
 
   function loadPiecesByLang(
     puzzleSelectedAux: number,
+    piecesAux: PieceProps[],
     langAux: string
   ) {
     //force refresh of pieces
+    setPieces([]);
     PuzzleService.getCustomTranslations(puzzleSelectedAux, langAux).then(
       (customTranslations: CustomTranslations[]) => {
-        pieces.forEach((piece: PieceProps) => {
+        piecesAux.forEach((piece: PieceProps) => {
           //find from CustomTranslations[]
           const customTranslation = customTranslations.find(
             (e: CustomTranslations) =>
@@ -238,8 +250,8 @@ function FlagQuiz(): JSX.Element {
           } else {
             piece.properties.name = piece.name;
           }
-        });
-
+        }); 
+        setPieces(piecesAux)
       }
     );
   }

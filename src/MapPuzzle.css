@@ -345,13 +345,21 @@ table.legend .imgflag div {
   direction: rtl;
   text-align: right;
 }
-#flagsQuiz img {
+#flagsQuiz > .logo {
   width: 32px;
   height: 32px;
   margin: -3px -10px;
   cursor: pointer;
   position: absolute;
 }
+#flagsQuiz > .new {
+  width: 28px;
+  height: 28px;
+  margin: -13px -5px;
+  cursor: pointer;
+  position: absolute;
+}
+
 #flagsQuiz span {
   margin: 0px 10px 0px 25px;
 }
