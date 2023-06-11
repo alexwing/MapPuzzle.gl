@@ -3,7 +3,7 @@ import { PieceProps } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
 import Button from "react-bootstrap/Button";
 import Flag from "./Flag";
-import { Canvas, useFrame } from "react-three-fiber";
+import { Canvas } from "react-three-fiber";
 import { t } from "i18next";
 import { Row, Col, Alert } from "react-bootstrap";
 import "./PieceQuiz.css";

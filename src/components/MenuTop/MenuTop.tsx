@@ -170,7 +170,7 @@ function MenuTop({
         onHide={onShowWikiInfoHandler(false)}
         piece={0}
         enableFlags={false}
-        puzzleSelected={0}
+        puzzleSelected={puzzleSelected}
       />
     </React.Fragment>
   );
