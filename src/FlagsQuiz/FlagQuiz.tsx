@@ -10,7 +10,7 @@ import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 import ReactFullscreeen from "react-easyfullscreen";
 import MenuTop from "./MenuTop/MenuTop";
 import Puzzles from "../../backend/src/models/puzzles";
-import { getLang, Jsondb, copyViewState, shuffle } from "../lib/Utils";
+import { getLang, Jsondb, copyViewState, shuffle, getWiki } from "../lib/Utils";
 import GameTime from "../lib/GameTime";
 import { PuzzleService } from "../services/puzzleService";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,9 @@ import * as turf from "@turf/turf";
 import PieceQuiz from "./Quiz/PieceQuiz";
 import YouWin from "../components/YouWin";
 import { ConfigService } from "../services/configService";
+import Tooltip from "./lib/Tooltip";
+import CustomWiki from "../../backend/src/models/customWiki";
+import WikiInfo from "../components/WikiInfo";
 
 function FlagQuiz(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
@@ -39,7 +42,11 @@ function FlagQuiz(): JSX.Element {
   const [corrects, setCorrects] = useState([] as Array<number>);
   const [questions, setQuestions] = useState([] as Array<PieceProps>);
   const [reset, setReset] = useState(false);
-
+  const [tooltipValue, setTooltipValue] = useState("");
+  const [puzzleCustomWiki, setPuzzleCustomWiki] = useState([] as CustomWiki[]);
+  const [showWikiInfo, setShowWikiInfo] = useState(false);
+  const [wikiInfoUrl, setWikiInfoUrl] = useState("");
+  const [wikiInfoId, setWikiInfoId] = useState(-1);
   const MIN_ZOOM = 2.5;
   const ZOOM_OUT_FACTOR = 0.8;
 
@@ -60,11 +67,37 @@ function FlagQuiz(): JSX.Element {
     }
   }, []);
 
+  
+  const getCustomWikis = (puzzleId: number) => {
+    PuzzleService.getCustomWikis(puzzleId).then((customWiki: CustomWiki[]) => {
+      setPuzzleCustomWiki(customWiki);
+    });
+  };
+
   const onClickMapHandler = (info: PieceEvent) => {
-    //TODO: check if the click is in the correct country
+    if (!winner) return;
+    if (info.object) {
+      console.log("Selected piece: " + info.object.properties.cartodb_id);
+      //if the piece is found and wiki is enabled in puzzle, show the wiki info on click
+      if (
+        founds.includes(info.object.properties.cartodb_id) &&
+        puzzleSelectedData.enableWiki
+      ) {
+        const wiki_url = getWiki(
+          info.object.properties.cartodb_id,
+          info.object.name,
+          puzzleCustomWiki
+        );
+        setShowWikiInfo(true);
+        setWikiInfoUrl(wiki_url);
+        setWikiInfoId(info.object.properties.cartodb_id);
+        return;
+      }
+    }
   };
   const onHoverMapHandler = (info: PieceEvent) => {
-    //TODO: check if the hover is in the correct country
+    if (!winner) return;
+    setTooltipValue(info.object ? info.object.properties.name : "");
   };
   const onViewStateChangeHandler = (viewState: ViewStateEvent) => {
     setViewState(viewState.viewState);
@@ -99,6 +132,20 @@ function FlagQuiz(): JSX.Element {
     GameTime.seconds = 0;
   };
 
+  const onShowWikiInfoHandler = (val: boolean) => {
+    if (
+      val &&
+      puzzleSelectedData !== null &&
+      puzzleSelectedData !== undefined
+    ) {
+      setShowWikiInfo(true);
+      setWikiInfoUrl(puzzleSelectedData.wiki ? puzzleSelectedData.wiki : "");
+    } else {
+      setShowWikiInfo(false);
+      setWikiInfoUrl("");
+    }
+  };
+
   /* on reset game */
   useEffect(() => {
     if (reset) {
@@ -108,12 +155,12 @@ function FlagQuiz(): JSX.Element {
   }, [reset]);
 
   useEffect(() => {
-      loadPiecesByLang(puzzleSelected, pieces, lang);
+    loadPiecesByLang(puzzleSelected, pieces, lang);
   }, [lang]);
 
   useEffect(() => {
     if (pieces.length > 0) {
-    restoreMapColors();
+      restoreMapColors();
     }
   }, [pieces]);
 
@@ -131,13 +178,14 @@ function FlagQuiz(): JSX.Element {
     setCorrects([]);
     setFoundsIds([]);
     setWinner(false);
-    
+
     setLang(langAux);
     setLoading(true);
     //get puzzle data from db
     PuzzleService.getPuzzle(puzzleId).then((puzzleData: Puzzles) => {
       //get map data from geojson
       Jsondb(puzzleData.data).then((response) => {
+        getCustomWikis(puzzleData.id);
         window.history.pushState(
           {},
           puzzleData.name,
@@ -185,20 +233,16 @@ function FlagQuiz(): JSX.Element {
         if (fails.includes(piece.properties.cartodb_id)) {
           piece.properties.mapcolor = WRONG_COLOR;
         }
-        if (pieceSelectedData.properties !== undefined){
-          if (pieceSelectedData.properties.cartodb_id === piece.properties.cartodb_id) {
-          piece.properties.mapcolor = SELECTED_COLOR;
+        if (pieceSelectedData.properties !== undefined) {
+          if (
+            pieceSelectedData.properties.cartodb_id ===
+            piece.properties.cartodb_id
+          ) {
+            piece.properties.mapcolor = SELECTED_COLOR;
+          }
         }
-      }
       });
     }
-  /* const pieceSelectedAux = pieceSelectedData;
-    if (pieceSelectedAux.properties !== undefined) {
-        pieceSelectedAux.properties.mapcolor = SELECTED_COLOR;
-        setPieceSelectedData(pieceSelectedAux);
-    }*/
-
-
   };
 
   const restoreCookies = (puzzleId: number) => {
@@ -250,8 +294,8 @@ function FlagQuiz(): JSX.Element {
           } else {
             piece.properties.name = piece.name;
           }
-        }); 
-        setPieces(piecesAux)
+        });
+        setPieces(piecesAux);
       }
     );
   }
@@ -383,7 +427,6 @@ function FlagQuiz(): JSX.Element {
       transitionInterpolator: new FlyToInterpolator(),
     };
     setViewState(newViewState);
-    console.log("piece set to: " + pieceSelectedAux.properties.name);
   };
 
   useEffect(() => {
@@ -469,6 +512,19 @@ function FlagQuiz(): JSX.Element {
                 name={puzzleSelectedData?.name}
               />
             </div>
+            <Tooltip tooltip={tooltipValue} />
+            <WikiInfo
+              show={showWikiInfo}
+              url={wikiInfoUrl}
+              onHide={onShowWikiInfoHandler}
+              piece={wikiInfoId}
+              enableFlags={
+                puzzleSelectedData.enableFlags
+                  ? puzzleSelectedData.enableFlags
+                  : false
+              }
+              puzzleSelected={puzzleSelected}
+            />
           </div>
         )}
       </ReactFullscreeen>
