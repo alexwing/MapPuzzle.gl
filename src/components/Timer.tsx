@@ -7,9 +7,13 @@ import { useTranslation } from "react-i18next";
 
 interface TimerProps {
   puzzleSelected: number;
+  name?: string;
 }
 
-function Timer({ puzzleSelected }: TimerProps) : JSX.Element {
+function Timer({
+  puzzleSelected,
+  name = "seconds",
+}: TimerProps): JSX.Element {
   const { t } = useTranslation();
   const [time, setTime] = useState({
     h: 0,
@@ -22,13 +26,12 @@ function Timer({ puzzleSelected }: TimerProps) : JSX.Element {
     return () => clearInterval(interval);
   }, []);
 
-
   function countDown(): void {
     GameTime.seconds++;
     //save time each 5 seconds
     if (GameTime.seconds % 5 === 0) {
       setCookie(
-        "seconds" + puzzleSelected,
+        name + puzzleSelected,
         GameTime.seconds.toString(),
         ConfigService.cookieDays
       );

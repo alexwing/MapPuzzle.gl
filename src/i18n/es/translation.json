@@ -1,6 +1,8 @@
 {
   "topMenu": {
     "selectPuzzle": "Seleccionar Puzle",
+    "selectQuiz": "Seleccionar Desafío",
+    "playFlagsQuiz": "Desafío de Banderas",
     "resetGame": "Reiniciar",
     "editor": "Editor",
     "surrenderTitle": "¿Te rindes?",

@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import "./MapPuzzle.css";
+import "./responsive.css";
 import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store";
 
 import MenuTop from "./components/MenuTop/MenuTop";
 import DeckMap from "./components/DeckMap";
 import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
-import { Jsondb, getWiki, copyViewState,getLang } from "./lib/Utils";
+import { Jsondb, getWiki, copyViewState, getLang, cleanUrlParams } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
@@ -25,7 +26,6 @@ import CustomWiki from "../backend/src/models/customWiki";
 import CustomTranslations from "../backend/src/models/customTranslations";
 import Puzzles from "../backend/src/models/puzzles";
 import { useTranslation } from "react-i18next";
-
 
 function MapPuzzle(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
@@ -55,9 +55,8 @@ function MapPuzzle(): JSX.Element {
   const [lang, setLang] = useState("");
   const { i18n } = useTranslation();
   useEffect(() => {
-
     if (window.location.pathname) {
-      const puzzleUrl = window.location.search.substring(5);
+      const puzzleUrl = cleanUrlParams(window.location.search.substring(5));
       PuzzleService.getPuzzleIdByUrl(puzzleUrl).then((content: number) => {
         loadGame(content);
       });
@@ -67,15 +66,28 @@ function MapPuzzle(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (height !== window.innerHeight) setHeight(window.innerHeight);
+    handleResize();
   }, [height]);
+
+  const handleResize = () => {
+    let heightAux = window.innerHeight;
+    if (window.innerWidth < 992) {
+      heightAux = window.innerHeight / 2;
+    } else {
+      heightAux = window.innerHeight;
+    }
+    if (height !== heightAux) {
+      setHeight(heightAux);
+    }
+  };
+
 
   /* load game from db */
   const loadGame = (puzzleId: number) => {
     const langAux = getLang();
     i18n.changeLanguage(langAux);
     setPieces([]);
-    setFounds([]);    
+    setFounds([]);
     setLang(langAux);
     setLoading(true);
     //get puzzle data from db
@@ -112,7 +124,7 @@ function MapPuzzle(): JSX.Element {
           setViewState(viewStateCopy);
           setData(response);
 
-          loadPiecesByLang(puzzleId,piecesAux, langAux);
+          loadPiecesByLang(puzzleId, piecesAux, langAux);
         }
       });
     });
@@ -138,8 +150,12 @@ function MapPuzzle(): JSX.Element {
       GameTime.seconds = 0;
     }
   };
-  
-   function loadPiecesByLang(puzzleSelectedAux:number,piecesAux: PieceProps[], langAux: string) {
+
+  function loadPiecesByLang(
+    puzzleSelectedAux: number,
+    piecesAux: PieceProps[],
+    langAux: string
+  ) {
     //force refresh of pieces
     setPieces([]);
     PuzzleService.getCustomTranslations(puzzleSelectedAux, langAux).then(
@@ -147,7 +163,8 @@ function MapPuzzle(): JSX.Element {
         piecesAux.forEach((piece: PieceProps) => {
           //find from CustomTranslations[]
           const customTranslation = customTranslations.find(
-            (e: CustomTranslations) => e.cartodb_id === piece.properties.cartodb_id && e.lang === langAux
+            (e: CustomTranslations) =>
+              e.cartodb_id === piece.properties.cartodb_id && e.lang === langAux
           )?.translation;
           if (customTranslation) {
             piece.properties.name = customTranslation;
@@ -167,7 +184,7 @@ function MapPuzzle(): JSX.Element {
         });
         setPieces(piecesAux);
         //restore game status from coockie
-        restoreCookies(puzzleSelectedAux); 
+        restoreCookies(puzzleSelectedAux);
         setLoading(false);
       }
     );
@@ -207,7 +224,10 @@ function MapPuzzle(): JSX.Element {
     if (info.object) {
       console.log("Selected piece: " + info.object.properties.cartodb_id);
       //if the piece is found and wiki is enabled in puzzle, show the wiki info on click
-      if (founds.includes(info.object.properties.cartodb_id) && puzzleSelectedData.enableWiki) {
+      if (
+        founds.includes(info.object.properties.cartodb_id) &&
+        puzzleSelectedData.enableWiki
+      ) {
         const wiki_url = getWiki(
           info.object.properties.cartodb_id,
           info.object.name,
@@ -396,6 +416,8 @@ function MapPuzzle(): JSX.Element {
     }
   };
 
+  window.addEventListener('resize', handleResize)
+
   return (
     <React.Fragment>
       <ReactFullscreeen>
@@ -418,7 +440,7 @@ function MapPuzzle(): JSX.Element {
               onRefocus={onRefocusMapHandler}
               onShowEditor={onShowEditorHandler}
               onLangChange={onLangChangeHandler}
-              puzzleSelected={puzzleSelected}              
+              puzzleSelected={puzzleSelected}
             />
             <YouWin
               winner={winner}
@@ -430,7 +452,7 @@ function MapPuzzle(): JSX.Element {
             />
             <Container fluid style={{ paddingTop: 15 + "px" }}>
               <Row>
-                <Col xs={8} md={4} lg={4} xl={3}>
+                <Col xs={12} md={8} lg={4} xl={3}>
                   <ToolsPanel
                     name={puzzleSelectedData?.name}
                     flag={puzzleSelectedData?.icon}
@@ -444,7 +466,11 @@ function MapPuzzle(): JSX.Element {
                     founds={founds}
                     fails={fails}
                     winner={winner}
-                    enableFlags={puzzleSelectedData.enableFlags ? puzzleSelectedData.enableFlags : false}
+                    enableFlags={
+                      puzzleSelectedData.enableFlags
+                        ? puzzleSelectedData.enableFlags
+                        : false
+                    }
                     lang={lang}
                     loading={loading}
                   />
@@ -463,7 +489,11 @@ function MapPuzzle(): JSX.Element {
               url={wikiInfoUrl}
               onHide={onShowWikiInfoHandler}
               piece={wikiInfoId}
-              enableFlags={puzzleSelectedData.enableFlags ? puzzleSelectedData.enableFlags : false}
+              enableFlags={
+                puzzleSelectedData.enableFlags
+                  ? puzzleSelectedData.enableFlags
+                  : false
+              }
               puzzleSelected={puzzleSelected}
             />
             <EditorDialog

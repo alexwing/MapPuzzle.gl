@@ -197,16 +197,40 @@ async function saveCustomCentroids(pieceProps: PieceProps): Promise<any> {
   }
   return Promise.resolve();
 }
+interface Link {
+  url: string;
+  changefreq: string;
+  priority: number;
+}
+
 mapEditor.get("/generateSitemap", async (_req, res) => {
   const pieces = await connection!.getRepository(Puzzles).find();
   //create links from pieces format  const links = [{ url: '/page-1/',  changefreq: 'daily', priority: 0.3  }]
-  const links = pieces.map((piece) => {
+  let links = pieces.map((piece) => {
     return {
       url: `http://mappuzzle.xyz/?map=${piece.url}`,
       changefreq: "monthly",
       priority: 0.8,
-    };
+    } as Link;
   });
+
+  //links to flagsQuiz
+  const linksQuiz: Link[] = [];
+  //foreach link in linksQuiz add to links
+  pieces.forEach((piece) => {
+    if (piece.enableFlags === true) {
+      links.push({
+        url: `http://mappuzzle.xyz/?flagQuiz=${piece.url}`,
+        changefreq: "monthly",
+        priority: 0.8,
+      } as Link);
+    }
+  });
+  
+
+  if (linksQuiz){
+    links = links.concat(linksQuiz as Link[]);
+  } 
   const stream = new SitemapStream({ hostname: "http://mappuzzle.xyz" });
 
   let sitemap = await streamToPromise(Readable.from(links).pipe(stream)).then(

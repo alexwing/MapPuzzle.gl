@@ -1,0 +1,43 @@
+
+@media screen and (max-width: 992px) {
+    
+    .basic-navbar-nav {
+       display: inline;
+       flex-flow: column nowrap;
+    }
+    .navbar-collapse {
+        display: inline;
+        flex-flow: column nowrap;
+     }
+    #flagsQuiz, .lang-selector, #puzzleSelect, .btn-outline-secondary, .btn-outline-primary {
+       margin: 0;
+       background-color: transparent;
+       border: 1px solid #ddd;
+       border-radius: 0.25rem;   
+       color: #333;    
+       text-align: center;
+       padding: 0.5rem 1rem;
+       width: 100%;
+    }
+    #flagsQuiz > .new {
+        display: none;
+    }
+    .lang-selector a {
+        padding: 0;
+        margin: -3px 0;
+    }
+    .form-inline {
+        display: flex;
+        flex-flow: column nowrap;
+     }
+
+     .share h4 {
+        display: none;
+     }
+}
+
+@media screen and (max-width: 768px) {
+    .container-fluid {
+        padding: 0 !important;  
+     }
+}

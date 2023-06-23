@@ -38,6 +38,8 @@ export interface PieceProps {
     box: string;
     mapcolor: number;
     poly: string;
+    longitude: number;
+    latitude: number;
   };
   customCentroid?: CustomCentroids;
   customWiki?: CustomWiki;

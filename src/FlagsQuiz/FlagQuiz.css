@@ -1,0 +1,65 @@
+.navbar-brand > img {
+  max-height: 32px;
+  padding-right: 4px;
+  height: 32px;
+  width: 38px;
+}
+
+.piece-quiz > .timer {
+  text-align: right;
+  color: lightgray;
+  font-style: italic;
+  position: absolute;
+  z-index: 1;
+  margin-left: calc(30vw - 210px);
+  width: 200px;
+  margin-top: 10px;
+}
+.piece-quiz > .timer b {
+  color: pink;
+  font-style: normal;
+}
+
+.quiz-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 56px);
+  background: linear-gradient(180deg, #777 0%, #fff 70%, #777 100%);
+}
+.flag-container {
+  background: linear-gradient(
+    180deg,
+    #777 0%,
+    #151515 30%,
+    #151515 70%,
+    #cdcdcd 99%,
+    #fff 99.5%,
+    #cdcdcd 100%
+  );
+  /*max-height: calc(100vh - 470px);*/
+  max-height: calc(42vh - 56px - 37px);
+
+}
+.deckgl-container {
+  flex: 30vw;
+  height: 100vh;
+}
+.deckgl-container > div {
+  height: 100vh !important;
+  width: 70vw !important;
+  margin-left: 30vw !important;
+}
+.piece-quiz {
+  position: absolute;
+  max-width: min-content;
+}
+
+.questions {
+  margin-top: 2vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1em;
+  padding: 0 1em;
+  max-width: 100%;
+  height: calc(60vh - 56px - 37px);
+}

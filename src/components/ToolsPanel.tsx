@@ -106,6 +106,7 @@ function ToolsPanel({
                   </Col>
                 </Row>
                 <div
+                  className="pieceListContainer"
                   style={{
                     overflowY: "auto",
                     maxHeight: height - 190 + "px",

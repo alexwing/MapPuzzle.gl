@@ -18,7 +18,7 @@ function LangSelector({ langs = [] as WikiInfoLang[],currentLang, onSelectLang }
   const navDropdownTitle = (
     <span>
       <span className="lang-selector-icon"></span>
-      <span className="d-none d-lg-inline d-lg-none">{currentLang}</span>
+      <span className="d-xl-inline d-lg-none ">{currentLang}</span>
     </span>
   );
 

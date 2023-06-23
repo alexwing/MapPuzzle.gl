@@ -1,10 +1,7 @@
 import React, { useEffect } from "react";
 import Navbar from "react-bootstrap/Navbar";
-import Info from "../Info";
 import PuzzleSelector from "./PuzzleSelector";
 import PuzzleOptions from "./PuzzleOptions";
-import ConfirmDialog from "./ConfirmDialog";
-import LangSelector from "../LangSelector";
 import { WikiInfoLang } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
 import { setCookie } from "react-simple-cookie-store";
@@ -14,15 +11,16 @@ import { getCurrentLang, languagesToWikiInfoLang } from "../../lib/Utils";
 import { Button, Nav } from "react-bootstrap";
 import "../../i18n/config";
 import { useTranslation } from "react-i18next";
-import WikiInfo from "../WikiInfo";
+import ConfirmDialog from "../../components/MenuTop/ConfirmDialog";
+import LangSelector from "../../components/LangSelector";
+import Info from "../../components/Info";
+import WikiInfo from "../../components/WikiInfo";
 
 interface MenuTopProps {
   name: string;
   onSelectMap: (any) => void;
   onResetGame: () => void;
   onFullScreen: () => void;
-  onRefocus: () => void;
-  onShowEditor: (val: boolean) => void;
   onLangChange: (lang: string) => void;
   puzzleSelected: number;
 }
@@ -32,8 +30,6 @@ function MenuTop({
   onSelectMap,
   onResetGame,
   onFullScreen,
-  onRefocus,
-  onShowEditor,
   onLangChange,
   puzzleSelected,
 }: MenuTopProps): JSX.Element {
@@ -104,16 +100,12 @@ function MenuTop({
       setShowWikiInfo(false);
     }
   };
-  const onOpenFlagsQuiz = () => {
-    //open new windows to play flags quiz
-    window.open("/?flagQuiz", "_blank");
-  };
 
   return (
     <React.Fragment>
       <Navbar bg="light" expand="lg">
         <Navbar.Brand>
-          <img src="./logo192.png" alt="" />
+          <img src="./logoFlagsQuiz192.png" alt="" />
           {name}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -124,21 +116,13 @@ function MenuTop({
               variant="outline-primary"
               onClick={handleShowSelectPuzzle}
             >
-              {t("topMenu.selectPuzzle")}
-            </Button>
-            <Button
-              id="flagsQuiz"
-              variant="outline-primary"
-              onClick={onOpenFlagsQuiz}
-            >
-              <img className="logo" src="./logoFlagsQuiz192.png" alt="" />
-              <span>{t("topMenu.playFlagsQuiz")}</span>
-              <img className="new" src="./new-icon.png" alt="" />
+              {t("topMenu.selectQuiz")}
             </Button>
             <PuzzleSelector
               show={showSelectPuzzle}
               onSelectMap={onSelectMap}
               onHidePuzzleSelector={handleHideSelectPuzzle}
+              onlyFlags={true}
             />
           </Nav>
           <LangSelector
@@ -147,12 +131,10 @@ function MenuTop({
             currentLang={currentLang}
           ></LangSelector>
           <PuzzleOptions
-            onRefocus={onRefocus}
             onFullScreen={onFullScreen}
             handleInfo={handleShowInfo}
             handleShow={handleShow}
-            onShowWikiInfo={onShowWikiInfoHandler(true)}
-            onShowEditor={onShowEditor}
+            onShowWikiInfo={onShowWikiInfoHandler(true)}            
           />
         </Navbar.Collapse>
       </Navbar>
@@ -170,8 +152,8 @@ function MenuTop({
         onHide={onShowWikiInfoHandler(false)}
         piece={0}
         enableFlags={false}
-        puzzleSelected={puzzleSelected}
-      />
+        puzzleSelected={0}
+      />      
     </React.Fragment>
   );
 }

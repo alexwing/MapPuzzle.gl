@@ -1,6 +1,8 @@
 {
   "topMenu": {
     "selectPuzzle": "Seleziona il puzzle",
+    "selectQuiz": "Seleziona il quiz",
+    "playFlagsQuiz": "Quiz Bandiere",
     "resetGame": "Riavvia il gioco",
     "editor": "Editor",
     "surrenderTitle": "Ti arrendi?",
