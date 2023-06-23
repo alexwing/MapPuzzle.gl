@@ -10,7 +10,7 @@ import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 import ReactFullscreeen from "react-easyfullscreen";
 import MenuTop from "./MenuTop/MenuTop";
 import Puzzles from "../../backend/src/models/puzzles";
-import { getLang, Jsondb, copyViewState, shuffle, getWiki } from "../lib/Utils";
+import { getLang, Jsondb, copyViewState, shuffle, getWiki, cleanUrlParams } from "../lib/Utils";
 import GameTime from "../lib/GameTime";
 import { PuzzleService } from "../services/puzzleService";
 import { useTranslation } from "react-i18next";
@@ -58,7 +58,7 @@ function FlagQuiz(): JSX.Element {
 
   useEffect(() => {
     if (window.location.pathname) {
-      const puzzleUrl = window.location.search.substring(10);
+      const puzzleUrl = cleanUrlParams(window.location.search.substring(10));
       PuzzleService.getPuzzleIdByUrl(puzzleUrl).then((content: number) => {
         loadGame(content);
       });

@@ -9,7 +9,7 @@ import MenuTop from "./components/MenuTop/MenuTop";
 import DeckMap from "./components/DeckMap";
 import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
-import { Jsondb, getWiki, copyViewState, getLang } from "./lib/Utils";
+import { Jsondb, getWiki, copyViewState, getLang, cleanUrlParams } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
@@ -56,7 +56,7 @@ function MapPuzzle(): JSX.Element {
   const { i18n } = useTranslation();
   useEffect(() => {
     if (window.location.pathname) {
-      const puzzleUrl = window.location.search.substring(5);
+      const puzzleUrl = cleanUrlParams(window.location.search.substring(5));
       PuzzleService.getPuzzleIdByUrl(puzzleUrl).then((content: number) => {
         loadGame(content);
       });

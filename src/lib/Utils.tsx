@@ -473,3 +473,14 @@ export function* shuffle<T>(arr: T[]): IterableIterator<T> {
   arr = [...arr];
   while(arr.length) yield arr.splice(Math.random()*arr.length|0, 1)[0]
 }
+
+
+/* clean url params */
+export function cleanUrlParams(url: string): string {
+  const index = url.indexOf("&");
+  if (index > -1) {
+    return url.substring(0, index);
+  } else {
+    return url;
+  }
+}
