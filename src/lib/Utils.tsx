@@ -134,10 +134,13 @@ export function setColor(col: number): string {
  * @param alpha - The alpha value to use for the RGBA color array. Defaults to 255.
  * @returns An RGBA color array with the specified alpha value.
  */
-export function AlphaColor(
-{ col, alpha = 255 }: {
+export function AlphaColor({
+  col,
+  alpha = 255,
+}: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  col: any | string; alpha?: number;
+  col: any | string;
+  alpha?: number;
 }): Array<number> {
   if (col[0] === "#") {
     col = col.slice(1);
@@ -558,8 +561,12 @@ export function convertToNumber(value: SqlValue): number {
   return 0;
 }
 
-// Shuffles an array in place.
-// Uses the Fisher-Yates algorithm.
+
+/**
+ * Shuffles an array using the Fisher-Yates algorithm.
+ * @param arr - The array to shuffle.
+ * @returns An iterable iterator of the shuffled array.
+ */
 export function* shuffle<T>(arr: T[]): IterableIterator<T> {
   arr = [...arr];
   while (arr.length) yield arr.splice((Math.random() * arr.length) | 0, 1)[0];

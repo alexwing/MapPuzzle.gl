@@ -296,8 +296,6 @@ function FlagQuiz(): JSX.Element {
     );
   }
 
-
-
   const getRandomPiece = (
     pieces: PieceProps[],
     selectedPiece: number
@@ -420,7 +418,12 @@ function FlagQuiz(): JSX.Element {
     }
   }, [loading]);
 
-  const generateQuestions = (correctPiece:PieceProps) => {
+  /**
+   * Generates an array of questions for the quiz, including the correct piece and random pieces.
+   * @param correctPiece The correct piece for the current question.
+   * @returns An array of PieceProps objects representing the questions for the quiz.
+   */
+  const generateQuestions = (correctPiece: PieceProps) => {
     const questionsAux: PieceProps[] = [];
     //add current piece to questions
     questionsAux.push(correctPiece);

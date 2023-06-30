@@ -26,14 +26,49 @@
         padding: 0;
         margin: -3px 0;
     }
+    .lang-selector a.dropdown-item {
+        padding: 0.5em;
+        margin: -3px 0;
+        border-bottom: 1px solid lightgray;
+    }
+
     .form-inline {
         display: flex;
         flex-flow: column nowrap;
+        align-items: flex-end;
      }
 
      .share h4 {
         display: none;
      }
+     .modal-dialog {
+        width: calc(100vw) !important;
+        margin: 0;
+        padding: 0;
+     }
+     .modal-content {
+        width: calc(100vw) !important;
+        margin: 0;
+        padding: 0;
+        border-radius: 0;
+     }
+     .modal-title {
+        font-size: 1.8vh;
+        margin: 0;
+    }
+    .modal-footer small {
+        font-size: 1vh;
+    }
+    .modal-footer {
+        padding: 0;
+    }
+    .react-share__ShareButton {
+        transform: scale(0.75);
+    }
+    .share {
+        padding: 0 !important;
+    }
+
 }
 
 @media screen and (max-width: 768px) {
