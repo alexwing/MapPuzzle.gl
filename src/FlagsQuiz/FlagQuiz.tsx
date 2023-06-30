@@ -10,7 +10,14 @@ import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 import ReactFullscreeen from "react-easyfullscreen";
 import MenuTop from "./MenuTop/MenuTop";
 import Puzzles from "../../backend/src/models/puzzles";
-import { getLang, Jsondb, copyViewState, shuffle, getWiki, cleanUrlParams } from "../lib/Utils";
+import {
+  getLang,
+  Jsondb,
+  shuffle,
+  getWiki,
+  cleanUrlParams,
+  calculateZoom,
+} from "../lib/Utils";
 import GameTime from "../lib/GameTime";
 import { PuzzleService } from "../services/puzzleService";
 import { useTranslation } from "react-i18next";
@@ -67,7 +74,6 @@ function FlagQuiz(): JSX.Element {
     }
   }, []);
 
-  
   const getCustomWikis = (puzzleId: number) => {
     PuzzleService.getCustomWikis(puzzleId).then((customWiki: CustomWiki[]) => {
       setPuzzleCustomWiki(customWiki);
@@ -193,31 +199,21 @@ function FlagQuiz(): JSX.Element {
         );
         //change title
         document.title = "MapPuzzle.xyz / FlagQuiz - " + puzzleData.name;
+        const piecesAux: PieceProps[] = response.features;
+        //set name to pieces from pieces.properties.name
+        piecesAux.forEach((piece: PieceProps) => {
+          piece.name = piece.properties.name;
+        });
 
-        if (
-          puzzleData.view_state !== null &&
-          puzzleData.view_state !== undefined
-        ) {
-          const viewStateCopy: ViewState = copyViewState(
-            puzzleData.view_state,
-            viewState
-          );
-          const piecesAux: PieceProps[] = response.features;
-          //set name to pieces from pieces.properties.name
-          piecesAux.forEach((piece: PieceProps) => {
-            piece.name = piece.properties.name;
-          });
+        setPuzzleSelectedData(puzzleData);
+        setPuzzleSelected(puzzleId);
 
-          setPuzzleSelectedData(puzzleData);
-          setPuzzleSelected(puzzleId);
-          setViewState(viewStateCopy);
-          setData(response);
-          loadPiecesByLang(puzzleId, piecesAux, langAux);
-          setPieces(piecesAux);
-          //restore game status from coockie
-          restoreCookies(puzzleId);
-          setLoading(false);
-        }
+        setData(response);
+        loadPiecesByLang(puzzleId, piecesAux, langAux);
+        setPieces(piecesAux);
+        //restore game status from coockie
+        restoreCookies(puzzleId);
+        setLoading(false);
       });
     });
   };
@@ -300,19 +296,7 @@ function FlagQuiz(): JSX.Element {
     );
   }
 
-  const calculateZoom = (bbox) => {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const [west, south, east, north] = bbox;
-    const viewportSize = Math.min(viewportWidth, viewportHeight);
-    const lngDiff = east - west;
-    const latDiff = north - south;
-    const lngZoom = Math.log2(((360 / 512) * viewportSize) / lngDiff);
-    const latZoom = Math.log2(((180 / 512) * viewportSize) / latDiff);
-    const zoom = Math.min(lngZoom, latZoom);
 
-    return Math.round(zoom);
-  };
 
   const getRandomPiece = (
     pieces: PieceProps[],
@@ -436,7 +420,7 @@ function FlagQuiz(): JSX.Element {
     }
   }, [loading]);
 
-  const generateQuestions = (correctPiece) => {
+  const generateQuestions = (correctPiece:PieceProps) => {
     const questionsAux: PieceProps[] = [];
     //add current piece to questions
     questionsAux.push(correctPiece);

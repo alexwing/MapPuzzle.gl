@@ -44,7 +44,7 @@ function PiecePreview({ selected, centroid }: PiecePreviewProps): JSX.Element {
             d={selected ? selected.properties.poly : ""}
             stroke="black"
             strokeWidth="0"
-            fill={setColor(selected.properties.mapcolor)}
+            fill={setColor(selected.properties.mapcolor || 0)}
           />
         </svg>
       </div>

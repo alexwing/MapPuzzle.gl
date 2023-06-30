@@ -34,9 +34,7 @@ function DeckMap({
           getLineColor: colorStroke,
           getFillColor: (object: PieceProps) =>
             AlphaColor(
-              hexToRgb(setColor(object.properties.mapcolor)),
-              founds.includes(object.properties.cartodb_id) ? 150 : 0
-            ),
+              { col: hexToRgb(setColor(object.properties.mapcolor)), alpha: founds.includes(object.properties.cartodb_id) ? 150 : 0 }            ),
           opacity: 1,
           pickable: true,
           lineWidthMinPixels: lineWidth,
@@ -45,9 +43,7 @@ function DeckMap({
             getLineColor: colorStroke,
             getFillColor: (object: PieceProps) =>
               AlphaColor(
-                hexToRgb(setColor(object.properties.mapcolor)),
-                founds?.includes(object.properties.cartodb_id) ? 150 : 0
-              ),
+                { col: hexToRgb(setColor(object.properties.mapcolor)), alpha: founds?.includes(object.properties.cartodb_id) ? 150 : 0 }              ),
           },
           onClick: (info: PieceEvent) => onClickMap(info),
           onHover: (info: PieceEvent) => onHoverMap(info),

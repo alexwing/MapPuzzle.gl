@@ -12,7 +12,12 @@ import { SqlValue } from "sql.js";
 export const colorStroke = [150, 150, 150];
 export const lineWidth = 1;
 
-export const colorScale = function (x: number): number[] {
+/**
+ * Returns an array of RGB values representing a color on a scale from negative to positive.
+ * @param x - The value to determine the color for.
+ * @returns An array of three numbers representing the red, green, and blue values of the resulting color.
+ */
+export function colorScale(x: number): number[] {
   const COLOR_SCALE = [
     // negative
     [65, 182, 196],
@@ -36,7 +41,7 @@ export const colorScale = function (x: number): number[] {
     return COLOR_SCALE[i] || COLOR_SCALE[0];
   }
   return COLOR_SCALE[i] || COLOR_SCALE[COLOR_SCALE.length - 1];
-};
+}
 
 export const hexToRgb = function (hex: string | null): Array<number> {
   if (!hex) return [0, 0, 0];
@@ -50,10 +55,13 @@ export const hexToRgb = function (hex: string | null): Array<number> {
     : [0, 0, 0];
 };
 
-export const LightenDarkenColor = function (
-  col: string,
-  amt: number
-): Array<number> {
+/**
+ * Lightens or darkens a given color by a specified amount.
+ * @param col - The color to lighten or darken, in hexadecimal format.
+ * @param amt - The amount to lighten or darken the color by, as a number between -1 and 1.
+ * @returns An array of three numbers representing the red, green, and blue values of the resulting color.
+ */
+export function LightenDarkenColor(col: string, amt: number): Array<number> {
   if (col[0] === "#") {
     col = col.slice(1);
   }
@@ -71,9 +79,14 @@ export const LightenDarkenColor = function (
   else if (g < 0) g = 0;
 
   return [r, g, b];
-};
+}
 
-export const setColor = function (col: number): string {
+/**
+ * Sets the color of a given number as a string.
+ * @param col - The number to set the color for.
+ * @returns The color as a string.
+ */
+export function setColor(col: number): string {
   const colorArray = [
     "#fef400",
     "#67ba2e",
@@ -113,13 +126,19 @@ export const setColor = function (col: number): string {
     } while (col > colorScale.length);
     return colorArray[Math.abs(col)];
   }
-};
+}
 
-export const AlphaColor = function (
+/**
+ * Converts a hex color code to an RGBA color array with the specified alpha value.
+ * @param col - The hex color code to convert.
+ * @param alpha - The alpha value to use for the RGBA color array. Defaults to 255.
+ * @returns An RGBA color array with the specified alpha value.
+ */
+export function AlphaColor(
+{ col, alpha = 255 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  col: any | string,
-  alpha = 255
-): Array<number> {
+  col: any | string; alpha?: number;
+}): Array<number> {
   if (col[0] === "#") {
     col = col.slice(1);
   }
@@ -136,34 +155,13 @@ export const AlphaColor = function (
   if (g > 255) g = 255;
   else if (g < 0) g = 0;
   return [r, g, b, alpha];
-};
-
-export function ST_ExtentToVieport(box: string): string {
-  box = box.replace("BOX(", "").replace(")", "").replace(",", " ");
-  const arrayBox = box.split(" ");
-  return (
-    arrayBox[0] +
-    " " +
-    -(
-      parseFloat(arrayBox[1]) +
-      (parseFloat(arrayBox[3]) - parseFloat(arrayBox[1]))
-    ) +
-    " " +
-    (parseFloat(arrayBox[2]) - parseFloat(arrayBox[0])) +
-    " " +
-    (parseFloat(arrayBox[3]) - parseFloat(arrayBox[1]))
-  );
 }
 
-export function LazyRound(num: string): string {
-  const parts = num.split(".");
-  return parts.length > 1
-    ? Math.round(
-        parseInt(parts.join(""), 10) / Math.pow(1000, parts.length - 1)
-      ) + ["T", "M", "B"][parts.length - 2]
-    : parts[0];
-}
-
+/**
+ * Fetches a JSON file from the specified filepath and returns its contents as a Promise.
+ * @param filepath - The path to the JSON file to fetch.
+ * @returns A Promise that resolves to the contents of the fetched JSON file.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function Jsondb(filepath: string): Promise<any> {
   return fetch(filepath, {
@@ -176,17 +174,11 @@ export async function Jsondb(filepath: string): Promise<any> {
     .catch((error) => console.log(error));
 }
 
-export async function Querydb(sql: string): Promise<Response> {
-  return fetch("https://public.carto.com/api/v2/sql?q=" + sql, {
-    method: "GET",
-    headers: new Headers({
-      Accept: "application/json",
-    }),
-  })
-    .then((res) => res.json())
-    .catch((error) => console.log(error));
-}
-
+/**
+ * Converts a number of seconds to an object representing the equivalent time in hours, minutes, and seconds.
+ * @param secs - The number of seconds to convert.
+ * @returns An object representing the equivalent time in hours, minutes, and seconds.
+ */
 export function secondsToTime(secs: number): {
   h: number;
   m: number;
@@ -206,6 +198,14 @@ export function secondsToTime(secs: number): {
   };
 }
 
+/**
+ * Returns a JSX element representing the time in a formatted way, based on the number of seconds passed.
+ * If the time is greater than an hour, it returns the time in hours, minutes, and seconds.
+ * If the time is greater than a minute, it returns the time in minutes and seconds.
+ * If the time is less than a minute, it returns the time in seconds.
+ * @param t - The translation function to use for formatting the time.
+ * @returns A JSX element representing the time in a formatted way.
+ */
 export function getTime(t: TFunction): JSX.Element | undefined {
   const time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
@@ -231,6 +231,14 @@ export function getTime(t: TFunction): JSX.Element | undefined {
   }
 }
 
+/**
+ * Returns a string representing the time in a formatted way, based on the number of seconds passed.
+ * If the time is greater than an hour, it returns the time in hours, minutes, and seconds.
+ * If the time is greater than a minute, it returns the time in minutes and seconds.
+ * If the time is less than a minute, it returns the time in seconds.
+ * @param t - The translation function to use for formatting the time.
+ * @returns A string representing the time in a formatted way.
+ */
 export function getTexTime(t: TFunction): string | undefined {
   const time = secondsToTime(GameTime.seconds);
   if (time.h > 0) {
@@ -246,6 +254,11 @@ export function getTexTime(t: TFunction): string | undefined {
   }
 }
 
+/**
+ * Returns the current URL of the page, excluding the protocol and path.
+ * If the URL includes "localhost", it returns "mappuzzle.xyz".
+ * @returns The current URL of the page.
+ */
 export function getUrl(): string {
   const url = window.location.href.split("/")[2];
   if (url.includes("localhost")) {
@@ -254,6 +267,11 @@ export function getUrl(): string {
   return url;
 }
 
+/**
+ * Removes HTML comments, references, and audio descriptions from a given array of strings.
+ * @param html - The array of strings to remove HTML comments, references, and audio descriptions from.
+ * @returns The array of strings without HTML comments, references, and audio descriptions.
+ */
 export function cleanWikiComment(html: string[]): string[] {
   //remove comment
   let htmlAux = cleanHtmlComment(html.join(""));
@@ -274,10 +292,20 @@ export function cleanWikiComment(html: string[]): string[] {
   return [htmlAux];
 }
 
+/**
+ * Removes HTML comments from a given string.
+ * @param html - The string to remove HTML comments from.
+ * @returns The string without HTML comments.
+ */
 function cleanHtmlComment(html: string): string {
   return html.replace(/<!--[\s\S]*?-->/g, "");
 }
 
+/**
+ * Cleans a given name to generate a Wikipedia URL.
+ * @param name - The name to clean.
+ * @returns The cleaned Wikipedia URL.
+ */
 function cleanNameToWiki(name: string): string {
   let wiki_url = name.trim();
   wiki_url = wiki_url.replace("(disputed)", "");
@@ -292,6 +320,14 @@ function cleanNameToWiki(name: string): string {
   return wiki_url;
 }
 
+/**
+ * Returns a Wikipedia URL for a given name and custom Wikipedia URL, if available.
+ * If a custom Wikipedia URL is not available, it generates a Wikipedia URL from the name.
+ * @param cartodb_id - The cartodb_id of the feature.
+ * @param name - The name to generate a Wikipedia URL from.
+ * @param custom_wiki - An array of custom Wikipedia URLs, if available.
+ * @returns The Wikipedia URL.
+ */
 export function getWiki(
   cartodb_id: number,
   name: string,
@@ -309,6 +345,14 @@ export function getWiki(
     return cleanNameToWiki(name);
   }
 }
+
+/**
+ * Returns a Wikipedia URL for a given name and custom Wikipedia URL, if available.
+ * If a custom Wikipedia URL is not available, it generates a Wikipedia URL from the name.
+ * @param name - The name to generate a Wikipedia URL from.
+ * @param custom_wiki - A custom Wikipedia URL, if available.
+ * @returns The Wikipedia URL.
+ */
 export function getWikiSimple(name: string, custom_wiki: string): string {
   let wiki_url = "";
   if (custom_wiki) {
@@ -321,6 +365,12 @@ export function getWikiSimple(name: string, custom_wiki: string): string {
   }
 }
 
+/**
+ * Copies the view state from one object to another, preserving the bearing and pitch of the destination view state.
+ * @param viewStateOrigin - The view state object to copy from.
+ * @param viewStateDestination - The view state object to copy to.
+ * @returns The updated view state object.
+ */
 export function copyViewState(
   viewStateOrigin: ViewState,
   viewStateDestination: ViewState
@@ -344,11 +394,21 @@ export function copyViewState(
   }
   return viewStateDestination;
 }
-
+/**
+ * Returns the class name for a table row based on whether it is selected or not.
+ * @param c - A PieceProps object containing information about a table row.
+ * @param pieceSelected - The ID of the currently selected table row.
+ * @returns The class name as a string.
+ */
 export function className(c: PieceProps, pieceSelected: number): string {
   return c.properties.cartodb_id === pieceSelected ? "table-primary" : "";
 }
 
+/**
+ * Returns the language name with the autonym if available.
+ * @param piece - A WikiInfoLang object containing information about a language.
+ * @returns The language name as a string.
+ */
 export function langName(piece: WikiInfoLang): string {
   if (piece.autonym === "") {
     return piece.langname;
@@ -361,6 +421,11 @@ export function langName(piece: WikiInfoLang): string {
   }
 }
 
+/**
+ * Gets the current language based on the user's selected language and an array of WikiInfoLang objects.
+ * @param langs - An array of WikiInfoLang objects.
+ * @returns The current language as a string.
+ */
 export function getCurrentLang(langs: WikiInfoLang[]): string {
   const puzzleLanguage = getLang();
   //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
@@ -379,6 +444,11 @@ export function getCurrentLang(langs: WikiInfoLang[]): string {
   }
 }
 
+/**
+ * Gets the title of the language from an array of WikiInfoLang objects based on the current language.
+ * @param langs - An array of WikiInfoLang objects.
+ * @returns The title of the language as a string.
+ */
 export function getTitleFromLang(langs: WikiInfoLang[]): string {
   //find in pieceInfo.langs the lang with the same lang as puzzleLanguage
   const lang = getLang();
@@ -390,6 +460,11 @@ export function getTitleFromLang(langs: WikiInfoLang[]): string {
   }
 }
 
+/**
+ * Converts an array of Languages objects to an array of WikiInfoLang objects.
+ * @param languages - An array of Languages objects to be converted.
+ * @returns An array of WikiInfoLang objects.
+ */
 export function languagesToWikiInfoLang(
   languages: Languages[]
 ): WikiInfoLang[] {
@@ -404,6 +479,11 @@ export function languagesToWikiInfoLang(
   });
 }
 
+/**
+ * Sorts an array of WikiInfoLang objects by their langname property.
+ * @param langs - An array of WikiInfoLang objects to be sorted.
+ * @returns A sorted array of WikiInfoLang objects.
+ */
 export function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
   langs.sort((a: WikiInfoLang, b: WikiInfoLang) => {
     if (a.langname < b.langname) {
@@ -417,6 +497,10 @@ export function sortLangs(langs: WikiInfoLang[]): WikiInfoLang[] {
   return langs;
 }
 
+/**
+ * Gets the language code for the current user, based on their browser language or a saved cookie.
+ * @returns The language code as a string.
+ */
 export function getLang(): string {
   const lang = getCookie("puzzleLanguage");
   if (lang === undefined || lang === "") {
@@ -435,6 +519,11 @@ export function getLang(): string {
   }
 }
 
+/**
+ * Converts a value to a number.
+ * @param value - The value to convert.
+ * @returns The converted number.
+ */
 export function convertToNumber(value: SqlValue): number {
   if (typeof value === "number") {
     return value;
@@ -469,11 +558,12 @@ export function convertToNumber(value: SqlValue): number {
   return 0;
 }
 
+// Shuffles an array in place.
+// Uses the Fisher-Yates algorithm.
 export function* shuffle<T>(arr: T[]): IterableIterator<T> {
   arr = [...arr];
-  while(arr.length) yield arr.splice(Math.random()*arr.length|0, 1)[0]
+  while (arr.length) yield arr.splice((Math.random() * arr.length) | 0, 1)[0];
 }
-
 
 /* clean url params */
 export function cleanUrlParams(url: string): string {
@@ -483,4 +573,24 @@ export function cleanUrlParams(url: string): string {
   } else {
     return url;
   }
+}
+
+/**
+ * Calculates the zoom level based on the given bounding box and viewport dimensions.
+ * @param bbox - The bounding box of the map.
+ * @returns The calculated zoom level.
+ */
+export function calculateZoom(bbox: number[]): number {
+  const viewportWidth = window.innerWidth;
+  /** The height of the viewport. */
+  const viewportHeight = window.innerHeight;
+  const [west, south, east, north] = bbox;
+  const viewportSize = Math.min(viewportWidth, viewportHeight);
+  const lngDiff = east - west;
+  const latDiff = north - south;
+  const lngZoom = Math.log2(((360 / 512) * viewportSize) / lngDiff);
+  const latZoom = Math.log2(((180 / 512) * viewportSize) / latDiff);
+  const zoom = Math.min(lngZoom, latZoom);
+
+  return Math.round(zoom);
 }

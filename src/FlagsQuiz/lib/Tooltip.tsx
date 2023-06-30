@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import CustomCentroids from "../../../backend/src/models/customCentroids";
 import { useEventListener } from "../../lib/hooks/useEventListener";
 /**
  * MouseEvent
@@ -15,18 +14,12 @@ interface MouseEventProps {
 
 function Tooltip({ tooltip = "" }: MouseEventProps): JSX.Element {
   const tooltipRef: any = useRef();
-  const requestRef: any = useRef();
-  const previousTimeRef: any = useRef();
-  const [coords, setCoords]: any = useState({ x: 0, y: 0 });
-  const [isVisible, setIsVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
-  const [isActiveClickable, setIsActiveClickable] = useState(false);
   const endX = useRef(0);
   const endY = useRef(0);
 
   // Primary Mouse Move event
   const onMouseMove = useCallback(({ clientX, clientY }: any) => {
-    setCoords({ x: clientX, y: clientY });
     tooltipRef.current.style.top = clientY + "px";
     tooltipRef.current.style.left = clientX + "px";
     endX.current = clientX;
@@ -40,15 +33,6 @@ function Tooltip({ tooltip = "" }: MouseEventProps): JSX.Element {
 
   useEventListener("mousemove", onMouseMove);
   useEventListener("mousedown", onMouseDown);
-
-  // Cursor Visibility State
-  useEffect(() => {
-    if (isVisible) {
-      tooltipRef.current.style.opacity = 1;
-    } else {
-      tooltipRef.current.style.opacity = 1;
-    }
-  }, [isVisible]);
 
   // Target all possible clickables
   useEffect(() => {
@@ -64,10 +48,6 @@ function Tooltip({ tooltip = "" }: MouseEventProps): JSX.Element {
         });
         el.addEventListener("click", () => {
           setIsActive(true);
-          setIsActiveClickable(false);
-        });
-        el.addEventListener("mousedown", () => {
-          setIsActiveClickable(true);
         });
       }
     });
@@ -79,10 +59,6 @@ function Tooltip({ tooltip = "" }: MouseEventProps): JSX.Element {
         });
         el.removeEventListener("click", () => {
           setIsActive(true);
-          setIsActiveClickable(false);
-        });
-        el.removeEventListener("mousedown", () => {
-          setIsActiveClickable(true);
         });
       });
     };
