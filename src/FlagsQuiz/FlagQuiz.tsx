@@ -218,7 +218,12 @@ function FlagQuiz(): JSX.Element {
     });
   };
 
-  //restore color corrects and fails in the map
+  /**
+   * Restores the map colors based on the founds, corrects, fails and selected piece.
+   * If a piece is found, its color will be set to CORRECT_COLOR.
+   * If a piece is failed, its color will be set to WRONG_COLOR.
+   * If a piece is selected, its color will be set to SELECTED_COLOR.
+   */
   const restoreMapColors = () => {
     if (founds.length > 0) {
       //restore color corrects
@@ -241,6 +246,10 @@ function FlagQuiz(): JSX.Element {
     }
   };
 
+  /**
+   * Restores the cookies for the founds, foundsIds, corrects, fails and seconds of the game.
+   * @param puzzleId The ID of the selected puzzle.
+   */
   const restoreCookies = (puzzleId: number) => {
     const cookieFounds = getCookie("quizFounds" + puzzleId);
     if (cookieFounds) {
@@ -269,7 +278,12 @@ function FlagQuiz(): JSX.Element {
       GameTime.seconds = 0;
     }
   };
-
+  /**
+   * Loads custom translations for the pieces in the selected puzzle and language.
+   * @param puzzleSelectedAux The ID of the selected puzzle.
+   * @param piecesAux An array of PieceProps objects representing the pieces to be translated.
+   * @param langAux The language code for the translations.
+   */
   function loadPiecesByLang(
     puzzleSelectedAux: number,
     piecesAux: PieceProps[],
@@ -296,6 +310,12 @@ function FlagQuiz(): JSX.Element {
     );
   }
 
+  /**
+   * Returns a random piece that is not the currently selected piece.
+   * @param pieces An array of PieceProps objects representing the pieces to choose from.
+   * @param selectedPiece The index of the currently selected piece in the pieces array.
+   * @returns The index of the randomly selected piece in the pieces array.
+   */
   const getRandomPiece = (
     pieces: PieceProps[],
     selectedPiece: number
@@ -307,6 +327,11 @@ function FlagQuiz(): JSX.Element {
     return randomPiece;
   };
 
+  /**
+   * Returns a random piece that has not been found yet.
+   * @param pieces An array of PieceProps objects representing the pieces to choose from.
+   * @returns The index of the randomly selected piece in the pieces array.
+   */
   const getRandomPieceNotFounds = (pieces: PieceProps[]): number => {
     const length = pieces.length - founds.length;
     const randomPiece = Math.floor(Math.random() * length);
@@ -336,7 +361,7 @@ function FlagQuiz(): JSX.Element {
       ConfigService.cookieDays
     );
 
-    //Set piece to wrong color
+    //Set piece to correct color
     setPieceColour(pieceSelected, CORRECT_COLOR);
     nextPiece();
   };
@@ -355,12 +380,21 @@ function FlagQuiz(): JSX.Element {
     nextPiece();
   };
 
+  /**
+   * Sets the color of a puzzle piece.
+   * @param {number} pieceId - The ID of the puzzle piece to set the color for.
+   * @param {number} color - The color to set for the puzzle piece.
+   */
   const setPieceColour = (pieceId: number, color: number) => {
     const piecesAux = [...pieces];
     piecesAux[pieceId].properties.mapcolor = color;
     setPieces(piecesAux);
   };
 
+  /**
+   * Selects the next puzzle piece for the quiz, sets its color to the selected color,
+   * and generates questions for the quiz based on the selected piece.
+   */
   const nextPiece = () => {
     setCookie(
       "quizFounds" + puzzleSelected,
@@ -368,9 +402,7 @@ function FlagQuiz(): JSX.Element {
       ConfigService.cookieDays
     );
 
-    //if all pieces are founds
-    if (founds.length === pieces.length && pieces.length !== 0) {
-      setWinner(true);
+    if (onWinner()) {
       return;
     }
 
@@ -409,6 +441,35 @@ function FlagQuiz(): JSX.Element {
       transitionInterpolator: new FlyToInterpolator(),
     };
     setViewState(newViewState);
+  };
+
+  /**
+   * Checks if all puzzle pieces have been found and sets the winner state to true if so.
+   * @returns A boolean indicating whether all puzzle pieces have been found.
+   */
+  const onWinner = (): boolean => {
+    //if all pieces are founds
+    if (founds.length === pieces.length && pieces.length !== 0) {
+      setWinner(true);
+      setPieceSelectedData({} as PieceProps);
+      setPieceSelected(-1);
+      setViewState({
+        ...viewState,
+        latitude: puzzleSelectedData.view_state?.latitude
+          ? puzzleSelectedData.view_state?.latitude
+          : 0,
+        longitude: puzzleSelectedData.view_state?.longitude
+          ? puzzleSelectedData.view_state?.longitude
+          : 0,
+        zoom: puzzleSelectedData.view_state?.zoom
+          ? puzzleSelectedData.view_state?.zoom
+          : 1,
+        transitionDuration: 1000,
+        transitionInterpolator: new FlyToInterpolator(),
+      });
+      return true;
+    }
+    return false;
   };
 
   useEffect(() => {
@@ -480,7 +541,7 @@ function FlagQuiz(): JSX.Element {
                   />
                 </div>
               )}
-              <div className="deckgl-container">
+              <div className={winner ? "deckgl-container winner" : "deckgl-container"}>
                 <DeckMap
                   onClickMap={onClickMapHandler}
                   onHoverMap={onHoverMapHandler}

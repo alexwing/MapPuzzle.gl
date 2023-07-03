@@ -44,11 +44,21 @@
   flex: 30vw;
   height: 100vh;
 }
+
+.deckgl-container.winner > div {
+  height: 100vh !important;
+  width: 100vw !important;
+  margin-left: 0 !important;
+  margin-top: 0 !important;
+}
+
 .deckgl-container > div {
   height: 100vh !important;
   width: 70vw !important;
   margin-left: 30vw !important;
 }
+
+
 .piece-quiz {
   position: absolute;
   max-width: min-content;
