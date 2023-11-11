@@ -19,5 +19,8 @@ export default class ViewState {
 
     @Column({ type: 'real', nullable: false })
     zoom!: number;
+
+    transitionDuration?: number;
+    transitionInterpolator?: any;
 }
     

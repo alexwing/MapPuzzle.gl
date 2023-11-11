@@ -5,7 +5,7 @@ import "./FlagQuiz.css";
 import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store";
 
 import DeckMap from "../components/DeckMap";
-import { FlyToInterpolator, ViewState } from "react-map-gl";
+import { FlyToInterpolator } from "react-map-gl";
 import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 import ReactFullscreeen from "react-easyfullscreen";
 import MenuTop from "./MenuTop/MenuTop";
@@ -30,6 +30,7 @@ import { ConfigService } from "../services/configService";
 import Tooltip from "./lib/Tooltip";
 import CustomWiki from "../../backend/src/models/customWiki";
 import WikiInfo from "../components/WikiInfo";
+import ViewState from "../../backend/src/models/viewState";
 
 function FlagQuiz(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
@@ -106,7 +107,7 @@ function FlagQuiz(): JSX.Element {
     setTooltipValue(info.object ? info.object.properties.name : "");
   };
   const onViewStateChangeHandler = (viewState: ViewStateEvent) => {
-    setViewState(viewState.viewState);
+    setViewState(viewState.viewState as ViewState);
   };
 
   const onSelectMapHandler = (val: number) => {
