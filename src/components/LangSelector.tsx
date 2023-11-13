@@ -4,8 +4,6 @@ import { Nav, NavDropdown } from "react-bootstrap";
 
 import { langName } from "../lib/Utils";
 
-import "./LangSelector.css";
-
 
 interface LangSelectorProps {
   langs: WikiInfoLang[];
