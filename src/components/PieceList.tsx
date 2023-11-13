@@ -123,7 +123,6 @@ export default function PieceList({
     <React.Fragment>
       <Table
         striped
-        bordered
         hover
         size="sm"
         className={"legend " + rtlClass}
