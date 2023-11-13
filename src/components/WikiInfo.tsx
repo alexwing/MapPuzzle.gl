@@ -193,13 +193,14 @@ function WikiInfo({
         show={showAlert}
         alertMessage={alertModal}
         onHide={clearAlert}
-      />
+        />
       <Modal
         show={showIn}
         size="xl"
         aria-labelledby="contained-modal-title-vcenter"
         centered
         onHide={handleClose}
+        className="alertWiki"
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">

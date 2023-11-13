@@ -91,6 +91,7 @@ function Info({
         aria-labelledby="contained-modal-title-vcenter"
         centered
         onHide={handleClose}
+        className="infoModal"
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
