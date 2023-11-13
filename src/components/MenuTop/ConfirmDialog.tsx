@@ -23,8 +23,8 @@ function ConfirmDialog({
 
   return (
     <React.Fragment>
-      <Modal show={show} onHide={handleCancel}>
-          <Modal.Header closeButton>
+      <Modal show={show} onHide={handleCancel} centered className="confirmDialog">
+          <Modal.Header>
             <Modal.Title>{title}</Modal.Title>
           </Modal.Header>
           <Modal.Body>{message}</Modal.Body>

@@ -72,6 +72,7 @@ export default function YouWin({
         aria-labelledby="contained-modal-title-vcenter"
         centered
         onHide={handleClose}
+        className="youWin"
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
