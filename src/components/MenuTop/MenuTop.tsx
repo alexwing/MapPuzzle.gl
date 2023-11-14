@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Info from "../Info";
 import PuzzleSelector from "./PuzzleSelector";
@@ -15,6 +15,8 @@ import { Button, Nav } from "react-bootstrap";
 import "../../i18n/config";
 import { useTranslation } from "react-i18next";
 import WikiInfo from "../WikiInfo";
+import * as Icon from "react-bootstrap-icons";
+import ThemeContext from "../../components/ThemeProvider";
 
 interface MenuTopProps {
   name: string;
@@ -45,6 +47,7 @@ function MenuTop({
   const [showWikiInfo, setShowWikiInfo] = React.useState(false);
   const { t, i18n } = useTranslation();
   const [wikiInfoUrl, setWikiInfoUrl] = React.useState("");
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     setShow(false);
@@ -111,7 +114,7 @@ function MenuTop({
 
   return (
     <React.Fragment>
-      <Navbar bg="light" expand="lg">
+      <Navbar bg={theme} expand="lg">
         <Navbar.Brand>
           <img src="./logo192.png" alt="" />
           {name}
@@ -124,6 +127,7 @@ function MenuTop({
               variant="outline-primary"
               onClick={handleShowSelectPuzzle}
             >
+              <Icon.PuzzleFill size={22} className="me-2" />
               {t("topMenu.selectPuzzle")}
             </Button>
             <Button

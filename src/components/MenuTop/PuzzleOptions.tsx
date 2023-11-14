@@ -36,28 +36,33 @@ function PuzzleOptions({
   };
 
   const { t } = useTranslation();
+  const size = 28;
 
   return (
     <React.Fragment>
       <Form inline>
-        <Button id="refocus" variant="none" onClick={onRefocus}>          
-          <Icon.FullscreenExit size={22} />
+        <Button id="refocus" variant="none" onClick={onRefocus}>
+          <Icon.FullscreenExit size={size} />
         </Button>
         <Button id="fullscreen" variant="none" onClick={onFullScreen}>
-          <Icon.Fullscreen size={22} />
+          <Icon.Fullscreen size={size} />
         </Button>
         <Button id="theme" variant="none" onClick={onThemeChange}>
-          {theme === "light" ? <Icon.Moon size={22} /> : <Icon.Sun size={22} />}
+          {theme === "light" ? <Icon.Moon size={size} /> : <Icon.Sun size={size} />}
         </Button>
         <Button id="info" variant="none" onClick={handleInfo}>
-          <Icon.InfoCircle size={22} />
+          <Icon.InfoCircle size={size} />
         </Button>
         <Button id="wiki" variant="none" onClick={onShowWikiInfoHandler}>
-          <Icon.Wikipedia size={22} />
+          <Icon.Wikipedia size={size} />
         </Button>
-        <Button id="reset" variant="none"  onClick={handleShow} aria-tooltip={t("topMenu.resetGame")}>
-          <Icon.ArrowClockwise size={22} 
-          />
+        <Button
+          id="reset"
+          variant="none"
+          onClick={handleShow}
+          aria-tooltip={t("topMenu.resetGame")}
+        >
+          <Icon.ArrowClockwise size={size} />
         </Button>
         {ConfigService.editorEnabled ? (
           <Button
@@ -66,7 +71,7 @@ function PuzzleOptions({
             onClick={onShowEditorHandler}
             aria-tooltip={t("topMenu.editor")}
           >
-            <Icon.PencilSquare size={22} color="green" />
+            <Icon.PencilSquare size={size} color="green" />
           </Button>
         ) : null}
       </Form>

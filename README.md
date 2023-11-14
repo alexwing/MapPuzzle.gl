@@ -66,6 +66,15 @@ The following lines of code refer to different ways of starting the project:
 * **"pro-php-backend"**: "env-cmd -f ./environments/.env.phpbackend react-scripts start", This option allows you to run the frontend in production mode and connect it to the production PHP backend running.
 * **"build"**: "env-cmd -f ./environments/.env react-scripts build", This option allows you to build the frontend in production mode and connect it to a local sqlite3 database, without the need of a backend. The database is located in the "public" folder.
 * **"build-php"**: "env-cmd -f ./environments/.env.phpbackend react-scripts build", This option allows you to build the frontend and copy the files to the backend folder for use in a PHP server. This PHP server is a simple script to execute queries to the sqlite3 database, similar to the frontend version. It is used to deploy the application on a PHP server. This PHP script is limited to SELECT queries, does not support INSERT, UPDATE or DELETE query and prevents SQL injection.
+  
+## Design
+
+The design of the game is based on the following principles:
+
+* **Minimalism**: The game has a minimalist design, with a simple and clean interface that allows players to focus on the game and not be distracted by other elements.
+* Bootstrap: The game uses the Bootstrap framework to facilitate the development of the user interface and make it responsive.
+* https://icons.getbootstrap.com/: The game uses the Bootstrap icons to facilitate the development of the user interface.
+* **Colors**: The game uses a color palette based on the colors of the map pieces, which are bright and vibrant colors that give the game a fun and playful look.
 
 
 ## Query Example for Postgis shape table export to Geojson

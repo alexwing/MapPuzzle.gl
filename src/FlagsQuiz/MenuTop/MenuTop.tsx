@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import PuzzleSelector from "./PuzzleSelector";
 import PuzzleOptions from "./PuzzleOptions";
@@ -15,6 +15,8 @@ import ConfirmDialog from "../../components/MenuTop/ConfirmDialog";
 import LangSelector from "../../components/LangSelector";
 import Info from "../../components/Info";
 import WikiInfo from "../../components/WikiInfo";
+import * as Icon from "react-bootstrap-icons";
+import ThemeContext from "../../components/ThemeProvider";
 
 interface MenuTopProps {
   name: string;
@@ -41,7 +43,8 @@ function MenuTop({
   const [showWikiInfo, setShowWikiInfo] = React.useState(false);
   const { t, i18n } = useTranslation();
   const [wikiInfoUrl, setWikiInfoUrl] = React.useState("");
-
+  const { theme } = useContext(ThemeContext);
+  
   useEffect(() => {
     setShow(false);
     setShowInfo(false);
@@ -103,10 +106,10 @@ function MenuTop({
 
   return (
     <React.Fragment>
-      <Navbar bg="light" expand="lg">
+      <Navbar bg={theme} expand="lg">
         <Navbar.Brand>
           <img src="./logoFlagsQuiz192.png" alt="" />
-          {name}
+          {name} {theme}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">

@@ -3,6 +3,7 @@ import { WikiInfoLang } from "../models/Interfaces";
 import { Nav, NavDropdown } from "react-bootstrap";
 
 import { langName } from "../lib/Utils";
+import  { Translate } from "react-bootstrap-icons";
 
 
 interface LangSelectorProps {
@@ -17,7 +18,7 @@ function LangSelector({ langs = [] as WikiInfoLang[],currentLang, onSelectLang }
 
   const navDropdownTitle = (
     <span>
-      <span className="lang-selector-icon"></span>
+      <Translate size={24} className="me-2" />
       <span className="d-xl-inline d-lg-none ">{currentLang}</span>
     </span>
   );
