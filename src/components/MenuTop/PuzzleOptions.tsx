@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Form } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { ConfigService } from "../../services/configService";
 import { useTranslation } from "react-i18next";
+import ThemeContext from "../ThemeProvider";
 
 interface PuzzleOptionsProps {
   onRefocus: () => void;
@@ -13,6 +14,8 @@ interface PuzzleOptionsProps {
   onShowEditor: (val:boolean) => void;
 }
 
+
+
 function PuzzleOptions({
   onRefocus,
   onFullScreen,
@@ -21,6 +24,7 @@ function PuzzleOptions({
   handleShow,
   onShowEditor,
 }: PuzzleOptionsProps) : JSX.Element {
+  const { theme, setTheme } = useContext(ThemeContext);
 
   const onShowWikiInfoHandler = () => {
     onShowWikiInfo(true);
@@ -28,6 +32,10 @@ function PuzzleOptions({
   const onShowEditorHandler = () => {
     onShowEditor(true);
   }
+  const onThemeChange = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  }
+
   const { t } = useTranslation();
 
   return (
@@ -42,6 +50,13 @@ function PuzzleOptions({
           onClick={onFullScreen}
         >
           <span className="navbar-full-icon"></span>
+        </Button>
+        <Button
+          id="theme"
+          variant="outline-secondary"
+          onClick={onThemeChange}
+        >
+          <span className={theme === "dark" ? "navbar-sun-icon" : "navbar-moon-icon"}></span>
         </Button>
         <Button id="info" variant="outline-secondary" onClick={handleInfo}>
           <span className="navbar-info-icon"></span>

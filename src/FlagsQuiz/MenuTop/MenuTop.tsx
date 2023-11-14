@@ -110,7 +110,7 @@ function MenuTop({
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="justify-content-end">
+          <Nav>
             <Button
               id="puzzleSelect"
               variant="outline-primary"
@@ -125,17 +125,19 @@ function MenuTop({
               onlyFlags={true}
             />
           </Nav>
-          <LangSelector
-            langs={langs}
-            onSelectLang={handleLangChange}
-            currentLang={currentLang}
-          ></LangSelector>
-          <PuzzleOptions
-            onFullScreen={onFullScreen}
-            handleInfo={handleShowInfo}
-            handleShow={handleShow}
-            onShowWikiInfo={onShowWikiInfoHandler(true)}            
-          />
+          <Nav className="ms-auto">
+            <LangSelector
+              langs={langs}
+              onSelectLang={handleLangChange}
+              currentLang={currentLang}
+            ></LangSelector>
+            <PuzzleOptions
+              onFullScreen={onFullScreen}
+              handleInfo={handleShowInfo}
+              handleShow={handleShow}
+              onShowWikiInfo={onShowWikiInfoHandler(true)}
+            />
+          </Nav>
         </Navbar.Collapse>
       </Navbar>
       <Info name={name} show={showInfo} InfoClose={handleCancel} />
@@ -153,7 +155,7 @@ function MenuTop({
         piece={0}
         enableFlags={false}
         puzzleSelected={0}
-      />      
+      />
     </React.Fragment>
   );
 }
