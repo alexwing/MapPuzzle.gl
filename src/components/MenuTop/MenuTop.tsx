@@ -118,7 +118,7 @@ function MenuTop({
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
+          <Nav>
             <Button
               id="puzzleSelect"
               variant="outline-primary"
@@ -141,19 +141,21 @@ function MenuTop({
               onHidePuzzleSelector={handleHideSelectPuzzle}
             />
           </Nav>
-          <LangSelector
-            langs={langs}
-            onSelectLang={handleLangChange}
-            currentLang={currentLang}
-          ></LangSelector>
-          <PuzzleOptions
-            onRefocus={onRefocus}
-            onFullScreen={onFullScreen}
-            handleInfo={handleShowInfo}
-            handleShow={handleShow}
-            onShowWikiInfo={onShowWikiInfoHandler(true)}
-            onShowEditor={onShowEditor}
-          />
+          <Nav className="ms-auto">
+            <LangSelector
+              langs={langs}
+              onSelectLang={handleLangChange}
+              currentLang={currentLang}
+            ></LangSelector>
+            <PuzzleOptions
+              onRefocus={onRefocus}
+              onFullScreen={onFullScreen}
+              handleInfo={handleShowInfo}
+              handleShow={handleShow}
+              onShowWikiInfo={onShowWikiInfoHandler(true)}
+              onShowEditor={onShowEditor}
+            />
+          </Nav>
         </Navbar.Collapse>
       </Navbar>
       <Info name={name} show={showInfo} InfoClose={handleCancel} />

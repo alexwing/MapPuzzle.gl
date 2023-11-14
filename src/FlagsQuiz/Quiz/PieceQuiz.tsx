@@ -94,21 +94,18 @@ function PieceQuiz({
           <Col xs={4} lg={4}>
             <Alert variant="success">
               <Alert.Heading>{t("toolsPanel.founds")}</Alert.Heading>
-              <hr />
               <p className="mb-0">{corrects}</p>
             </Alert>
           </Col>
           <Col xs={4} lg={4}>
             <Alert variant="warning">
               <Alert.Heading>{t("toolsPanel.remaining")}</Alert.Heading>
-              <hr />
               <p className="mb-0">{pieces.length - founds.length}</p>
             </Alert>
           </Col>
           <Col xs={4} lg={4}>
             <Alert variant="danger">
               <Alert.Heading>{t("toolsPanel.fails")}</Alert.Heading>
-              <hr />
               <p className="mb-0">{fails}</p>
             </Alert>
           </Col>

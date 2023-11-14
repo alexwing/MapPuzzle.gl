@@ -110,7 +110,7 @@ function MenuTop({
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
+          <Nav className="justify-content-end">
             <Button
               id="puzzleSelect"
               variant="outline-primary"

@@ -17,7 +17,7 @@
         () => new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000)
     );
 
-    const flagRef = useRef<THREE.Mesh>();
+    const flagRef = useRef<THREE.Mesh>(null);
 
     useLayoutEffect(() => {
         camera.left = -size.width / 2;
