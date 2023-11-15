@@ -26,3 +26,10 @@
     z-index: -1;
     top: 1px;
   }
+  [data-bs-theme="dark"] .flagGradient::after {
+    background: linear-gradient(
+      to right,
+      rgba(39, 43, 48, 0) 25%,
+      rgba(39, 43, 48, 1) 100%
+      );
+  }
