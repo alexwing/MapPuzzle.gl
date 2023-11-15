@@ -4,6 +4,7 @@ import { useKeyPress } from "../lib/useKeyPress";
 import { className, setColor } from "../lib/Utils";
 import { PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
+import "./PieceList.css";
 
 interface PieceListProps {
   pieces: Array<PieceProps>;

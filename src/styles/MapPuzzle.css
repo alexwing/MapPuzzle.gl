@@ -45,32 +45,6 @@ code {
     monospace;
 }
 
-table.legend {
-  margin-bottom: 0px !important;
-  border: none !important;
-}
-table.legend td,
-table.legend th {
-  border: none !important;
-  cursor: default;
-}
-table.legend .imgflag img {
-  height: 25px;
-  width: 40px;
-  max-width: 40px;
-  min-width: 40px;
-  box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 1px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-}
-table.legend .imgflag {
-  max-width: 45px;
-  min-width: 50px;
-}
-table.legend .imgflag div {
-  max-width: 55px;
-  min-width: 55px;
-}
-
 .mapName {
   font-weight: 600;
   margin: -0.75rem -0.25rem;
@@ -88,30 +62,6 @@ table.legend .imgflag div {
   padding: 0.7em;
 }
 
-.legendPiece {
-  padding: 1px 3px !important;
-}
-.legendPiece > svg {
-  pointer-events: none;
-  background: white;
-  border: 1px solid lightgray;
-  box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2px;
-  height: 30px;
-  width: 80px;
-  opacity: 0.7;
-}
-.mousePiece > svg {
-  opacity: 0.7;
-}
-.mousePiece {
-  z-index: 1;
-  display: block;
-  position: fixed;
-  pointer-events: none;
-  backface-visibility: hidden;
-  will-change: transform;
-  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
-}
 .tooltipRef {
   z-index: 999;
   display: block;

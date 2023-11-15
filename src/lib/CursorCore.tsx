@@ -4,6 +4,7 @@ import CustomCentroids from "../../backend/src/models/customCentroids";
 import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
 import { setColor } from "./Utils";
+import "./CursorCore.css";
 /**
  * Cursor Core
  * Replaces the native cursor with a custom animated cursor, consisting

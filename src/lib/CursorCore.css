@@ -1,0 +1,14 @@
+.mousePiece > svg {
+    opacity: 0.7;
+    filter: drop-shadow(rgba(0, 0, 0, 0.2) 5px 5px 5px);
+  }
+  
+  .mousePiece {
+    z-index: 1;
+    display: block;
+    position: fixed;
+    pointer-events: none;
+    backface-visibility: hidden;
+    will-change: transform;
+    transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+  }
