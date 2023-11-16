@@ -33,3 +33,11 @@
   max-width: calc(95vw);
   overflow-y: auto;
 }
+
+[data-bs-theme="dark"] .alertWiki .modal-header {
+  background-color: #343a40;
+}
+
+[data-bs-theme="dark"] .alertWiki .infoWiki {
+  color: #aaa;
+}

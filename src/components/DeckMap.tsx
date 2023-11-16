@@ -1,10 +1,12 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import { StaticMap, ViewState } from "react-map-gl";
 import { AlphaColor, colorStroke, hexToRgb, lineWidth, setColor } from "../lib/Utils";
 import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
+import ThemeContext from './ThemeProvider';
+import { use } from 'i18next';
 
 interface DeckMapProps {
   onClickMap: (e: PieceEvent) => void;
@@ -25,6 +27,13 @@ function DeckMap({
   data,
 }: DeckMapProps): JSX.Element | null {
   const [layers, setLayers] = React.useState([] as Array<GeoJsonLayer>);
+  const { theme } = useContext(ThemeContext);
+  const [mapStyle, setMapStyle] = React.useState("");
+
+  //set mapStyle by theme
+  useEffect(() => {
+    setMapStyle(theme === "light" ? "https://basemaps.cartocdn.com/gl/voyager-nolabels-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json");
+  } , [theme]);
 
   useEffect(() => {
       setLayers(
@@ -63,7 +72,7 @@ function DeckMap({
       >
         <StaticMap
           reuseMaps
-          mapStyle="https://basemaps.cartocdn.com/gl/voyager-nolabels-gl-style/style.json"
+          mapStyle={mapStyle}
           preventStyleDiffing
         />
       </DeckGL>

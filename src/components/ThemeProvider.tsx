@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
 // Create a context with the default theme and function to update it
 interface ThemeContextProps {
@@ -17,10 +17,15 @@ const ThemeContext = createContext<ThemeContextProps>({
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState("light");
 
+  //set data-bs-theme={theme} to body element when theme changes
+  useEffect(() => {
+    document.body.setAttribute("data-bs-theme", theme);
+  }, [theme]);
+  
   // Provide the theme state and the function to update it
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
-      <div data-bs-theme={theme}>{children}</div>
+      {children}
     </ThemeContext.Provider>
   );
 };

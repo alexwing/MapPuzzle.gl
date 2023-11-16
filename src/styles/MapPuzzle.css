@@ -185,3 +185,11 @@ code {
   border-color: #ffbf40; /* Color del borde al pasar el ratón por encima */
   color: white;
 }
+
+.btn > svg {
+  vertical-align:bottom;
+}
+
+.mapboxgl-ctrl.mapboxgl-ctrl-attrib {
+	color: black;
+}
