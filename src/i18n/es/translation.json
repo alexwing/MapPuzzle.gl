@@ -4,6 +4,12 @@
     "selectQuiz": "Seleccionar Desafío",
     "playFlagsQuiz": "Desafío de Banderas",
     "resetGame": "Reiniciar",
+    "wikiInfo": "Información de Wiki",
+    "dark": "Tema Oscuro",
+    "light": "Tema Claro",
+    "about": "Acerca de",
+    "refocus": "Refocalizar",
+    "fullscreen": "Pantalla Completa",    
     "editor": "Editor",
     "surrenderTitle": "¿Te rindes?",
     "surrenderMessage": "Haz click en sí, si quieres empezar un nuevo juego"
