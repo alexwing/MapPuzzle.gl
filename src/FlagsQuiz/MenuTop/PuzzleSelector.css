@@ -3,7 +3,6 @@
 }
 
 .puzzle-selector-modal  .modal-content {
-  background-color: #fff;
   border: 2px solid #bbb;
   border-radius: 0.5rem;
   box-shadow: 0 0 1rem 1rem rgba(0, 0, 0, 0.2);
@@ -93,58 +92,6 @@ table.puzzle-selector {
 
 /* Search */
 
-.puzzle-selector .dropdown a {
-  color: #a1a1a1;
-}
-.puzzle-selector .dropdown .dropdown-item {
-  color: #212529;
-}
-.puzzle-selector .form-control {
-  display: block;
-  width: 100%;
-  height: calc(1.5em + 0.5em);
-  padding: 0.25rem 0.5rem;
-  font-size: 1rem;
-
-  line-height: 1.5;
-  color: #a1a1a1;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid #e5e5e5;
-  border-radius: 0;
-}
-.puzzle-selector .form-control::-webkit-input-placeholder {
-  color: #a1a1a1;
-  font-weight: bold;
-}
-.puzzle-selector .form-control:focus {
-  border-color: #a1a1a1;
-  box-shadow: none;
-}
-
-.puzzle-selector .dropdown-menu {
-  max-height: calc(50vh);
-  max-width: calc(95vw);
-  overflow-y: auto;
-}
-
-.puzzle-selector .table {
-  margin-bottom: 0.4em;
-}
-.puzzle-selector .no-found {
-  text-align: center;
-  font-size: 1em;
-  font-weight: bold;
-  color: #a1a1a1;
-  padding: 1em;
-}
-.puzzle-selector .no-found h3 {
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #d96161;
-  padding: 0em;
-}
-
 /* disable on mobile  region and subregion */
 @media (max-width: 768px) {
 
@@ -181,17 +128,3 @@ table.puzzle-selector {
   user-select: none;
 }
 
-.clean-icon {
-  padding: 0;
-  margin: 0;
-}
-
-.clean-icon:focus,
-.clean-icon:active,
-.clean-icon:hover,
-.clean-icon:visited,
-.clean-icon:link,
-.clean-icon:enabled {
-  border: none !important;
-  box-shadow: none !important;
-}

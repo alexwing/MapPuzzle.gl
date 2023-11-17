@@ -1,78 +1,121 @@
-
 @media screen and (max-width: 992px) {
-    
-    .basic-navbar-nav {
-       display: inline;
-       flex-flow: column nowrap;
-    }
-    .navbar-collapse {
-        display: inline;
-        flex-flow: column nowrap;
-     }
-    #flagsQuiz, .lang-selector, #puzzleSelect, .btn-outline-secondary, .btn-outline-primary {
-       margin: 0;
-       background-color: transparent;
-       border: 1px solid #ddd;
-       border-radius: 0.25rem;   
-       color: #333;    
-       text-align: center;
-       padding: 0.5rem 1rem;
-       width: 100%;
-    }
-    #flagsQuiz > .new {
-        display: none;
-    }
-    .lang-selector a {
-        padding: 0;
-        margin: -3px 0;
-    }
-    .lang-selector a.dropdown-item {
-        padding: 0.5em;
-        margin: -3px 0;
-        border-bottom: 1px solid lightgray;
-    }
+  .basic-navbar-nav {
+    display: inline;
+    flex-flow: column nowrap;
+  }
+  .navbar{
+    padding: 0;
+  }
+  .navbar-collapse {
+    display: inline;
+    flex-flow: column nowrap;
+  }
+  #flagsQuiz,
+  .lang-selector,
+  #puzzleSelect,
+  .navbar .btn-none {
+    margin: 0;
+    background-color: transparent;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    color: #333;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    min-height: 40px;
+    text-align: left;
+    padding-left: 10%;
+    border-radius: 0px;
+  }
+  [data-bs-theme="dark"]   #flagsQuiz,
+  [data-bs-theme="dark"]   .lang-selector,
+  [data-bs-theme="dark"]   #puzzleSelect,
+  [data-bs-theme="dark"]   .navbar .btn-none {
+    background-color: transparent;
+    border: 1px solid #333;
+    border-radius: 0.25rem;
+    color: #ddd;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    min-height: 40px;
+    text-align: left;
+    padding-left: 10%;
+    border-radius: 0px;
+  }
 
-    .form-inline {
-        display: flex;
-        flex-flow: column nowrap;
-        align-items: flex-end;
-     }
+  #flagsQuiz:hover,
+  .lang-selector:hover,
+  #puzzleSelect:hover,
+  .navbar .btn-none:hover {
+    background-color: #ffbf40;
+    border-color: #ffbf40;
+    color: #333;
+  }
 
-     .share h4 {
-        display: none;
-     }
-     .modal-dialog {
-        width: calc(100vw) !important;
-        margin: 0;
-        padding: 0;
-     }
-     .modal-content {
-        width: calc(100vw) !important;
-        margin: 0;
-        padding: 0;
-        border-radius: 0;
-     }
-     .modal-title {
-        font-size: 1.8vh;
-        margin: 0;
-    }
-    .modal-footer small {
-        font-size: 1vh;
-    }
-    .modal-footer {
-        padding: 0;
-    }
-    .react-share__ShareButton {
-        transform: scale(0.75);
-    }
-    .share {
-        padding: 0 !important;
-    }
 
+
+  #flagsQuiz > .new {
+    display: none;
+  }
+  .lang-selector .a {
+    padding: 0;
+    margin: -3px 0;
+  }
+  .lang-selector a.dropdown-item {
+    padding: 0.5em;
+    margin: -3px 0;
+    border-bottom: 1px solid lightgray;
+  }
+  .lang-selector .dropdown-menu.show {
+    max-height: calc(50vh);
+    max-width: calc(95vw);
+    overflow-y: auto;
+  }
+  .lang-selector .nav-link {
+    padding: 0;
+  } 
+
+  .form-inline {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-end;
+  }
+
+  .share h4 {
+    display: none;
+  }
+  .modal-dialog {
+    width: calc(100vw) !important;
+    margin: 0;
+    padding: 0;
+  }
+  .modal-content {
+    width: calc(100vw) !important;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+  }
+  .modal-title {
+    font-size: 1.8vh;
+    margin: 0;
+  }
+  .modal-footer small {
+    font-size: 1vh;
+  }
+  .modal-footer {
+    padding: 0;
+  }
+  .react-share__ShareButton {
+    transform: scale(0.75);
+  }
+  .share {
+    padding: 0 !important;
+  }
 }
 
 @media screen and (max-width: 768px) {
-    .container-fluid {
-        padding: 0 !important;  
-     }
+  .container-fluid {
+    padding: 0 !important;
+  }
 }

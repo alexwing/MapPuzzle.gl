@@ -55,7 +55,6 @@ function PuzzleOptions({
           id="reset"
           variant="none"
           onClick={handleShow}
-          aria-tooltip={t("topMenu.resetGame")}
         >
           <Icon.ArrowClockwise size={size} />
         </Button>

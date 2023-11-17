@@ -1,0 +1,5 @@
+.lang-selector .dropdown-menu.show {
+  max-height: calc(50vh);
+  max-width: calc(95vw);
+  overflow-y: auto;
+}

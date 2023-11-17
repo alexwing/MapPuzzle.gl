@@ -28,11 +28,6 @@
   font-weight: bold;
   font-size: 1.5em;
 }
-.alertWiki .lang-selector > .dropdown-menu {
-  max-height: calc(50vh);
-  max-width: calc(95vw);
-  overflow-y: auto;
-}
 
 [data-bs-theme="dark"] .alertWiki .modal-header {
   background-color: #343a40;

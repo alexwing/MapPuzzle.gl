@@ -15,7 +15,6 @@ import ConfirmDialog from "../../components/MenuTop/ConfirmDialog";
 import LangSelector from "../../components/LangSelector";
 import Info from "../../components/Info";
 import WikiInfo from "../../components/WikiInfo";
-import * as Icon from "react-bootstrap-icons";
 import ThemeContext from "../../components/ThemeProvider";
 
 interface MenuTopProps {
@@ -109,7 +108,7 @@ function MenuTop({
       <Navbar bg={theme} expand="lg">
         <Navbar.Brand>
           <img src="./logoFlagsQuiz192.png" alt="" />
-          {name} {theme}
+          {name}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">

@@ -18,6 +18,7 @@ import WikiInfo from "../WikiInfo";
 import * as Icon from "react-bootstrap-icons";
 import ThemeContext from "../../components/ThemeProvider";
 
+
 interface MenuTopProps {
   name: string;
   onSelectMap: (any) => void;
@@ -135,7 +136,7 @@ function MenuTop({
               variant="outline-primary"
               onClick={onOpenFlagsQuiz}
             >
-              <img className="logo" src="./logoFlagsQuiz192.png" alt="" />
+              <Icon.FlagFill size={22} className="me-2" />
               <span>{t("topMenu.playFlagsQuiz")}</span>
               <img className="new" src="./new-icon.png" alt="" />
             </Button>

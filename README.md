@@ -75,6 +75,7 @@ The design of the game is based on the following principles:
 * Bootstrap: The game uses the Bootstrap framework to facilitate the development of the user interface and make it responsive.
 * https://icons.getbootstrap.com/: The game uses the Bootstrap icons to facilitate the development of the user interface.
 * **Colors**: The game uses a color palette based on the colors of the map pieces, which are bright and vibrant colors that give the game a fun and playful look.
+* **react-bootstrap**: The game uses the react-bootstrap library to facilitate the development of the user interface. https://react-bootstrap.netlify.app/docs/getting-started/introduction
 
 
 ## Query Example for Postgis shape table export to Geojson

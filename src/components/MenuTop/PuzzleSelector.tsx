@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/display-name */
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Button, Col, Form, Modal, NavDropdown, Row } from "react-bootstrap";
+import * as Icon from "react-bootstrap-icons";
 import "./PuzzleSelector.css";
 import Puzzles from "../../../backend/src/models/puzzles";
 import { Regions } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
 import { useTranslation } from "react-i18next";
+import ThemeContext from "../../components/ThemeProvider";
+
 
 import BootstrapTable, {
   ColumnDescription,
@@ -38,6 +41,7 @@ function PuzzleSelector({
   const [puzzles, setPuzzles] = useState([] as Puzzles[]);
   const [searchName, setSearchName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const { theme } = useContext(ThemeContext);
   const ref: any = useRef();
 
   const handleCancel = () => {
@@ -214,6 +218,7 @@ function PuzzleSelector({
         onHide={handleCancel}
         centered
         size="lg"
+        bg={theme}
         className="puzzle-selector-modal"
       >
         <Modal.Body>
@@ -270,13 +275,13 @@ function PuzzleSelector({
       return (
         <Button
           className="clean-icon"
-          variant="link"
+          variant="outline-primary"
           size="sm"
           onClick={() => {
             cleanFilters();
           }}
         >
-          <span></span>
+          <Icon.Trash3Fill size={24} />
         </Button>
       );
     };

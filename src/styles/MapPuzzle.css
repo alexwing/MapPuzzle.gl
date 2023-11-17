@@ -8,6 +8,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+span.navbar-brand {
+  margin-left: 8px;
+}
 .navbar-brand > img {
   max-height: 32px;
   padding-right: 15px;
@@ -126,7 +129,6 @@ code {
 }
 
 .form-inline button {
-  margin-left: 0.3em;
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -168,8 +170,17 @@ code {
   position: absolute;
 }
 
-#flagsQuiz span {
-  margin: 0px 10px 0px 25px;
+.navbar-toggler:focus {
+  text-decoration: none;
+  outline: 0;
+  box-shadow: none;
+}
+.navbar-toggler:hover {
+  background-color: #ffbf40;
+}
+.navbar-toggler {
+  border-radius: 0px;
+  border: 0px;
 }
 
 /* Estilos para resaltar el botón */

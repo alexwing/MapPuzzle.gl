@@ -3,7 +3,6 @@
 }
 
 .puzzle-selector-modal  .modal-content {
-  background-color: #fff;
   border: 2px solid #bbb;
   border-radius: 0.5rem;
   box-shadow: 0 0 1rem 1rem rgba(0, 0, 0, 0.2);
@@ -23,6 +22,9 @@ table.puzzle-selector {
   cursor: default;
   border-bottom: 1px solid #dee2e6;
 }
+[data-bs-theme="dark"] .puzzle-selector tbody td {
+  border-bottom: 1px solid #444;
+}
 
 .puzzle-selector thead th {
   padding: 1em 0 1em 1em;
@@ -38,11 +40,22 @@ table.puzzle-selector {
   width: 3em;
   height: 2.5em;
   background: linear-gradient(0deg, #e8e8e8, #fff);
-  border: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  border-left: 0px;
+  border-right: 0px;
   cursor: pointer;
   padding: 0;
   display: block;
   /* content: " "; */
+}
+
+[data-bs-theme="dark"] .puzzle-selector .icon {
+  background: linear-gradient(0deg, #111, #222);
+  border-top: 1px solid #444;
+  border-bottom: 1px solid #444;
+  border-left: 0px;
+  border-right: 0px;
 }
 .puzzle-selector .icon img {
   width: 3em;
@@ -92,13 +105,6 @@ table.puzzle-selector {
 }
 
 /* Search */
-
-.puzzle-selector .dropdown a {
-  color: #a1a1a1;
-}
-.puzzle-selector .dropdown .dropdown-item {
-  color: #212529;
-}
 .puzzle-selector .form-control {
   display: block;
   width: 100%;
@@ -107,19 +113,19 @@ table.puzzle-selector {
   font-size: 1rem;
 
   line-height: 1.5;
-  color: #a1a1a1;
-  background-color: #fff;
   background-clip: padding-box;
   border: 1px solid #e5e5e5;
   border-radius: 0;
 }
 .puzzle-selector .form-control::-webkit-input-placeholder {
-  color: #a1a1a1;
   font-weight: bold;
 }
 .puzzle-selector .form-control:focus {
   border-color: #a1a1a1;
   box-shadow: none;
+}
+[data-bs-theme="dark"] .puzzle-selector .form-control {
+  border-color: #333;
 }
 
 .puzzle-selector .dropdown-menu {
@@ -135,13 +141,11 @@ table.puzzle-selector {
   text-align: center;
   font-size: 1em;
   font-weight: bold;
-  color: #a1a1a1;
   padding: 1em;
 }
 .puzzle-selector .no-found h3 {
   font-size: 1.5em;
   font-weight: bold;
-  color: #d96161;
   padding: 0em;
 }
 

@@ -4,7 +4,7 @@ import { Nav, NavDropdown } from "react-bootstrap";
 
 import { langName } from "../lib/Utils";
 import  { Translate } from "react-bootstrap-icons";
-
+import "./LangSelector.css";
 
 interface LangSelectorProps {
   langs: WikiInfoLang[];
@@ -29,7 +29,7 @@ function LangSelector({ langs = [] as WikiInfoLang[],currentLang, onSelectLang }
         <NavDropdown
           className="lang-selector"
           title={navDropdownTitle}
-          id="puzzle"
+          id="nav-dropdown"          
         >
           {langs.map((c: WikiInfoLang) => (
             <NavDropdown.Item id={c.lang} key={c.lang} onClick={onSelectLang}>
