@@ -9,7 +9,6 @@ import Puzzles from "../../../backend/src/models/puzzles";
 import { Regions } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
 import { useTranslation } from "react-i18next";
-import ThemeContext from "../../components/ThemeProvider";
 
 
 import BootstrapTable, {
@@ -23,12 +22,14 @@ interface PuzzleSelectorProps {
   show: boolean;
   onSelectMap: (puzzle: number) => void;
   onHidePuzzleSelector: () => void;
+  onlyFlags?: boolean;
 }
 
 function PuzzleSelector({
   show = false,
   onSelectMap,
   onHidePuzzleSelector,
+  onlyFlags = false,
 }: PuzzleSelectorProps): JSX.Element {
   const { t } = useTranslation();
   const [selectedPuzzle, setSelectedPuzzle] = useState(0);
@@ -41,7 +42,6 @@ function PuzzleSelector({
   const [puzzles, setPuzzles] = useState([] as Puzzles[]);
   const [searchName, setSearchName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const { theme } = useContext(ThemeContext);
   const ref: any = useRef();
 
   const handleCancel = () => {
@@ -76,7 +76,17 @@ function PuzzleSelector({
       selectedSubRegion,
       searchName
     ).then((data: Puzzles[]) => {
-      setPuzzles(data);
+      if (onlyFlags) {
+        const puzzles: Puzzles[] = [];
+        data.forEach((element: Puzzles) => {
+          if (element.enableFlags) {
+            puzzles.push(element);
+          }
+        });
+        setPuzzles(puzzles);
+      } else {
+        setPuzzles(data);
+      }
     });
   }, [selectedRegion, selectedSubRegion, searchName]);
 
@@ -218,7 +228,6 @@ function PuzzleSelector({
         onHide={handleCancel}
         centered
         size="lg"
-        bg={theme}
         className="puzzle-selector-modal"
       >
         <Modal.Body>

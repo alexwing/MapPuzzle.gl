@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import Navbar from "react-bootstrap/Navbar";
-import PuzzleSelector from "./PuzzleSelector";
+import PuzzleSelector from "../../components/MenuTop/PuzzleSelector"; 
 import PuzzleOptions from "./PuzzleOptions";
 import { WikiInfoLang } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
