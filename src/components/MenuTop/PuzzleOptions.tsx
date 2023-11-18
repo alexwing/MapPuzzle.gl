@@ -1,12 +1,11 @@
-import React, { useContext } from "react";
+import React, { useCallback, useContext } from "react";
 import { Form } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import { ConfigService } from "../../services/configService";
 import { useTranslation } from "react-i18next";
 import ThemeContext from "../ThemeProvider";
 import * as Icon from "react-bootstrap-icons";
 import Tooltip from "react-bootstrap/Tooltip";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import { OverlayTrigger } from "react-bootstrap";
 import { useMediaQuery } from 'react-responsive';
 
 
@@ -122,13 +121,12 @@ function PuzzleOptions({
       labelClass: "d-lg-none"
     },
   ];
-  
-  const overlay = (button: any) => {
+
+  const overlay = useCallback((button: any) => {
     return (useMediaQuery({ minWidth: 992 }) ? (
       <Tooltip id={`tooltip-${button.id}`}>{button.tooltip}</Tooltip>
     ) : <span></span>) as JSX.Element;
-  };
-  
+  }, []); // Add dependencies here if any
 
   return (
     <React.Fragment>
