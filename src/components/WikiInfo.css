@@ -1,6 +1,4 @@
-.alertWiki .modal-header {
-  background-color: lightskyblue;
-}
+
 .alertWiki .modal-body {
   padding: 0 1rem;
 }
@@ -18,8 +16,12 @@
   padding: 1.5em;
   color: #555;
   max-height: 500px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
+[data-bs-theme="dark"] .alertWiki .infoWiki {
+  color: #aaa;
+}
+
 .alertWiki .infoWiki p {
   padding-bottom: 0.5em;
 }

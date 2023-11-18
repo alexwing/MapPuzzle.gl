@@ -10,7 +10,6 @@ import { Regions } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
 import { useTranslation } from "react-i18next";
 
-
 import BootstrapTable, {
   ColumnDescription,
   PaginationOptions,
@@ -255,10 +254,19 @@ function PuzzleSelector({
             variant="primary"
             onClick={handleOK}
             disabled={selectedPuzzle === 0}
+            size="lg"
+            className="mb-4"
           >
+            <Icon.Play size={28} className="me-2" />
             {t("puzzleSelector.buttons.play")}
           </Button>
-          <Button variant="secondary" onClick={handleCancel}>
+          <Button
+            variant="secondary"
+            onClick={handleCancel}
+            size="lg"
+            className="mb-4"
+          >
+            <Icon.X size={28} className="me-2" />
             {t("puzzleSelector.buttons.cancel")}
           </Button>
         </Modal.Footer>
