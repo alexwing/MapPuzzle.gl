@@ -67,11 +67,6 @@
     margin: -3px 0;
     border-bottom: 1px solid lightgray;
   }
-  .lang-selector .dropdown-menu.show {
-    max-height: calc(50vh);
-    max-width: calc(95vw);
-    overflow-y: auto;
-  }
   .lang-selector .nav-link {
     padding: 0;
   } 
