@@ -6,7 +6,6 @@ import { StaticMap, ViewState } from "react-map-gl";
 import { AlphaColor, colorStroke, hexToRgb, lineWidth, setColor } from "../lib/Utils";
 import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 import ThemeContext from './ThemeProvider';
-import { use } from 'i18next';
 
 interface DeckMapProps {
   onClickMap: (e: PieceEvent) => void;

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext } from "react";
 import { Form } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,7 @@ import * as Icon from "react-bootstrap-icons";
 import Tooltip from "react-bootstrap/Tooltip";
 import { OverlayTrigger } from "react-bootstrap";
 import { useMediaQuery } from 'react-responsive';
-import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store";
+import { setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../../services/configService";
 
 interface PuzzleOptionsProps {
@@ -39,16 +39,6 @@ function PuzzleOptions({
     setTheme(theme === "dark" ? "light" : "dark");
     setCookie("theme", theme === "dark" ? "light" : "dark", ConfigService.cookieDays);
   };
-
-  useEffect(() => {
-    const savedTheme = getCookie("theme");
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else {
-      const systemTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      setTheme(systemTheme);
-    }
-  }, []);
 
   const { t } = useTranslation();
   const size = 28;
@@ -134,11 +124,12 @@ function PuzzleOptions({
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const overlay = useCallback((button: any) => {
     return (useMediaQuery({ minWidth: 992 }) ? (
       <Tooltip id={`tooltip-${button.id}`}>{button.tooltip}</Tooltip>
     ) : <span></span>) as JSX.Element;
-  }, []); // Add dependencies here if any
+  }, []); 
 
   return (
     <React.Fragment>
