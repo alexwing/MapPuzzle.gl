@@ -7,7 +7,7 @@
 
 .piece-quiz > .timer {
   text-align: right;
-  color: lightgray;
+  color: black;
   font-style: italic;
   position: absolute;
   z-index: 1;
@@ -16,7 +16,7 @@
   margin-top: 10px;
 }
 .piece-quiz > .timer b {
-  color: pink;
+  color: darkred;
   font-style: normal;
 }
 
@@ -36,10 +36,36 @@
     #fff 99.5%,
     #cdcdcd 100%
   );
+  /* ajust to height and repeat image public/flagBackground.jpg */
+  background: url("http://localhost:3000/flagQuiz/flagBackground12.jpeg");
+  background-size: auto 100% ;
+  background-repeat: repeat-x;
+  background-position: center;
+  flex: 1;
+  
   /*max-height: calc(100vh - 470px);*/
   max-height: calc(42vh - 56px - 37px);
-
 }
+
+@media screen and (max-width: 992px) {
+
+
+  .flag-container 
+  {
+    background-size: auto 250%;    
+  } 
+}
+@media screen and (max-width: 576px) {
+
+
+  .flag-container 
+  {
+    background-size: auto 200%;    
+  } 
+}
+
+
+
 .deckgl-container {
   flex: 30vw;
   height: 100vh;

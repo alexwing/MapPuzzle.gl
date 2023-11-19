@@ -607,3 +607,13 @@ export function calculateZoom(bbox: number[]): number {
 
   return Math.round(zoom);
 }
+
+
+/**
+ * Calculates distance proportion from ecuador based on the given latitude.
+ * @param bbox - The bounding box of the map.
+ * @returns The calculated distance porcentage from ecuador. 
+ */
+export function calculateDistanceFromEcuador(lat: number): number {
+  return Math.abs(lat) / 100;
+}

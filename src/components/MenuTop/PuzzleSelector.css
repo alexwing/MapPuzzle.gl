@@ -88,6 +88,11 @@ table.puzzle-selector {
   white-space: nowrap;
   overflow: hidden;
 }
+
+.puzzle-selector .font-weight-bold {
+  font-weight: bold !important;
+}
+
 /* Header */
 
 .puzzle-selector .icon-header {
@@ -200,3 +205,7 @@ table.puzzle-selector {
   box-shadow: none !important;
 }
 
+.puzzle-selector .selected td{
+  background-color: #ff0000 !important
+
+}

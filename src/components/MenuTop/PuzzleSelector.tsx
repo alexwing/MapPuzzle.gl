@@ -129,22 +129,18 @@ function PuzzleSelector({
 
   const navDropdownRegionsTitle = (
     <span>
-      <span className="d-none d-lg-inline d-lg-none">
         {selectedRegion === 0
           ? t("puzzleSelector.filters.region")
           : regions.find((x) => x.regionCode === selectedRegion)?.region}
-      </span>
     </span>
   );
 
   const navDropdownSubRegionsTitle = (
     <span>
-      <span className="d-none d-lg-inline d-lg-none">
         {selectedSubRegion === 0
           ? t("puzzleSelector.filters.subregion")
           : subregions.find((x) => x.subregionCode === selectedSubRegion)
               ?.subregion}
-      </span>
     </span>
   );
 
@@ -193,7 +189,7 @@ function PuzzleSelector({
     mode: "radio",
     hideSelectColumn: true,
     clickToSelect: true,
-    bgColor: "#b8daff",
+    style: { filter: "invert(0.2) sepia(0.5)  hue-rotate(175deg)" },
     onSelect: (row, _isSelect, _rowIndex, _e) => {
       setSelectedPuzzle(parseInt(row.id));
     },
@@ -325,7 +321,7 @@ function PuzzleSelector({
     return (_column: any, _colIndex: any, _components: any) => {
       return (
         <NavDropdown title={navDropdownRegionsTitle} id="nav-dropdown">
-          <NavDropdown.Item id="0" onClick={onSelectRegion}>
+          <NavDropdown.Item onClick={onSelectRegion} id="0" key="0" eventKey="0" className="font-weight-bold">
             {t("puzzleSelector.filters.all")}
           </NavDropdown.Item>
           {regions.map((region) => (
@@ -347,7 +343,7 @@ function PuzzleSelector({
     return (_column: any, _colIndex: any, _components: any) => {
       return (
         <NavDropdown title={navDropdownSubRegionsTitle} id="nav-dropdown">
-          <NavDropdown.Item id="0" onClick={onSelectSubRegion}>
+          <NavDropdown.Item onClick={onSelectSubRegion} id="0" key="0" eventKey="0" className="font-weight-bold">
             {t("puzzleSelector.filters.all")}
           </NavDropdown.Item>
           {subregions.map((subregion) => (

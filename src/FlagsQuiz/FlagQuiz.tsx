@@ -75,6 +75,7 @@ function FlagQuiz(): JSX.Element {
     }
   }, []);
 
+  
   const getCustomWikis = (puzzleId: number) => {
     PuzzleService.getCustomWikis(puzzleId).then((customWiki: CustomWiki[]) => {
       setPuzzleCustomWiki(customWiki);
@@ -106,8 +107,9 @@ function FlagQuiz(): JSX.Element {
     if (!winner) return;
     setTooltipValue(info.object ? info.object.properties.name : "");
   };
-  const onViewStateChangeHandler = (viewState: ViewStateEvent) => {
-    setViewState(viewState.viewState as ViewState);
+  const onViewStateChangeHandler = (newviewState: ViewStateEvent) => {
+    setViewState(newviewState.viewState as ViewState);
+
   };
 
   const onSelectMapHandler = (val: number) => {

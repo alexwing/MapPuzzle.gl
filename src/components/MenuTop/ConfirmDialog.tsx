@@ -28,7 +28,7 @@ function ConfirmDialog({
       <Modal show={show} onHide={handleCancel} centered className="confirmDialog">
           <Modal.Header>
             <Modal.Title>
-              <Icon.InfoSquare size={32} className="me-4" />
+              <Icon.PatchQuestion size={32} className="me-4" color="#007bff" />
               {title}</Modal.Title>
           </Modal.Header>
           <Modal.Body>{message}</Modal.Body>

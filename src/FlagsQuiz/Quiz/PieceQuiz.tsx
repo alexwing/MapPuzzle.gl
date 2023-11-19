@@ -9,6 +9,8 @@ import { Row, Col, Alert } from "react-bootstrap";
 import "./PieceQuiz.css";
 import "./responsive.css";
 import Timer from "../../components/Timer";
+import * as turf from "@turf/turf";
+import { calculateDistanceFromEcuador } from "../../lib/Utils";
 
 interface PieceQuizProps {
   puzzleSelected: number;
@@ -42,6 +44,23 @@ function PieceQuiz({
   onWrong,
 }: PieceQuizProps): JSX.Element {
   const [rtlClass, setRtlClass] = useState("");
+  const [backgroundImage, setBackgroundImage] = useState('');
+
+  useEffect(() => {
+    if (pieceSelectedData?.geometry === undefined) return;
+    const centroid = turf.centroid(pieceSelectedData.geometry);
+    const Nimages =20;
+    
+    // calculate distance from ecuador
+    const distance = calculateDistanceFromEcuador(centroid.geometry.coordinates[1]);
+
+    // get n from 1 to images lenght proportionally to distance
+    const n = Math.floor(distance * Nimages) + 1;
+    
+    // console.log(`distance: ${distance} n: ${n}`);
+
+    setBackgroundImage(`./flagQuiz/flagBackground${n}.jpeg`);
+  }, [pieceSelectedData]);
 
   //on init load if rtl lang
   useEffect(() => {
@@ -114,7 +133,7 @@ function PieceQuiz({
       {showTimer  }
       <Canvas
         className="flag-container"
-        style={{ width: "30vw", height: "20vw" }}
+        style={{ width: "30vw", height: "20vw",  backgroundImage: `url(${backgroundImage})` }}
       >
         <Flag flagImageUrl={getFlag(puzzleSelected, pieceSelectedData)} />
       </Canvas>
