@@ -17,9 +17,7 @@
   .quiz-container {
     height: calc(60vh - 56px);
   }
-  .flag-container {
-    margin: auto;
-  }
+
   .questions {
     grid-gap: 0.6vh;
     margin-top: 0.5em;
@@ -27,15 +25,12 @@
     overflow-y: scroll;
     height: calc(33vh - 56px);
   }
-
+  
   .piece-quiz > .timer {
     margin-left: calc(100vw - 210px);
   }
   .btn-quiz {
     font-size: 2.3vh;
   }
-  .flag-container {
-    width: 100vw !important;
-    height: calc(20vh - 56px) !important;
-  }
+
 }

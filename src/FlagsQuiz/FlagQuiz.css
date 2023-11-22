@@ -37,7 +37,7 @@
     #cdcdcd 100%
   );
   /* ajust to height and repeat image public/flagBackground.jpg */
-  background: url("http://localhost:3000/flagQuiz/flagBackground12.jpeg");
+  /* background: url("http://localhost:3000/flagQuiz/flagBackground12.jpeg");*/
   background-size: auto 100% ;
   background-repeat: repeat-x;
   background-position: center;

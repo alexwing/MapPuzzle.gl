@@ -3,7 +3,7 @@ import { PieceProps } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
 import Button from "react-bootstrap/Button";
 import Flag from "./Flag";
-import { Canvas } from '@react-three/fiber'
+import { Canvas } from "@react-three/fiber";
 import { t } from "i18next";
 import { Row, Col, Alert } from "react-bootstrap";
 import "./PieceQuiz.css";
@@ -11,6 +11,7 @@ import "./responsive.css";
 import Timer from "../../components/Timer";
 import * as turf from "@turf/turf";
 import { calculateDistanceFromEcuador } from "../../lib/Utils";
+import { ConfigService } from "../../services/configService";
 
 interface PieceQuizProps {
   puzzleSelected: number;
@@ -44,19 +45,20 @@ function PieceQuiz({
   onWrong,
 }: PieceQuizProps): JSX.Element {
   const [rtlClass, setRtlClass] = useState("");
-  const [backgroundImage, setBackgroundImage] = useState('');
+  const [backgroundImage, setBackgroundImage] = useState("");
 
   useEffect(() => {
     if (pieceSelectedData?.geometry === undefined) return;
     const centroid = turf.centroid(pieceSelectedData.geometry);
-    const Nimages =20;
-    
-    // calculate distance from ecuador
-    const distance = calculateDistanceFromEcuador(centroid.geometry.coordinates[1]);
 
-    // get n from 1 to images lenght proportionally to distance
-    const n = Math.floor(distance * Nimages) + 1;
-    
+    // calculate distance percent from ecuador
+    const distance = calculateDistanceFromEcuador(
+      centroid.geometry.coordinates[1]
+    );
+
+    // get n from 1 to flagQuizBackgrounds number proportionally to distance
+    const n = Math.floor(distance * ConfigService.flagQuizBackgrounds) + 1;
+
     // console.log(`distance: ${distance} n: ${n}`);
 
     setBackgroundImage(`./flagQuiz/flagBackground${n}.jpeg`);
@@ -83,14 +85,16 @@ function PieceQuiz({
         size="lg"
         className={rtlClass}
         onClick={() => {
-          if (c.properties.cartodb_id === pieceSelectedData.properties.cartodb_id) {
+          if (
+            c.properties.cartodb_id === pieceSelectedData.properties.cartodb_id
+          ) {
             onCorrect();
           } else {
             onWrong();
           }
         }}
       >
-       {c.properties.name}
+        {c.properties.name}
       </Button>
     );
   });
@@ -102,8 +106,9 @@ function PieceQuiz({
   };
 
   const showTimer =
-    winner || loading ? null : <Timer puzzleSelected={puzzleSelected} 
-    name="quizSeconds" />;
+    winner || loading ? null : (
+      <Timer puzzleSelected={puzzleSelected} name="quizSeconds" />
+    );
 
   if (pieceSelected === -1) return <div></div>;
   return (
@@ -130,13 +135,19 @@ function PieceQuiz({
           </Col>
         </Row>
       </div>
-      {showTimer  }
-      <Canvas
+      {showTimer}
+      <div
         className="flag-container"
-        style={{ width: "30vw", height: "20vw",  backgroundImage: `url(${backgroundImage})` }}
+        style={{
+          width: "30vw",
+          height: "20vw",
+          backgroundImage: `url(${backgroundImage})`,
+        }}
       >
-        <Flag flagImageUrl={getFlag(puzzleSelected, pieceSelectedData)} />
-      </Canvas>
+        <Canvas shadows >
+          <Flag flagImageUrl={getFlag(puzzleSelected, pieceSelectedData)}/>
+        </Canvas>
+      </div>
       <div className="questions">{buttons}</div>
     </React.Fragment>
   );

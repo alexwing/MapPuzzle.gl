@@ -10,4 +10,5 @@ export class ConfigService {
   public static database:string = process.env.REACT_APP_DATABASE || "puzzles.sqlite3.png";
   public static defaultLang:string = process.env.REACT_APP_DEFAULT_LANG || "en";
   public static langs:string[] = process.env.REACT_APP_LANGS?.split(",") || ["en","es","fr"];
+  public static flagQuizBackgrounds = 20;
 } 
