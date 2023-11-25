@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { PieceProps } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
 import Button from "react-bootstrap/Button";
-import Flag from "./Flag";
 import { Canvas } from "@react-three/fiber";
 import { t } from "i18next";
 import { Row, Col, Alert } from "react-bootstrap";
@@ -12,6 +11,7 @@ import Timer from "../../components/Timer";
 import * as turf from "@turf/turf";
 import { calculateDistanceFromEcuador } from "../../lib/Utils";
 import { ConfigService } from "../../services/configService";
+import FlagSelector from "./FlagSelector";
 
 interface PieceQuizProps {
   puzzleSelected: number;
@@ -144,8 +144,8 @@ function PieceQuiz({
           backgroundImage: `url(${backgroundImage})`,
         }}
       >
-        <Canvas shadows >
-          <Flag flagImageUrl={getFlag(puzzleSelected, pieceSelectedData)}/>
+        <Canvas shadows camera={{ position: [0, 0,10], fov:60 }}>
+          <FlagSelector flagImageUrl={getFlag(puzzleSelected, pieceSelectedData)}/>
         </Canvas>
       </div>
       <div className="questions">{buttons}</div>

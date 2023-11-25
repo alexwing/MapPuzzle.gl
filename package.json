@@ -47,6 +47,7 @@
     "react-scripts": "4.0.0-next.98",
     "react-share": "^4.4.1",
     "react-simple-cookie-store": "^1.0.12",
+    "react-spring": "9.6.1",
     "sql.js": "^1.8.0",
     "sql.js-httpvfs": "^0.8.12",
     "three": "^0.153.0"
