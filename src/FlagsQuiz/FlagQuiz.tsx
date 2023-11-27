@@ -108,8 +108,8 @@ function FlagQuiz(): JSX.Element {
     setTooltipValue(info.object ? info.object.properties.name : "");
   };
   const onViewStateChangeHandler = (newviewState: ViewStateEvent) => {
-    setViewState(newviewState.viewState as ViewState);
-
+    //not used, create forwards compatibility
+    //setViewState(newviewState.viewState as ViewState);
   };
 
   const onSelectMapHandler = (val: number) => {

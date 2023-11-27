@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 import React, { useEffect, useState } from "react";
 import { PieceProps } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
@@ -144,7 +145,9 @@ function PieceQuiz({
           backgroundImage: `url(${backgroundImage})`,
         }}
       >
-        <Canvas shadows camera={{ position: [0, 0,10], fov:60 }}>
+        <Canvas shadows camera={{ position: [1.4, -1, 6.5], fov: 60 }}>
+          <pointLight position={[0, 6, 1.5]} intensity={2.25} />
+          <ambientLight intensity={0.04} />
           <FlagSelector flagImageUrl={getFlag(puzzleSelected, pieceSelectedData)}/>
         </Canvas>
       </div>
