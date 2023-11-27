@@ -1,16 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react/no-unknown-property */
 import * as THREE from "three";
-import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
-import { useFrame, useThree, extend } from "@react-three/fiber";
-import {
-  PlaneGeometry,
-  MeshBasicMaterial,
-  Mesh,
-  RepeatWrapping,
-  TextureLoader,
-} from "three";
-import { AlphaColor } from "../../lib/Utils";
+import React, { useRef, useEffect } from "react";
+import { useFrame, extend } from "@react-three/fiber";
 
 extend({ THREE });
 
@@ -95,7 +87,7 @@ function Flag({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
         </mesh>
         <mesh
           ref={flagFakeShadow}
-          position={[0.2, -0.2, -0.15]}
+          position={[-0.2, -0.1, -0.18]}
           scale={[1.15, 1.15, 1]}
         >
           <planeGeometry args={[8, 5, 32, 32]} />

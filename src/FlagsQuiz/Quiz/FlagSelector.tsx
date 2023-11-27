@@ -1,14 +1,15 @@
 
 /* eslint-disable react/no-unknown-property */
-import React, { useState, useEffect } from "react";
-import { Vector3, extend } from "@react-three/fiber";
-import { easings, useSpring, useTransition, animated } from "@react-spring/three";
+import React from "react";
+import { Vector3,  } from "@react-three/fiber";
+import { easings, useTransition, animated } from "@react-spring/three";
 
 import Flag from "./Flag";
+import { ConfigService } from "../../services/configService";
 
 
 function FlagSelector({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
-  const TIMEANIMATION = 1000;
+
   const initialFlagPositionOutsideRight: Vector3 = [10, -0.3, 0.4];
   const initialFlagPositionOutsideLeft: Vector3 = [-20, -0.3, 0.4];
   const flagPosition: Vector3 = [0, -0.3, 0.4];
@@ -18,7 +19,7 @@ function FlagSelector({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
     from: { position: initialFlagPositionOutsideRight },
     enter: { position: flagPosition },
     leave: { position: initialFlagPositionOutsideLeft },
-    config: { duration: TIMEANIMATION },
+    config: { duration: ConfigService.flagQuizTransitionsTime },
     easing: easings.easeOutCubic, 
   });
 

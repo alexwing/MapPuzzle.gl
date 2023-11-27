@@ -10,7 +10,7 @@ import ThemeContext from './ThemeProvider';
 interface DeckMapProps {
   onClickMap: (e: PieceEvent) => void;
   onHoverMap: (e: PieceEvent) => void;
-  onViewStateChange: (e: ViewStateEvent) => void;
+  onViewStateChange?: (e: ViewStateEvent) => void
   viewState: ViewState;
   founds:  Array<number>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
