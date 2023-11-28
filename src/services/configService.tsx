@@ -13,4 +13,5 @@ export class ConfigService {
   public static flagQuizBackgrounds = 20;
   public static flagQuizQuestions = 6;
   public static flagQuizTransitionsTime = 1500;
+  public static flagQuizResponseTime = 1000;
 } 
