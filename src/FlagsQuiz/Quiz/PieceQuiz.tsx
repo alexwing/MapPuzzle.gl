@@ -96,7 +96,7 @@ function PieceQuiz({
       <Button
         key={c.properties.cartodb_id}
         variant={variant(c)}
-        size="lg"
+        size="lg"      
         className={rtlClass}
         onClick={() => onClickHandler(c)}
       >
@@ -163,8 +163,6 @@ function PieceQuiz({
       <div
         className="flag-container"
         style={{
-          width: "30vw",
-          height: "20vw",
           backgroundImage: `url(${backgroundImage})`,
         }}
       >

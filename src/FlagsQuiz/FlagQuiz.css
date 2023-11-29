@@ -24,29 +24,33 @@
   display: flex;
   flex-direction: column;
   height: calc(100vh - 56px);
-  background: linear-gradient(180deg, #777 0%, #fff 70%, #777 100%);
+  background: #cbe1e4;
 }
+
+[data-bs-theme="dark"] .quiz-container {
+  background: #2c353c;
+}
+
 .flag-container {
-  background: linear-gradient(
-    180deg,
-    #777 0%,
-    #151515 30%,
-    #151515 70%,
-    #cdcdcd 99%,
-    #fff 99.5%,
-    #cdcdcd 100%
-  );
-  /* ajust to height and repeat image public/flagBackground.jpg */
-  /* background: url("http://localhost:3000/flagQuiz/flagBackground12.jpeg");*/
+  width: 30vw ;
+  height: calc(35vh - 56px);
+  background: gray;
   background-size: auto 100% ;
   background-repeat: repeat-x;
   background-position: center;
   flex: 1;
-  
-  /*max-height: calc(100vh - 470px);*/
   max-height: calc(42vh - 56px - 37px);
 }
 
+.questions {
+  margin-top: 2vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1em;
+  padding:0em 1em 1em 1em;
+  max-width: 100%;
+  height: calc(65vh - 56px);
+}
 @media screen and (max-width: 992px) {
 
 
@@ -90,12 +94,3 @@
   max-width: min-content;
 }
 
-.questions {
-  margin-top: 2vh;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 1em;
-  padding: 0 1em;
-  max-width: 100%;
-  height: calc(60vh - 56px - 37px);
-}
