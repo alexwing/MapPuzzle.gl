@@ -1,35 +1,40 @@
-.modal-header {
-  background-color: lightskyblue;
-}
-.modal-body {
+
+.alertWiki .modal-body {
   padding: 0 1rem;
 }
-.modal-body p {
+.alertWiki .modal-body p {
   margin-bottom: 0px;
 }
-.imgWiki {
+.alertWiki .imgWiki {
 	float: right;
 	margin: 15px 0px 10px 23px;
 	width: 35%;
 	box-shadow: 0 0 9px rgba(0, 0, 0, 0.2);
 }
-.infoWiki {
+.alertWiki .infoWiki {
   text-align: justify;
   padding: 1.5em;
   color: #555;
   max-height: 500px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
-.infoWiki p {
+[data-bs-theme="dark"] .alertWiki .infoWiki {
+  color: #aaa;
+}
+
+.alertWiki .infoWiki p {
   padding-bottom: 0.5em;
 }
-.infoWiki h2 {
+.alertWiki .infoWiki h2 {
   padding-bottom: 0.25em;
   font-weight: bold;
   font-size: 1.5em;
 }
-.lang-selector > .dropdown-menu {
-  max-height: calc(50vh);
-  max-width: calc(95vw);
-  overflow-y: auto;
+
+[data-bs-theme="dark"] .alertWiki .modal-header {
+  background-color: #343a40;
+}
+
+[data-bs-theme="dark"] .alertWiki .infoWiki {
+  color: #aaa;
 }

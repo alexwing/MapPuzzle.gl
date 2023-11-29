@@ -8,6 +8,7 @@ import "../i18n/config";
 import { useTranslation } from "react-i18next";
 
 import { getUrl } from "../lib/Utils";
+import { Check } from "react-bootstrap-icons";
 import "./Info.css";
 import {
   FacebookShareButton,
@@ -91,6 +92,7 @@ function Info({
         aria-labelledby="contained-modal-title-vcenter"
         centered
         onHide={handleClose}
+        className="infoModal"
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
@@ -244,7 +246,10 @@ function Info({
           </Row>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={handleClose}>Ok</Button>
+          <Button onClick={handleClose}>
+            <Check size={22} className="me-2" />
+            Ok
+          </Button>
         </Modal.Footer>
       </Modal>
     </React.Fragment>

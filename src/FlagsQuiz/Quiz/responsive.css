@@ -1,13 +1,13 @@
 @media screen and (max-width: 992px) {
   .deckgl-container > div {
-    height: calc(40vh + 56px) !important;
+    height: calc(20vh + 56px) !important;
     width: 100vw !important;
     margin-left: 0vw !important;
-    margin-top: calc(60vh - 56px) !important;
+    margin-top: calc(80vh - 56px) !important;
   }
   .deckgl-container {
     flex: 100vw;
-    height: calc(60vh - 56px);
+    height: calc(20vh - 56px);
   }
   .piece-quiz {
     position: relative;
@@ -15,27 +15,26 @@
     margin-top: 0;
   }
   .quiz-container {
-    height: calc(60vh - 56px);
+    height: calc(80vh - 56px);
   }
   .flag-container {
-    margin: auto;
+    width: 100vw;
+    height: calc(40vh - 56px);
   }
+
   .questions {
     grid-gap: 0.6vh;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
-    overflow-y: scroll;
-    height: calc(33vh - 56px);
+    height: calc(40vh - 56px);
   }
-
+  
   .piece-quiz > .timer {
     margin-left: calc(100vw - 210px);
   }
   .btn-quiz {
     font-size: 2.3vh;
+    line-height: 2.3vh;
   }
-  .flag-container {
-    width: 100vw !important;
-    height: calc(20vh - 56px) !important;
-  }
+
 }

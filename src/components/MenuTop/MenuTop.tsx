@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Info from "../Info";
 import PuzzleSelector from "./PuzzleSelector";
@@ -15,6 +15,9 @@ import { Button, Nav } from "react-bootstrap";
 import "../../i18n/config";
 import { useTranslation } from "react-i18next";
 import WikiInfo from "../WikiInfo";
+import * as Icon from "react-bootstrap-icons";
+import ThemeContext from "../../components/ThemeProvider";
+
 
 interface MenuTopProps {
   name: string;
@@ -45,6 +48,7 @@ function MenuTop({
   const [showWikiInfo, setShowWikiInfo] = React.useState(false);
   const { t, i18n } = useTranslation();
   const [wikiInfoUrl, setWikiInfoUrl] = React.useState("");
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     setShow(false);
@@ -111,19 +115,20 @@ function MenuTop({
 
   return (
     <React.Fragment>
-      <Navbar bg="light" expand="lg">
+      <Navbar bg={theme} expand="lg">
         <Navbar.Brand>
           <img src="./logo192.png" alt="" />
           {name}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
+          <Nav>
             <Button
               id="puzzleSelect"
               variant="outline-primary"
               onClick={handleShowSelectPuzzle}
             >
+              <Icon.PuzzleFill size={22} className="me-2" />
               {t("topMenu.selectPuzzle")}
             </Button>
             <Button
@@ -131,7 +136,7 @@ function MenuTop({
               variant="outline-primary"
               onClick={onOpenFlagsQuiz}
             >
-              <img className="logo" src="./logoFlagsQuiz192.png" alt="" />
+              <Icon.FlagFill size={22} className="me-2" />
               <span>{t("topMenu.playFlagsQuiz")}</span>
               <img className="new" src="./new-icon.png" alt="" />
             </Button>
@@ -141,19 +146,21 @@ function MenuTop({
               onHidePuzzleSelector={handleHideSelectPuzzle}
             />
           </Nav>
-          <LangSelector
-            langs={langs}
-            onSelectLang={handleLangChange}
-            currentLang={currentLang}
-          ></LangSelector>
-          <PuzzleOptions
-            onRefocus={onRefocus}
-            onFullScreen={onFullScreen}
-            handleInfo={handleShowInfo}
-            handleShow={handleShow}
-            onShowWikiInfo={onShowWikiInfoHandler(true)}
-            onShowEditor={onShowEditor}
-          />
+          <Nav className="ms-auto">
+            <LangSelector
+              langs={langs}
+              onSelectLang={handleLangChange}
+              currentLang={currentLang}
+            ></LangSelector>
+            <PuzzleOptions
+              onRefocus={onRefocus}
+              onFullScreen={onFullScreen}
+              handleInfo={handleShowInfo}
+              handleShow={handleShow}
+              onShowWikiInfo={onShowWikiInfoHandler(true)}
+              onShowEditor={onShowEditor}
+            />
+          </Nav>
         </Navbar.Collapse>
       </Navbar>
       <Info name={name} show={showInfo} InfoClose={handleCancel} />

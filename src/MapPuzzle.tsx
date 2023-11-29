@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
-import "./MapPuzzle.css";
+import "./styles/MapPuzzle.css";
+import "./styles/icons.css";
 import "./responsive.css";
 import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store";
 

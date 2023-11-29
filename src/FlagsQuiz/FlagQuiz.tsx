@@ -6,7 +6,7 @@ import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store";
 
 import DeckMap from "../components/DeckMap";
 import { FlyToInterpolator } from "react-map-gl";
-import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
+import { PieceEvent, PieceProps } from "../models/Interfaces";
 import ReactFullscreeen from "react-easyfullscreen";
 import MenuTop from "./MenuTop/MenuTop";
 import Puzzles from "../../backend/src/models/puzzles";
@@ -62,7 +62,6 @@ function FlagQuiz(): JSX.Element {
   const WRONG_COLOR = 4;
   const SELECTED_COLOR = 0;
 
-  const NUM_QUESTION = 6;
 
   useEffect(() => {
     if (window.location.pathname) {
@@ -75,6 +74,7 @@ function FlagQuiz(): JSX.Element {
     }
   }, []);
 
+  
   const getCustomWikis = (puzzleId: number) => {
     PuzzleService.getCustomWikis(puzzleId).then((customWiki: CustomWiki[]) => {
       setPuzzleCustomWiki(customWiki);
@@ -106,10 +106,6 @@ function FlagQuiz(): JSX.Element {
     if (!winner) return;
     setTooltipValue(info.object ? info.object.properties.name : "");
   };
-  const onViewStateChangeHandler = (viewState: ViewStateEvent) => {
-    setViewState(viewState.viewState as ViewState);
-  };
-
   const onSelectMapHandler = (val: number) => {
     if (val) {
       setPuzzleSelected(val);
@@ -438,7 +434,7 @@ function FlagQuiz(): JSX.Element {
       longitude: centroid.geometry.coordinates[0],
       latitude: centroid.geometry.coordinates[1],
       zoom: zoom,
-      transitionDuration: 1000,
+      transitionDuration: ConfigService.flagQuizTransitionsTime,
       transitionInterpolator: new FlyToInterpolator(),
     };
     setViewState(newViewState);
@@ -491,7 +487,7 @@ function FlagQuiz(): JSX.Element {
     questionsAux.push(correctPiece);
     //add random pieces to questions
     const numQuestions =
-      pieces.length - 1 < NUM_QUESTION ? pieces.length - 1 : NUM_QUESTION;
+      pieces.length - 1 < ConfigService.flagQuizQuestions ? pieces.length - 1 : ConfigService.flagQuizQuestions;
     while (questionsAux.length < numQuestions) {
       const randomPiece = getRandomPiece(pieces, pieceSelected);
       if (
@@ -546,7 +542,6 @@ function FlagQuiz(): JSX.Element {
                 <DeckMap
                   onClickMap={onClickMapHandler}
                   onHoverMap={onHoverMapHandler}
-                  onViewStateChange={onViewStateChangeHandler}
                   viewState={viewState}
                   founds={founds}
                   data={data}

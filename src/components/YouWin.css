@@ -1,24 +1,25 @@
 
-.modal-header {
-  background-color: lightskyblue;
+.scorewin.row {
+  margin: 0px -16px;
 }
-.modal-body {
+
+.youWin .modal-body {
   padding: 0 1rem;
 }
-.modal-body p {
+.youWin .modal-body p {
   margin-bottom: 0px;
 }
-.scorewin .alert {
+.youWin .scorewin .alert {
   border-radius: 0px;
   margin-bottom: 0px;
   padding: 0.75rem 0rem;
 }
-.scorewin .alert-warning > .mb-0 {
+.youWin .scorewin .alert-warning > .mb-0 {
   font-size: 20px !important;
   line-height: 40px;
 }
-.scorewin .alert-heading.h4,
-.scorewin .mb-0 {
+.youWin .scorewin .alert-heading.h4,
+.youWin .scorewin .mb-0 {
   font-size: 25px !important;
   font-weight: bolder;
   text-align: center;
@@ -29,15 +30,19 @@
   margin: 1.5em 0em !important;
 }
 
-.scorewin hr {
+.youWin .scorewin hr {
   margin: 0px;
 }
 
-.scorewin .col-lg-4 {
+.youWin .scorewin .col-lg-4 {
   padding-right: 0px;
   padding-left: 0px;
 }
 
-.share h4 {
+.youWin .share {
+  text-align: center;
+  padding: 1.5em;
+}
+.youWin .share h4 {
   padding-bottom: 0.5em;
 }

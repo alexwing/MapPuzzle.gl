@@ -3,6 +3,8 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "../../i18n/config";
 import { useTranslation } from "react-i18next";
+import "./ConfirmDialog.css";
+import * as Icon from "react-bootstrap-icons";
 
 interface ConfirmDialogProps {
   title: string;
@@ -23,16 +25,20 @@ function ConfirmDialog({
 
   return (
     <React.Fragment>
-      <Modal show={show} onHide={handleCancel}>
-          <Modal.Header closeButton>
-            <Modal.Title>{title}</Modal.Title>
+      <Modal show={show} onHide={handleCancel} centered className="confirmDialog">
+          <Modal.Header>
+            <Modal.Title>
+              <Icon.PatchQuestion size={32} className="me-4" color="#007bff" />
+              {title}</Modal.Title>
           </Modal.Header>
           <Modal.Body>{message}</Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" onClick={handleOK}>
+            <Button variant="primary" onClick={handleOK} size="lg">
+              <Icon.Check size={32} className="me-2" />
               {t("ConfirmDialog.yes")}
             </Button>
-            <Button variant="secondary" onClick={handleCancel}>
+            <Button variant="secondary" onClick={handleCancel} size="lg">
+              <Icon.X size={32} className="me-2" />
             {t("ConfirmDialog.no")}
             </Button>
           </Modal.Footer>

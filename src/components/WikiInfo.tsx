@@ -11,6 +11,8 @@ import { setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "../services/configService";
 import AlertMessage from "./AlertMessage";
 import LangSelector from "./LangSelector";
+import { Wikipedia, Check } from "react-bootstrap-icons";
+
 import {
   getCurrentLang,
   getTitleFromLang,
@@ -157,9 +159,7 @@ function WikiInfo({
     if (pieceInfo.title !== "") {
       return (
         <span>
-          <span className="d-none d-lg-inline d-lg-none">
-            {t("wikiInfo.title")}{" "}
-          </span>
+          <Wikipedia size={28} className="me-2" />
           {titleLang}
         </span>
       );
@@ -200,6 +200,7 @@ function WikiInfo({
         aria-labelledby="contained-modal-title-vcenter"
         centered
         onHide={handleClose}
+        className="alertWiki"
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
@@ -228,7 +229,10 @@ function WikiInfo({
               .
             </small>
           </Modal.Body>
-          <Button onClick={handleClose}>Ok</Button>
+          <Button onClick={handleClose}>
+            <Check size={22} className="me-2" />
+            Ok
+          </Button>
         </Modal.Footer>
       </Modal>
     </React.Fragment>

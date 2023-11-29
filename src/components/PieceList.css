@@ -1,0 +1,42 @@
+.legendPiece {
+    padding: 1px 3px !important;
+  }
+  .legendPiece > svg {
+    pointer-events: none;
+    /*background: white;
+    border: 1px solid lightgray;
+    box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2px;
+    */
+    height: 30px;
+    width: 80px;
+    opacity: 0.7;
+    filter: drop-shadow(rgba(0, 0, 0, 0.5) 1px 1px 1px);
+  }
+
+  
+table.legend {
+    margin-bottom: 0px !important;
+    border: none !important;
+  }
+  table.legend td,
+  table.legend th {
+    border: none !important;
+    cursor: default;
+  }
+  table.legend .imgflag img {
+    height: 25px;
+    width: 40px;
+    max-width: 40px;
+    min-width: 40px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 1px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+  }
+  table.legend .imgflag {
+    max-width: 45px;
+    min-width: 50px;
+  }
+  table.legend .imgflag div {
+    max-width: 55px;
+    min-width: 55px;
+  }
+  

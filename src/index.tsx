@@ -3,22 +3,18 @@ import MapPuzzle from "./MapPuzzle";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 import FlagQuiz from "./FlagsQuiz/FlagQuiz";
+import { ThemeProvider } from "./components/ThemeProvider";
+
 const container = createRoot(document.getElementById("root") as HTMLElement);
 
-//render MapPuzzle or FlagQuiz
-
-//if url has ?flagQuiz then render FlagQuiz
-if (window.location.href.includes("flagQuiz")) {
-  container.render(
-    <Router>
-      <FlagQuiz />
-    </Router>
+const App = () => {
+  const Game = window.location.href.includes("flagQuiz") ? FlagQuiz : MapPuzzle;
+  return (
+    <ThemeProvider>
+      <Router>
+        <Game />
+      </Router>
+    </ThemeProvider>
   );
-} else {
-  //else render MapPuzzle
-  container.render(
-    <Router>
-      <MapPuzzle />
-    </Router>
-  );
-}
+};
+container.render(<App />);

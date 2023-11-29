@@ -102,20 +102,26 @@ export function setColor(col: number): string {
     "#811e78",
     "#ce9572",
     "#a3c828",
-    "#fef400",
-    "#67ba2e",
-    "#eb891a",
-    "#00913c",
-    "#dc261b",
-    "#00938d",
-    "#815329",
-    "#dc2053",
-    "#005ca1",
-    "#df127b",
-    "#291670",
-    "#811e78",
-    "#ce9572",
-    "#a3c828",
+    "#7a7a7a",
+    "#b5b5b5",
+    "#93a42a",
+    "#d7a94a",
+    "#6fa2e3",
+    "#c28dc7",
+    "#8ec5a9",
+    "#f0c27a",
+    "#95d1c4",
+    "#f5e0b7",    
+    "#3e4a66",
+    "#aa6f73",
+    "#4a9068",
+    "#d692ae",
+    "#507dbc",
+    "#ab83a1",
+    "#6d9dc5",
+    "#c0b283",
+    "#b06e79",
+    "#6c876d",
   ];
 
   if (col < colorArray.length) {
@@ -600,4 +606,14 @@ export function calculateZoom(bbox: number[]): number {
   const zoom = Math.min(lngZoom, latZoom);
 
   return Math.round(zoom);
+}
+
+
+/**
+ * Calculates distance proportion from ecuador based on the given latitude.
+ * @param bbox - The bounding box of the map.
+ * @returns The calculated distance porcentage from ecuador. 
+ */
+export function calculateDistanceFromEcuador(lat: number): number {
+  return Math.abs(lat) / 100;
 }

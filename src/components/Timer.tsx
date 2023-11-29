@@ -1,3 +1,4 @@
+import "./Timer.css";
 import React, { useEffect, useState } from "react";
 import { secondsToTime } from "../lib/Utils";
 import GameTime from "../lib/GameTime";

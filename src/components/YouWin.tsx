@@ -7,6 +7,7 @@ import Row from "react-bootstrap/Row";
 import Alert from "react-bootstrap/Alert";
 import "../i18n/config";
 import { useTranslation } from "react-i18next";
+import * as Icon from "react-bootstrap-icons";
 
 import { getUrl, getTexTime, getTime } from "../lib/Utils";
 import "./YouWin.css";
@@ -72,6 +73,7 @@ export default function YouWin({
         aria-labelledby="contained-modal-title-vcenter"
         centered
         onHide={handleClose}
+        className="youWin"
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
@@ -105,17 +107,17 @@ export default function YouWin({
           <Row>
             <Col lg={12} className="share">
               <h4>{t("YouWin.share")}</h4>
-              <EmailShareButton url={url} subject={title} body={quote}>
+              <EmailShareButton url={url} subject={title} body={quote} className="me-2">
                 <EmailIcon size={48} round={true} />
               </EmailShareButton>
-              <FacebookShareButton url={url} quote={quote} hashtag={hashtag}>
+              <FacebookShareButton url={url} quote={quote} hashtag={hashtag} className="me-2">
                 <FacebookIcon size={48} round={true} />
               </FacebookShareButton>
               <TwitterShareButton
                 url={url}
                 title={quote}
                 hashtags={hashtag.split(",")}
-              >
+                className="me-2">
                 <TwitterIcon size={48} round={true} />
               </TwitterShareButton>
               <LinkedinShareButton
@@ -123,23 +125,32 @@ export default function YouWin({
                 title={title + " - " + name}
                 summary={quote}
                 source={title}
-              >
+                className="me-2">
                 <LinkedinIcon size={48} round={true} />
               </LinkedinShareButton>
-              <WhatsappShareButton url={url} title={quote}>
+              <WhatsappShareButton url={url} title={quote}  className="me-2">
                 <WhatsappIcon size={48} round={true} />
               </WhatsappShareButton>
-              <TelegramShareButton url={url} title={quote}>
+              <TelegramShareButton url={url} title={quote}  className="me-2">
                 <TelegramIcon size={48} round={true} />
               </TelegramShareButton>
             </Col>
           </Row>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-primary" onClick={handleClose}>
+          <Button
+            variant="outline-primary"
+            onClick={handleClose}
+            size="lg"
+            className="mb-4"
+          >
+            <Icon.Globe size={28} className="me-2" />
             {t("YouWin.buttons.explore")}
           </Button>
-          <Button onClick={onResetGame}>{t("YouWin.buttons.playAgain")}</Button>
+          <Button onClick={onResetGame} size="lg" className="mb-4">
+            <Icon.Play size={28} className="me-2" />
+            {t("YouWin.buttons.playAgain")}
+          </Button>
         </Modal.Footer>
       </Modal>
       {show && <Fireworks />}

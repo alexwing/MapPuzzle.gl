@@ -1,0 +1,206 @@
+body {
+  background-color: darkgray;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+span.navbar-brand {
+  margin-left: 8px;
+}
+.navbar-brand > img {
+  max-height: 32px;
+  padding-right: 15px;
+  height: 32px;
+  width: 47px;
+} 
+
+.dropdown-menu.show > .dropdown-item img {
+  max-height: 32px;
+  padding-right: 0.5em;
+  margin: -0.5em 0;
+  pointer-events: none;
+}
+
+select {
+  cursor: auto !important;
+}
+
+button,
+.btn,
+.navbar-nav .dropdown-menu,
+.navbar-brand,
+.dropdown-item,
+.dropdown-toggle,
+a {
+  cursor: pointer !important;
+}
+.card-body,
+.navbar-brand {
+  padding: 0px !important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.mapName {
+  font-weight: 600;
+  margin: -0.75rem -0.25rem;
+  height: 3em;
+  position: absolute;
+  width: calc(100% - 5.5rem);
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  line-height: 0.95em;
+}
+.card-header {
+  min-height: 3em;
+  padding: 0.7em;
+}
+
+.tooltipRef {
+  z-index: 999;
+  display: block;
+  position: fixed;
+  border-radius: 15px;
+  padding: 0px 10px;
+  font-size: 11px;
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  backface-visibility: hidden;
+  will-change: transform;
+  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+}
+
+.form-group {
+  margin-bottom: 0px !important;
+}
+
+.score {
+  padding-right: 0px;
+  padding-left: 0px;
+  margin: 0px;
+}
+.score .alert {
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  border-radius: 0px;
+}
+.score .alert-heading.h4,
+.score .mb-0 {
+  font-size: 15px !important;
+  font-weight: bolder;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+  margin-bottom: 0px;
+}
+
+.score hr {
+  margin: 0px;
+}
+
+.score .col-lg-4 {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+
+.card,
+.navbar {
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 12px;
+}
+.card {
+  border-radius: 0px;
+  z-index: 79;
+}
+.navbar {
+  z-index: 89;
+}
+
+.form-inline button {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.modal-title {
+  font-size: 2.5vh;
+  margin: auto 1vh;
+}
+.modal-title-error {
+  font-size: 1.7vh;
+  line-height: 1.7vh;
+  font-weight: bold;
+  margin: auto 1vh;
+}
+.bg-warning.modal-body {
+  padding: 1vh;
+  background-color: burlywood !important;
+}
+
+.modal-backdrop.show {
+  opacity: 0.2;
+}
+
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+#flagsQuiz > .logo {
+  width: 32px;
+  height: 32px;
+  margin: -3px -10px;
+  cursor: pointer;
+  position: absolute;
+}
+#flagsQuiz > .new {
+  width: 28px;
+  height: 28px;
+  margin: -13px -5px;
+  cursor: pointer;
+  position: absolute;
+}
+
+.navbar-toggler:focus {
+  text-decoration: none;
+  outline: 0;
+  box-shadow: none;
+}
+.navbar-toggler:hover {
+  background-color: #ffbf40;
+}
+.navbar-toggler {
+  border-radius: 0px;
+  border: 0px;
+}
+
+/* Estilos para resaltar el botón */
+#flagsQuiz {
+  margin-left: 10px;
+  color: #ff9900; /* Color del texto */
+  border-color: #ff9900; /* Color del borde */
+  transition: background-color 0.3s ease; /* Transición suave al pasar el ratón por encima */
+}
+
+#flagsQuiz:hover {
+  background-color: #ffbf40; /* Color de fondo al pasar el ratón por encima */
+  border-color: #ffbf40; /* Color del borde al pasar el ratón por encima */
+  color: white;
+}
+
+.btn > svg {
+  vertical-align:bottom;
+}
+
+.mapboxgl-ctrl.mapboxgl-ctrl-attrib {
+	color: black;
+}

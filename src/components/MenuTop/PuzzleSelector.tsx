@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/display-name */
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Button, Col, Form, Modal, NavDropdown, Row } from "react-bootstrap";
+import * as Icon from "react-bootstrap-icons";
 import "./PuzzleSelector.css";
 import Puzzles from "../../../backend/src/models/puzzles";
 import { Regions } from "../../models/Interfaces";
@@ -20,12 +21,14 @@ interface PuzzleSelectorProps {
   show: boolean;
   onSelectMap: (puzzle: number) => void;
   onHidePuzzleSelector: () => void;
+  onlyFlags?: boolean;
 }
 
 function PuzzleSelector({
   show = false,
   onSelectMap,
   onHidePuzzleSelector,
+  onlyFlags = false,
 }: PuzzleSelectorProps): JSX.Element {
   const { t } = useTranslation();
   const [selectedPuzzle, setSelectedPuzzle] = useState(0);
@@ -72,7 +75,17 @@ function PuzzleSelector({
       selectedSubRegion,
       searchName
     ).then((data: Puzzles[]) => {
-      setPuzzles(data);
+      if (onlyFlags) {
+        const puzzles: Puzzles[] = [];
+        data.forEach((element: Puzzles) => {
+          if (element.enableFlags) {
+            puzzles.push(element);
+          }
+        });
+        setPuzzles(puzzles);
+      } else {
+        setPuzzles(data);
+      }
     });
   }, [selectedRegion, selectedSubRegion, searchName]);
 
@@ -116,22 +129,18 @@ function PuzzleSelector({
 
   const navDropdownRegionsTitle = (
     <span>
-      <span className="d-none d-lg-inline d-lg-none">
         {selectedRegion === 0
           ? t("puzzleSelector.filters.region")
           : regions.find((x) => x.regionCode === selectedRegion)?.region}
-      </span>
     </span>
   );
 
   const navDropdownSubRegionsTitle = (
     <span>
-      <span className="d-none d-lg-inline d-lg-none">
         {selectedSubRegion === 0
           ? t("puzzleSelector.filters.subregion")
           : subregions.find((x) => x.subregionCode === selectedSubRegion)
               ?.subregion}
-      </span>
     </span>
   );
 
@@ -180,7 +189,7 @@ function PuzzleSelector({
     mode: "radio",
     hideSelectColumn: true,
     clickToSelect: true,
-    bgColor: "#b8daff",
+    style: { filter: "invert(0.2) sepia(0.5)  hue-rotate(175deg)" },
     onSelect: (row, _isSelect, _rowIndex, _e) => {
       setSelectedPuzzle(parseInt(row.id));
     },
@@ -241,10 +250,19 @@ function PuzzleSelector({
             variant="primary"
             onClick={handleOK}
             disabled={selectedPuzzle === 0}
+            size="lg"
+            className="mb-4"
           >
+            <Icon.Play size={28} className="me-2" />
             {t("puzzleSelector.buttons.play")}
           </Button>
-          <Button variant="secondary" onClick={handleCancel}>
+          <Button
+            variant="secondary"
+            onClick={handleCancel}
+            size="lg"
+            className="mb-4"
+          >
+            <Icon.X size={28} className="me-2" />
             {t("puzzleSelector.buttons.cancel")}
           </Button>
         </Modal.Footer>
@@ -270,13 +288,13 @@ function PuzzleSelector({
       return (
         <Button
           className="clean-icon"
-          variant="link"
+          variant="outline-primary"
           size="sm"
           onClick={() => {
             cleanFilters();
           }}
         >
-          <span></span>
+          <Icon.Trash3Fill size={24} />
         </Button>
       );
     };
@@ -303,7 +321,7 @@ function PuzzleSelector({
     return (_column: any, _colIndex: any, _components: any) => {
       return (
         <NavDropdown title={navDropdownRegionsTitle} id="nav-dropdown">
-          <NavDropdown.Item id="0" onClick={onSelectRegion}>
+          <NavDropdown.Item onClick={onSelectRegion} id="0" key="0" eventKey="0" className="font-weight-bold">
             {t("puzzleSelector.filters.all")}
           </NavDropdown.Item>
           {regions.map((region) => (
@@ -325,7 +343,7 @@ function PuzzleSelector({
     return (_column: any, _colIndex: any, _components: any) => {
       return (
         <NavDropdown title={navDropdownSubRegionsTitle} id="nav-dropdown">
-          <NavDropdown.Item id="0" onClick={onSelectSubRegion}>
+          <NavDropdown.Item onClick={onSelectSubRegion} id="0" key="0" eventKey="0" className="font-weight-bold">
             {t("puzzleSelector.filters.all")}
           </NavDropdown.Item>
           {subregions.map((subregion) => (

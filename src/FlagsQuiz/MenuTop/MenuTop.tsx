@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import Navbar from "react-bootstrap/Navbar";
-import PuzzleSelector from "./PuzzleSelector";
+import PuzzleSelector from "../../components/MenuTop/PuzzleSelector"; 
 import PuzzleOptions from "./PuzzleOptions";
 import { WikiInfoLang } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
@@ -15,6 +15,7 @@ import ConfirmDialog from "../../components/MenuTop/ConfirmDialog";
 import LangSelector from "../../components/LangSelector";
 import Info from "../../components/Info";
 import WikiInfo from "../../components/WikiInfo";
+import ThemeContext from "../../components/ThemeProvider";
 
 interface MenuTopProps {
   name: string;
@@ -41,7 +42,8 @@ function MenuTop({
   const [showWikiInfo, setShowWikiInfo] = React.useState(false);
   const { t, i18n } = useTranslation();
   const [wikiInfoUrl, setWikiInfoUrl] = React.useState("");
-
+  const { theme } = useContext(ThemeContext);
+  
   useEffect(() => {
     setShow(false);
     setShowInfo(false);
@@ -103,14 +105,14 @@ function MenuTop({
 
   return (
     <React.Fragment>
-      <Navbar bg="light" expand="lg">
+      <Navbar bg={theme} expand="lg">
         <Navbar.Brand>
           <img src="./logoFlagsQuiz192.png" alt="" />
           {name}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
+          <Nav>
             <Button
               id="puzzleSelect"
               variant="outline-primary"
@@ -125,17 +127,19 @@ function MenuTop({
               onlyFlags={true}
             />
           </Nav>
-          <LangSelector
-            langs={langs}
-            onSelectLang={handleLangChange}
-            currentLang={currentLang}
-          ></LangSelector>
-          <PuzzleOptions
-            onFullScreen={onFullScreen}
-            handleInfo={handleShowInfo}
-            handleShow={handleShow}
-            onShowWikiInfo={onShowWikiInfoHandler(true)}            
-          />
+          <Nav className="ms-auto">
+            <LangSelector
+              langs={langs}
+              onSelectLang={handleLangChange}
+              currentLang={currentLang}
+            ></LangSelector>
+            <PuzzleOptions
+              onFullScreen={onFullScreen}
+              handleInfo={handleShowInfo}
+              handleShow={handleShow}
+              onShowWikiInfo={onShowWikiInfoHandler(true)}
+            />
+          </Nav>
         </Navbar.Collapse>
       </Navbar>
       <Info name={name} show={showInfo} InfoClose={handleCancel} />
@@ -153,7 +157,7 @@ function MenuTop({
         piece={0}
         enableFlags={false}
         puzzleSelected={0}
-      />      
+      />
     </React.Fragment>
   );
 }
