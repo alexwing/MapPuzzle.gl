@@ -14,7 +14,7 @@ function FlagSelector({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
   const initialFlagPositionOutsideLeft: Vector3 = [-20, -0.3, 0.4];
   const flagPosition: Vector3 = [0, -0.3, 0.4];
 
-  // Creamos un hook useTransition para animar la entrada y salida de la bandera antigua
+  // create a useTransition hook to animate the entry and exit of the old flag
   const transitions = useTransition(flagImageUrl, {
     from: { position: initialFlagPositionOutsideRight },
     enter: { position: flagPosition },
@@ -27,7 +27,7 @@ function FlagSelector({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
     <React.Fragment>
  
       {transitions((style, item) => {
-        // Usamos el componente animated para renderizar la bandera antigua con la transición animada
+        // Use the animated component to render the old flag with the animated transition
         return (
           item && (
             <animated.group position={style.position}>

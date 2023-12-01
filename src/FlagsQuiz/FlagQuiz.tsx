@@ -62,7 +62,7 @@ function FlagQuiz(): JSX.Element {
   const WRONG_COLOR = 4;
   const SELECTED_COLOR = 0;
 
-
+  // load puzzle from url
   useEffect(() => {
     if (window.location.pathname) {
       const puzzleUrl = cleanUrlParams(window.location.search.substring(10));
@@ -74,13 +74,20 @@ function FlagQuiz(): JSX.Element {
     }
   }, []);
 
-  
+  // get custom wikis
   const getCustomWikis = (puzzleId: number) => {
     PuzzleService.getCustomWikis(puzzleId).then((customWiki: CustomWiki[]) => {
       setPuzzleCustomWiki(customWiki);
     });
   };
 
+
+  /**
+   * Handles the click event on the map.
+   * @param info The PieceEvent object containing the information about the clicked piece.
+   * @returns Nothing.
+   * @remarks If the clicked piece is found and the puzzle has wiki enabled, the wiki info will be shown.
+  */
   const onClickMapHandler = (info: PieceEvent) => {
     if (!winner) return;
     if (info.object) {
@@ -135,6 +142,7 @@ function FlagQuiz(): JSX.Element {
     GameTime.seconds = 0;
   };
 
+  /* show wiki info */
   const onShowWikiInfoHandler = (val: boolean) => {
     if (
       val &&
@@ -346,6 +354,9 @@ function FlagQuiz(): JSX.Element {
     return pieceSelectedAux;
   };
 
+  /**
+   * Sets the color of a puzzle piece to CORRECT_COLOR and selects the next piece for the quiz.
+   */
   const onCorrectAnswerHandler = () => {
     const correctsAux = [
       ...corrects,
@@ -363,6 +374,9 @@ function FlagQuiz(): JSX.Element {
     nextPiece();
   };
 
+  /**
+   * Sets the color of a puzzle piece to WRONG_COLOR and selects the next piece for the quiz.
+   */
   const onWrongAnswerHandler = () => {
     const failsAux = [...fails, pieces[pieceSelected].properties.cartodb_id];
     setFails(failsAux);
@@ -412,7 +426,7 @@ function FlagQuiz(): JSX.Element {
         ConfigService.cookieDays
       );
     }
-
+    // get random piece not found
     const randomPiece = getRandomPieceNotFounds(pieces);
     const pieceSelectedAux = pieces[randomPiece];
     setPieceSelectedData(pieceSelectedAux);
@@ -421,14 +435,16 @@ function FlagQuiz(): JSX.Element {
     setFounds([...founds, pieces[randomPiece].properties.cartodb_id]);
 
     generateQuestions(pieceSelectedAux);
-
+    
+    //calculate centroid
     const centroid = turf.centroid(pieceSelectedAux.geometry);
+    //calculate zoom
     let zoom =
       calculateZoom(turf.bbox(pieceSelectedAux.geometry)) * ZOOM_OUT_FACTOR;
     if (zoom < MIN_ZOOM) {
       zoom = MIN_ZOOM;
     }
-
+    // animate to piece position and zoom
     const newViewState: ViewState = {
       ...viewState,
       longitude: centroid.geometry.coordinates[0],

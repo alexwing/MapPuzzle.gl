@@ -14,6 +14,7 @@ function Flag({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
   const flagRef = useRef<THREE.Mesh>(null);
   const flagFakeShadow = useRef<THREE.Mesh>(null);
 
+  // Load flag texture and apply it to the flag mesh
   useEffect(() => {
     if (flagRef.current) {
       const loader = new THREE.TextureLoader();
@@ -60,6 +61,7 @@ function Flag({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
     }
   }, []);
 
+  // Animate flag vertices
   useFrame(() => {
     const time = Date.now() * SPEED; // Cambia el factor para ajustar la velocidad del movimiento
 

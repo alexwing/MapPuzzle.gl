@@ -49,6 +49,7 @@ function PieceQuiz({
   const [backgroundImage, setBackgroundImage] = useState("");
   const [quizResponse, setQuizResponse] = useState(false)
 
+  // get background image from distance from ecuador
   useEffect(() => {
     if (pieceSelectedData?.geometry === undefined) return;
     const centroid = turf.centroid(pieceSelectedData.geometry);
@@ -58,10 +59,8 @@ function PieceQuiz({
       centroid.geometry.coordinates[1]
     );
 
-    // get n from 1 to flagQuizBackgrounds number proportionally to distance
+    // get distance from ecuador and multiply by flagQuizBackgrounds number
     const n = Math.floor(distance * ConfigService.flagQuizBackgrounds) + 1;
-
-    // console.log(`distance: ${distance} n: ${n}`);
 
     setBackgroundImage(`./flagQuiz/flagBackground${n}.jpeg`);
   }, [pieceSelectedData]);
@@ -78,6 +77,7 @@ function PieceQuiz({
       });
   }, [lang]);
 
+  // set variant for buttons if quizResponse is true
   const variant = (c: PieceProps) => {
     if (quizResponse) {
       if (c.properties.cartodb_id === pieceSelectedData.properties.cartodb_id) {
@@ -106,7 +106,8 @@ function PieceQuiz({
   });
 
 
-
+  // on click button check if correct or wrong
+  // and init animate button and show correct or wrong
   const onClickHandler = (c: PieceProps) => {
   //prevent clicks if quizResponse is true
   if (quizResponse) return;
@@ -122,13 +123,14 @@ function PieceQuiz({
       }, ConfigService.flagQuizResponseTime);
     
   }
-
+  // get flag image url
   const getFlag = (puzzleId: number, c: PieceProps): string => {
     return `../customFlags/${puzzleId.toString()}/1024/${
       c.properties.cartodb_id
     }.png`;
   };
-
+  
+  // show timer if not winner
   const showTimer =
     winner || loading ? null : (
       <Timer puzzleSelected={puzzleSelected} name="quizSeconds" />

@@ -55,6 +55,10 @@ function MapPuzzle(): JSX.Element {
   const [viewState, setViewState] = useState({} as ViewState);
   const [lang, setLang] = useState("");
   const { i18n } = useTranslation();
+
+  /*
+  * Load the game on start
+  */
   useEffect(() => {
     if (window.location.pathname) {
       const puzzleUrl = cleanUrlParams(window.location.search.substring(5));
@@ -69,7 +73,10 @@ function MapPuzzle(): JSX.Element {
   useEffect(() => {
     handleResize();
   }, [height]);
-
+  
+  /*
+  * Handle resize of the window set the height of tools panel
+  */
   const handleResize = () => {
     let heightAux = window.innerHeight;
     if (window.innerWidth < 992) {
@@ -83,7 +90,12 @@ function MapPuzzle(): JSX.Element {
   };
 
 
-  /* load game from db */
+  /* 
+  * load game from db 
+  * @param puzzleId 
+  * @returns void
+  * @remarks Load the game from db and set the pieces and founds
+  */
   const loadGame = (puzzleId: number) => {
     const langAux = getLang();
     i18n.changeLanguage(langAux);
@@ -131,6 +143,11 @@ function MapPuzzle(): JSX.Element {
     });
   };
 
+  /*
+  * Restore cookies from game
+  * @param puzzleId
+  * @returns void
+  */
   const restoreCookies = (puzzleId: number) => {
     const cookieFounds = getCookie("founds" + puzzleId);
     if (cookieFounds) {
@@ -152,6 +169,14 @@ function MapPuzzle(): JSX.Element {
     }
   };
 
+  /*
+  * Load pieces by lang
+  * @param puzzleSelectedAux
+  * @param piecesAux
+  * @param langAux
+  * @returns void
+  * @remarks Load the pieces from db and set the pieces and founds
+  * */
   function loadPiecesByLang(
     puzzleSelectedAux: number,
     piecesAux: PieceProps[],
@@ -199,6 +224,7 @@ function MapPuzzle(): JSX.Element {
     setLang(lang);
   };
 
+  /* get custom centroids from db */
   const getCustomCentroids = (puzzleId: number) => {
     PuzzleService.getCustomCentroids(puzzleId).then(
       (customCentroids: CustomCentroids[]) => {
@@ -207,12 +233,14 @@ function MapPuzzle(): JSX.Element {
     );
   };
 
+  /* get custom wikis from db */
   const getCustomWikis = (puzzleId: number) => {
     PuzzleService.getCustomWikis(puzzleId).then((customWiki: CustomWiki[]) => {
       setPuzzleCustomWiki(customWiki);
     });
   };
 
+  /* check if the game is finished */
   useEffect(() => {
     if (pieces.length - founds.length <= 0 && pieces.length > 0) {
       setWinner(true);
