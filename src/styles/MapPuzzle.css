@@ -136,20 +136,46 @@ code {
   font-size: 2.5vh;
   margin: auto 1vh;
 }
-.modal-title-error {
+.modal-backdrop.show {
+  opacity: 0.2;
+}
+
+/* Modal alert */
+
+.alert-message .modal-title {
+  font-size: 2.5vh;
+  margin: auto 1vh;
+}
+.alert-message .modal-title-error {
   font-size: 1.7vh;
   line-height: 1.7vh;
   font-weight: bold;
   margin: auto 1vh;
 }
-.bg-warning.modal-body {
-  padding: 1vh;
-  background-color: burlywood !important;
+
+.alert-message .modal-body {
+  font-size: 1.7vh;
+  border-bottom-left-radius: var(--bs-modal-inner-border-radius);
+  border-bottom-right-radius: var(--bs-modal-inner-border-radius);
 }
 
-.modal-backdrop.show {
-  opacity: 0.2;
+.alert-message .modal-content {
+  border-bottom-left-radius: var(--bs-modal-inner-border-radius);
+  border-bottom-right-radius: var(--bs-modal-inner-border-radius);
 }
+
+.alert-message .modal-header {
+  border-bottom: 0px;
+  padding: 0.5rem;
+}
+.alert-message .bg-success {
+  background-color: #7cac7c !important;
+}
+.alert-message .bg-danger {
+  background-color: #e47681 !important;
+}
+
+/* End Modal alert */
 
 .rtl {
   direction: rtl;

@@ -1,14 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import { AlertModel } from "../models/Interfaces";
-
-interface AlertMessageProps {
-  show: boolean;
-  alertMessage: AlertModel;
-  onHide: () => void;
-  autoClose?: number ;
-}
+import { AlertMessageProps, AlertModel } from "../models/Interfaces";
+import * as Icon from "react-bootstrap-icons";
 
 function AlertMessage({
   show = false,
@@ -22,15 +16,30 @@ function AlertMessage({
 }: AlertMessageProps) : JSX.Element {
   const [showIn, setShowIn] = useState(false);
   const [alert, setAlert] = useState(alertMessage);
+  // Create a ref that will persist
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   //on load show modal
   useEffect(() => {
     setShowIn(show);
     setAlert(alertMessage);
     if (autoClose > 0) {
-      setTimeout(() => {
+      // Clear previous timer
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      // Create new timeout
+      timeoutRef.current = setTimeout(() => {
         setShowIn(false);
       }, autoClose);
     }
+
+    // Clear timeout if the component is unmounted
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [show, alertMessage, autoClose]);
 
   function handleClose() {
@@ -45,6 +54,7 @@ function AlertMessage({
         size="sm"
         aria-labelledby="contained-modal-title-vcenter"
         centered
+        className="alert-message"
         animation={false}
       >
         <Modal.Header className={"bg-" + alert.type}>
@@ -55,10 +65,10 @@ function AlertMessage({
             {alert.title}
           </Modal.Title>
           <Button variant={alert.type} onClick={handleClose}>
-            <i className="close-icon"></i>
+            <Icon.X size={24} />
           </Button>
         </Modal.Header>
-        <Modal.Body className="bg-warning">{alert.message}</Modal.Body>
+        <Modal.Body>{alert.message}</Modal.Body>
       </Modal>
     </React.Fragment>
   );

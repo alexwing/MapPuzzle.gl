@@ -90,3 +90,9 @@ export interface FlagsIcons {
   url: string;
 }
   
+export interface AlertMessageProps {
+  show: boolean;
+  alertMessage: AlertModel;
+  onHide: () => void;
+  autoClose?: number ;
+}

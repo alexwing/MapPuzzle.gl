@@ -69,7 +69,7 @@ function EditMap({
         setShowAlert(true);
         setAlert({
           title: "Success",
-          message: result.message,
+          message: result.msg,
           type: "success",
         } as AlertModel);
       })
