@@ -49,13 +49,15 @@ mapCreator.post("/importShapefile", async (req: Request, res: Response) => {
     //get all files in temp folder
     const files = fs.readdirSync(tempDir);
     //for each file
+    let found = false;
     for (const file of files) {
       //get file extension
       const ext = file.split(".").pop();
       const nameTable = file.split(".").shift();
       //if file is a shapefile
-      // @ts-ignore
+      // @ts-ignore      
       if (ext.toLowerCase() === "shp") {
+        found = true;
         //import shapefile
         const mapGenerator = new MapGenerator();
         const mapGeneratorResult = await mapGenerator
@@ -69,6 +71,13 @@ mapCreator.post("/importShapefile", async (req: Request, res: Response) => {
           });
         console.log("mapGeneratorResult", mapGeneratorResult);
       }
+    }
+    if (!found) {
+      res.json({
+        success: false,
+        msg: "No shapefile found in zip file",
+      });
+      return;
     }
     res.json({
       success: true,

@@ -106,11 +106,12 @@ export default function PieceList({
       event.preventDefault();
     });
   }, [concernedElement]);
-
+  
   const paintFlag = (c: PieceProps) => {
     if (!enableFlags) return null;
     //create flag image from piece id
     const flag = `../customFlags/${puzzleId.toString()}/64/${c.properties.cartodb_id}.png`;
+    //  const flag = `../customFlags/${puzzleId.toString()}/${c.properties.cartodb_id}.svg`;
     return (
       <td className="imgflag">
         <div>
@@ -119,6 +120,38 @@ export default function PieceList({
       </td>
     );
   };
+  
+ /*
+  const paintFlag = (c: PieceProps) => {
+    if (!enableFlags) return null;
+
+    const svgFlag = `../customFlags/${puzzleId.toString()}/${
+      c.properties.cartodb_id
+    }.svg`;
+    const pngFlag = `../customFlags/${puzzleId.toString()}/${
+      c.properties.cartodb_id
+    }.png`;
+
+    return (
+      <td className="imgflag">
+        <div>
+          <img
+            src={svgFlag}
+            alt={c.properties.name}
+            onError={(e) => {
+              const imgElement = e.target as HTMLImageElement;
+              if (imgElement.src === svgFlag) {
+                imgElement.src = `${pngFlag}?timestamp=${new Date().getTime()}`;
+              } else if (imgElement.src.includes(pngFlag)) {
+                imgElement.style.display = "none";
+              }
+            }}
+          />
+        </div>
+      </td>
+    );
+  };
+  */
 
   return (
     <React.Fragment>

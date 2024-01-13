@@ -13,20 +13,20 @@
   opacity: 0.8;
 }
 .piece-preview {
-	border: 1px solid #ccc;
-	display: inline-flex;
-	padding: 10px;
-	/* transform: scale(2); */
-	margin-top: 2em;
-	margin-left: 50%;
-	box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.15);
+  border: 1px solid #ccc;
+  display: inline-flex;
+  padding: 10px;
+  transform: scale(1.5); 
+  margin-top: 20%;
+  margin-left: 50%;
+  box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.15);
 }
-.btn-cursor{
-    width: 50px;
-    height: 50px; 
+.btn-cursor {
+  width: 50px;
+  height: 50px;
 }
 
-.piece-poi{
+.piece-poi {
   position: absolute;
   width: 5px;
   height: 5px;
@@ -36,8 +36,8 @@
   overflow: hidden;
 }
 
-.full-height{
-    height: calc(30vh);
+.full-height {
+  height: calc(30vh);
 }
 
 .flag-selector > .dropdown-menu {
@@ -45,7 +45,7 @@
   max-width: calc(95vw);
   overflow-y: auto;
 }
-.flag-selector > .nav-link{
+.flag-selector > .nav-link {
   padding: 0;
   margin: -3px;
 }
@@ -63,11 +63,28 @@
 }
 
 .wikiIframe {
-	margin-top: 2em;
-	height: 600px;
+  height: calc(100vh - 27em);
   width: 100%;
 }
+
+iframe {
+  overflow-x: hidden;
+}
+
 .scrollable {
-	overflow-y: auto;
-	max-height: calc(100vh - 19em);
+  overflow-y: auto;
+  max-height: calc(100vh - 19em);
+}
+
+.editor-dialog .modal-xl {
+  --bs-modal-width: 1365px;
+}
+.save-btn {
+  margin-left: auto;
+  height: 2em;
+  line-height: 0em;
+}
+
+.right-align {
+  display: contents;
 }
