@@ -24,6 +24,10 @@
   font-weight: bold;
   font-size: 1.5em;
 }
+.infoModal .info h3 {
+  padding-bottom: 0.25em;
+  font-size: 1.15em;
+}
 .infoModal .share {
   text-align: center;
   padding: 1.5em;

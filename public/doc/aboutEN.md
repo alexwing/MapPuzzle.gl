@@ -1,21 +1,38 @@
-MapPuzzle.gl is an experimental website, developed with React and Deck.gl. It is an accessible way to learn cartography, through this project I try to offer an interactive learning experience with maps.
+**MapPuzzle.xyz** is a platform that immerses you in hours of entertainment through flags, maps, and puzzles from various parts of the world. The game is designed for players of all ages and skill levels, offering a comprehensive and enriching educational experience.
 
-## Description of the game
+## Available Games
 
-MapPuzzle.xyz is a fun way to learn geography in a playful way. The game features a list of puzzle pieces on the left side of the screen, which can be countries, states, cities, or provinces, among others. Each piece is shown with a map illustration and when clicked, it follows the mouse and the player must find its match on the map. It also has a counter for found pieces, pieces to be found, and mistakes made. Players can choose the map they want to play and filter it by continent and region.
+Currently, there are two different games: Geographical Puzzles and Guess the Flag.
 
-One of the interesting features of the game is that it allows players to translate the names of the puzzle pieces into different languages. This allows them to learn the names of the places in different languages, enriching their gaming experience and helping them develop their language skills.
+### Geographical Puzzles
+- Choose from available puzzles representing different regions of the world, including countries, states, or provinces.
+- In the interface, the map is displayed on the right with its borders, while on the left, there is a list of elements with their respective silhouettes. Your task is to place each piece in its corresponding location.
+- Additionally, every time a piece is placed on the map, players can access Wikipedia data about the place they are exploring. This allows them to obtain additional information about the geography, history, culture, and other areas related to the place, helping them learn more about the world around them.
 
-In addition, every time a piece is placed on the map, players can access Wikipedia data about the place they are exploring. This allows them to obtain additional information about the geography, history, culture, and other areas related to the place, helping them learn more about the world around them.
+### Guess the Flag
+- Observe a waving flag and the silhouette of the country on the right.
+- Choose from six available options to correctly identify the country to which it belongs.
+- Once the game is finished, you can explore the map and obtain additional information about the country from Wikipedia.
 
-In summary, the map puzzle game offers a complete and fun educational experience for all ages. Don't miss out on trying it!
+## Game Modes
 
-## Code description
+Both games offer detailed tracking of your successes, the list of remaining elements, errors made, and the time devoted to the activity.
 
-To develop the game, the Deck.gl library was used, which allows creating interactive maps on the web using JavaScript and WebGL. This library is a powerful and versatile tool that facilitates the development of map applications on the web, offering a wide variety of components and layers that can be used to create custom and highly interactive maps.
+Players can choose the map they want to play, filtering by continent and region. One interesting feature of the game is that it allows players to translate the names of the puzzle pieces into different languages. This enriches their gaming experience and helps them develop their language skills.
 
-In addition, other technologies and tools such as React, sqlite, PHP, typeorm, and node.js have been used to implement different functionalities and improve the game experience. React has been used as a user interface development framework, sqlite has been used to store and retrieve data in a local database, PHP has been used to develop server scripts, typeorm has been used to manage the database, and node.js has been used as an execution environment to run the server scripts.
+## Code Description
 
-In terms of the project structure, the game is divided into different components and modules that are responsible for different tasks. For example, there are components that are responsible for displaying the puzzle piece list and the map, others that manage the game logic and interact with players, and others that are responsible for obtaining and processing Wikipedia and translation data.
+**MapPuzzle.xyz** has been developed using advanced technologies such as React, Deck.gl, sqlite, PHP, typeorm, and node.js. This combination ensures a comprehensive and enriching educational experience for users of all ages.
 
-In summary, the map puzzle game has been developed using advanced technologies and web development tools, and is structured in a modular and efficient way to facilitate its maintenance and expansion.
+To develop the game, the Deck.gl library was used, allowing the creation of interactive maps on the web using JavaScript and WebGL. This library is a powerful and versatile tool that facilitates the development of map applications on the web, offering a wide variety of components and layers for creating custom and highly interactive maps.
+
+Additionally, other technologies and tools such as React, sqlite, PHP, typeorm, and node.js have been used to implement various functionalities and enhance the gaming experience.
+
+- **React** has been used as the user interface development framework.
+- **sqlite** serves as a local database to store game data, with the published version on the web using it in read-only mode.
+- **PHP** has been used to develop database scripts, allowing the game to be hosted on a standard web server without node.js.
+- **node.js** is used for the backend of the map editor, which was used to create the game maps.
+- **typeorm** has been used to manage the database from the map editor.
+- **Postgis** has been utilized to convert from SHP files and generate the **geojson** files for the maps.
+
+Regarding the project structure, the game is divided into different components and modules responsible for various tasks. For example, there are components responsible for displaying the puzzle piece list and the map, others that manage the game logic and interact with players, and others responsible for obtaining and processing Wikipedia and translation data.
