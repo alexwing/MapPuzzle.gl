@@ -9,7 +9,6 @@
 .infoModal .info {
   text-align: justify;
   padding: 1.5em;
-  margin-top: 1em;
   color: #555;
   max-height: 500px;
   overflow-y: scroll;

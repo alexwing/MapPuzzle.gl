@@ -6,8 +6,9 @@ import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 import "../i18n/config";
 import { useTranslation } from "react-i18next";
+import ReactMarkdown from "react-markdown";
 
-import { getUrl } from "../lib/Utils";
+import { getLang, getUrl } from "../lib/Utils";
 import { Check } from "react-bootstrap-icons";
 import "./Info.css";
 import {
@@ -41,6 +42,7 @@ function Info({
 }: InfoProps): JSX.Element | null {
   const [showIn, setShowIn] = useState(false);
   const [content, setContent] = useState([] as Puzzles[]);
+  const [markdown, setMarkdown] = useState("");
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -53,6 +55,18 @@ function Info({
   function handleClose() {
     InfoClose();
   }
+
+  useEffect(() => {
+    if (!showIn) {
+      return;
+    }
+    const lang = getLang() === "es" ? "ES" : "EN";
+    console.log("lang service", getLang());
+    console.log("lang", lang);
+    PuzzleService.getResource(`/doc/about${lang}.md`).then((response) => {
+      setMarkdown(response);
+    });
+  }, [showIn]);
 
   const url = "http://" + getUrl();
   const quote = t("info.quote");
@@ -99,86 +113,12 @@ function Info({
             {t("common.share.title")}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="info">
           <Row>
-            <Col lg={12} className="info">
-              <p>
-                MapPuzzle.gl is an experimental website, developed with React
-                and Deck.gl. It is an accessible way to learn cartography,
-                through this project I try to offer an interactive learning
-                experience with maps.
-              </p>
-              <h2>Description of the game</h2>
-              <p>
-                MapPuzzle.xyz is a fun way to learn geography in a playful way.
-                The game features a list of puzzle pieces on the left side of
-                the screen, which can be countries, states, cities, or
-                provinces, among others. Each piece is shown with a map
-                illustration and when clicked, it follows the mouse and the
-                player must find its match on the map. It also has a counter for
-                found pieces, pieces to be found, and mistakes made. Players can
-                choose the map they want to play and filter it by continent and
-                region.
-              </p>
-              <p>
-                One of the interesting features of the game is that it allows
-                players to translate the names of the puzzle pieces into
-                different languages. This allows them to learn the names of the
-                places in different languages, enriching their gaming experience
-                and helping them develop their language skills.
-              </p>
-              <p>
-                In addition, every time a piece is placed on the map, players
-                can access Wikipedia data about the place they are exploring.
-                This allows them to obtain additional information about the
-                geography, history, culture, and other areas related to the
-                place, helping them learn more about the world around them.
-              </p>
-              <p>
-                In summary, the map puzzle game offers a complete and fun
-                educational experience for all ages. Don&apos;t miss out on
-                trying it!
-              </p>
-              <h2>Code description</h2>
-              <p>
-                To develop the game, the Deck.gl library was used, which allows
-                creating interactive maps on the web using JavaScript and WebGL.
-                This library is a powerful and versatile tool that facilitates
-                the development of map applications on the web, offering a wide
-                variety of components and layers that can be used to create
-                custom and highly interactive maps.
-              </p>
-
-              <p>
-                In addition, other technologies and tools such as React, sqlite,
-                PHP, typeorm, and node.js have been used to implement different
-                functionalities and improve the game experience. React has been
-                used as a user interface development framework, sqlite has been
-                used to store and retrieve data in a local database, PHP has
-                been used to develop server scripts, typeorm has been used to
-                manage the database, and node.js has been used as an execution
-                environment to run the server scripts.
-              </p>
-
-              <p>
-                In terms of the project structure, the game is divided into
-                different components and modules that are responsible for
-                different tasks. For example, there are components that are
-                responsible for displaying the puzzle piece list and the map,
-                others that manage the game logic and interact with players, and
-                others that are responsible for obtaining and processing
-                Wikipedia and translation data.
-              </p>
-
-              <p>
-                In summary, the map puzzle game has been developed using
-                advanced technologies and web development tools, and is
-                structured in a modular and efficient way to facilitate its
-                maintenance and expansion.
-              </p>
+            <Col lg={12}>
+              <ReactMarkdown>{markdown}</ReactMarkdown>
               <h2>Credits</h2>
               {infoPuzzles}
-
               <p>
                 The project repository can be found at:&nbsp;
                 <a
