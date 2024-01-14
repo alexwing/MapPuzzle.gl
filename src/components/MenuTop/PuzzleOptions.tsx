@@ -53,7 +53,8 @@ function PuzzleOptions({
       iconColor: "",
       iconClass: "me-2",
       label: t("topMenu.refocus"),
-      labelClass: "d-lg-none"
+      labelClass: "d-lg-none",
+      visible: true,
     },
     { id: "fullscreen",
       variant: "none",
@@ -64,7 +65,8 @@ function PuzzleOptions({
       iconColor: "",
       iconClass: "me-2",
       label: t("topMenu.fullscreen"),
-      labelClass: "d-lg-none"
+      labelClass: "d-lg-none",
+      visible: true,
     },
     { id: "theme",
       variant: "none",
@@ -75,7 +77,8 @@ function PuzzleOptions({
       iconColor: "",
       iconClass: "me-2",
       label: theme === "light" ? t("topMenu.dark") : t("topMenu.light"),
-      labelClass: "d-lg-none"
+      labelClass: "d-lg-none",
+      visible: true,
     },
     { id: "info",
       variant: "none",
@@ -86,7 +89,8 @@ function PuzzleOptions({
       iconColor: "",
       iconClass: "me-2",
       label: t("topMenu.about"),
-      labelClass: "d-lg-none"
+      labelClass: "d-lg-none",
+      visible: true,
     },
     { id: "wiki",
       variant: "none",
@@ -97,7 +101,8 @@ function PuzzleOptions({
       iconColor: "",
       iconClass: "me-2",
       label: t("topMenu.wikiInfo"),
-      labelClass: "d-lg-none"
+      labelClass: "d-lg-none",
+      visible: true,
     },
     { id: "reset",
       variant: "none",
@@ -108,7 +113,8 @@ function PuzzleOptions({
       iconColor: "",
       iconClass: "me-2",
       label: t("topMenu.resetGame"),
-      labelClass: "d-lg-none"
+      labelClass: "d-lg-none",
+      visible: true,
     },
     {
       id: "editor",
@@ -120,7 +126,8 @@ function PuzzleOptions({
       iconColor: "green",
       iconClass: "me-2",
       label: t("topMenu.editor"),
-      labelClass: "d-lg-none"
+      labelClass: "d-lg-none",
+      visible: ConfigService.editorEnabled,
     },
   ];
 
@@ -140,11 +147,13 @@ function PuzzleOptions({
             placement="bottom"
             overlay={overlay(button)}
           >
+          
           <Button
             key={index}
             id={button.id}
             variant={button.variant}
             onClick={button.onClickHandler}
+            style={{ display: button.visible ? "inline" : "none" }}
           >
             <span>
               <button.icon size={button.iconSize} className={button.iconClass} />
