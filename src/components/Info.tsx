@@ -117,7 +117,6 @@ function Info({
           <Row>
             <Col lg={12}>
               <ReactMarkdown>{markdown}</ReactMarkdown>
-              <h2>Credits</h2>
               {infoPuzzles}
               <p>
                 The project repository can be found at:&nbsp;

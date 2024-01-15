@@ -22,7 +22,7 @@ Players can choose the map they want to play, filtering by continent and region.
 
 ## Code Description
 
-**MapPuzzle.xyz** has been developed using advanced technologies such as React, Deck.gl, sqlite, PHP, typeorm, and node.js. This combination ensures a comprehensive and enriching educational experience for users of all ages.
+**MapPuzzle.xyz** has been developed using advanced technologies such as React, Deck.gl, sqlite, PHP, typeorm, and node.js.
 
 To develop the game, the Deck.gl library was used, allowing the creation of interactive maps on the web using JavaScript and WebGL. This library is a powerful and versatile tool that facilitates the development of map applications on the web, offering a wide variety of components and layers for creating custom and highly interactive maps.
 
@@ -36,3 +36,14 @@ Additionally, other technologies and tools such as React, sqlite, PHP, typeorm, 
 - **Postgis** has been utilized to convert from SHP files and generate the **geojson** files for the maps.
 
 Regarding the project structure, the game is divided into different components and modules responsible for various tasks. For example, there are components responsible for displaying the puzzle piece list and the map, others that manage the game logic and interact with players, and others responsible for obtaining and processing Wikipedia and translation data.
+
+## Design
+
+The design of the game is based on the following principles:
+
+* **Minimalism**: The game has a minimalist design, with a simple and clean interface that allows players to focus on the game and not be distracted by other elements.
+* **Bootstrap**: The game uses the Bootstrap framework to facilitate the development of the user interface and make it responsive.
+* https://icons.getbootstrap.com/: The game uses the Bootstrap icons to facilitate the development of the user interface.
+* **Colors**: The puzzle pieces have bright, eye-catching colors that contrast with the white background of the map, making them easy to identify and locate on the map.
+
+## Credits

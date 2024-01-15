@@ -23,7 +23,7 @@ Una de las características interesantes del juego es que permite a los jugadore
 
 ## Descripción del código
 
-**MapPuzzle.xyz** ha sido desarrollado utilizando tecnologías avanzadas como React, Deck.gl, sqlite, PHP, typeorm y node.js. Esta combinación asegura una experiencia educativa completa y enriquecedora para usuarios de todas las edades.
+**MapPuzzle.xyz** ha sido desarrollado utilizando tecnologías avanzadas como React, Deck.gl, sqlite, PHP, typeorm y node.js. 
 
 Para desarrollar el juego, se utilizó la biblioteca Deck.gl, que permite crear mapas interactivos en la web utilizando JavaScript y WebGL. Esta biblioteca es una herramienta poderosa y versátil que facilita el desarrollo de aplicaciones de mapas en la web, ofreciendo una amplia variedad de componentes y capas que se pueden utilizar para crear mapas personalizados y altamente interactivos.
 
@@ -37,3 +37,16 @@ Además, se han utilizado otras tecnologías y herramientas como React, sqlite, 
 - **Postgis** se ha utilizado para convertir desde ficheros SHP y generar los **geojson** de los mapas.
 
 En cuanto a la estructura del proyecto, el juego está dividido en diferentes componentes y módulos que son responsables de tareas diferentes. Por ejemplo, hay componentes que se encargan de mostrar la lista de piezas del rompecabezas y el mapa, otros que gestionan la lógica del juego e interactúan con los jugadores, y otros que se encargan de obtener y procesar datos de Wikipedia y traducciones.
+
+## Diseño
+
+El diseño del juego se basa en los siguientes principios:
+
+* **Minimalismo**: El juego tiene un diseño minimalista, con una interfaz simple y limpia que permite a los jugadores centrarse en el juego y no distraerse con otros elementos.
+* **Bootstrap**: El juego utiliza el framework Bootstrap para facilitar el desarrollo de la interfaz de usuario y hacerla responsive.
+* https://icons.getbootstrap.com/: El juego utiliza los iconos de Bootstrap para facilitar el desarrollo de la interfaz de usuario.
+* **Colores**: Las piezas del rompecabezas tienen colores brillantes y llamativos que contrastan con el fondo blanco del mapa, lo que facilita su identificación y localización en el mapa.
+
+
+## Créditos
+ 
