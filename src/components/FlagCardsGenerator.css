@@ -1,0 +1,22 @@
+.flagCards .imgflag img {
+    height: auto;
+    width: 100%;
+  }
+
+  .flagCards .imgflag svg {
+    height: auto;
+    width: 100%;
+    stroke: black; /* Color de las líneas */
+    fill: none;    /* Sin relleno */
+  }
+
+.flagCards .card-text {
+	font-weight: bold;
+	text-align: center;
+}
+
+.flagCards .card {
+	box-shadow: none;
+    border: 0px;
+    padding: 0px;
+}
