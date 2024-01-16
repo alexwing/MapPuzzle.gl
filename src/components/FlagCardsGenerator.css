@@ -1,22 +1,29 @@
 .flagCards .imgflag img {
-    height: auto;
-    width: 100%;
-  }
+  height: auto;
+  width: 100%;
+  /* conver svg to black lines withouth fill */
+  filter: invert(0) grayscale(1) brightness(1) contrast(1);
+  opacity: 0.15;
+}
 
-  .flagCards .imgflag svg {
-    height: auto;
-    width: 100%;
-    stroke: black; /* Color de las líneas */
-    fill: none;    /* Sin relleno */
-  }
+.flagCards .imgflag svg {
+  height: auto;
+  width: 100%;
 
+  /* conver svg to black lines withouth fill */
+  filter: invert(1) grayscale(1) brightness(1) contrast(1);
+  opacity: 0.25;
+}
+.flagCards .imgflag {
+  border: 1px solid #dee2e6;
+}
 .flagCards .card-text {
-	font-weight: bold;
-	text-align: center;
+  font-weight: bold;
+  text-align: center;
 }
 
 .flagCards .card {
-	box-shadow: none;
-    border: 0px;
-    padding: 0px;
+  box-shadow: none;
+  border: 0px;
+  padding: 0px;
 }
