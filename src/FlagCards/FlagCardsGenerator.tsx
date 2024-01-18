@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useId, useRef, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
-import { Button, Card, Container, Navbar } from "react-bootstrap";
-import { Check } from "react-bootstrap-icons";
+import { Card } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { Col, Row } from "react-bootstrap";
 
 import "./FlagCardsGenerator.css";
-import ThemeContext from "../components/ThemeProvider";
 
 interface PieceListProps {
   show: boolean;
@@ -115,9 +113,7 @@ export default function FlagCardsGenerator({
 
   return (
     <React.Fragment>
-      <Container
-      >
-        <Row className="flagCards">
+        <Row>
           {pieces.map((c: PieceProps) => (
             <Col sm={3} key={c.properties.cartodb_id}>
               <Card border="none">
@@ -129,7 +125,6 @@ export default function FlagCardsGenerator({
             </Col>
           ))}
         </Row>
-      </Container>
     </React.Fragment>
   );
 }

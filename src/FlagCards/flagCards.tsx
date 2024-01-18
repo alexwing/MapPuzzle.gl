@@ -5,7 +5,7 @@ import { cleanUrlParams, getLang, Jsondb } from "../lib/Utils";
 import { PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
 import { useTranslation } from "react-i18next";
-import { Navbar, Button } from "react-bootstrap";
+import { Navbar, Button, Container } from "react-bootstrap";
 import ThemeContext from "../components/ThemeProvider";
 
 // Asumiendo que tienes un componente MapPuzzle
@@ -19,7 +19,7 @@ const FlagCards = () => {
 
   useEffect(() => {
     if (window.location.pathname) {
-      const puzzleUrl = cleanUrlParams(window.location.search.substring(5));
+      const puzzleUrl = cleanUrlParams(window.location.search.substring(11));
       PuzzleService.getPuzzleIdByUrl(puzzleUrl).then((content: number) => {
         loadGame(content);
       });
@@ -90,30 +90,34 @@ const FlagCards = () => {
 
   return (
     <React.Fragment>
-      <Navbar bg={theme} expand="lg">
-        <Navbar.Brand>
-          <img src="./logoFlagsQuiz192.png" alt="" />
-        </Navbar.Brand>
-        <Button
-          className="btn btn-primary"
-          onClick={handlePrint}
-          variant="primary"
+      <header>
+        <Navbar bg={theme} expand="lg">
+          <Navbar.Brand>
+            <img src="./logoFlagsQuiz192.png" alt="" />
+          </Navbar.Brand>
+          <Button
+            className="btn btn-primary"
+            onClick={handlePrint}
+            variant="primary"
+          >
+            Print
+          </Button>
+        </Navbar>
+      </header>
+      <main style={{ backgroundColor: "gray" }}>
+        <Container
+          ref={ref}
+          className="flagCards"
+          style={{ backgroundColor: "white", overflow: "scroll" }}
         >
-          Print
-        </Button>
-      </Navbar>
-      <div
-        ref={ref}
-        className="flagCards"
-        style={{ backgroundColor: "white", overflow: "scroll" }}
-      >
-        <FlagCardsGenerator
-          show={true}
-          pieces={pieces}
-          puzzleId={puzzleId}
-          lang={"en"}
-        />
-      </div>
+          <FlagCardsGenerator
+            show={true}
+            pieces={pieces}
+            puzzleId={puzzleId}
+            lang={"en"}
+          />
+        </Container>
+      </main>
     </React.Fragment>
   );
 };
