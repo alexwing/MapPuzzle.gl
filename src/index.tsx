@@ -4,11 +4,21 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 import FlagQuiz from "./FlagsQuiz/FlagQuiz";
 import { ThemeProvider } from "./components/ThemeProvider";
+import FlagCards from "./FlagCards/flagCards";
 
 const container = createRoot(document.getElementById("root") as HTMLElement);
 
 const App = () => {
-  const Game = window.location.href.includes("flagQuiz") ? FlagQuiz : MapPuzzle;
+  const Game = () => {
+    if (window.location.href.includes("flagQuiz")) {
+      return <FlagQuiz />;
+    } else  if (window.location.href.includes("flagCards")) {
+      return <FlagCards />;
+    } else {
+      return <MapPuzzle />;
+    }
+  }
+
   return (
     <ThemeProvider>
       <Router>

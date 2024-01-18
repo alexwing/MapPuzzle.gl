@@ -27,7 +27,6 @@ import CustomWiki from "../backend/src/models/customWiki";
 import CustomTranslations from "../backend/src/models/customTranslations";
 import Puzzles from "../backend/src/models/puzzles";
 import { useTranslation } from "react-i18next";
-import FlagCardsGenerator from "./components/FlagCardsGenerator";
 
 function MapPuzzle(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
@@ -531,15 +530,7 @@ function MapPuzzle(): JSX.Element {
               onHide={onShowEditorHandler}
               puzzleSelected={puzzleSelectedData}
               pieces={pieces}
-            />
-           <FlagCardsGenerator
-              show={true}
-              pieces={pieces}
-              founds={founds}
-              pieceSelected={pieceSelected}
-              puzzleId={puzzleSelected}
-              lang={lang} 
-              enableFlags={true}            />                       
+            />           
           </div>
         )}
       </ReactFullscreeen>

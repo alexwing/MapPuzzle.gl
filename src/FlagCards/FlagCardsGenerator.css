@@ -1,9 +1,9 @@
 .flagCards .imgflag img {
   height: auto;
   width: 100%;
-  /* conver svg to black lines withouth fill */
+  /* conver svg to black lines withouth fill 
   filter: invert(0) grayscale(1) brightness(1) contrast(1);
-  opacity: 0.15;
+  opacity: 0.15;*/
 }
 
 .flagCards .imgflag svg {
