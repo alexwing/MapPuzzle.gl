@@ -43,54 +43,15 @@ const FlagCards = () => {
     });
     setPieces(piecesAux);
   };
+  
 
-  const handlePrint = () => {
-    const html = ref.current.innerHTML;
-    const style = `
-      <style>
-      @media print {
-        .flagCards .imgflag img {
-          height: auto;
-          width: 100%;
-          /* conver svg to black lines withouth fill 
-          filter: invert(0) grayscale(1) brightness(1) contrast(1);
-          opacity: 0.15;    */
-        }
-        .flagCards .card-text {
-          font-weight: bold;
-          text-align: center;
-          text-align: center;
-        }
-        .flagCards .imgflag {
-          border: 1px solid #dee2e6;
-        }
-        
-        .flagCards .card {
-            box-shadow: none;
-            border: 0px;
-            padding: 1.5%;
-        }      
-        .flagCards {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          grid-gap: 10px;
-        }
-      }
-      </style>
-      `;
-    const printWindow = window.open("", "Print");
-    if (!printWindow) return;
-    printWindow.document.write(style);
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+  const handlePrint = async () => {
+    window.print();
   };
 
   return (
     <React.Fragment>
-      <header>
+      <header className="App-header">
         <Navbar bg={theme} expand="lg">
           <Navbar.Brand>
             <img src="./logoFlagsQuiz192.png" alt="" />
@@ -104,11 +65,9 @@ const FlagCards = () => {
           </Button>
         </Navbar>
       </header>
-      <main style={{ backgroundColor: "gray" }}>
+      <main className="App-main">
         <Container
-          ref={ref}
           className="flagCards"
-          style={{ backgroundColor: "white", overflow: "scroll" }}
         >
           <FlagCardsGenerator
             show={true}

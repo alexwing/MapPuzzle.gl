@@ -1,9 +1,25 @@
-.flagCards .imgflag img {
-  height: auto;
+.flagCards {
+  background-color: white;
+  height: 100%;
+  box-shadow: 0px 0px 125px 0px rgba(0,0,0,0.35);
+}
+.App-main {
+  background-color: #ccc
+}
+
+.flagCards .imgflag {
+  position: relative;
   width: 100%;
-  /* conver svg to black lines withouth fill 
-  filter: invert(0) grayscale(1) brightness(1) contrast(1);
-  opacity: 0.15;*/
+  /*padding-bottom: 66.6%;*/
+  padding-bottom: 60%;
+}
+
+.flagCards .imgflag img {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+  box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.35);
+  border: 1px solid black;
 }
 
 .flagCards .imgflag svg {
@@ -14,16 +30,45 @@
   filter: invert(1) grayscale(1) brightness(1) contrast(1);
   opacity: 0.25;
 }
-.flagCards .imgflag {
-  border: 1px solid #dee2e6;
+/*background gradients simulate flag ondulation*/
+.flagCards .imgflag:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(125deg, #eee0 0%, #eee5 25%, #eee2 50%, #eee5 75%, #eee0 100%);
+  z-index: 1;
+  pointer-events: none;
 }
-.flagCards .card-text {
-  font-weight: bold;
-  text-align: center;
+.flagCards .card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.flagCards p.card-text {
+	font-weight: bold;
+	text-align: center;
+	height: 70px;
+	line-height: 30px;
+	min-height: 80px;
+	vertical-align: middle;
+  padding-top: 10px;
 }
 
 .flagCards .card {
   box-shadow: none;
   border: 0px;
   padding: 0px;
+}
+
+@media print {
+  .App-header {
+    display: none;
+  }
+  .flagCards {
+    width: 100%;
+    max-width: 100%;
+  }
 }

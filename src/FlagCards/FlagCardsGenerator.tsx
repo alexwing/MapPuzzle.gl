@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
 import { Card } from "react-bootstrap";
@@ -12,6 +12,32 @@ interface PieceListProps {
   pieces: Array<PieceProps>;
   puzzleId: number;
   lang: string;
+}
+
+// eslint-disable-next-line react/prop-types
+function AdjustableText({ children }) {
+  const [fontSize, setFontSize] = useState(2);
+  const textRef = useRef();
+
+  const adjustFontSize = () => {
+    const element = textRef.current as unknown as HTMLElement;
+    if (element.scrollHeight > element.offsetHeight) {
+      setFontSize((prevFontSize) => prevFontSize - 0.05);
+      requestAnimationFrame(() => {
+        adjustFontSize();
+      });
+    }
+  };
+
+  useEffect(() => {
+    adjustFontSize();
+  }, [children]);
+
+  return (
+    <Card.Text style={{ fontSize: `${fontSize}em` }} ref={textRef as any}>
+      {children}
+    </Card.Text>
+  );
 }
 
 export default function FlagCardsGenerator({
@@ -61,70 +87,20 @@ export default function FlagCardsGenerator({
     );
   };
 
-  /*
-    const paintFlag = (c: PieceProps) => {
-      if (!enableFlags) return null;
-      //create flag image from piece id
-      const flag = `../customFlags/${puzzleId.toString()}/1024/${c.properties.cartodb_id}.png`;
-      const flagSvg = `../customFlags/${puzzleId.toString()}/${ c.properties.cartodb_id}.svg`;
-      return (
-        <div className="imgflag">
-          <img  src={flag} alt={c.properties.name} />
-          <svg  viewBox="0 0 1024 768" xmlns="http://www.w3.org/2000/svg">
-              <image href={flagSvg} height="100%" width="100%" />
-            </svg>
-        </div>
-
-
-      );
-    };
-
-
-    const paintFlag = (c: PieceProps) => {
-      if (!enableFlags) return null;
-
-      const svgFlag = `../customFlags/${puzzleId.toString()}/${
-        c.properties.cartodb_id
-      }.svg`;
-      const pngFlag = `../customFlags/${puzzleId.toString()}/${
-        c.properties.cartodb_id
-      }.png`;
-
-      return (
-        <td className="imgflag">
-          <div>
-            <img
-              src={svgFlag}
-              alt={c.properties.name}
-              onError={(e) => {
-                const imgElement = e.target as HTMLImageElement;
-                if (imgElement.src === svgFlag) {
-                  imgElement.src = `${pngFlag}?timestamp=${new Date().getTime()}`;
-                } else if (imgElement.src.includes(pngFlag)) {
-                  imgElement.style.display = "none";
-                }
-              }}
-            />
-          </div>
-        </td>
-      );
-    };
-    */
-
   return (
     <React.Fragment>
-        <Row>
-          {pieces.map((c: PieceProps) => (
-            <Col sm={3} key={c.properties.cartodb_id}>
-              <Card border="none">
-                <Card.Body>
-                  {paintFlag(c)}
-                  <Card.Text>{c.properties.name}</Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+      <Row>
+        {pieces.map((c: PieceProps) => (
+          <Col sm={3} key={c.properties.cartodb_id}>
+            <Card border="none">
+              <Card.Body>
+                {paintFlag(c)}
+                <AdjustableText>{c.properties.name}</AdjustableText>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
     </React.Fragment>
   );
 }

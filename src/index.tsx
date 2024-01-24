@@ -12,12 +12,12 @@ const App = () => {
   const Game = () => {
     if (window.location.href.includes("flagQuiz")) {
       return <FlagQuiz />;
-    } else  if (window.location.href.includes("flagCards")) {
+    } else if (window.location.href.includes("flagCards")) {
       return <FlagCards />;
     } else {
       return <MapPuzzle />;
     }
-  }
+  };
 
   return (
     <ThemeProvider>
