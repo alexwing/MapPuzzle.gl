@@ -1,15 +1,41 @@
-
 .alertWiki .modal-body {
   padding: 0 1rem;
 }
 .alertWiki .modal-body p {
   margin-bottom: 0px;
 }
-.alertWiki .imgWiki {
-	float: right;
-	margin: 15px 0px 10px 23px;
-	width: 35%;
-	box-shadow: 0 0 9px rgba(0, 0, 0, 0.2);
+.alertWiki .imgFlag, .alertWiki .imgWiki {
+  float: right;
+  width: 35%;
+  margin: 15px 0px 10px 23px;
+  position: relative; /* Añade esta línea */
+}
+
+.alertWiki .fakeFlag {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    125deg,
+    #0002 0%,
+    #fff4 25%,
+    #0002 50%,
+    #fff4 75%,
+    #0002 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+.alertWiki .imgFlag img {
+  width: 100%;
+  height: auto;
+  box-shadow: 0 0 9px rgba(0, 0, 0, 0.2);
 }
 .alertWiki .infoWiki {
   text-align: justify;
@@ -18,6 +44,7 @@
   max-height: 500px;
   overflow-y: auto;
 }
+
 [data-bs-theme="dark"] .alertWiki .infoWiki {
   color: #aaa;
 }

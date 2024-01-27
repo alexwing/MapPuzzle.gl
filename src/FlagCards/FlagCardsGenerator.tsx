@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { PieceProps } from "../models/Interfaces";
-import { PuzzleService } from "../services/puzzleService";
 import { Card } from "react-bootstrap";
-import { useTranslation } from "react-i18next";
 import { Col, Row } from "react-bootstrap";
 
 import "./FlagCardsGenerator.css";
@@ -34,45 +32,17 @@ function AdjustableText({ children }) {
   }, [children]);
 
   return (
-    <Card.Text style={{ fontSize: `${fontSize}em` }} ref={textRef as any}>
+    <Card.Text style={{ fontSize: `${fontSize}em` }} ref={textRef as never}>
       {children}
     </Card.Text>
   );
 }
 
 export default function FlagCardsGenerator({
-  show = false,
   pieces,
   puzzleId,
-  lang,
 }: PieceListProps): JSX.Element {
-  const [rtlClass, setRtlClass] = useState("");
-  const [showIn, setShowIn] = useState(false);
-  const { t } = useTranslation();
-
   const enableFlags = true;
-
-  function handleClose() {
-    setShowIn(false);
-  }
-
-  useEffect(() => {
-    setShowIn(show);
-  }, [show]);
-
-  //print flags from useRef when handlePrint is called
-
-  //on init load if rtl lang
-  useEffect(() => {
-    PuzzleService.getLangIsRtl(lang)
-      .then((isRtl) => {
-        setRtlClass(isRtl ? "rtl" : "");
-      })
-      .catch((err) => {
-        console.log(err);
-        setRtlClass("");
-      });
-  }, [lang]);
 
   const paintFlag = (c: PieceProps) => {
     if (!enableFlags) return null;

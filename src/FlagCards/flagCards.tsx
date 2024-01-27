@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import FlagCardsGenerator from "./FlagCardsGenerator"; // Asegúrate de que la ruta de importación sea correcta
 import Puzzles from "../../backend/src/models/puzzles";
 import { cleanUrlParams, getLang, Jsondb } from "../lib/Utils";
@@ -8,14 +8,11 @@ import { useTranslation } from "react-i18next";
 import { Navbar, Button, Container } from "react-bootstrap";
 import ThemeContext from "../components/ThemeProvider";
 
-// Asumiendo que tienes un componente MapPuzzle
-const FlagCards = () => {
+const FlagCards = (): JSX.Element => {
   const [pieces, setPieces] = useState<PieceProps[]>([]); // Asumiendo que tienes un estado para las piezas
   const { i18n } = useTranslation();
-  const [show, setShow] = useState(false);
   const [puzzleId, setPuzzleId] = useState(0);
   const { theme } = useContext(ThemeContext);
-  const ref: any = useRef();
 
   useEffect(() => {
     if (window.location.pathname) {
