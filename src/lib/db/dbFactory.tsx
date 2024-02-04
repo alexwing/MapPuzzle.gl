@@ -5,6 +5,7 @@ import { query as queryPHPBackend } from "./dbPHPBackend";
 import { ConfigService } from "../../services/configService";
 import { QueryExecResult } from "sql.js";
 import { securizeQuery } from "../Commons";
+import { QueryClient } from "react-query";
 
 export const dbFactory = {
   sqlite: querySqlite,
@@ -12,8 +13,16 @@ export const dbFactory = {
   php: queryPHPBackend,
 };
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+    },
+  },
+});
+
 //function to execute a query,
-export async function query(sql: string): Promise<QueryExecResult[]> {
+async function queryAxios(sql: string): Promise<QueryExecResult[]> {
   //securize query
   try {
     sql = securizeQuery(sql);
@@ -37,4 +46,6 @@ export async function query(sql: string): Promise<QueryExecResult[]> {
   }
 }
 
-export default query;
+export async function query(sql: string): Promise<QueryExecResult[]> {
+  return queryClient.fetchQuery(sql, () => queryAxios(sql));
+}

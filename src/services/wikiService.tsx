@@ -9,8 +9,8 @@ import { QueryClient } from "react-query";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 1000, // 1000 minutos
-    }, 
+      staleTime: Infinity,
+    },
   },
 });
 
@@ -55,7 +55,7 @@ async function getWikiImageAxios(piece: string): Promise<string> {
     return "";
   }
 }
- async function changeLanguageAxios(
+async function changeLanguageAxios(
   piece: WikiInfoPiece,
   lang: string
 ): Promise<string[]> {
@@ -81,7 +81,7 @@ async function getWikiImageAxios(piece: string): Promise<string> {
 // get wiki info for a piece with react-query
 export async function getWikiInfo(piece: string): Promise<WikiInfoPiece> {
   return await queryClient.fetchQuery(["wikiInfo", piece], async () => {
-    return await getWikiInfoAxios(piece) as WikiInfoPiece;
+    return (await getWikiInfoAxios(piece)) as WikiInfoPiece;
   });
 }
 // get wiki image for a piece with react-query
@@ -89,7 +89,6 @@ export function getWikiImage(piece) {
   return queryClient.fetchQuery(["wikiImage", piece], async () => {
     return await getWikiImageAxios(piece);
   });
-
 }
 
 // change language for a piece with react-query
