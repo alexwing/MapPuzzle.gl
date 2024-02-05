@@ -254,11 +254,13 @@ function WikiInfo({
             />
           )}
         {enableFlags && (
-          <img
-            src={`../customFlags/${puzzleSelected.toString()}/512/${piece.toString()}.png`}
-            alt={currentLang}
-            className="imgWiki"
-          />
+          <div className="imgFlag">
+            <span className="fakeFlag"></span>
+            <img
+              src={`../customFlags/${puzzleSelected.toString()}/512/${piece.toString()}.png`}
+              alt={currentLang}
+            />
+          </div>
         )}
         {cleanWikiComment(pieceInfo.contents).map((content, index: number) => (
           <div key={index} dangerouslySetInnerHTML={{ __html: content }} />
