@@ -9,7 +9,7 @@ import { QueryClient } from "react-query";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: Infinity,
+      staleTime: ConfigService.staleTime,
     },
   },
 });
@@ -44,11 +44,7 @@ async function getWikiImageAxios(piece: string): Promise<string> {
   try {
     const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&formatversion=2&piprop=original&format=json&prop=pageimages&titles=${piece}`;
     const response = await axios.get(url);
-    console.log(response);
-    const json = response.data;
-    const { pages } = json.query;
-    const page = pages[0];
-    console.log("image:", page.original.source);
+    const page = response.data.query.pages[0];
     return page.original.source;
   } catch (e: any) {
     console.log(e);
@@ -85,14 +81,14 @@ export async function getWikiInfo(piece: string): Promise<WikiInfoPiece> {
   });
 }
 // get wiki image for a piece with react-query
-export function getWikiImage(piece) {
+export function getWikiImage(piece: string) : Promise<string> {
   return queryClient.fetchQuery(["wikiImage", piece], async () => {
     return await getWikiImageAxios(piece);
   });
 }
 
 // change language for a piece with react-query
-export function changeLanguage(piece, lang) {
+export function changeLanguage(piece: WikiInfoPiece, lang: string) : Promise<string[]> {
   return queryClient.fetchQuery(["changeLanguage", piece, lang], async () => {
     return await changeLanguageAxios(piece, lang);
   });

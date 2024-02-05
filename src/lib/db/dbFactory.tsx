@@ -16,7 +16,7 @@ export const dbFactory = {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: Infinity,
+      staleTime: ConfigService.staleTime,
     },
   },
 });
