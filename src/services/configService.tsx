@@ -14,4 +14,5 @@ export class ConfigService {
   public static flagQuizQuestions = 6;
   public static flagQuizTransitionsTime = 1500;
   public static flagQuizResponseTime = 1000;
+  public static staleTime = process.env.REACT_APP_STALE_TIME == "Infinity" ? Infinity : parseInt(process.env.REACT_APP_STALE_TIME || "60000");
 } 
