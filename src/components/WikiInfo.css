@@ -22,14 +22,19 @@
   height: 100%;
   background-image: linear-gradient(
     125deg,
-    #0002 0%,
+    #0006 0%,
     #fff4 25%,
-    #0002 50%,
+    #0006 50%,
     #fff4 75%,
-    #0002 100%
+    #0006 100%
   );
   z-index: 1;
   pointer-events: none;
+  /*blur effect*/
+  filter: blur(20px);
+  -webkit-filter: blur(20px);
+  /* hide outside the parent */
+  clip: rect(0, auto, auto, 0);
 }
 
 .alertWiki .imgFlag img {
