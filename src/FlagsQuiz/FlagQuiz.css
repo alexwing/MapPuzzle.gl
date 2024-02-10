@@ -1,3 +1,6 @@
+body{
+  overflow: hidden;
+}
 .navbar-brand > img {
   max-height: 32px;
   padding-right: 4px;
