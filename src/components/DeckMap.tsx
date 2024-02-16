@@ -6,6 +6,7 @@ import DeckGL from "@deck.gl/react";
 import { _GlobeView as GlobeView } from "@deck.gl/core";
 import { StaticMap, ViewState } from "react-map-gl";
 import { TileLayer } from "@deck.gl/geo-layers";
+import { SolidPolygonLayer } from "@deck.gl/layers";
 import {
   AlphaColor,
   colorStroke,
@@ -16,6 +17,11 @@ import {
 import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 import ThemeContext from "./ThemeProvider";
 import { BitmapLayer } from '@deck.gl/layers';
+/*import {
+  LightingEffect,
+  AmbientLight,
+  _SunLight as SunLight
+} from '@deck.gl/core';*/
 
 interface DeckMapProps {
   onClickMap: (e: PieceEvent) => void;
@@ -38,32 +44,35 @@ function DeckMap({
   const [layers, setLayers] = React.useState([] as Array<GeoJsonLayer>);
   const { theme } = useContext(ThemeContext);
   const [mapStyle, setMapStyle] = React.useState("");
+
+  /*
+  const ambientLight = new AmbientLight({
+    color: [255, 255, 255],
+    intensity: 0.5
+  });
+  const sunLight = new SunLight({
+    color: [255, 255, 255],
+    intensity: 2.0,
+    timestamp: 0
+  });
+  // create lighting effect with light sources
+  const lightingEffect = new LightingEffect({ambientLight, sunLight});
+  */
+  
   const tileLayer = new TileLayer({
-    // https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers
-    data: [
-      'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
-    ],
-
-    // Since these OSM tiles support HTTP/2, we can make many concurrent requests
-    // and we aren't limited by the browser to a certain number per domain.
-    maxRequests: 20,
-    
-
-    pickable: true,
-    // onViewportLoad: onTilesLoad,
-    // autoHighlight: showBorder,
-    highlightColor: [60, 60, 60, 40],
-    // https://wiki.openstreetmap.org/wiki/Zoom_levels
-    minZoom: 0,
-    maxZoom: 19,
-    tileSize: 256,
+    id: 'tile-layer',
+    data: theme === "light" ? 'http://a.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png' : 'http://a.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
+    maxRequests: 20,  
+    pickable: false,
+    tileSize: 64,
+    opacity: 1,
+    //change z-value
     renderSubLayers: (props) => {
       const {
         bbox: {west, south, east, north}
+        
+        
       } = props.tile;
-
       return [
         new BitmapLayer(props, {
           data: null,
@@ -82,6 +91,25 @@ function DeckMap({
         : "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json"
     );
   }, [theme]);
+
+  const globeView = new GlobeView({
+    id: "globe",
+    controller: true,
+  });
+
+  const sphere = new SolidPolygonLayer({
+    id: 'background',
+    data: [
+      [[-180, 90], [0, 90], [180, 90], [180, -90], [0, -90], [-180, -90]]
+    ],
+    getPolygon: d => d,
+    stroked: false,
+    filled: true,
+    getFillColor: [250, 250, 250], 
+    opacity: 1,
+
+       
+  })
 
   useEffect(() => {
     setLayers(
@@ -115,13 +143,14 @@ function DeckMap({
   return !viewState.zoom || !data ? null : (
     <React.Fragment>
       <DeckGL
-        views={new GlobeView()}
+        views={globeView}
         width="100%"
         height="100%"
         initialViewState={viewState}
         onViewStateChange={onViewStateChange}
         controller={true}
-        layers={[layers, tileLayer]}
+        layers={[ sphere, tileLayer, layers ]}
+       // parameters={{ depthTest: false, blend: true }}
       ></DeckGL>
     </React.Fragment>
   );
