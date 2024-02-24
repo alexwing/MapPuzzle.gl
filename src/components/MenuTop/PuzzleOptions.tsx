@@ -140,7 +140,7 @@ function PuzzleOptions({
 
   return (
     <React.Fragment>
-      <Form inline>
+      <Form>
         {buttons.map((button, index) => (
                     <OverlayTrigger
             key={index}

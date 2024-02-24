@@ -31,7 +31,11 @@ function PuzzleOptions({
 
   const onThemeChange = () => {
     setTheme(theme === "dark" ? "light" : "dark");
-    setCookie("theme", theme === "dark" ? "light" : "dark", ConfigService.cookieDays);
+    setCookie(
+      "theme",
+      theme === "dark" ? "light" : "dark",
+      ConfigService.cookieDays
+    );
   };
 
   const { t } = useTranslation();
@@ -113,7 +117,7 @@ function PuzzleOptions({
 
   return (
     <React.Fragment>
-      <Form inline>
+      <Form>
         {buttons.map((button, index) => (
           <OverlayTrigger
             key={index}

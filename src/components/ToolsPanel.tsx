@@ -77,9 +77,9 @@ function ToolsPanel({
     <React.Fragment>
       <Accordion defaultActiveKey="0" >
         <Card>
-          <Accordion.Toggle as={Card.Header} eventKey="0">
+          <Accordion.Item as={Card.Header} eventKey="0">
             {accordionTitle()}         
-          </Accordion.Toggle>
+          </Accordion.Item>
           <Accordion.Collapse eventKey="0">
             <Card.Body>
               <Form>
