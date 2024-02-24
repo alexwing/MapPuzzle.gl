@@ -3,7 +3,6 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import AlertMessage from "../components/AlertMessage";
 import LoadingDialog from "../components/LoadingDialog";
 import { AlertModel, MapGeneratorModel } from "../models/Interfaces";
-//import { setCookie, getCookie } from "react-simple-cookie-store";
 import { BackMapCreatorService } from "../services/BackMapCreatorService";
 
 function NewMap(): JSX.Element | null {
@@ -161,7 +160,7 @@ function NewMap(): JSX.Element | null {
                   size="sm"
                   as="select"
                   value={data.table}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setData({ ...data, table: e.target.value });
                   }}
                 >
@@ -180,7 +179,7 @@ function NewMap(): JSX.Element | null {
                   size="sm"
                   as="select"
                   value={data.id}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setData({ ...data, id: e.target.value });
                   }}
                 >
@@ -197,7 +196,7 @@ function NewMap(): JSX.Element | null {
                   size="sm"
                   as="select"
                   value={data.name}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setData({ ...data, name: e.target.value });
                   }}
                 >
@@ -214,7 +213,7 @@ function NewMap(): JSX.Element | null {
                   size="sm"
                   as="select"
                   value={data.mapColor}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setData({ ...data, mapColor: e.target.value });
                   }}
                 >

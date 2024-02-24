@@ -22,5 +22,8 @@ export default class ViewState {
 
     transitionDuration?: number;
     transitionInterpolator?: any;
+
+    bearing?: number;
+    pitch?: number;
 }
     

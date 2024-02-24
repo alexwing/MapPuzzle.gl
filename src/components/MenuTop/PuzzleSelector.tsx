@@ -326,7 +326,7 @@ function PuzzleSelector({
           </NavDropdown.Item>
           {regions.map((region) => (
             <NavDropdown.Item
-              id={region.regionCode}
+              id={region.regionCode.toString()}
               key={region.regionCode}
               eventKey={region.region}
               onClick={onSelectRegion}
@@ -348,7 +348,7 @@ function PuzzleSelector({
           </NavDropdown.Item>
           {subregions.map((subregion) => (
             <NavDropdown.Item
-              id={subregion.subregionCode}
+              id={subregion.subregionCode.toString()}
               key={subregion.subregionCode}
               eventKey={subregion.subregion}
               onClick={onSelectSubRegion}
