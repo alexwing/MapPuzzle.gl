@@ -84,6 +84,7 @@ function Flag({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
   return (
     <React.Fragment>
       <group  rotation={[0,0, 0]} position={[0, 0, 0]}>
+      <pointLight position={[2, 4.5, 4]} intensity={50} />
         <mesh ref={flagRef}>
           <planeGeometry args={[8, 5, 32, 32]} />
         </mesh>

@@ -16,7 +16,7 @@
   "private": true,
   "dependencies": {
     "@babel/core": "^7.23.3",
-    "@react-three/fiber": "^8.15.10",
+    "@react-three/fiber": "^8.15.16",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
