@@ -169,8 +169,8 @@ function PieceQuiz({
         }}
       >
         <Canvas shadows camera={{ position: [1.4, -1, 6.5], fov: 60 }}>
-          <pointLight position={[0, 6, 1.5]} intensity={2.25} />
-          <ambientLight intensity={0.04} />
+          <pointLight position={[2, 4.5, 4]} intensity={55} />
+          <ambientLight intensity={0.25} />
           <FlagSelector flagImageUrl={getFlag(puzzleSelected, pieceSelectedData)}/>
         </Canvas>
       </div>

@@ -53,7 +53,7 @@
     "react-spring": "9.7.3",
     "sql.js": "^1.10.2",
     "sql.js-httpvfs": "^0.8.12",
-    "three": "^0.153.0"
+    "three": "^0.161.0"
   },
   "scripts": {
     "dev": "env-cmd -f ./environments/.env.development react-scripts start",
