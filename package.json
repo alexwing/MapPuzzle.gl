@@ -44,7 +44,7 @@
     "react-dom": "^18.2.0",
     "react-easyfullscreen": "^1.1.2",
     "react-i18next": "^12.3.1",
-    "react-map-gl": "6.1.21",
+    "react-map-gl": "5.3.21",
     "react-markdown": "^6.0.2",
     "react-query": "^3.39.3",
     "react-responsive": "^9.0.2",
@@ -52,7 +52,7 @@
     "react-share": "^4.4.1",
     "react-simple-cookie-store": "^1.0.12",
     "react-spring": "9.6.1",
-    "sql.js": "^1.8.0",
+    "sql.js": "^1.10.2",
     "sql.js-httpvfs": "^0.8.12",
     "three": "^0.153.0"
   },
