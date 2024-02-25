@@ -50,7 +50,7 @@
     "react-scripts": "^5.0.1",
     "react-share": "^5.1.0",
     "react-simple-cookie-store": "^1.0.12",
-    "react-spring": "9.6.1",
+    "react-spring": "9.7.3",
     "sql.js": "^1.10.2",
     "sql.js-httpvfs": "^0.8.12",
     "three": "^0.153.0"
