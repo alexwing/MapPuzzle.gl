@@ -56,6 +56,14 @@ The project Front-end is in main directory, and the project Back-end is in the d
 
 Each project has its own Package.json with the configuration of the dependencies.
 
+### Dependencies considerations
+
+The project has some dependencies that require a specific version of Node.js, it is necessary to have the correct version of Node.js to use the project.
+
+- ```json "react-map-gl": "5.3.21"```, This version of react-map-gl is necessary to use the deck.gl library, after this version, in 6.0.0 has necesary ACCESS_TOKEN to use the  mapbox API, require a payment plan to use the mapbox API.
+- ```json "node-sass": "^4.14.1"```, This version need NODE version v14.17.3
+- ```json"react-markdown": "^6.0.2"```, This version need NODE version v14.17.3
+
 ### Backend
 
 The backend is built with Node.js, it is a server that receives the requests from the client and sends the response, it also has a database with the information of the puzzles.

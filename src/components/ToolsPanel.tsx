@@ -1,4 +1,4 @@
-import  "./ToolsPanel.css";
+import "./ToolsPanel.css";
 import React from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -54,7 +54,7 @@ function ToolsPanel({
       return (
         <React.Fragment>
           <div className="flagGradient">
-            <img src={flag}/>
+            <img src={flag} />
           </div>
           <div className="mapName">{name}</div>
           {showTimer}
@@ -70,17 +70,17 @@ function ToolsPanel({
   };
 
   const showTimer =
-    winner || loading ? null : <Timer puzzleSelected={puzzleSelected} />;
+    winner || loading ? <div className="timer"/> : <Timer puzzleSelected={puzzleSelected} />;
   return loading ? (
     <React.Fragment></React.Fragment>
   ) : (
     <React.Fragment>
-      <Accordion defaultActiveKey="0" >
-        <Card>
-          <Accordion.Item as={Card.Header} eventKey="0">
-            {accordionTitle()}         
-          </Accordion.Item>
-          <Accordion.Collapse eventKey="0">
+      <Accordion defaultActiveKey="0" className="toolsPanelContainer">
+        <Accordion.Item eventKey="0">
+          <Accordion.Header>{accordionTitle()}</Accordion.Header>
+        </Accordion.Item>
+        <Accordion.Collapse eventKey="0">
+          <Card>
             <Card.Body>
               <Form>
                 <Row className="score">
@@ -124,8 +124,8 @@ function ToolsPanel({
                 </div>
               </Form>
             </Card.Body>
-          </Accordion.Collapse>
-        </Card>
+          </Card>
+        </Accordion.Collapse>
       </Accordion>
     </React.Fragment>
   );

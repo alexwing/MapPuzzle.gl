@@ -48,22 +48,7 @@ code {
     monospace;
 }
 
-.mapName {
-  font-weight: 600;
-  margin: -0.75rem -0.25rem;
-  height: 3em;
-  position: absolute;
-  width: calc(100% - 5.5rem);
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  flex-direction: column;
-  line-height: 0.95em;
-}
-.card-header {
-  min-height: 3em;
-  padding: 0.7em;
-}
+
 
 .tooltipRef {
   z-index: 999;

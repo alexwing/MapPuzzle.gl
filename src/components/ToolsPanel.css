@@ -6,7 +6,7 @@
     position: absolute;
     opacity: 0.25;
     z-index: -2;
-    top: -13px;
+    top: -16px;
   }
   .flagGradient {
     position: absolute;
@@ -24,7 +24,7 @@
   rgba(255, 255, 255, 1) 90%
   );
     z-index: -1;
-    top: 1px;
+    top: -2px;
   }
   [data-bs-theme="dark"] .flagGradient::after {
     background: linear-gradient(
@@ -32,4 +32,55 @@
       rgba(39, 43, 48, 0) 25%,
       rgba(39, 43, 48, 1) 100%
       );
+  }
+
+  .toolsPanelContainer .accordion-button {
+    min-height: 3em;
+    padding: 0.7em;
+    background: white;
+    z-index: 1;
+    display:inline-block;
+    border-radius: 0;
+    margin-bottom: -2px;
+
+  }
+  .toolsPanelContainer .accordion-button::after {
+    z-index: 1;
+    position: absolute;
+    top: 29px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    opacity: 0.5;
+  }
+  .toolsPanelContainer .mapTimer {
+    min-height: 20px;
+  }
+
+  .toolsPanelContainer .accordion-button:not(.collapsed) {
+    background: white;
+  }
+  .toolsPanelContainer .accordion-item:first-of-type {
+
+  }
+  .toolsPanelContainer .accordion-item:first-of-type {
+    border-radius: 0;
+  }
+  .toolsPanelContainer .mapName {
+    font-weight: 600;
+    margin: -0.75rem -0.25rem;
+    height: 3em;
+    position: absolute;
+    width: calc(100% - 5.5rem);
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    line-height: 0.95em;
+  }
+  .toolsPanelContainer .timer {
+    min-height: 20px;
+    max-height: 20px;
+    overflow: visible;
   }

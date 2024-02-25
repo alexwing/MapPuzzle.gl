@@ -110,7 +110,7 @@ export default function YouWin({
               <EmailShareButton url={url} subject={title} body={quote} className="me-2">
                 <EmailIcon size={48} round={true} />
               </EmailShareButton>
-              <FacebookShareButton url={url} quote={quote} hashtag={hashtag} className="me-2">
+              <FacebookShareButton url={url} hashtag={hashtag} className="me-2">
                 <FacebookIcon size={48} round={true} />
               </FacebookShareButton>
               <TwitterShareButton

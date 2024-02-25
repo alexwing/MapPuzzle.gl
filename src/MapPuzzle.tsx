@@ -268,7 +268,7 @@ function MapPuzzle(): JSX.Element {
         return;
       }
     }
-    if (info && pieceSelected) {
+    if (info && pieceSelected && pieceSelectedData?.properties?.cartodb_id) {
       if (
         String(pieceSelectedData.properties.cartodb_id).trim() ===
         String(info.object.properties.cartodb_id).trim()
