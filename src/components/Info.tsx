@@ -157,7 +157,7 @@ function Info({
               <EmailShareButton url={url} subject={title} body={quote}>
                 <EmailIcon size={48} round={true} />
               </EmailShareButton>
-              <FacebookShareButton url={url} quote={quote} hashtag={hashtag}>
+              <FacebookShareButton url={url} hashtag={hashtag}>
                 <FacebookIcon size={48} round={true} />
               </FacebookShareButton>
               <TwitterShareButton
