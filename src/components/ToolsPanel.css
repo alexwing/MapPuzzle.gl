@@ -58,12 +58,14 @@
     min-height: 20px;
   }
 
-  .toolsPanelContainer .accordion-button:not(.collapsed) {
+  .toolsPanelContainer .accordion-button {
     background: white;
   }
-  .toolsPanelContainer .accordion-item:first-of-type {
 
+  [data-bs-theme="dark"] .toolsPanelContainer .accordion-button {
+    background: #272b30;
   }
+  
   .toolsPanelContainer .accordion-item:first-of-type {
     border-radius: 0;
   }
