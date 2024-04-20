@@ -138,7 +138,6 @@ function MenuTop({
             >
               <Icon.FlagFill size={22} className="me-2" />
               <span>{t("topMenu.playFlagsQuiz")}</span>
-              <img className="new" src="./new-icon.png" alt="" />
             </Button>
             <PuzzleSelector
               show={showSelectPuzzle}

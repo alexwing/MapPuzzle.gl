@@ -74,6 +74,7 @@
       "title": "MapPuzzle.xyz - Gioco di puzzle basato su mappe",
       "quote": "Ho completato il gioco del puzzle di {{name}}, in {{time}}, con {{fails}} errori su {{founds}} pezzi trovati.",
       "hashtag": "educazione,cartografia,puzzle,paesi"
-    }
+    },
+    "donate": "Donare"
   }
 }

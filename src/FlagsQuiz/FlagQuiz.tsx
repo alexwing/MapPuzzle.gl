@@ -31,6 +31,7 @@ import Tooltip from "./lib/Tooltip";
 import CustomWiki from "../../backend/src/models/customWiki";
 import WikiInfo from "../components/WikiInfo";
 import ViewState from "../../backend/src/models/viewState";
+import Donate from "../components/Donate";
 
 function FlagQuiz(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
@@ -585,6 +586,7 @@ function FlagQuiz(): JSX.Element {
               }
               puzzleSelected={puzzleSelected}
             />
+            <Donate/>
           </div>
         )}
       </ReactFullscreeen>

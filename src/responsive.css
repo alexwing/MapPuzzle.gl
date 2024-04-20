@@ -55,9 +55,6 @@
 
 
 
-  #flagsQuiz > .new {
-    display: none;
-  }
   .lang-selector .a {
     padding: 0;
     margin: -3px 0;
@@ -107,10 +104,23 @@
   .share {
     padding: 0 !important;
   }
+  .donateButton {
+    top: initial;
+    right: initial;
+    left: 10px;
+    bottom: 10px;
+  }
+
 }
 
 @media screen and (max-width: 768px) {
   .container-fluid {
     padding: 0 !important;
+  }
+}
+
+@media screen and (max-width: 1100px) {
+  .btn {
+    --bs-btn-padding-x: 0.35rem;
   }
 }

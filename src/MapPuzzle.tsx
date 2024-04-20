@@ -27,6 +27,7 @@ import CustomWiki from "../backend/src/models/customWiki";
 import CustomTranslations from "../backend/src/models/customTranslations";
 import Puzzles from "../backend/src/models/puzzles";
 import { useTranslation } from "react-i18next";
+import Donate from "./components/Donate";
 
 function MapPuzzle(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
@@ -531,6 +532,7 @@ function MapPuzzle(): JSX.Element {
               puzzleSelected={puzzleSelectedData}
               pieces={pieces}
             />
+            <Donate/>
           </div>
         )}
       </ReactFullscreeen>
