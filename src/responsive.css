@@ -52,9 +52,6 @@
     border-color: #ffbf40;
     color: #333;
   }
-
-
-
   .lang-selector .a {
     padding: 0;
     margin: -3px 0;
@@ -78,6 +75,7 @@
     display: none;
   }
   .modal-dialog {
+    --bs-modal-width: calc(100vw);
     width: calc(100vw) !important;
     margin: 0;
     padding: 0;
