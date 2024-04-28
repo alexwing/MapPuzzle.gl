@@ -96,3 +96,8 @@ export interface AlertMessageProps {
   onHide: () => void;
   autoClose?: number ;
 }
+
+export interface ServiceWorkerConfig {
+  onUpdate: (registration: ServiceWorkerRegistration) => void;
+  onSuccess: (registration: ServiceWorkerRegistration) => void;
+}

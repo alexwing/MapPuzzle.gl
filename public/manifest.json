@@ -1,10 +1,10 @@
 {
-  "short_name": "MapPuzzle.xyz",
-  "name": "Puzzle game application based in maps",
+  "short_name": "MapPuzzle",
+  "name": "MapPuzzle.xyz",
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "256x256 128x128 64x64 48x78 32x32 16x16",
       "type": "image/x-icon"
     },
     {
