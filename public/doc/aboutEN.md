@@ -20,6 +20,18 @@ Both games offer detailed tracking of your successes, the list of remaining elem
 
 Players can choose the map they want to play, filtering by continent and region. One interesting feature of the game is that it allows players to translate the names of the puzzle pieces into different languages. This enriches their gaming experience and helps them develop their language skills.
 
+## MapPuzzle.xyz as a native app
+
+Now you can install MapPuzzle.xyz as a Progressive Web App (PWA). A PWA offers a native app experience that installs directly from your browser, without the need to download it from an app store or use an installer.
+
+For best integration in Windows I recommend using Microsoft Edge, although you can also install it on other compatible operating systems and browsers.
+
+1. Open Microsoft Edge and navigate to MapPuzzle.xyz.
+2. Click on the icon that appears in the right corner of the address bar.
+3. Select install.
+4. Then, select whether you want it to appear in the start menu or in the taskbar.
+5. Ready! 🎉 Now you will have quick access to MapPuzzle.xyz from your Windows start menu
+   
 ## Code Description
 
 **MapPuzzle.xyz** has been developed using advanced technologies such as React, Deck.gl, sqlite, PHP, typeorm, and node.js.

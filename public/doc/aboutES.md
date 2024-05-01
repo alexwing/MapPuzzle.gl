@@ -21,6 +21,18 @@ Ambos juegos ofrecen un seguimiento detallado de tus aciertos, la lista de eleme
 Los jugadores pueden elegir el mapa en el que quieren jugar y filtrando por continente y región. 
 Una de las características interesantes del juego es que permite a los jugadores traducir los nombres de las piezas del rompecabezas a diferentes idiomas. Esto les permite aprender los nombres de los lugares en diferentes idiomas, enriqueciendo su experiencia de juego y ayudándoles a desarrollar sus habilidades lingüísticas.
 
+## MapPuzzle.xyz como una aplicación nativa
+
+Ahora puedes instala MapPuzzle.xyz como una Aplicación Web Progresiva (PWA). Una PWA ofrece una experiencia de aplicación nativa que se instala directamente desde tu navegador, sin necesidad de descargarla desde una tienda de aplicaciones o usar un instalador.
+
+Para su mejor integración en Windows recomiendo usar Microsoft Edge, aunque también puedes instalarlo en otros sistemas operativos y navegadores compatibles.
+
+1. Abre Microsoft Edge y navega a MapPuzzle.xyz.
+2. Haz clic en el ícono que aparece en la esquina derecha de la barra de direcciones.
+3. Selecciona instalar.
+4. Luego, selecciona si quieres que aparezca en el menú de inicio o en la barra de tareas.
+5. ¡Listo! 🎉 Ahora tendrás un acceso rápido a MapPuzzle.xyz desde tu menú de inicio de Windows. 
+
 ## Descripción del código
 
 **MapPuzzle.xyz** ha sido desarrollado utilizando tecnologías avanzadas como React, Deck.gl, sqlite, PHP, typeorm y node.js. 
@@ -49,4 +61,3 @@ El diseño del juego se basa en los siguientes principios:
 
 
 ## Créditos
- 
