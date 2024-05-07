@@ -74,6 +74,7 @@
       "title": "MapPuzzle.xyz - Jogo de quebra-cabeça baseado em mapas",
       "quote": "Completei o jogo de quebra-cabeça do {{name}}, em {{time}}, com {{fails}} falhas em {{founds}} peças encontradas.",
       "hashtag": "educação,cartografia,quebra-cabeça,países"
-    }
+    },
+    "privacy": "política de Privacidade"
   }
 }

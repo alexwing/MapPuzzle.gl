@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 
 import { getLang, getUrl } from "../lib/Utils";
-import { Check } from "react-bootstrap-icons";
+import { Check, Heart, ShieldShaded } from "react-bootstrap-icons";
 import "./Info.css";
 import {
   FacebookShareButton,
@@ -27,6 +27,7 @@ import {
 } from "react-share";
 import { PuzzleService } from "../services/puzzleService";
 import Puzzles from "../../backend/src/models/puzzles";
+import Privacy from "./Privacy";
 //to function hooks
 
 interface InfoProps {
@@ -44,6 +45,7 @@ function Info({
   const [content, setContent] = useState([] as Puzzles[]);
   const [markdown, setMarkdown] = useState("");
   const { t } = useTranslation();
+  const [showInPrivacy, setShowInPrivacy] = useState(false);
 
   useEffect(() => {
     PuzzleService.getPuzzles().then((data) => {
@@ -100,8 +102,9 @@ function Info({
   );
   return !content ? null : (
     <React.Fragment>
+      <Privacy showIn={showInPrivacy} setShowIn={setShowInPrivacy} />
       <Modal
-        show={showIn}
+        show={showIn && !showInPrivacy}
         size="xl"
         aria-labelledby="contained-modal-title-vcenter"
         centered
@@ -111,6 +114,15 @@ function Info({
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
             {t("common.share.title")}
+            <Button
+              rel="noreferrer"
+              variant="none"
+              style={{ position: "absolute", right: "20px" }}
+              onClick={() => setShowInPrivacy(true)}
+            >
+              <ShieldShaded size={22} className="me-2" />
+              {t("common.privacy")}
+            </Button>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="info">
@@ -185,6 +197,16 @@ function Info({
           </Row>
         </Modal.Body>
         <Modal.Footer>
+          <Button
+            href="https://github.com/sponsors/alexwing"
+            target="_blank"
+            rel="noreferrer"
+            variant="danger"
+            style={{ position: "absolute", left: "20px" }}
+          >
+            <Heart size={22} className="me-2" />
+            {t("common.donate")}
+          </Button>
           <Button onClick={handleClose}>
             <Check size={22} className="me-2" />
             Ok

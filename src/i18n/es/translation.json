@@ -9,7 +9,7 @@
     "light": "Tema Claro",
     "about": "Acerca de",
     "refocus": "Refocalizar",
-    "fullscreen": "Pantalla Completa",    
+    "fullscreen": "Pantalla Completa",
     "editor": "Editor",
     "surrenderTitle": "¿Te rindes?",
     "surrenderMessage": "Haz click en sí, si quieres empezar un nuevo juego"
@@ -75,6 +75,7 @@
       "quote": "He completado el rompecabezas de {{name}}, en {{time}}, con {{fails}} errores y {{founds}} piezas encontradas.",
       "hashtag": "educación,cartografía,puzle,países,rompecabezas"
     },
-    "donate": "Donar"
+    "donate": "Donar",
+    "privacy": "política de privacidad"
   }
 }

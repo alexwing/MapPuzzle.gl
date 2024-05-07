@@ -75,6 +75,7 @@
       "quote": "Ho completato il gioco del puzzle di {{name}}, in {{time}}, con {{fails}} errori su {{founds}} pezzi trovati.",
       "hashtag": "educazione,cartografia,puzzle,paesi"
     },
-    "donate": "Donare"
+    "donate": "Donare",
+    "privacy": "politica sulla riservatezza"
   }
 }

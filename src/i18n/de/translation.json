@@ -75,6 +75,7 @@
       "quote": "Ich habe das Puzzle-Spiel von {{name}} in {{time}} beendet, mit {{fails}} Fehlern von {{founds}} gefundenen Teilen.",
       "hashtag": "Bildung, Kartografie, Puzzle, Länder"
     },
-    "donate": "Spenden"
+    "donate": "Spenden",
+    "privacy": "Datenschutzrichtlinie"
   }
 }

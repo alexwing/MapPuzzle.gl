@@ -8,11 +8,15 @@ import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 
 import { getLang } from "../lib/Utils";
-import { Check, Heart } from "react-bootstrap-icons";
+import { Check } from "react-bootstrap-icons";
 import { PuzzleService } from "../services/puzzleService";
 
-function Info(): JSX.Element | null {
-  const [showIn, setShowIn] = useState(false);
+interface PrivacyProps {
+  showIn: boolean;
+  setShowIn: (show: boolean) => void;
+}
+
+function Privacy({ showIn, setShowIn }: PrivacyProps): JSX.Element | null {
   const [markdown, setMarkdown] = useState("");
   const { t } = useTranslation();
 
@@ -27,23 +31,13 @@ function Info(): JSX.Element | null {
     const lang = getLang() === "es" ? "ES" : "EN";
     console.log("lang service", getLang());
     console.log("lang", lang);
-    PuzzleService.getResource(`/doc/donate${lang}.md`).then((response) => {
+    PuzzleService.getResource(`/doc/privacy${lang}.md`).then((response) => {
       setMarkdown(response);
     });
   }, [showIn]);
 
-  return  (
+  return (
     <React.Fragment>
-      <Button
-        onClick={() => setShowIn(true)}
-        rel="noreferrer"
-        variant="outline-danger"
-        size="sm"
-        className="donateButton"
-      >
-        <Heart size={22} className="me-2" />
-        {t("common.donate")}
-      </Button>
       <Modal
         show={showIn}
         size="xl"
@@ -55,21 +49,19 @@ function Info(): JSX.Element | null {
         <Modal.Body className="info">
           <Row>
             <Col lg={12}>
-              <ReactMarkdown>{markdown}</ReactMarkdown>
+              <ReactMarkdown
+                components={{
+                  a: ({ node, ...props }) => (
+                    <a {...props} target="_blank" rel="noopener noreferrer" />
+                  ),
+                }}
+              >
+                {markdown}
+              </ReactMarkdown>
             </Col>
           </Row>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            href="https://github.com/sponsors/alexwing"
-            target="_blank"
-            rel="noreferrer"
-            variant="danger"
-            style={{ position: "absolute", left: "20px" }}
-          >
-            <Heart size={22} className="me-2" />
-            {t("common.donate")}
-          </Button>
           <Button onClick={handleClose}>
             <Check size={22} className="me-2" />
             Ok
@@ -79,4 +71,4 @@ function Info(): JSX.Element | null {
     </React.Fragment>
   );
 }
-export default Info;
+export default Privacy;
