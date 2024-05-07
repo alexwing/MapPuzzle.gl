@@ -10,7 +10,7 @@
     "refocus": "Refocus",
     "fullscreen": "Fullscreen",
     "resetGame": "Reset Game",
-    "editor":"Editor",
+    "editor": "Editor",
     "surrenderTitle": "Do you surrender?",
     "surrenderMessage": "Click yes, if you want to start a new game"
   },
@@ -57,7 +57,7 @@
   },
   "info": {
     "share": "Share MapPuzzle.xyz",
-    "quote" : "MapPuzzle.xyz is an experimental website, it is an accessible way to learn cartography, through this project we try to offer an interactive learning experience with maps."
+    "quote": "MapPuzzle.xyz is an experimental website, it is an accessible way to learn cartography, through this project we try to offer an interactive learning experience with maps."
   },
   "wikiInfo": {
     "title": "Wikipedia article for",
@@ -75,6 +75,7 @@
       "quote": "I completed the puzzle game of the {{name}}, in {{time}}, with {{fails}} failures out of {{founds}} pieces found.",
       "hashtag": "education,cartography,puzzle,countries"
     },
-    "donate": "Donate"
+    "donate": "Donate",
+    "privacy": "Privacy Policy"
   }
 }

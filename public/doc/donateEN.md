@@ -6,7 +6,7 @@ Hello! I'm Alejandro Aranda, the creator of the [MapPuzzle.xyz](http://mappuzzle
 
 MapPuzzle.xyz offers two exciting games:
 
-- **Geographical Puzzles**: Choose from a variety of puzzles  g fascinating places and accessing Wikipedia data to learn more about the geography, history, and culture of each location.
+- **Geographical Puzzles**: Choose from a variety of puzzles representing different regions of the world, such as countries, states or provinces. Place each piece in its corresponding place on the map as you explore fascinating locations and access Wikipedia data to learn more about the geography, history and culture of each place.
 
 - **Guess the Flag**: Observe a waving flag and try to identify the country to which it belongs. Choose from six options and demonstrate your knowledge of world flags.
 
