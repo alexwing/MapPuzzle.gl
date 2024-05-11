@@ -16,6 +16,7 @@ import LangSelector from "../../components/LangSelector";
 import Info from "../../components/Info";
 import WikiInfo from "../../components/WikiInfo";
 import ThemeContext from "../../components/ThemeProvider";
+import {PuzzleFill} from "react-bootstrap-icons";
 
 interface MenuTopProps {
   name: string;
@@ -103,6 +104,10 @@ function MenuTop({
     }
   };
 
+  const onOpenMappuzzle = () => {
+    window.open("/", "_self");
+  }
+
   return (
     <React.Fragment>
       <Navbar bg={theme} expand="lg">
@@ -120,6 +125,14 @@ function MenuTop({
             >
               {t("topMenu.selectQuiz")}
             </Button>
+            <Button
+              id="flagsQuiz"
+              variant="outline-primary"
+              onClick={onOpenMappuzzle}
+            >
+               <PuzzleFill size={22} className="me-2" />
+              <span>MapPuzzle</span>
+            </Button>            
             <PuzzleSelector
               show={showSelectPuzzle}
               onSelectMap={onSelectMap}

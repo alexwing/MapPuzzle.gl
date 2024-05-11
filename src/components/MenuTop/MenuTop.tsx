@@ -109,8 +109,7 @@ function MenuTop({
     }
   };
   const onOpenFlagsQuiz = () => {
-    //open new windows to play flags quiz
-    window.open("/?flagQuiz", "_blank");
+    window.open("/?flagQuiz", "_self");
   };
 
   return (
@@ -128,7 +127,7 @@ function MenuTop({
               variant="outline-primary"
               onClick={handleShowSelectPuzzle}
             >
-              <Icon.PuzzleFill size={22} className="me-2" />
+             
               {t("topMenu.selectPuzzle")}
             </Button>
             <Button
