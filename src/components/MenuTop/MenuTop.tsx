@@ -15,9 +15,8 @@ import { Button, Nav } from "react-bootstrap";
 import "../../i18n/config";
 import { useTranslation } from "react-i18next";
 import WikiInfo from "../WikiInfo";
-import * as Icon from "react-bootstrap-icons";
+import { FlagFill, CollectionPlay } from "react-bootstrap-icons";
 import ThemeContext from "../../components/ThemeProvider";
-
 
 interface MenuTopProps {
   name: string;
@@ -127,7 +126,7 @@ function MenuTop({
               variant="outline-primary"
               onClick={handleShowSelectPuzzle}
             >
-             
+              <CollectionPlay size={22} className="me-2" />
               {t("topMenu.selectPuzzle")}
             </Button>
             <Button
@@ -135,7 +134,7 @@ function MenuTop({
               variant="outline-primary"
               onClick={onOpenFlagsQuiz}
             >
-              <Icon.FlagFill size={22} className="me-2" />
+              <FlagFill size={22} className="me-2" />
               <span>{t("topMenu.playFlagsQuiz")}</span>
             </Button>
             <PuzzleSelector

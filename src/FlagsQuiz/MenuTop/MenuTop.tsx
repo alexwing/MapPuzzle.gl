@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import Navbar from "react-bootstrap/Navbar";
-import PuzzleSelector from "../../components/MenuTop/PuzzleSelector"; 
+import PuzzleSelector from "../../components/MenuTop/PuzzleSelector";
 import PuzzleOptions from "./PuzzleOptions";
 import { WikiInfoLang } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
@@ -16,7 +16,7 @@ import LangSelector from "../../components/LangSelector";
 import Info from "../../components/Info";
 import WikiInfo from "../../components/WikiInfo";
 import ThemeContext from "../../components/ThemeProvider";
-import {PuzzleFill} from "react-bootstrap-icons";
+import { PuzzleFill, CollectionPlay } from "react-bootstrap-icons";
 
 interface MenuTopProps {
   name: string;
@@ -44,7 +44,7 @@ function MenuTop({
   const { t, i18n } = useTranslation();
   const [wikiInfoUrl, setWikiInfoUrl] = React.useState("");
   const { theme } = useContext(ThemeContext);
-  
+
   useEffect(() => {
     setShow(false);
     setShowInfo(false);
@@ -106,7 +106,7 @@ function MenuTop({
 
   const onOpenMappuzzle = () => {
     window.open("/", "_self");
-  }
+  };
 
   return (
     <React.Fragment>
@@ -123,6 +123,7 @@ function MenuTop({
               variant="outline-primary"
               onClick={handleShowSelectPuzzle}
             >
+              <CollectionPlay size={22} className="me-2" />
               {t("topMenu.selectQuiz")}
             </Button>
             <Button
@@ -130,9 +131,9 @@ function MenuTop({
               variant="outline-primary"
               onClick={onOpenMappuzzle}
             >
-               <PuzzleFill size={22} className="me-2" />
+              <PuzzleFill size={22} className="me-2" />
               <span>MapPuzzle</span>
-            </Button>            
+            </Button>
             <PuzzleSelector
               show={showSelectPuzzle}
               onSelectMap={onSelectMap}
