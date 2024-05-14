@@ -71,7 +71,8 @@
       "seconds": "{{seconds}} Seconds"
     },
     "share": {
-      "title": "MapPuzzle.xyz - Puzzle game based in maps",
+      "title": "MapPuzzle.xyz",
+      "subtitle": "Puzzle game based in maps",
       "quote": "I completed the puzzle game of the {{name}}, in {{time}}, with {{fails}} failures out of {{founds}} pieces found.",
       "hashtag": "education,cartography,puzzle,countries"
     },

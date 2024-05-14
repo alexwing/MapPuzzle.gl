@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 
 import { getLang, getUrl } from "../lib/Utils";
-import { Check, Heart, ShieldShaded } from "react-bootstrap-icons";
+import { Check, Heart, ShieldShaded, Github } from "react-bootstrap-icons";
 import "./Info.css";
 import {
   FacebookShareButton,
@@ -113,16 +113,15 @@ function Info({
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
-            {t("common.share.title")}
-            <Button
+            {t("common.share.title")} <span className="hide-xs d-none d-sm-inline"> - {t("common.share.subtitle")}</span>
+            <a
               rel="noreferrer"
-              variant="none"
               style={{ position: "absolute", right: "20px" }}
               onClick={() => setShowInPrivacy(true)}
             >
               <ShieldShaded size={22} className="me-2" />
               {t("common.privacy")}
-            </Button>
+            </a>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="info">
@@ -138,17 +137,6 @@ function Info({
                   rel="noopener noreferrer"
                 >
                   https://github.com/alexwing/MapPuzzle.gl
-                </a>
-              </p>
-              <p>
-                If you want to support the project, you can donate at this
-                link:&nbsp;
-                <a
-                  href="https://github.com/sponsors/alexwing"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  https://github.com/sponsors/alexwing
                 </a>
               </p>
               <p>
@@ -197,16 +185,27 @@ function Info({
           </Row>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            href="https://github.com/sponsors/alexwing"
-            target="_blank"
-            rel="noreferrer"
-            variant="danger"
-            style={{ position: "absolute", left: "20px" }}
-          >
-            <Heart size={22} className="me-2" />
-            {t("common.donate")}
-          </Button>
+          <div style={{ position: "absolute", left: "20px" }}>
+            <Button
+              href="https://github.com/sponsors/alexwing"
+              target="_blank"
+              rel="noreferrer"
+              variant="danger"
+            >
+              <Heart size={22} className="me-2" />
+              {t("common.donate")}
+            </Button>
+            <Button
+              href="https://github.com/alexwing/MapPuzzle.gl"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="none"
+              className="ms-2"
+            >
+              <Github size={22} className="me-2" />
+              Github
+            </Button>
+          </div>
           <Button onClick={handleClose}>
             <Check size={22} className="me-2" />
             Ok

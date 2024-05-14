@@ -71,7 +71,8 @@
       "seconds": "{{seconds}} Segundos"
     },
     "share": {
-      "title": "MapPuzzle.xyz - Rompecabezas basado en mapas",
+      "title": "MapPuzzle.xyz",
+      "subtitle": "Rompecabezas basado en mapas",
       "quote": "He completado el rompecabezas de {{name}}, en {{time}}, con {{fails}} errores y {{founds}} piezas encontradas.",
       "hashtag": "educación,cartografía,puzle,países,rompecabezas"
     },
