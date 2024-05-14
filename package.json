@@ -63,7 +63,8 @@
     "build-php": "env-cmd -f ./environments/.env.phpbackend react-scripts build",
     "test": "env-cmd -f ./environments/.env.development react-scripts test",
     "eslint:fix": "yarn run eslint --fix",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false --strict --jsx react"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false --strict --jsx react",
+    "android bubblewrap": "bubblewrap build"
   },
   "eslintConfig": {
     "extends": [
