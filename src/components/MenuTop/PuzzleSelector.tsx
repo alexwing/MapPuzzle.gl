@@ -63,7 +63,11 @@ function PuzzleSelector({
     setShowIn(show);
 
     PuzzleService.getPuzzlesWithRegion().then((data: PuzzleSearchResults[]) => {
-      const transPuzzles = translatePuzzles(data);
+      let transPuzzles = translatePuzzles(data);
+      //only show puzzles with flags
+      if (onlyFlags) {
+        transPuzzles = transPuzzles.filter((puzzle) => puzzle.enableFlags);
+      }
       setLoadedPuzzles(transPuzzles);
       setPuzzles(transPuzzles);
     });
@@ -104,7 +108,7 @@ function PuzzleSelector({
     inputRef.current?.focus();
   }, [allregions]);
 
-  useEffect(() => {
+  const puzzleFilter = () => {
     setSelectedPuzzle(0);
 
     // Filtrar los puzzles localmente en lugar de cargar los datos de nuevo
@@ -122,17 +126,31 @@ function PuzzleSelector({
       );
     }
 
+    //search by name normalized and without accents
     if (searchName) {
       filteredPuzzles = filteredPuzzles.filter((puzzle) =>
-        puzzle.name.toLowerCase().includes(searchName.toLowerCase())
+        puzzle.name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .includes(
+            searchName
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .toLowerCase()
+          )
       );
     }
-
+    //only show puzzles with flags
     if (onlyFlags) {
       filteredPuzzles = filteredPuzzles.filter((puzzle) => puzzle.enableFlags);
     }
 
     setPuzzles(filteredPuzzles);
+  };
+
+  useEffect(() => {
+    puzzleFilter();
   }, [selectedRegion, selectedSubRegion, searchName, onlyFlags]);
 
   const loadRegions = () => {
