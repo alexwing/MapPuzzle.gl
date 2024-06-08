@@ -5,13 +5,14 @@ import Puzzles from "../../backend/src/models/puzzles";
 import CustomCentroids from "../../backend/src/models/customCentroids";
 import CustomWiki from "../../backend/src/models/customWiki";
 import Languages from "../../backend/src/models/languages";
-import { Regions } from "../models/Interfaces";
+import { PuzzleSearchResults, Regions } from "../models/Interfaces";
 import {
   mapResultToCustomCentroids,
   mapResultToCustomTranslations,
   mapResultToCustomWiki,
   mapResultToLanguage,
   mapResultToPuzzle,
+  mapResultToPuzzleSearchResults,
 } from "../lib/mappings/modelMappers";
 import { securizeTextParameter } from "../lib/Commons";
 import CustomTranslations from "../../backend/src/models/customTranslations";
@@ -38,6 +39,7 @@ export class PuzzleService {
       });
   }
 
+  //get a puzzle by url
   public static getPuzzleIdByUrl(url: string): Promise<number> {
     return query(
       `SELECT p.id  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id WHERE p.url = '${url}'`
@@ -89,12 +91,34 @@ export class PuzzleService {
         return Promise.reject("Puzzles not found");
       });
   }
+
+  //get all puzzles with region and subregion
+  public static async getPuzzlesWithRegion(): Promise<PuzzleSearchResults[]> {
+    return query(
+      `SELECT p.*, c.regioncode, c.region, c.subregioncode, c.subregion FROM puzzles p INNER JOIN countries c ON p.countrycode = c.countrycode ORDER BY p.name`
+    )
+      .then((result: QueryExecResult[]) => {
+        const puzzles: PuzzleSearchResults[] = [];
+        result.forEach((row) => {
+          row.values.forEach((value) => {
+            puzzles.push(mapResultToPuzzleSearchResults(value));
+          });
+        });
+        return puzzles;
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.resolve([]);
+      });
+  }
+
+
   //get a puzzles by filters (region, subregion)
   public static getPuzzlesByFilters(
     regioncode: number,
     subregioncode: number,
     searchName: string
-  ): Promise<Puzzles[]> {
+  ): Promise<PuzzleSearchResults[]> {
     let where = "";
     if (regioncode !== 0) {
       where = ` and c.regioncode = '${regioncode}'`;
@@ -109,18 +133,10 @@ export class PuzzleService {
       `SELECT p.*, c.regioncode, c.region, c.subregioncode, c.subregion FROM puzzles p INNER JOIN countries c ON p.countrycode = c.countrycode WHERE 1=1 ${where} ORDER BY p.name`
     )
       .then((result: QueryExecResult[]) => {
-        const puzzles: Puzzles[] = [];
+        const puzzles: PuzzleSearchResults[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
-            const puzzle: Puzzles = mapResultToPuzzle(value);
-
-            puzzle.region = {
-              regionCode: value[10],
-              region: value[11],
-              subregionCode: value[12],
-              subregion: value[13],
-            } as Regions;
-
+            const puzzle: PuzzleSearchResults = mapResultToPuzzleSearchResults(value);
             puzzles.push(puzzle);
           });
         });

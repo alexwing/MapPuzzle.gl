@@ -1,6 +1,7 @@
 import CustomCentroids from "../../backend/src/models/customCentroids";
 import CustomWiki from "../../backend/src/models/customWiki";
 import { ViewState } from "react-map-gl";
+import Puzzles from "../../backend/src/models/puzzles";
 export interface PieceEvent {
   color: Uint8Array;
   coordinate: number[];
@@ -101,3 +102,10 @@ export interface ServiceWorkerConfig {
   onUpdate: (registration: ServiceWorkerRegistration) => void;
   onSuccess: (registration: ServiceWorkerRegistration) => void;
 }
+
+// extend from Puzzle interface and add the new properties regionCode, subregionCode, region, subregion
+export interface PuzzleSearchResults extends Puzzles {
+  region: Regions;
+}
+
+
