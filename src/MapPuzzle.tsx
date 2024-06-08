@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import "./styles/MapPuzzle.css";
 import "./styles/icons.css";
-import "./responsive.css";
+import "./styles/responsive.css";
 import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store";
 
 import MenuTop from "./components/MenuTop/MenuTop";

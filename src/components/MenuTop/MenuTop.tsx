@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect,useState } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Info from "../Info";
 import PuzzleSelector from "./PuzzleSelector";
@@ -39,14 +39,14 @@ function MenuTop({
   onLangChange,
   puzzleSelected,
 }: MenuTopProps): JSX.Element {
-  const [show, setShow] = React.useState(false);
-  const [showInfo, setShowInfo] = React.useState(false);
-  const [showSelectPuzzle, setShowSelectPuzzle] = React.useState(false);
-  const [langs, setLangs] = React.useState([] as WikiInfoLang[]);
-  const [currentLang, setCurrentLang] = React.useState("");
-  const [showWikiInfo, setShowWikiInfo] = React.useState(false);
+  const [show, setShow] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [showSelectPuzzle, setShowSelectPuzzle] = useState(false);
+  const [langs, setLangs] = useState([] as WikiInfoLang[]);
+  const [currentLang, setCurrentLang] = useState("");
+  const [showWikiInfo, setShowWikiInfo] = useState(false);
   const { t, i18n } = useTranslation();
-  const [wikiInfoUrl, setWikiInfoUrl] = React.useState("");
+  const [wikiInfoUrl, setWikiInfoUrl] = useState("");
   const { theme } = useContext(ThemeContext);
 
   useEffect(() => {

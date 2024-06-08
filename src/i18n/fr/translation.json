@@ -57,7 +57,9 @@
   },
   "info": {
     "share": "Partager MapPuzzle.xyz",
-    "quote": "MapPuzzle.xyz est un site web expérimental, c'est un moyen accessible d'apprendre la cartographie, à travers ce projet nous essayons d'offrir une expérience d'apprentissage interactive avec les cartes."
+    "quote": "MapPuzzle.xyz est un site web expérimental, c'est un moyen accessible d'apprendre la cartographie, à travers ce projet nous essayons d'offrir une expérience d'apprentissage interactive avec les cartes.",
+    "github": "Le référentiel du projet peut être trouvé à l'adresse",
+    "moreInfo": "Plus d'infos dans :"
   },
   "wikiInfo": {
     "title": "Article Wikipedia pour",

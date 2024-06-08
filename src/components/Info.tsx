@@ -130,7 +130,7 @@ function Info({
               <ReactMarkdown>{markdown}</ReactMarkdown>
               {infoPuzzles}
               <p>
-                The project repository can be found at:&nbsp;
+               {t("info.github")}:&nbsp;
                 <a
                   href="https://github.com/alexwing/MapPuzzle.gl"
                   target="_blank"
@@ -140,7 +140,7 @@ function Info({
                 </a>
               </p>
               <p>
-                More info in:&nbsp;
+              {t("info.moreInfo")}:&nbsp;
                 <a
                   href="https://aaranda.es/en/mappuzzle-gl-en/"
                   target="_blank"
