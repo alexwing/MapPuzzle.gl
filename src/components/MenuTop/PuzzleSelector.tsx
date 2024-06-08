@@ -169,6 +169,7 @@ function PuzzleSelector({
           } as Regions);
         }
       });
+      regions.sort((a, b) => a.region.localeCompare(b.region));
 
       const transSubregions = data.map((subregion) => {
         return {
@@ -179,7 +180,7 @@ function PuzzleSelector({
             subregion.subregion
           ),
         };
-      });
+      }).sort((a, b) => a.subregion.localeCompare(b.subregion));
       setRegions(regions);
       setSubregions(transSubregions);
       setAllregions(transSubregions);
