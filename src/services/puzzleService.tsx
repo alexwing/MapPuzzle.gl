@@ -112,7 +112,6 @@ export class PuzzleService {
       });
   }
 
-
   //get a puzzles by filters (region, subregion)
   public static getPuzzlesByFilters(
     regioncode: number,
@@ -136,7 +135,8 @@ export class PuzzleService {
         const puzzles: PuzzleSearchResults[] = [];
         result.forEach((row) => {
           row.values.forEach((value) => {
-            const puzzle: PuzzleSearchResults = mapResultToPuzzleSearchResults(value);
+            const puzzle: PuzzleSearchResults =
+              mapResultToPuzzleSearchResults(value);
             puzzles.push(puzzle);
           });
         });
@@ -343,7 +343,6 @@ export class PuzzleService {
   public static getResource(url: string): Promise<string> {
     return fetch(url)
       .then((response) => response.text())
-      .then((text) => text);     
+      .then((text) => text);
   }
-
 }

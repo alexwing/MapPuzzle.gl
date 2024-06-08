@@ -140,7 +140,7 @@ function Info({
                 </a>
               </p>
               <p>
-              {t("info.moreInfo")}:&nbsp;
+              {t("info.moreInfo")}&nbsp;
                 <a
                   href="https://aaranda.es/en/mappuzzle-gl-en/"
                   target="_blank"
