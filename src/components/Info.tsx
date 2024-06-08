@@ -8,7 +8,7 @@ import "../i18n/config";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 
-import { getLang, getUrl } from "../lib/Utils";
+import { getLang, getTranslation, getUrl } from "../lib/Utils";
 import { Check, Heart, ShieldShaded, Github } from "react-bootstrap-icons";
 import "./Info.css";
 import {
@@ -89,7 +89,7 @@ function Info({
             <td width="1%">
               <img src={c.icon} alt={c.name} />
             </td>
-            <td width="30%">{c.name}</td>
+            <td width="30%">{getTranslation("puzzles", c.id.toString(), c.name)}</td>
             <td width="50%">
               <a href={c.comment} target="_blank" rel="noopener noreferrer">
                 {c.comment}
