@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/display-name */
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Button, Col, Form, Modal, NavDropdown, Row } from "react-bootstrap";
 import * as Icon from "react-bootstrap-icons";
 import "./PuzzleSelector.css";
-import { Regions, PuzzleSearchResults  } from "../../models/Interfaces";
+import { Regions, PuzzleSearchResults } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
 import { useTranslation } from "react-i18next";
 
@@ -15,6 +15,7 @@ import BootstrapTable, {
   SelectRowProps,
 } from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
+import { getTranslation } from "../../lib/Utils";
 
 interface PuzzleSelectorProps {
   show: boolean;
@@ -38,7 +39,9 @@ function PuzzleSelector({
   const [regions, setRegions] = useState([] as Regions[]);
   const [subregions, setSubregions] = useState([] as Regions[]);
   const [puzzles, setPuzzles] = useState([] as PuzzleSearchResults[]);
-  const [loadedPuzzles, setLoadedPuzzles] = useState([] as PuzzleSearchResults[]);
+  const [loadedPuzzles, setLoadedPuzzles] = useState(
+    [] as PuzzleSearchResults[]
+  );
   const [searchName, setSearchName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const ref: any = useRef();
@@ -60,15 +63,42 @@ function PuzzleSelector({
     setShowIn(show);
 
     PuzzleService.getPuzzlesWithRegion().then((data: PuzzleSearchResults[]) => {
-      console.log("loaded puzzles");
-      setLoadedPuzzles(data);
-      setPuzzles(data);
-    });    
+      const transPuzzles = translatePuzzles(data);
+      setLoadedPuzzles(transPuzzles);
+      setPuzzles(transPuzzles);
+    });
     //focus on search input
     if (show) {
       loadRegions();
     }
   }, [show]);
+
+  //translate function for  regions in puzzles
+  const translatePuzzles = (
+    puzzles: PuzzleSearchResults[]
+  ): PuzzleSearchResults[] => {
+    const translatedPuzzles = puzzles.map((puzzle) => {
+      return {
+        ...puzzle,
+        name: getTranslation("puzzles", puzzle.id.toString(), puzzle.name),
+        region: {
+          regionCode: puzzle.region.regionCode,
+          region: getTranslation(
+            "regions",
+            puzzle.region.regionCode.toString(),
+            puzzle.region.region
+          ),
+          subregionCode: puzzle.region.subregionCode,
+          subregion: getTranslation(
+            "subregions",
+            puzzle.region.subregionCode.toString(),
+            puzzle.region.subregion
+          ),
+        },
+      };
+    });
+    return translatedPuzzles;
+  };
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -113,13 +143,28 @@ function PuzzleSelector({
         if (regions.findIndex((x) => x.regionCode === element.regionCode) < 0) {
           regions.push({
             regionCode: element.regionCode,
-            region: element.region,
+            region: getTranslation(
+              "regions",
+              element.regionCode.toString(),
+              element.region
+            ),
           } as Regions);
         }
       });
+
+      const transSubregions = data.map((subregion) => {
+        return {
+          ...subregion,
+          subregion: getTranslation(
+            "subregions",
+            subregion.subregionCode.toString(),
+            subregion.subregion
+          ),
+        };
+      });
       setRegions(regions);
-      setSubregions(data);
-      setAllregions(data);
+      setSubregions(transSubregions);
+      setAllregions(transSubregions);
     });
   };
 
