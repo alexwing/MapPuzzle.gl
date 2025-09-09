@@ -80,6 +80,8 @@
                 android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR"
                 android:resource="@color/colorPrimary" />
 
+            
+
             <meta-data
                 android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR_DARK"
                 android:resource="@color/colorPrimaryDark" />
@@ -138,8 +140,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https"
-                    android:host="@string/hostName"/>
+                    android:host="@string/hostName"
+                
+                />
             </intent-filter>
+
+            
 
             
         </activity>

@@ -51,13 +51,14 @@ def twaManifest = [
 ]
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 36
+    namespace "xyz.mappuzzle.twa"
     defaultConfig {
         applicationId "xyz.mappuzzle.twa"
-        minSdkVersion 19
-        targetSdkVersion 33
-        versionCode 2
-        versionName "2"
+    minSdkVersion 21
+        targetSdkVersion 35
+        versionCode 3
+        versionName "3"
 
         // The name for the application
         resValue "string", "appName", twaManifest.name
@@ -68,6 +69,8 @@ android {
         // The URL that will be used when launching the TWA from the Android Launcher
         def launchUrl = "https://" + twaManifest.hostName + twaManifest.launchUrl
         resValue "string", "launchUrl", launchUrl
+
+        
 
         
             // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
@@ -144,6 +147,8 @@ android {
 
         resValue "bool", "enableSiteSettingsShortcut", twaManifest.enableSiteSettingsShortcut
         resValue "string", "orientation", twaManifest.orientation
+
+        
     }
     buildTypes {
         release {
@@ -203,6 +208,6 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     
-        implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+        implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.6.2'
     
 }
