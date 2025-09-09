@@ -8,6 +8,7 @@ import Languages from "../../backend/src/models/languages";
 import { ConfigService } from "../services/configService";
 import { TFunction } from "i18next";
 import { SqlValue } from "sql.js";
+import i18n from 'i18next';
 
 export const colorStroke = [150, 150, 150];
 export const lineWidth = 1;
@@ -616,4 +617,29 @@ export function calculateZoom(bbox: number[]): number {
  */
 export function calculateDistanceFromEcuador(lat: number): number {
   return Math.abs(lat) / 100;
+}
+
+
+/**
+ * Returns the translation for a given code and parent.
+ * @param parent - The parent of the translation.
+ * @param code - The code of the translation.
+ * @param noTranslation - The default translation if the code is not found.
+ * @returns The translation as a string.
+ */
+export function getTranslation(parent, code: string, noTranslation?: string) {
+  let translation = "";
+  
+  if (code) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const possibleTranslation =  i18n.t(parent + '.' + code);
+    if (typeof possibleTranslation === "string" && possibleTranslation !== parent + '.' + code ) {
+      translation = possibleTranslation;
+    }
+  }
+  if (noTranslation && translation === "") {
+    translation = noTranslation;
+  }
+  return translation;
 }

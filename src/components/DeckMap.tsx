@@ -67,6 +67,7 @@ function DeckMap({
             }),
         },
         onClick: (info: PieceEvent) => onClickMap(info),
+        onPress: (info: PieceEvent) => onClickMap(info),
         onHover: (info: PieceEvent) => onHoverMap(info),
       })
     );

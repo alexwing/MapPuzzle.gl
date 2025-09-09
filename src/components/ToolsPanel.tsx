@@ -10,6 +10,7 @@ import Timer from "./Timer";
 import PieceList from "./PieceList";
 import { PieceProps } from "../models/Interfaces";
 import { useTranslation } from "react-i18next";
+import { getTranslation } from "../lib/Utils";
 
 interface ToolsPanelProps {
   name: string;
@@ -56,7 +57,7 @@ function ToolsPanel({
           <div className="flagGradient">
             <img src={flag} />
           </div>
-          <div className="mapName">{name}</div>
+          <div className="mapName">{getTranslation("puzzles", puzzleSelected.toString() ,name)}</div>
           {showTimer}
         </React.Fragment>
       );

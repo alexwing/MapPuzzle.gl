@@ -5,7 +5,11 @@ import CustomTranslations from "../../../backend/src/models/customTranslations";
 import CustomWiki from "../../../backend/src/models/customWiki";
 import Languages from "../../../backend/src/models/languages";
 import Puzzles from "../../../backend/src/models/puzzles";
-import { WikiInfoLang, WikiInfoPiece } from "../../models/Interfaces";
+import {
+  PuzzleSearchResults,
+  WikiInfoLang,
+  WikiInfoPiece,
+} from "../../models/Interfaces";
 import { convertToNumber, sortLangs } from "../Utils";
 
 //map the result data to a QueryExecResult[]
@@ -79,58 +83,80 @@ export function mapResultToPuzzle(result: SqlValue[]): Puzzles {
   } as Puzzles;
 }
 
-//map the result to a language 
-export function  mapResultToLanguage(result: SqlValue[]): Languages {
-    return {
-      lang: result[0],
-      langname: result[1],
-      autonym: result[2],
-      active: result[3],
-      rtl: result[4],
-    } as Languages;
-  }
+//map the result to a language
+export function mapResultToLanguage(result: SqlValue[]): Languages {
+  return {
+    lang: result[0],
+    langname: result[1],
+    autonym: result[2],
+    active: result[3],
+    rtl: result[4],
+  } as Languages;
+}
 
-  
-  //map the result to a CustomCentroids object
-  export function mapResultToCustomCentroids(
-    result: SqlValue[]
-  ): CustomCentroids {
-    return {
-      id: result[0],
-      cartodb_id: result[1],
-      left: convertToNumber(result[2]),
-      top: convertToNumber(result[3]),
-    } as CustomCentroids;
-  }
-
+//map the result to a CustomCentroids object
+export function mapResultToCustomCentroids(
+  result: SqlValue[]
+): CustomCentroids {
+  return {
+    id: result[0],
+    cartodb_id: result[1],
+    left: convertToNumber(result[2]),
+    top: convertToNumber(result[3]),
+  } as CustomCentroids;
+}
 
 //map wiki response to wiki info
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function mapWikiResponseToWikiInfo(response: any): WikiInfoPiece {
-    const { pages } = response.query;
-    const page = pages[Object.keys(pages)[0]];
-    const title = page.title;
-    const contents = page.extract.split("\n");
-    let langs = page.langlinks.map((x: any) => {
-      return {
-        id: x["*"],
-        lang: x.lang,
-        langname: x.langname,
-        autonym: x.autonym,
-      } as WikiInfoLang;
-    });
-    //add english to lang
-    langs.push({
-      id: title,
-      lang: "en",
-      langname: "English",
-      autonym: "English",
-    } as WikiInfoLang);
-    //order langs by langname
-    langs = sortLangs(langs);
+  const { pages } = response.query;
+  const page = pages[Object.keys(pages)[0]];
+  const title = page.title;
+  const contents = page.extract.split("\n");
+  let langs = page.langlinks.map((x: any) => {
     return {
-      title,
-      contents,
-      langs,
-    };
-  }
+      id: x["*"],
+      lang: x.lang,
+      langname: x.langname,
+      autonym: x.autonym,
+    } as WikiInfoLang;
+  });
+  //add english to lang
+  langs.push({
+    id: title,
+    lang: "en",
+    langname: "English",
+    autonym: "English",
+  } as WikiInfoLang);
+  //order langs by langname
+  langs = sortLangs(langs);
+  return {
+    title,
+    contents,
+    langs,
+  };
+}
+
+//map the result to a PuzzleSearchResults object
+export function mapResultToPuzzleSearchResults(
+  value: any
+): PuzzleSearchResults {
+  return {
+    id: value[0],
+    comment: value[1],
+    data: value[2],
+    icon: value[3],
+    name: value[4],
+    url: value[5],
+    wiki: value[6],
+    countryCode: value[7],
+    enableWiki: parseInt(value[8] as string) === 1,
+    enableFlags: parseInt(value[9] as string) === 1,
+    region: {
+      regionCode: value[10],
+      region: value[11],
+      subregionCode: value[12],
+      subregion: value[13],
+    },
+  };
+}

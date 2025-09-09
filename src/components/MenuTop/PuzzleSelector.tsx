@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/display-name */
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Button, Col, Form, Modal, NavDropdown, Row } from "react-bootstrap";
 import * as Icon from "react-bootstrap-icons";
 import "./PuzzleSelector.css";
-import Puzzles from "../../../backend/src/models/puzzles";
-import { Regions } from "../../models/Interfaces";
+import { Regions, PuzzleSearchResults } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
 import { useTranslation } from "react-i18next";
 
@@ -16,6 +15,7 @@ import BootstrapTable, {
   SelectRowProps,
 } from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
+import { getTranslation } from "../../lib/Utils";
 
 interface PuzzleSelectorProps {
   show: boolean;
@@ -38,7 +38,10 @@ function PuzzleSelector({
   const [allregions, setAllregions] = useState([] as Regions[]);
   const [regions, setRegions] = useState([] as Regions[]);
   const [subregions, setSubregions] = useState([] as Regions[]);
-  const [puzzles, setPuzzles] = useState([] as Puzzles[]);
+  const [puzzles, setPuzzles] = useState([] as PuzzleSearchResults[]);
+  const [loadedPuzzles, setLoadedPuzzles] = useState(
+    [] as PuzzleSearchResults[]
+  );
   const [searchName, setSearchName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const ref: any = useRef();
@@ -58,36 +61,97 @@ function PuzzleSelector({
   useEffect(() => {
     cleanFilters();
     setShowIn(show);
+
+    PuzzleService.getPuzzlesWithRegion().then((data: PuzzleSearchResults[]) => {
+      let transPuzzles = translatePuzzles(data);
+      //only show puzzles with flags
+      if (onlyFlags) {
+        transPuzzles = transPuzzles.filter((puzzle) => puzzle.enableFlags);
+      }
+      setLoadedPuzzles(transPuzzles);
+      setPuzzles(transPuzzles);
+    });
     //focus on search input
     if (show) {
       loadRegions();
     }
   }, [show]);
 
+  //translate function for  regions in puzzles
+  const translatePuzzles = (
+    puzzles: PuzzleSearchResults[]
+  ): PuzzleSearchResults[] => {
+    const translatedPuzzles = puzzles.map((puzzle) => {
+      return {
+        ...puzzle,
+        name: getTranslation("puzzles", puzzle.id.toString(), puzzle.name),
+        region: {
+          regionCode: puzzle.region.regionCode,
+          region: getTranslation(
+            "regions",
+            puzzle.region.regionCode.toString(),
+            puzzle.region.region
+          ),
+          subregionCode: puzzle.region.subregionCode,
+          subregion: getTranslation(
+            "subregions",
+            puzzle.region.subregionCode.toString(),
+            puzzle.region.subregion
+          ),
+        },
+      };
+    });
+    return translatedPuzzles;
+  };
+
   useEffect(() => {
     inputRef.current?.focus();
   }, [allregions]);
 
-  useEffect(() => {
+  const puzzleFilter = () => {
     setSelectedPuzzle(0);
-    PuzzleService.getPuzzlesByFilters(
-      selectedRegion,
-      selectedSubRegion,
-      searchName
-    ).then((data: Puzzles[]) => {
-      if (onlyFlags) {
-        const puzzles: Puzzles[] = [];
-        data.forEach((element: Puzzles) => {
-          if (element.enableFlags) {
-            puzzles.push(element);
-          }
-        });
-        setPuzzles(puzzles);
-      } else {
-        setPuzzles(data);
-      }
-    });
-  }, [selectedRegion, selectedSubRegion, searchName]);
+
+    // Filtrar los puzzles localmente en lugar de cargar los datos de nuevo
+    let filteredPuzzles = loadedPuzzles;
+
+    if (selectedRegion) {
+      filteredPuzzles = filteredPuzzles.filter(
+        (puzzle) => puzzle.region.regionCode === selectedRegion
+      );
+    }
+
+    if (selectedSubRegion) {
+      filteredPuzzles = filteredPuzzles.filter(
+        (puzzle) => puzzle.region.subregionCode === selectedSubRegion
+      );
+    }
+
+    //search by name normalized and without accents
+    if (searchName) {
+      filteredPuzzles = filteredPuzzles.filter((puzzle) =>
+        puzzle.name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .includes(
+            searchName
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .toLowerCase()
+          )
+      );
+    }
+    //only show puzzles with flags
+    if (onlyFlags) {
+      filteredPuzzles = filteredPuzzles.filter((puzzle) => puzzle.enableFlags);
+    }
+
+    setPuzzles(filteredPuzzles);
+  };
+
+  useEffect(() => {
+    puzzleFilter();
+  }, [selectedRegion, selectedSubRegion, searchName, onlyFlags]);
 
   const loadRegions = () => {
     PuzzleService.getRegions().then((data: Regions[]) => {
@@ -97,13 +161,29 @@ function PuzzleSelector({
         if (regions.findIndex((x) => x.regionCode === element.regionCode) < 0) {
           regions.push({
             regionCode: element.regionCode,
-            region: element.region,
+            region: getTranslation(
+              "regions",
+              element.regionCode.toString(),
+              element.region
+            ),
           } as Regions);
         }
       });
+      regions.sort((a, b) => a.region.localeCompare(b.region));
+
+      const transSubregions = data.map((subregion) => {
+        return {
+          ...subregion,
+          subregion: getTranslation(
+            "subregions",
+            subregion.subregionCode.toString(),
+            subregion.subregion
+          ),
+        };
+      }).sort((a, b) => a.subregion.localeCompare(b.subregion));
       setRegions(regions);
-      setSubregions(data);
-      setAllregions(data);
+      setSubregions(transSubregions);
+      setAllregions(transSubregions);
     });
   };
 
@@ -129,18 +209,18 @@ function PuzzleSelector({
 
   const navDropdownRegionsTitle = (
     <span>
-        {selectedRegion === 0
-          ? t("puzzleSelector.filters.region")
-          : regions.find((x) => x.regionCode === selectedRegion)?.region}
+      {selectedRegion === 0
+        ? t("puzzleSelector.filters.region")
+        : regions.find((x) => x.regionCode === selectedRegion)?.region}
     </span>
   );
 
   const navDropdownSubRegionsTitle = (
     <span>
-        {selectedSubRegion === 0
-          ? t("puzzleSelector.filters.subregion")
-          : subregions.find((x) => x.subregionCode === selectedSubRegion)
-              ?.subregion}
+      {selectedSubRegion === 0
+        ? t("puzzleSelector.filters.subregion")
+        : subregions.find((x) => x.subregionCode === selectedSubRegion)
+            ?.subregion}
     </span>
   );
 
@@ -213,7 +293,6 @@ function PuzzleSelector({
 
   const onSearchNameChange = (e: any) => {
     setSearchName(e.target.value);
-    loadRegions();
   };
 
   return (
@@ -321,7 +400,13 @@ function PuzzleSelector({
     return (_column: any, _colIndex: any, _components: any) => {
       return (
         <NavDropdown title={navDropdownRegionsTitle} id="nav-dropdown">
-          <NavDropdown.Item onClick={onSelectRegion} id="0" key="0" eventKey="0" className="font-weight-bold">
+          <NavDropdown.Item
+            onClick={onSelectRegion}
+            id="0"
+            key="0"
+            eventKey="0"
+            className="font-weight-bold"
+          >
             {t("puzzleSelector.filters.all")}
           </NavDropdown.Item>
           {regions.map((region) => (
@@ -343,7 +428,13 @@ function PuzzleSelector({
     return (_column: any, _colIndex: any, _components: any) => {
       return (
         <NavDropdown title={navDropdownSubRegionsTitle} id="nav-dropdown">
-          <NavDropdown.Item onClick={onSelectSubRegion} id="0" key="0" eventKey="0" className="font-weight-bold">
+          <NavDropdown.Item
+            onClick={onSelectSubRegion}
+            id="0"
+            key="0"
+            eventKey="0"
+            className="font-weight-bold"
+          >
             {t("puzzleSelector.filters.all")}
           </NavDropdown.Item>
           {subregions.map((subregion) => (
