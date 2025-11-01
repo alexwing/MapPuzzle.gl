@@ -29,6 +29,7 @@
     "@types/three": "^0.164.0",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
+    "caniuse-lite": "^1.0.30001752",
     "deck.gl": "^8.9.36",
     "dom-helpers": "^5.2.1",
     "i18next": "^22.5.1",
@@ -51,7 +52,8 @@
     "react-spring": "9.7.3",
     "sql.js": "^1.10.3",
     "sql.js-httpvfs": "^0.8.12",
-    "three": "^0.164.1"
+    "three": "^0.164.1",
+    "webpack-manifest-plugin": "^6.0.0"
   },
   "scripts": {
     "dev": "env-cmd -f ./environments/.env.development react-scripts start",
