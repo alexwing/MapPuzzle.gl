@@ -27,7 +27,10 @@ export default defineConfig({
           "**/sqlite.worker.js",
         ],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        navigateFallbackDenylist: [/\.(?:wasm|sqlite3\.png)$/],
+        // Disable SPA navigation fallback so the service worker never hijacks
+        // navigations. Deep links / external subprojects (e.g. /sevilla360,
+        // /depth3dviewer) are resolved by the server as before the PWA existed.
+        navigateFallback: null,
       },
     }),
   ],
