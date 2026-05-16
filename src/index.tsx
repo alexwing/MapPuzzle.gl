@@ -4,10 +4,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 import FlagQuiz from "./FlagsQuiz/FlagQuiz";
 import { ThemeProvider } from "./components/ThemeProvider";
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-import { ServiceWorkerConfig } from "./models/Interfaces";
-
-
+import { registerSW } from "virtual:pwa-register";
 
 const container = createRoot(document.getElementById("root") as HTMLElement);
 
@@ -23,11 +20,4 @@ const App = () => {
 };
 container.render(<App />);
 
-serviceWorkerRegistration.register({
-  onUpdate: (registration) => {
-    console.log("New content is available; please refresh.", registration);
-  },
-  onSuccess: (registration) => {
-    console.log("Content is cached for offline use.", registration);
-  },
-} as ServiceWorkerConfig);
+registerSW({ immediate: true });
