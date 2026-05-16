@@ -32,13 +32,14 @@ You can play the game in the following link: [MapPuzzle.xyz](http://mappuzzle.xy
 
 ## Code Description
 
-**MapPuzzle.xyz** has been developed using advanced technologies such as React, Deck.gl, sqlite, PHP, typeorm, and node.js. .
+**MapPuzzle.xyz** has been developed using advanced technologies such as React, Vite, Deck.gl, sqlite, PHP, typeorm, and node.js.
 
 To develop the game, the Deck.gl library was used, allowing the creation of interactive maps on the web using JavaScript and WebGL. This library is a powerful and versatile tool that facilitates the development of map applications on the web, offering a wide variety of components and layers for creating custom and highly interactive maps.
 
-Additionally, other technologies and tools such as React, sqlite, PHP, typeorm, and node.js have been used to implement various functionalities and enhance the gaming experience.
+Additionally, other technologies and tools such as React, Vite, sqlite, PHP, typeorm, and node.js have been used to implement various functionalities and enhance the gaming experience.
 
 - **React** has been used as the user interface development framework.
+- **Vite** is the build tool and dev server for the frontend (migrated from Create React App / react-scripts). It also provides a PWA (offline support) via `vite-plugin-pwa`.
 - **sqlite** serves as a local database to store game data, with the published version on the web using it in read-only mode.
 - **PHP** has been used to develop database scripts, allowing the game to be hosted on a standard web server without node.js.
 - **node.js** is used for the backend of the map editor, which was used to create the game maps.
@@ -58,11 +59,10 @@ Each project has its own Package.json with the configuration of the dependencies
 
 ### Dependencies considerations
 
-The project has some dependencies that require a specific version of Node.js, it is necessary to have the correct version of Node.js to use the project.
+The project requires **Node.js 18 or higher** (Vite 5 requirement). It has been tested with Node.js 20+.
 
 - ```json "react-map-gl": "5.3.21"```, This version of react-map-gl is necessary to use the deck.gl library, after this version, in 6.0.0 has necesary ACCESS_TOKEN to use the  mapbox API, require a payment plan to use the mapbox API.
-- ```json "node-sass": "^4.14.1"```, This version need NODE version v14.17.3
-- ```json"react-markdown": "^6.0.2"```, This version need NODE version v14.17.3
+- ```json "sass": "^1.93.3"```, Dart Sass (replaces the deprecated `node-sass`); no special Node version is required.
 
 ### Backend
 
@@ -82,16 +82,19 @@ Use dev to run the server in development mode.
 
 ### Frontend
 
-The frontend is built with React, it is a client that sends requests to the server and receives the response, it also has a database with the information of the puzzles.
+The frontend is built with React and bundled with **Vite**, it is a client that sends requests to the server and receives the response, it also has a database with the information of the puzzles.
 
-The following lines of code refer to different ways of starting the project:
+Environment configuration lives in the `environments/` folder and is loaded through Vite modes (`--mode <name>`, set via `envDir`). Variables are exposed to the app with the `VITE_` prefix and read through `import.meta.env` (previously `REACT_APP_` / `process.env` under Create React App). The HTML entry point is `index.html` at the project root, and `npm run build` outputs to the `build/` folder.
 
-* **"dev"**: "env-cmd -f ./environments/.env.development react-scripts start", This option allows you to run the frontend in development mode, it needs to have the Node.js backend running to work properly.
-* **"pro"**: "env-cmd -f ./environments/.env react-scripts start", This option allows you to run the frontend in development mode and connect it to a local sqlite3 database, without the need of the backend. The database is located in the "public" folder.
-* **"dev-php-backend"**: "env-cmd -f ./environments/.env.devphpbackend react-scripts start", This option allows you to run the frontend in development mode and connect it to a local PHP backend running.
-* **"pro-php-backend"**: "env-cmd -f ./environments/.env.phpbackend react-scripts start", This option allows you to run the frontend in production mode and connect it to the production PHP backend running.
-* **"build"**: "env-cmd -f ./environments/.env react-scripts build", This option allows you to build the frontend in production mode and connect it to a local sqlite3 database, without the need of a backend. The database is located in the "public" folder.
-* **"build-php"**: "env-cmd -f ./environments/.env.phpbackend react-scripts build", This option allows you to build the frontend and copy the files to the backend folder for use in a PHP server. This PHP server is a simple script to execute queries to the sqlite3 database, similar to the frontend version. It is used to deploy the application on a PHP server. This PHP script is limited to SELECT queries, does not support INSERT, UPDATE or DELETE query and prevents SQL injection.
+The following scripts refer to different ways of starting and building the project:
+
+* **"dev"**: `vite` — runs the frontend in development mode (loads `environments/.env.development`). Needs the Node.js backend running to work properly.
+* **"pro"**: `vite --mode production` — runs the frontend dev server connected to a local sqlite3 database (loads `environments/.env.production`), without the need of the backend. The database is located in the "public" folder.
+* **"dev-php-backend"**: `vite --mode devphpbackend` — runs the frontend in development mode connected to a local PHP backend.
+* **"pro-php-backend"**: `vite --mode phpbackend` — runs the frontend connected to the production PHP backend.
+* **"build"**: `vite build` — builds the frontend for production connected to a local sqlite3 database (loads `environments/.env.production`), without the need of a backend. The database is located in the "public" folder.
+* **"build-php"**: `vite build --mode phpbackend` — builds the frontend and copies the files to the backend folder for use in a PHP server. This PHP server is a simple script to execute queries to the sqlite3 database, similar to the frontend version. It is used to deploy the application on a PHP server. This PHP script is limited to SELECT queries, does not support INSERT, UPDATE or DELETE query and prevents SQL injection.
+* **"preview"**: `vite preview` — serves the production build locally for verification.
   
 ## Design
 

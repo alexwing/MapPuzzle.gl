@@ -35,13 +35,14 @@ Para su mejor integración en Windows recomiendo usar Microsoft Edge, aunque tam
 
 ## Descripción del código
 
-**MapPuzzle.xyz** ha sido desarrollado utilizando tecnologías avanzadas como React, Deck.gl, sqlite, PHP, typeorm y node.js. 
+**MapPuzzle.xyz** ha sido desarrollado utilizando tecnologías avanzadas como React, Vite, Deck.gl, sqlite, PHP, typeorm y node.js.
 
 Para desarrollar el juego, se utilizó la biblioteca Deck.gl, que permite crear mapas interactivos en la web utilizando JavaScript y WebGL. Esta biblioteca es una herramienta poderosa y versátil que facilita el desarrollo de aplicaciones de mapas en la web, ofreciendo una amplia variedad de componentes y capas que se pueden utilizar para crear mapas personalizados y altamente interactivos.
 
-Además, se han utilizado otras tecnologías y herramientas como React, sqlite, PHP, typeorm y node.js para implementar diferentes funcionalidades y mejorar la experiencia del juego.
+Además, se han utilizado otras tecnologías y herramientas como React, Vite, sqlite, PHP, typeorm y node.js para implementar diferentes funcionalidades y mejorar la experiencia del juego.
 
 - **React** se ha utilizado como marco de desarrollo de interfaz de usuario. 
+- **Vite** es la herramienta de compilación y servidor de desarrollo del frontend, y proporciona las capacidades de Aplicación Web Progresiva (PWA, soporte offline).
 - **sqlite** base de datos local para almacenar los datos del juego, la version publicada en la web solo la usa en modo lectura.
 - **PHP** se ha utilizado para desarrollar scripts de base de datos, para poder ser alojado en un servidor web estandar, sin node.js.
 - **node.js** Sirven para el backend del editor de mapas, con el que se han creado los mapas del juego.
