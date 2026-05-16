@@ -21,6 +21,7 @@
     "bootstrap": "^5.3.3",
     "deck.gl": "^8.9.36",
     "dom-helpers": "^5.2.1",
+    "events": "3.3.0",
     "i18next": "^22.5.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.2",

@@ -35,6 +35,22 @@ export default defineConfig({
     }),
   ],
   envDir: "environments",
+  resolve: {
+    alias: {
+      // react-bootstrap-table-next / -paginator require Node's "events".
+      // Resolve it to the browser-compatible npm package instead of letting
+      // Vite externalize it (which broke EventEmitter -> "events.default is
+      // not a constructor" when opening the puzzle selector).
+      events: "events",
+    },
+  },
+  optimizeDeps: {
+    include: [
+      "events",
+      "react-bootstrap-table-next",
+      "react-bootstrap-table2-paginator",
+    ],
+  },
   server: { port: 3000 },
   build: { outDir: "build" },
 });
