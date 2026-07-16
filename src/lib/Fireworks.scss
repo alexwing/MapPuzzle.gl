@@ -1,3 +1,5 @@
+@use "sass:math";
+
 $particles: 350;
 $width: 900;
 $height: 900;
@@ -6,14 +8,12 @@ $height: 900;
 $box-shadow: ();
 $box-shadow2: ();
 @for $i from 0 through $particles {
+  $angle: math.random(360) * 1deg;
+  $radius: math.random(math.div($width, 2));
   $box-shadow: $box-shadow,
-    random($width)-$width /
-      2 +
-      px
-      random($height)-$height /
-      1.2 +
-      px
-      hsl(random(360), 100, 50);
+    ($radius * math.cos($angle)) * 1px
+      ($radius * math.sin($angle)) * 1px
+      hsl(math.random(360), 100%, 50%);
   $box-shadow2: $box-shadow2, 0 0 #fff;
 }
 @mixin keyframes($animationName) {
@@ -68,6 +68,13 @@ $box-shadow2: ();
   -webkit-transform: $settings;
   -o-transform: $settings;
   -ms-transform: $settings;
+}
+
+.pyro {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1050;
 }
 /*
 body {
