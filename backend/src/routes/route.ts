@@ -1,6 +1,6 @@
 import express from "express";
 import { connection } from "../server/database";
-import { securizeQuery } from "../../../src/lib/Commons";
+import { securizeQuery } from "../lib/Commons";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
