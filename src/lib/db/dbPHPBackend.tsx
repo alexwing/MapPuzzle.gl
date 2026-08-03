@@ -8,8 +8,10 @@ export const query = async (sql: string): Promise<QueryExecResult[]> => {
     query: sql,
   });
   const data = response.data;
-  if (data.errno) {
-    console.log(data.message);
+  // The endpoint answers with rows on success and {error} on failure; anything
+  // that is not an array would blow up the mapper.
+  if (!Array.isArray(data)) {
+    console.log(data?.error ?? data?.message ?? "Unexpected response");
     return [];
   }
   return mapResultToQueryExecResult(data);
