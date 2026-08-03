@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import CustomCentroids from "../../backend/src/models/customCentroids";
 import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
+import { pieceBox, pieceSilhouette } from "./pieceSilhouette";
 import { setColor } from "./Utils";
 import "./CursorCore.css";
 /**
@@ -187,23 +188,26 @@ function CursorCore({
   //document.body.style.cursor = 'none'
 
   let PieceCursor;
-  if (selected.properties?.box) {
+  // The box is in EPSG:3857 metres, so the piece scales with the map: metres
+  // times the zoom factor over the metres-per-pixel deck.gl draws at.
+  const box = pieceBox(selected);
+  if (box) {
     const scale = Math.pow(2, zoom);
-    const sizeX =
-      (parseInt(selected.properties.box.split(" ")[2]) * scale) / 74000;
-    const sizeY =
-      (parseInt(selected.properties.box.split(" ")[3]) * scale) / 74000;
+    const sizeX = (parseInt(box.split(" ")[2]) * scale) / 74000;
+    const sizeY = (parseInt(box.split(" ")[3]) * scale) / 74000;
     let marginLeft = "-50%";
     let marginTop = "-50%";
     if (centroid.id) {
       marginLeft = centroid.left + "%";
       marginTop = centroid.top + "%";
     }
+    // Ask for the detail the piece is actually being drawn at.
+    const { poly } = pieceSilhouette(selected, Math.max(sizeX, sizeY));
     PieceCursor = (
       <svg
         width={sizeX + "px"}
         height={sizeY + "px"}
-        viewBox={selected ? selected.properties.box : ""}
+        viewBox={box}
         style={{
           border: "0px solid lightgray",
           marginLeft: marginLeft,
@@ -211,7 +215,7 @@ function CursorCore({
         }}
       >
         <path
-          d={selected ? selected.properties.poly : ""}
+          d={poly}
           stroke="black"
           strokeWidth="0"
           fill={setColor(selected.properties.mapcolor || 0)}

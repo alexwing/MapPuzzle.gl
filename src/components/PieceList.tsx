@@ -2,9 +2,13 @@ import React, { useState, useEffect, useId } from "react";
 import Table from "react-bootstrap/Table";
 import { useKeyPress } from "../lib/useKeyPress";
 import { className, setColor } from "../lib/Utils";
+import { pieceSilhouette } from "../lib/pieceSilhouette";
 import { PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "../services/puzzleService";
 import "./PieceList.css";
+
+/** Width the silhouette is painted at, see .legendPiece > svg in PieceList.css. */
+const PIECE_WIDTH_PX = 80;
 
 interface PieceListProps {
   pieces: Array<PieceProps>;
@@ -163,8 +167,10 @@ export default function PieceList({
         id={identify}
       >
         <tbody>
-          {pieces.map((c: PieceProps) =>
-            founds.includes(c.properties.cartodb_id) ? null : (
+          {pieces.map((c: PieceProps) => {
+            if (founds.includes(c.properties.cartodb_id)) return null;
+            const silhouette = pieceSilhouette(c, PIECE_WIDTH_PX);
+            return (
               <tr
                 key={c.properties.cartodb_id}
                 onClick={onPieceSelected}
@@ -174,9 +180,9 @@ export default function PieceList({
                 {paintFlag(c)}
                 <td width="80%">{c.properties.name}</td>
                 <td width="20%" align="right" className="legendPiece">
-                  <svg viewBox={c.properties.box}>
+                  <svg viewBox={silhouette.box}>
                     <path
-                      d={c.properties.poly}
+                      d={silhouette.poly}
                       stroke="black"
                       strokeWidth="0"
                       fill={setColor(c.properties.mapcolor)}
@@ -184,8 +190,8 @@ export default function PieceList({
                   </svg>
                 </td>
               </tr>
-            )
-          )}
+            );
+          })}
         </tbody>
       </Table>
     </React.Fragment>

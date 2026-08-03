@@ -1,7 +1,11 @@
 import React, { useRef } from "react";
 import CustomCentroids from "../../backend/src/models/customCentroids";
+import { pieceSilhouette } from "../lib/pieceSilhouette";
 import { setColor } from "../lib/Utils";
 import { PieceProps } from "../models/Interfaces";
+
+/** Width the preview is painted at, see the svg below. */
+const PREVIEW_WIDTH_PX = 100;
 
 /**
  * PiecePreview
@@ -24,6 +28,7 @@ function PiecePreview({ selected, centroid }: PiecePreviewProps): JSX.Element {
   if (selected && centroid) {
     const marginTop = -1 * centroid.top;
     const marginLeft = -1 * centroid.left;
+    const silhouette = pieceSilhouette(selected, PREVIEW_WIDTH_PX);
     RenderPiecePreview = (
       <div>
         <div
@@ -34,14 +39,14 @@ function PiecePreview({ selected, centroid }: PiecePreviewProps): JSX.Element {
           }}
         ></div>
         <svg
-          width={"100px"}
-          viewBox={selected ? selected.properties.box : ""}
+          width={PREVIEW_WIDTH_PX + "px"}
+          viewBox={silhouette.box}
           style={{
             border: "0px solid lightgray",
           }}
         >
           <path
-            d={selected ? selected.properties.poly : ""}
+            d={silhouette.poly}
             stroke="black"
             strokeWidth="0"
             fill={setColor(selected.properties.mapcolor || 0)}
