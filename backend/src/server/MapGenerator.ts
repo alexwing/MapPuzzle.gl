@@ -25,7 +25,11 @@ export class MapGenerator {
   public async generateJson(data: MapGeneratorModel): Promise<ViewState> {
     const client = await this.pool.connect();
     try {
-      //generate query qgis
+      // The features carry geometry and metadata only. The piece silhouettes
+      // used to be baked in here as `poly` (ST_AsSVG) plus a `box` viewBox,
+      // which duplicated the geometry the client already loads for deck.gl and
+      // made up 56% of public/maps; src/lib/pieceSilhouette derives both in the
+      // browser now. `extend` (ST_Envelope) was never read by anything.
       let query = `SELECT jsonb_build_object(
                                 'type',     'FeatureCollection',
                                 'features', jsonb_agg(feature)
@@ -36,19 +40,16 @@ export class MapGenerator {
                                 'geometry',   ST_AsGeoJSON(geom)::jsonb,
                                 'properties', to_jsonb(row) - 'geom'
                             ) AS feature
-                            FROM (	
+                            FROM (
                                         select
-                                            [id] as cartodb_id,   		
+                                            [id] as cartodb_id,
                                             geom,
                                             initcap([name]) as name,
-                                            ST_AsSVG(ST_Translate(ST_Transform(ST_SetSRID(geom,4326),3857),-ST_Xmin(ST_Transform(ST_SetSRID(geom,4326),3857)),-ST_YMax(ST_Transform(ST_SetSRID(geom,4326),3857)))) as poly,
-                                            CONCAT('0 0 ', ST_Distance(CONCAT('SRID=3857;POINT(', ST_XMin(ST_Transform(ST_SetSRID(geom,4326), 3857)), ' 0)')::geometry, CONCAT('SRID=3857;POINT(', ST_XMax(ST_Transform(ST_SetSRID(geom,4326), 3857)), ' 0)')::geometry), ' ', ST_Distance(CONCAT('SRID=3857;POINT(0 ', ST_YMin(ST_Transform(ST_SetSRID(geom,4326), 3857)), ')')::geometry, CONCAT('SRID=3857;POINT(0 ', ST_YMax(ST_Transform(ST_SetSRID(geom,4326), 3857)), ')')::geometry)) as box,
-                                            [mapcolor] as mapcolor,
-                                            ST_Envelope(geom) as extend
+                                            [mapcolor] as mapcolor
                                         from
-                                            public.[table] sb 
+                                            public.[table] sb
                                         order by
-                                            name 
+                                            name
                             )
                             row) features;`;
 

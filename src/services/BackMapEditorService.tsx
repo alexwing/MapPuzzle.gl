@@ -95,7 +95,6 @@ export class BackMapEditorService {
       properties: {
         cartodb_id: piece.properties.cartodb_id,
         name: piece.name,
-        box: piece.properties.box,
       },
       customWiki: piece.customWiki,
       customCentroid: piece.customCentroid,
