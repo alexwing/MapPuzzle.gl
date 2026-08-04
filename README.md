@@ -84,18 +84,23 @@ Use dev to run the server in development mode.
 
 The frontend is built with React and bundled with **Vite**, it is a client that sends requests to the server and receives the response, it also has a database with the information of the puzzles.
 
-Environment configuration lives in the `environments/` folder and is loaded through Vite modes (`--mode <name>`, set via `envDir`). Variables are exposed to the app with the `VITE_` prefix and read through `import.meta.env` (previously `REACT_APP_` / `process.env` under Create React App). The HTML entry point is `index.html` at the project root, and `npm run build` outputs to the `build/` folder.
+The repository is a monorepo: `apps/game` (MapPuzzle and FlagsQuiz, the only thing deployed), `apps/editor` (the map editor), `apps/backend` (Express + TypeORM + PostGIS, local authoring only), `packages/` (the contracts and the code both clients share) and `data/` (the maps, flags and SQLite database the editor produces).
 
-The following scripts refer to different ways of starting and building the project:
+Environment configuration lives in each app's `environments/` folder and is loaded through Vite modes (`--mode <name>`, set via `envDir`). Variables are exposed with the `VITE_` prefix and read through `import.meta.env`. `npm run build` outputs to `build/` at the repo root, with the contents of `data/` copied in, which is exactly what gets uploaded.
 
-* **"dev"**: `vite` — runs the frontend in development mode (loads `environments/.env.development`). Needs the Node.js backend running to work properly.
-* **"pro"**: `vite --mode production` — runs the frontend dev server connected to a local sqlite3 database (loads `environments/.env.production`), without the need of the backend. The database is located in the "public" folder.
-* **"dev-php-backend"**: `vite --mode devphpbackend` — runs the frontend in development mode connected to a local PHP backend.
-* **"pro-php-backend"**: `vite --mode phpbackend` — runs the frontend connected to the production PHP backend.
-* **"build"**: `vite build` — builds the frontend for production connected to a local sqlite3 database (loads `environments/.env.production`), without the need of a backend. The database is located in the "public" folder.
-* **"build-php"**: `vite build --mode phpbackend` — builds the frontend and copies the files to the backend folder for use in a PHP server. This PHP server is a simple script to execute queries to the sqlite3 database, similar to the frontend version. It is used to deploy the application on a PHP server. This PHP script is limited to SELECT queries, does not support INSERT, UPDATE or DELETE query and prevents SQL injection.
-* **"preview"**: `vite preview` — serves the production build locally for verification.
-  
+The following scripts run and build the project:
+
+* **"dev"**: the game against the local Node backend (loads `environments/.env.development`). Needs `npm run backend`.
+* **"pro"**: the game against the SQLite database read straight over HTTP, so it needs no backend at all.
+* **"dev-php-backend"**: the game against a PHP backend running locally on port 8888.
+* **"editor"**: the map editor, on port 3001. Always talks to the Node backend, since the production PHP gateway is read-only.
+* **"backend"**: the Express + TypeORM backend on port 5000. Map creation additionally needs PostgreSQL with PostGIS.
+* **"build"**: the production build, in PHP-backend mode. This is what gets deployed.
+* **"preview"**: serves that build locally for verification.
+* **"typecheck"**, **"typecheck:editor"**, **"typecheck:backend"**: no-emit compiles of each project.
+* **"publish-db"**: copies the authoring database over the published one, after showing both digests. `--check` fails instead of writing.
+* **"deploy"** / **"deploy:app"**: uploads the build over FTP. The first compares the generated content by size and sends only what differs; the second sends just the app shell, which is the usual case. `--dry-run` prints the plan without uploading. Credentials come from `.env.deploy`, which is gitignored.
+
 ## Design
 
 The design of the game is based on the following principles:

@@ -148,8 +148,8 @@ async function main() {
     if (dryRun) {
       console.log("Skipping the build in --dry-run.\n");
     } else {
-      console.log("Building (npm run build-php)...");
-      execFileSync("npm", ["run", "build-php"], {
+      console.log("Building (npm run build)...");
+      execFileSync("npm", ["run", "build"], {
         cwd: repoRoot,
         stdio: verbose ? "inherit" : "ignore",
         shell: process.platform === "win32",
@@ -159,7 +159,7 @@ async function main() {
   }
 
   if (!fs.existsSync(buildDir)) {
-    console.error("No build/ directory. Run without --no-build, or npm run build-php first.");
+    console.error("No build/ directory. Run without --no-build, or npm run build first.");
     process.exit(1);
   }
 
