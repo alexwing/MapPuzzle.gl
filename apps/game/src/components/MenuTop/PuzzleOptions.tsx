@@ -141,7 +141,11 @@ function PuzzleOptions({
   return (
     <React.Fragment>
       <Form>
-        {buttons.map((button, index) => (
+        {/* Filtered, not hidden with CSS: a disabled feature should leave
+            nothing in the DOM for the player to find. */}
+        {buttons
+          .filter((button) => button.visible)
+          .map((button, index) => (
                     <OverlayTrigger
             key={index}
             placement="bottom"
@@ -153,7 +157,6 @@ function PuzzleOptions({
             id={button.id}
             variant={button.variant}
             onClick={button.onClickHandler}
-            style={{ display: button.visible ? "inline" : "none" }}
           >
             <span>
               <button.icon size={button.iconSize} className={button.iconClass} />

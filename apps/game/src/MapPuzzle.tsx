@@ -21,7 +21,12 @@ import { ViewState } from "react-map-gl";
 import LoadingDialog from "./components/LoadingDialog";
 import { PuzzleService } from "./services/puzzleService";
 import { ConfigService } from "./services/configService";
-import EditorDialog from "./editor/editorDialog";
+/**
+ * The editor is authoring tooling, not part of the game: loaded on demand so
+ * Vite keeps it in its own chunk and players never download it. It is being
+ * moved out to its own app; until then this is the boundary.
+ */
+const EditorDialog = React.lazy(() => import("./editor/editorDialog"));
 import type { CustomCentroids } from "@mappuzzle/shared";
 import type { CustomWiki } from "@mappuzzle/shared";
 import type { CustomTranslations } from "@mappuzzle/shared";
@@ -526,12 +531,16 @@ function MapPuzzle(): JSX.Element {
               }
               puzzleSelected={puzzleSelected}
             />
-            <EditorDialog
-              show={showEditor}
-              onHide={onShowEditorHandler}
-              puzzleSelected={puzzleSelectedData}
-              pieces={pieces}
-            />
+            {ConfigService.editorEnabled && showEditor && (
+              <React.Suspense fallback={null}>
+                <EditorDialog
+                  show={showEditor}
+                  onHide={onShowEditorHandler}
+                  puzzleSelected={puzzleSelectedData}
+                  pieces={pieces}
+                />
+              </React.Suspense>
+            )}
             <Donate/>
           </div>
         )}

@@ -137,6 +137,9 @@ export default defineConfig({
           "**/*.sqlite3.png",
           "**/sql-wasm.wasm",
           "**/sqlite.worker.js",
+          // The editor is lazy-loaded authoring tooling; precaching it would
+          // push it to every player anyway, which is what the split avoids.
+          "**/editorDialog-*",
         ],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         // Disable SPA navigation fallback so the service worker never hijacks
