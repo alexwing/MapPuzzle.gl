@@ -23,12 +23,14 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@mappuzzle/shared": ["../../packages/shared/src/index.d.ts"]
+      "@mappuzzle/shared": ["../../packages/shared/src/index.d.ts"],
+      "@mappuzzle/core": ["../../packages/core/src/index.ts"]
     }
   },
   "include": [
     "src",
     "../../packages/shared/src",
+    "../../packages/core/src",
     "vite.config.ts"
   ]
 }

@@ -8,7 +8,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import { OverlayTrigger } from "react-bootstrap";
 import { useMediaQuery } from "react-responsive";
 import { setCookie } from "react-simple-cookie-store";
-import { ConfigService } from "../../services/configService";
+import { ConfigService } from "@mappuzzle/core";
 
 interface PuzzleOptionsProps {
   onFullScreen: () => void;

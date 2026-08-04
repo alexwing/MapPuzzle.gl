@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { secondsToTime } from "../lib/Utils";
 import GameTime from "../lib/GameTime";
 import { setCookie } from "react-simple-cookie-store";
-import { ConfigService } from "../services/configService";
+import { ConfigService } from "@mappuzzle/core";
 import { useTranslation } from "react-i18next";
 
 interface TimerProps {

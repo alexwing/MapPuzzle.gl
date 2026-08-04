@@ -6,10 +6,10 @@ import PuzzleOptions from "./PuzzleOptions";
 import ConfirmDialog from "./ConfirmDialog";
 import LangSelector from "../LangSelector";
 import { WikiInfoLang } from "../../models/Interfaces";
-import { PuzzleService } from "../../services/puzzleService";
+import { PuzzleService } from "@mappuzzle/core";
 import { setCookie } from "react-simple-cookie-store";
 import type { Languages } from "@mappuzzle/shared";
-import { ConfigService } from "../../services/configService";
+import { ConfigService } from "@mappuzzle/core";
 import { getCurrentLang, languagesToWikiInfoLang } from "../../lib/Utils";
 import { Button, Nav } from "react-bootstrap";
 import "../../i18n/config";
@@ -24,7 +24,6 @@ interface MenuTopProps {
   onResetGame: () => void;
   onFullScreen: () => void;
   onRefocus: () => void;
-  onShowEditor: (val: boolean) => void;
   onLangChange: (lang: string) => void;
   puzzleSelected: number;
 }
@@ -35,7 +34,6 @@ function MenuTop({
   onResetGame,
   onFullScreen,
   onRefocus,
-  onShowEditor,
   onLangChange,
   puzzleSelected,
 }: MenuTopProps): JSX.Element {
@@ -155,8 +153,7 @@ function MenuTop({
               handleInfo={handleShowInfo}
               handleShow={handleShow}
               onShowWikiInfo={onShowWikiInfoHandler(true)}
-              onShowEditor={onShowEditor}
-            />
+                  />
           </Nav>
         </Navbar.Collapse>
       </Navbar>

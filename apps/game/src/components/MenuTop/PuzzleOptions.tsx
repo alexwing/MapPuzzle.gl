@@ -8,7 +8,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import { OverlayTrigger } from "react-bootstrap";
 import { useMediaQuery } from 'react-responsive';
 import { setCookie } from "react-simple-cookie-store";
-import { ConfigService } from "../../services/configService";
+import { ConfigService } from "@mappuzzle/core";
 
 interface PuzzleOptionsProps {
   onRefocus: () => void;
@@ -16,7 +16,6 @@ interface PuzzleOptionsProps {
   handleInfo: () => void;
   onShowWikiInfo: (val: boolean) => void;
   handleShow: () => void;
-  onShowEditor: (val: boolean) => void;
 }
 
 function PuzzleOptions({
@@ -25,15 +24,11 @@ function PuzzleOptions({
   handleInfo,
   onShowWikiInfo,
   handleShow,
-  onShowEditor,
 }: PuzzleOptionsProps): JSX.Element {
   const { theme, setTheme } = useContext(ThemeContext);
 
   const onShowWikiInfoHandler = () => {
     onShowWikiInfo(true);
-  };
-  const onShowEditorHandler = () => {
-    onShowEditor(true);
   };
   const onThemeChange = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -115,19 +110,6 @@ function PuzzleOptions({
       label: t("topMenu.resetGame"),
       labelClass: "d-lg-none",
       visible: true,
-    },
-    {
-      id: "editor",
-      variant: "none",
-      onClickHandler: onShowEditorHandler,
-      tooltip: t("topMenu.editor"),
-      icon: Icon.PencilSquare,
-      iconSize: size,
-      iconColor: "green",
-      iconClass: "me-2",
-      label: t("topMenu.editor"),
-      labelClass: "d-lg-none",
-      visible: ConfigService.editorEnabled,
     },
   ];
 

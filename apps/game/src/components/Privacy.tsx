@@ -9,7 +9,7 @@ import ReactMarkdown from "react-markdown";
 
 import { getLang } from "../lib/Utils";
 import { Check } from "react-bootstrap-icons";
-import { PuzzleService } from "../services/puzzleService";
+import { PuzzleService } from "@mappuzzle/core";
 
 interface PrivacyProps {
   showIn: boolean;

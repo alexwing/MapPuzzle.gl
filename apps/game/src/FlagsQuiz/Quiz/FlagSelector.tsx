@@ -5,7 +5,7 @@ import { Vector3,  } from "@react-three/fiber";
 import { easings, useTransition, animated } from "@react-spring/three";
 
 import Flag from "./Flag";
-import { ConfigService } from "../../services/configService";
+import { ConfigService } from "@mappuzzle/core";
 
 
 function FlagSelector({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {

@@ -55,8 +55,10 @@
     "build": "vite build --config apps/game/vite.config.ts",
     "build-php": "vite build --config apps/game/vite.config.ts --mode phpbackend",
     "preview": "vite preview --config apps/game/vite.config.ts",
+    "editor": "vite --config apps/editor/vite.config.ts",
     "eslint:fix": "yarn run eslint --fix",
     "typecheck": "tsc -p apps/game/tsconfig.json",
+    "typecheck:editor": "tsc -p apps/editor/tsconfig.json",
     "typecheck:backend": "tsc -p apps/backend/tsconfig.build.json --noEmit",
     "publish-db": "node scripts/publish-db.mjs"
   },

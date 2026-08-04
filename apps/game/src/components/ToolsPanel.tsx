@@ -7,7 +7,7 @@ import Card from "react-bootstrap/Card";
 import Alert from "react-bootstrap/Alert";
 import Accordion from "react-bootstrap/Accordion";
 import Timer from "./Timer";
-import PieceList from "./PieceList";
+import { PieceList } from "@mappuzzle/core";
 import { PieceProps } from "../models/Interfaces";
 import { useTranslation } from "react-i18next";
 import { getTranslation } from "../lib/Utils";

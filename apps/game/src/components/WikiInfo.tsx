@@ -4,12 +4,12 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import "./WikiInfo.css";
-import { changeLanguage, getWikiInfo } from "../services/wikiService";
+import { changeLanguage, getWikiInfo } from "@mappuzzle/core";
 import { AlertModel, WikiInfoPiece } from "../models/Interfaces";
-import LoadingDialog from "./LoadingDialog";
+import { LoadingDialog } from "@mappuzzle/core";
 import { setCookie } from "react-simple-cookie-store";
-import { ConfigService } from "../services/configService";
-import AlertMessage from "./AlertMessage";
+import { ConfigService } from "@mappuzzle/core";
+import { AlertMessage } from "@mappuzzle/core";
 import LangSelector from "./LangSelector";
 import { Wikipedia, Check } from "react-bootstrap-icons";
 
@@ -19,7 +19,7 @@ import {
   cleanWikiComment,
   getLang,
 } from "../lib/Utils";
-import { PuzzleService } from "../services/puzzleService";
+import { PuzzleService } from "@mappuzzle/core";
 import "../i18n/config";
 import { useTranslation } from "react-i18next";
 
@@ -177,7 +177,14 @@ function WikiInfo({
     setShowAlert(false);
   };
 
-  if (loading) return <LoadingDialog show={loading} delay={1000} />;
+  if (loading)
+    return (
+      <LoadingDialog
+        show={loading}
+        delay={1000}
+        title={t("common.loading")}
+      />
+    );
   const LangSelectorContainer = !ConfigService.langWikiSelector ? (
     ""
   ) : (

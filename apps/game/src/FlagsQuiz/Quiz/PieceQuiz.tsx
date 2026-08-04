@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unknown-property */
 import React, { useEffect, useState } from "react";
 import { PieceProps } from "../../models/Interfaces";
-import { PuzzleService } from "../../services/puzzleService";
+import { PuzzleService } from "@mappuzzle/core";
 import Button from "react-bootstrap/Button";
 import { Canvas } from "@react-three/fiber";
 import { t } from "i18next";
@@ -11,7 +11,7 @@ import "../styles/responsive.css";
 import Timer from "../../components/Timer";
 import * as turf from "@turf/turf";
 import { calculateDistanceFromEcuador } from "../../lib/Utils";
-import { ConfigService } from "../../services/configService";
+import { ConfigService } from "@mappuzzle/core";
 import FlagSelector from "./FlagSelector";
 
 interface PieceQuizProps {

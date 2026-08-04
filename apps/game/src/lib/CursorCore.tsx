@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import type { CustomCentroids } from "@mappuzzle/shared";
 import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
-import { pieceBox, pieceSilhouette } from "./pieceSilhouette";
+import { pieceBox, pieceSilhouette } from "@mappuzzle/core";
 import { setColor } from "./Utils";
 import "./CursorCore.css";
 /**

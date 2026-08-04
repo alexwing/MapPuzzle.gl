@@ -18,15 +18,9 @@ import { Col, Row } from "react-bootstrap";
 import { PieceEvent, PieceProps, ViewStateEvent } from "./models/Interfaces";
 import WikiInfo from "./components/WikiInfo";
 import { ViewState } from "react-map-gl";
-import LoadingDialog from "./components/LoadingDialog";
-import { PuzzleService } from "./services/puzzleService";
-import { ConfigService } from "./services/configService";
-/**
- * The editor is authoring tooling, not part of the game: loaded on demand so
- * Vite keeps it in its own chunk and players never download it. It is being
- * moved out to its own app; until then this is the boundary.
- */
-const EditorDialog = React.lazy(() => import("./editor/editorDialog"));
+import { LoadingDialog } from "@mappuzzle/core";
+import { PuzzleService } from "@mappuzzle/core";
+import { ConfigService } from "@mappuzzle/core";
 import type { CustomCentroids } from "@mappuzzle/shared";
 import type { CustomWiki } from "@mappuzzle/shared";
 import type { CustomTranslations } from "@mappuzzle/shared";
@@ -55,12 +49,11 @@ function MapPuzzle(): JSX.Element {
   const [winner, setWinner] = useState(false);
   const [tooltipValue, setTooltipValue] = useState("");
   const [showWikiInfo, setShowWikiInfo] = useState(false);
-  const [showEditor, setShowEditor] = useState(false);
   const [wikiInfoUrl, setWikiInfoUrl] = useState("");
   const [wikiInfoId, setWikiInfoId] = useState(-1);
   const [viewState, setViewState] = useState({} as ViewState);
   const [lang, setLang] = useState("");
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   /*
   * Load the game on start
@@ -372,9 +365,6 @@ function MapPuzzle(): JSX.Element {
     }
   };
 
-  const onShowEditorHandler = (val: boolean) => {
-    setShowEditor(val);
-  };
 
   /* Piece is selected on list */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -458,7 +448,11 @@ function MapPuzzle(): JSX.Element {
       <ReactFullscreeen>
         {({ onToggle }) => (
           <div>
-            <LoadingDialog show={loading} delay={1000} />
+            <LoadingDialog
+              show={loading}
+              delay={1000}
+              title={t("common.loading")}
+            />
             <DeckMap
               onClickMap={onClickMapHandler}
               onHoverMap={onHoverMapHandler}
@@ -473,7 +467,6 @@ function MapPuzzle(): JSX.Element {
               onResetGame={onResetGameHandler}
               onFullScreen={onToggle}
               onRefocus={onRefocusMapHandler}
-              onShowEditor={onShowEditorHandler}
               onLangChange={onLangChangeHandler}
               puzzleSelected={puzzleSelected}
             />
@@ -531,16 +524,6 @@ function MapPuzzle(): JSX.Element {
               }
               puzzleSelected={puzzleSelected}
             />
-            {ConfigService.editorEnabled && showEditor && (
-              <React.Suspense fallback={null}>
-                <EditorDialog
-                  show={showEditor}
-                  onHide={onShowEditorHandler}
-                  puzzleSelected={puzzleSelectedData}
-                  pieces={pieces}
-                />
-              </React.Suspense>
-            )}
             <Donate/>
           </div>
         )}

@@ -6,7 +6,7 @@ import { Button, Col, Form, Modal, NavDropdown, Row } from "react-bootstrap";
 import * as Icon from "react-bootstrap-icons";
 import "./PuzzleSelector.css";
 import { Regions, PuzzleSearchResults } from "../../models/Interfaces";
-import { PuzzleService } from "../../services/puzzleService";
+import { PuzzleService } from "@mappuzzle/core";
 import { useTranslation } from "react-i18next";
 
 import BootstrapTable, {

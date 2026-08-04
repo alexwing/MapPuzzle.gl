@@ -19,14 +19,14 @@ import {
   calculateZoom,
 } from "../lib/Utils";
 import GameTime from "../lib/GameTime";
-import { PuzzleService } from "../services/puzzleService";
+import { PuzzleService } from "@mappuzzle/core";
 import { useTranslation } from "react-i18next";
 import type { CustomTranslations } from "@mappuzzle/shared";
-import LoadingDialog from "../components/LoadingDialog";
+import { LoadingDialog } from "@mappuzzle/core";
 import * as turf from "@turf/turf";
 import PieceQuiz from "./Quiz/PieceQuiz";
 import YouWin from "../components/YouWin";
-import { ConfigService } from "../services/configService";
+import { ConfigService } from "@mappuzzle/core";
 import Tooltip from "./lib/Tooltip";
 import type { CustomWiki } from "@mappuzzle/shared";
 import WikiInfo from "../components/WikiInfo";
@@ -46,7 +46,7 @@ function FlagQuiz(): JSX.Element {
   const [founds, setFounds] = useState([] as Array<number>);
   const [foundsIds, setFoundsIds] = useState([] as Array<number>);
   const [lang, setLang] = useState("");
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [fails, setFails] = useState([] as Array<number>);
   const [corrects, setCorrects] = useState([] as Array<number>);
   const [questions, setQuestions] = useState([] as Array<PieceProps>);
@@ -534,7 +534,11 @@ function FlagQuiz(): JSX.Element {
               onLangChange={onLangChangeHandler}
               puzzleSelected={puzzleSelected}
             />
-            <LoadingDialog show={loading} delay={1000} />
+            <LoadingDialog
+              show={loading}
+              delay={1000}
+              title={t("common.loading")}
+            />
             <div className="quiz-container">
               {!winner && !loading && (
                 <div className="piece-quiz">

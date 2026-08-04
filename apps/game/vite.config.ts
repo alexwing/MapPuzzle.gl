@@ -164,6 +164,8 @@ export default defineConfig({
         repoRoot,
         "packages/shared/src/index.d.ts"
       ),
+      // Data access, shared UI and geometry, also consumed as source.
+      "@mappuzzle/core": path.join(repoRoot, "packages/core/src/index.ts"),
     },
   },
   optimizeDeps: {
