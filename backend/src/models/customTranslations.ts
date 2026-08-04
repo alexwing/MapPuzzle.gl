@@ -3,9 +3,10 @@
 */
 
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import type { CustomTranslations as CustomTranslationsRow } from '@mappuzzle/shared';
 
 @Entity()
-export default class CustomTranslations {
+export default class CustomTranslations implements CustomTranslationsRow {
 
     @PrimaryGeneratedColumn()
     id!: number;

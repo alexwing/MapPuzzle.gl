@@ -5,9 +5,10 @@
 */
 
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import type { Languages as LanguagesRow } from '@mappuzzle/shared';
 
 @Entity()
-export default class Languages  {
+export default class Languages implements LanguagesRow {
 
     @Column({ type: 'varchar', length: 10, nullable: false })
     @PrimaryGeneratedColumn()

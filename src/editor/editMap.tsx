@@ -8,8 +8,8 @@ import {
   NavDropdown,
   Row,
 } from "react-bootstrap";
-import Puzzles from "../../backend/src/models/puzzles";
-import Countries from "../../backend/src/models/countries";
+import type { Puzzles } from "@mappuzzle/shared";
+import type { Countries } from "@mappuzzle/shared";
 import AlertMessage from "../components/AlertMessage";
 import LoadingDialog from "../components/LoadingDialog";
 import { AlertModel, FlagsIcons, PieceProps } from "../models/Interfaces";

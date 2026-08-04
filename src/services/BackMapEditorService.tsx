@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConfigService } from "./configService";
-import Puzzles from "../../backend/src/models/puzzles";
+import type { Puzzles } from "@mappuzzle/shared";
 import { PieceProps } from "../models/Interfaces";
 import { PuzzleService } from "./puzzleService";
 

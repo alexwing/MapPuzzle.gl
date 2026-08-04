@@ -7,7 +7,7 @@ import LoadingDialog from "../components/LoadingDialog";
 import PieceList from "../components/PieceList";
 import { AlertModel, PieceProps } from "../models/Interfaces";
 import EditMap from "./editMap";
-import Puzzles from "../../backend/src/models/puzzles";
+import type { Puzzles } from "@mappuzzle/shared";
 import { Tab, Tabs } from "react-bootstrap";
 import EditPiece from "./editPiece";
 import "./editorDialog.css";

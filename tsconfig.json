@@ -18,13 +18,17 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "experimentalDecorators": true,
     "noEmit": true,
-    "types": ["vite/client", "vite-plugin-pwa/client"],
-    "jsx": "react-jsx"
+    "types": ["node", "vite/client", "vite-plugin-pwa/client"],
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@mappuzzle/shared": ["packages/shared/src/index.d.ts"]
+    }
   },
   "include": [
     "src",
+    "packages/shared/src",
     "vite.config.ts"
   ]
 }

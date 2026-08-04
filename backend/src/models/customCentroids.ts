@@ -3,9 +3,10 @@
 */
 
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import type { CustomCentroids as CustomCentroidsRow } from '@mappuzzle/shared';
 
 @Entity()
-export default class CustomCentroids {
+export default class CustomCentroids implements CustomCentroidsRow {
 
     @PrimaryGeneratedColumn()
     id!: number;

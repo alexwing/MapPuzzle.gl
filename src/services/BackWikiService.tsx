@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConfigService } from "./configService";
-import CustomTranslations from "../../backend/src/models/customTranslations";
-import Languages from "../../backend/src/models/languages";
+import type { CustomTranslations } from "@mappuzzle/shared";
+import type { Languages } from "@mappuzzle/shared";
 import { PieceProps, WikiInfoLang, WikiInfoPiece } from "../models/Interfaces";
 import { getWikiInfo } from "./wikiService";
 import { getWikiSimple } from "../lib/Utils";

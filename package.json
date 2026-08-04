@@ -44,6 +44,9 @@
     "sql.js-httpvfs": "^0.8.12",
     "three": "^0.164.1"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "vite",
     "pro": "vite --mode production",
@@ -53,7 +56,8 @@
     "build-php": "vite build --mode phpbackend",
     "preview": "vite preview",
     "eslint:fix": "yarn run eslint --fix",
-    "typecheck": "tsc --noEmit --strict --jsx react-jsx"
+    "typecheck": "tsc --noEmit --strict --jsx react-jsx",
+    "typecheck:backend": "tsc -p backend/tsconfig.build.json --noEmit"
   },
   "browserslist": {
     "production": [

@@ -1,3 +1,5 @@
+// Unprefixed on purpose: @types/node here is v15, which predates "node:".
+import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
@@ -42,6 +44,11 @@ export default defineConfig({
       // Vite externalize it (which broke EventEmitter -> "events.default is
       // not a constructor" when opening the puzzle selector).
       events: "events",
+      // Contracts shared with the backend. Resolved to the source so there is
+      // no build step; mirrored by "paths" in tsconfig.json.
+      "@mappuzzle/shared": fileURLToPath(
+        new URL("./packages/shared/src/index.d.ts", import.meta.url)
+      ),
     },
   },
   optimizeDeps: {

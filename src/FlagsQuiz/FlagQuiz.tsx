@@ -9,7 +9,7 @@ import { FlyToInterpolator } from "react-map-gl";
 import { PieceEvent, PieceProps } from "../models/Interfaces";
 import ReactFullscreeen from "react-easyfullscreen";
 import MenuTop from "./MenuTop/MenuTop";
-import Puzzles from "../../backend/src/models/puzzles";
+import type { Puzzles } from "@mappuzzle/shared";
 import {
   getLang,
   Jsondb,
@@ -21,16 +21,16 @@ import {
 import GameTime from "../lib/GameTime";
 import { PuzzleService } from "../services/puzzleService";
 import { useTranslation } from "react-i18next";
-import CustomTranslations from "../../backend/src/models/customTranslations";
+import type { CustomTranslations } from "@mappuzzle/shared";
 import LoadingDialog from "../components/LoadingDialog";
 import * as turf from "@turf/turf";
 import PieceQuiz from "./Quiz/PieceQuiz";
 import YouWin from "../components/YouWin";
 import { ConfigService } from "../services/configService";
 import Tooltip from "./lib/Tooltip";
-import CustomWiki from "../../backend/src/models/customWiki";
+import type { CustomWiki } from "@mappuzzle/shared";
 import WikiInfo from "../components/WikiInfo";
-import ViewState from "../../backend/src/models/viewState";
+import type { ViewState } from "@mappuzzle/shared";
 import Donate from "../components/Donate";
 
 function FlagQuiz(): JSX.Element {

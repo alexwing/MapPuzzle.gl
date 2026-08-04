@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import CustomCentroids from "../../backend/src/models/customCentroids";
+import type { CustomCentroids } from "@mappuzzle/shared";
 import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
 import { pieceBox, pieceSilhouette } from "./pieceSilhouette";

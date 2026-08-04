@@ -5,7 +5,7 @@ import PuzzleOptions from "./PuzzleOptions";
 import { WikiInfoLang } from "../../models/Interfaces";
 import { PuzzleService } from "../../services/puzzleService";
 import { setCookie } from "react-simple-cookie-store";
-import Languages from "../../../backend/src/models/languages";
+import type { Languages } from "@mappuzzle/shared";
 import { ConfigService } from "../../services/configService";
 import { getCurrentLang, languagesToWikiInfoLang } from "../../lib/Utils";
 import { Button, Nav } from "react-bootstrap";

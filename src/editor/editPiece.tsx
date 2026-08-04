@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Form, InputGroup, Nav, Row, Tab } from "react-bootstrap";
-import CustomCentroids from "../../backend/src/models/customCentroids";
-import CustomWiki from "../../backend/src/models/customWiki";
+import type { CustomCentroids } from "@mappuzzle/shared";
+import type { CustomWiki } from "@mappuzzle/shared";
 import AlertMessage from "../components/AlertMessage";
 import { getWikiSimple } from "../lib/Utils";
 import { AlertModel, PieceProps } from "../models/Interfaces";

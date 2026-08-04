@@ -2,7 +2,7 @@ import React from "react";
 import IsDevice from "./helpers/isDevice";
 import CursorCore from "./CursorCore";
 import { PieceProps } from "../models/Interfaces";
-import CustomCentroids from "../../backend/src/models/customCentroids";
+import type { CustomCentroids } from "@mappuzzle/shared";
 
 /**
  * AnimatedCursor

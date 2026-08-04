@@ -4,6 +4,10 @@
       "declaration": false,
       "resolveJsonModule": true,
       "baseUrl": ".",
+      "paths": {
+        "@mappuzzle/shared": ["../packages/shared/src/index.d.ts"]
+      },
+      "rootDir": "./src",
       "outDir": "./build",
       "strict": true,
       "allowSyntheticDefaultImports": true,

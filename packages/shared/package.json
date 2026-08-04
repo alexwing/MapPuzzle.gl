@@ -1,0 +1,13 @@
+{
+  "name": "@mappuzzle/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Type-only contracts shared by the game client, the editor client and the backend",
+  "license": "MIT",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts"
+    }
+  }
+}

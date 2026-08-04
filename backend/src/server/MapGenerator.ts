@@ -2,7 +2,7 @@ import { Pool, ClientConfig } from "pg";
 import { exec } from "child_process";
 import fs from "fs";
 import path from "path";
-import { MapGeneratorModel } from "../../../src/models/Interfaces";
+import type { MapGeneratorModel } from "@mappuzzle/shared";
 import ViewState from "../models/viewState";
 
 

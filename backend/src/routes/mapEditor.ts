@@ -1,4 +1,4 @@
-import { FlagsIcons, PieceProps } from "../../../src/models/Interfaces";
+import type { FlagsIcons, PieceProps } from "@mappuzzle/shared";
 import express from "express";
 import Puzzles from "../models/puzzles";
 import { connection } from "../server/database";

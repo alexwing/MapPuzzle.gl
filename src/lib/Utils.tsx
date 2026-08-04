@@ -1,10 +1,10 @@
 import GameTime from "../lib/GameTime";
 import React from "react";
 import { ViewState } from "react-map-gl";
-import CustomWiki from "../../backend/src/models/customWiki";
+import type { CustomWiki } from "@mappuzzle/shared";
 import { PieceProps, WikiInfoLang } from "../models/Interfaces";
 import { getCookie } from "react-simple-cookie-store";
-import Languages from "../../backend/src/models/languages";
+import type { Languages } from "@mappuzzle/shared";
 import { ConfigService } from "../services/configService";
 import { TFunction } from "i18next";
 import { SqlValue } from "sql.js";

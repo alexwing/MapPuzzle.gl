@@ -1,6 +1,6 @@
 import React from "react";
 import Table from "react-bootstrap/Table";
-import CustomTranslations from "../../backend/src/models/customTranslations";
+import type { CustomTranslations } from "@mappuzzle/shared";
 
 interface ErrorListProps {
   customTranslations: CustomTranslations[];

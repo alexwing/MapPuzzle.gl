@@ -3,11 +3,11 @@
 */
 
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Regions } from '../../../src/models/Interfaces';
+import type { Puzzles as PuzzleRow } from '@mappuzzle/shared';
 import ViewState from './viewState';
 
 @Entity()
-export default class Puzzles {
+export default class Puzzles implements PuzzleRow {
     @PrimaryGeneratedColumn('increment')
     id!: number
     
@@ -39,8 +39,6 @@ export default class Puzzles {
     
     @Column({ name: 'enableflags', type: 'boolean', nullable: false , default: true})
     enableFlags?: boolean;
-
-    region!: Regions;
 }
 
 

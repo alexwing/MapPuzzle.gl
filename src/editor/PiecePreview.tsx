@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import CustomCentroids from "../../backend/src/models/customCentroids";
+import type { CustomCentroids } from "@mappuzzle/shared";
 import { pieceSilhouette } from "../lib/pieceSilhouette";
 import { setColor } from "../lib/Utils";
 import { PieceProps } from "../models/Interfaces";

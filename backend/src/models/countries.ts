@@ -4,9 +4,10 @@
 
 
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import type { Countries as CountriesRow } from '@mappuzzle/shared';
 
 @Entity()
-export default class Countries {
+export default class Countries implements CountriesRow {
     @PrimaryGeneratedColumn()
     countrycode!: number;
 

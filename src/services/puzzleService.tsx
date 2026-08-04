@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { query } from "../lib/db/dbFactory";
 import { QueryExecResult } from "sql.js";
-import Puzzles from "../../backend/src/models/puzzles";
-import CustomCentroids from "../../backend/src/models/customCentroids";
-import CustomWiki from "../../backend/src/models/customWiki";
-import Languages from "../../backend/src/models/languages";
+import type { Puzzles } from "@mappuzzle/shared";
+import type { CustomCentroids } from "@mappuzzle/shared";
+import type { CustomWiki } from "@mappuzzle/shared";
+import type { Languages } from "@mappuzzle/shared";
 import { PuzzleSearchResults, Regions } from "../models/Interfaces";
 import {
   mapResultToCustomCentroids,
@@ -15,7 +15,7 @@ import {
   mapResultToPuzzleSearchResults,
 } from "../lib/mappings/modelMappers";
 import { securizeTextParameter } from "../lib/Commons";
-import CustomTranslations from "../../backend/src/models/customTranslations";
+import type { CustomTranslations } from "@mappuzzle/shared";
 import { ConfigService } from "./configService";
 
 export class PuzzleService {

@@ -1,4 +1,4 @@
-import { PieceProps } from "../../../src/models/Interfaces";
+import type { PieceProps } from "@mappuzzle/shared";
 import express from "express";
 import { connection } from "../server/database";
 import CustomTranslations from "../models/customTranslations";

@@ -1,4 +1,4 @@
-import { MapGeneratorModel } from "../../../src/models/Interfaces";
+import type { MapGeneratorModel } from "@mappuzzle/shared";
 import express, { Request, Response } from "express";
 import Puzzles from "../models/puzzles";
 import { connection } from "../server/database";

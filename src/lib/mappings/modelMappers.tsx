@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueryExecResult, SqlValue } from "sql.js";
-import CustomCentroids from "../../../backend/src/models/customCentroids";
-import CustomTranslations from "../../../backend/src/models/customTranslations";
-import CustomWiki from "../../../backend/src/models/customWiki";
-import Languages from "../../../backend/src/models/languages";
-import Puzzles from "../../../backend/src/models/puzzles";
+import type { CustomCentroids } from "@mappuzzle/shared";
+import type { CustomTranslations } from "@mappuzzle/shared";
+import type { CustomWiki } from "@mappuzzle/shared";
+import type { Languages } from "@mappuzzle/shared";
+import type { Puzzles } from "@mappuzzle/shared";
 import {
   PuzzleSearchResults,
   WikiInfoLang,

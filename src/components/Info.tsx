@@ -26,7 +26,7 @@ import {
   TelegramIcon,
 } from "react-share";
 import { PuzzleService } from "../services/puzzleService";
-import Puzzles from "../../backend/src/models/puzzles";
+import type { Puzzles } from "@mappuzzle/shared";
 import Privacy from "./Privacy";
 //to function hooks
 

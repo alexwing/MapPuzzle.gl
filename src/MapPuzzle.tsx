@@ -22,10 +22,10 @@ import LoadingDialog from "./components/LoadingDialog";
 import { PuzzleService } from "./services/puzzleService";
 import { ConfigService } from "./services/configService";
 import EditorDialog from "./editor/editorDialog";
-import CustomCentroids from "../backend/src/models/customCentroids";
-import CustomWiki from "../backend/src/models/customWiki";
-import CustomTranslations from "../backend/src/models/customTranslations";
-import Puzzles from "../backend/src/models/puzzles";
+import type { CustomCentroids } from "@mappuzzle/shared";
+import type { CustomWiki } from "@mappuzzle/shared";
+import type { CustomTranslations } from "@mappuzzle/shared";
+import type { Puzzles } from "@mappuzzle/shared";
 import { useTranslation } from "react-i18next";
 import Donate from "./components/Donate";
 
