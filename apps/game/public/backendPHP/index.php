@@ -21,9 +21,16 @@ declare(strict_types=1);
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 
+/**
+ * Every hostname the game is served from. game.mappuzzle.xyz shares this
+ * document root, and VITE_BACKEND_URL points every host at mappuzzle.xyz, so
+ * requests from it are cross-origin and it has to be listed: leaving it out
+ * breaks that hostname, which the previous `*` header happened to allow.
+ */
 const ALLOWED_ORIGINS = [
     'https://mappuzzle.xyz',
     'https://www.mappuzzle.xyz',
+    'https://game.mappuzzle.xyz',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
 ];

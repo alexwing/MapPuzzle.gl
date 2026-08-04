@@ -61,7 +61,8 @@
     "typecheck:editor": "tsc -p apps/editor/tsconfig.json",
     "typecheck:backend": "tsc -p apps/backend/tsconfig.build.json --noEmit",
     "publish-db": "node scripts/publish-db.mjs",
-    "deploy": "node scripts/deploy.mjs"
+    "deploy": "node scripts/deploy.mjs",
+    "deploy:app": "node scripts/deploy.mjs --only=app"
   },
   "browserslist": {
     "production": [
