@@ -5,7 +5,7 @@
       "resolveJsonModule": true,
       "baseUrl": ".",
       "paths": {
-        "@mappuzzle/shared": ["../packages/shared/src/index.d.ts"]
+        "@mappuzzle/shared": ["../../packages/shared/src/index.d.ts"]
       },
       "rootDir": "./src",
       "outDir": "./build",

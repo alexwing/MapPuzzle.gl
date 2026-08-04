@@ -48,16 +48,16 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "vite",
-    "pro": "vite --mode production",
-    "dev-php-backend": "vite --mode devphpbackend",
-    "pro-php-backend": "vite --mode phpbackend",
-    "build": "vite build",
-    "build-php": "vite build --mode phpbackend",
-    "preview": "vite preview",
+    "dev": "vite --config apps/game/vite.config.ts",
+    "pro": "vite --config apps/game/vite.config.ts --mode production",
+    "dev-php-backend": "vite --config apps/game/vite.config.ts --mode devphpbackend",
+    "pro-php-backend": "vite --config apps/game/vite.config.ts --mode phpbackend",
+    "build": "vite build --config apps/game/vite.config.ts",
+    "build-php": "vite build --config apps/game/vite.config.ts --mode phpbackend",
+    "preview": "vite preview --config apps/game/vite.config.ts",
     "eslint:fix": "yarn run eslint --fix",
-    "typecheck": "tsc --noEmit --strict --jsx react-jsx",
-    "typecheck:backend": "tsc -p backend/tsconfig.build.json --noEmit"
+    "typecheck": "tsc -p apps/game/tsconfig.json",
+    "typecheck:backend": "tsc -p apps/backend/tsconfig.build.json --noEmit"
   },
   "browserslist": {
     "production": [
