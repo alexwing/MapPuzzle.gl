@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import type { MapGeneratorModel } from "@mappuzzle/shared";
 import ViewState from "../models/viewState";
+import { TEMP_DIR, ensureDir, mapsDir } from "../config/paths";
 
 
 export class MapGenerator {
@@ -64,14 +65,14 @@ export class MapGenerator {
       //execute query
       const res = await client.query(query);
 
-      //delete file geojson in path `../../../public/maps/${data.fileJson}.geojson` if exist
-      if (fs.existsSync(path.join(__dirname, `../../../public/maps/${data.fileJson}.geojson`))) {
-        fs.unlinkSync(path.join(__dirname, `../../../public/maps/${data.fileJson}.geojson`));
+      const geojsonPath = path.join(mapsDir(), `${data.fileJson}.geojson`);
+      ensureDir(mapsDir());
+      if (fs.existsSync(geojsonPath)) {
+        fs.unlinkSync(geojsonPath);
       }
 
-      //write file geojson in path `../../../public/maps/${data.fileJson}.geojson`
       fs.writeFile(
-        path.join(__dirname, `../../../public/maps/${data.fileJson}.geojson`),
+        geojsonPath,
         // @ts-ignore
         JSON.stringify(res.rows[0].jsonb_build_object),
         function (err) {
@@ -174,7 +175,7 @@ export class MapGenerator {
     //to temp folder
     command = command.replace(
       "[sqlfile]",
-      path.join(__dirname, `../../../temp/` + table + `.sql`)
+      path.join(TEMP_DIR, table + ".sql")
     );
 
     exec(command, async (error, stdout, stderr) => {
@@ -208,7 +209,7 @@ export class MapGenerator {
       //to tempDir folder with table name .sql
       commandSql = commandSql.replace(
         "[sqlfile]",
-        path.join(__dirname, `../../../temp/` + table + `.sql`)
+        path.join(TEMP_DIR, table + ".sql")
       );
 
       exec(commandSql, (error, stdout, stderr) => {
@@ -222,8 +223,7 @@ export class MapGenerator {
         }
         console.log(`stdout: ${stdout}`);
         //delete temp folder
-        const tempDir = path.join(__dirname, `../../../temp`);
-        fs.rmdirSync(tempDir, { recursive: true });
+        fs.rmdirSync(TEMP_DIR, { recursive: true });
       });
     });
   }

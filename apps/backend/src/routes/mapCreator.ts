@@ -4,6 +4,7 @@ import Puzzles from "../models/puzzles";
 import { connection } from "../server/database";
 import { MapGenerator } from "../server/MapGenerator";
 import path from "path";
+import { TEMP_DIR } from "../config/paths";
 import * as fs from "fs";
 
 import AdmZip from "adm-zip";
@@ -36,7 +37,7 @@ mapCreator.post("/importShapefile", async (req: Request, res: Response) => {
     //unzip file in temp folder
     // @ts-ignore
     const zip = new AdmZip(file.data);
-    const tempDir = path.join(__dirname, `../../../temp`);
+    const tempDir = TEMP_DIR;
     //delete temp folder if exists
     if (fs.existsSync(tempDir)) {
       fs.rmdirSync(tempDir, { recursive: true });

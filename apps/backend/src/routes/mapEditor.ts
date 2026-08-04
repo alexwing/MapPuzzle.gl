@@ -9,7 +9,7 @@ import { SitemapStream, streamToPromise } from "sitemap";
 import { Readable } from "stream";
 import * as fs from "fs";
 import ViewState from "../models/viewState";
-import path from "path";
+import { flagsDir, sitemapPath } from "../config/paths";
 
 // eslint-disable-next-line new-cap
 const mapEditor = express.Router();
@@ -90,8 +90,8 @@ mapEditor.get("/getFlags", async (_req, res) => {
       name: "ASC",
     },
   });
-  //find flags icons in public folder flags and compare filename with country alpha2
-  const flagsPath = path.join(__dirname, `../../../public/flags`);
+  //find flags icons in the assets folder and compare filename with country alpha2
+  const flagsPath = flagsDir();
   const flags = [] as FlagsIcons[];
   const flagsFiles = fs.readdirSync(flagsPath);
   flagsFiles.forEach((flag) => {
@@ -245,7 +245,7 @@ mapEditor.get("/generateSitemap", async (_req, res) => {
   res.send(sitemap);
 
   //save to disk in ../public/sitemap.xml
-  fs.writeFile("../public/sitemap.xml", sitemap, function (err: any) {
+  fs.writeFile(sitemapPath(), sitemap, function (err: any) {
     if (err) return console.log(err);
     console.log("sitemap.xml written");
   });

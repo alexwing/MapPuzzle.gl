@@ -5,6 +5,7 @@ import CustomTranslations from "../models/customTranslations";
 import Languages from "../models/languages";
 import fetch from "node-fetch";
 import path from "path";
+import { customFlagsDir, ensureDir } from "../config/paths";
 import * as fs from "fs";
 import sharp from "sharp";
 import CustomWiki from "../models/customWiki";
@@ -116,8 +117,8 @@ wikiImport.post("/generateFlags", async (req, res) => {
         }
 
         const filePathPiece = path.join(
-          __dirname,
-          `../../../public/customFlags/${id}/${piece.properties.cartodb_id}`
+          customFlagsDir(id),
+          String(piece.properties.cartodb_id)
         );
         //if not exist as PNG or SVG
         if (
@@ -202,10 +203,7 @@ wikiImport.post("/generateFlags", async (req, res) => {
                   //get file extension
                   const ext = urlFlagImage.split(".").pop();
                   const fileName = `${piece.properties.cartodb_id}.${ext}`;
-                  const filePath = path.join(
-                    __dirname,
-                    `../../../public/customFlags/${id}/${fileName}`
-                  );
+                  const filePath = path.join(customFlagsDir(id), fileName);
                   console.log("filePath:", filePath);
 
                   //if filePath not exists
@@ -217,13 +215,7 @@ wikiImport.post("/generateFlags", async (req, res) => {
                       },
                     });
                     //create subfolder if not exists
-                    const dir = path.join(
-                      __dirname,
-                      `../../../public/customFlags/${id}`
-                    );
-                    if (!fs.existsSync(dir)) {
-                      fs.mkdirSync(dir);
-                    }
+                    ensureDir(customFlagsDir(id));
                     const writer = fs.createWriteStream(filePath);
                     response.body.pipe(writer);
                     await new Promise((resolve, reject) => {
@@ -283,10 +275,8 @@ wikiImport.post("/generateThumbs", async (req, res) => {
     let error: any;
     try {
       //create subfolder if not exists
-      const dir = path.join(__dirname, `../../../public/customFlags/${id}`);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-      }
+      const dir = customFlagsDir(id);
+      ensureDir(dir);
       //if dir exists
       if (fs.existsSync(dir)) {
         //get all files in dir

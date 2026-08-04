@@ -10,15 +10,6 @@ const here = fileURLToPath(new URL(".", import.meta.url));
 const repoRoot = path.resolve(here, "../..");
 const dataDir = path.join(repoRoot, "data");
 
-/**
- * The map geometry, the flags and the SQLite database are produced by the
- * editor, not authored here, so they live in the repo's data/ directory instead
- * of this app's public/. The deployed site still serves them from its root, so
- * this plugin serves them from there in dev and copies them into the build.
- *
- * Kept in sync with ASSETS_DIR in apps/backend/.env, which is where the editor
- * writes them.
- */
 /** Recursive copy, since @types/node here predates fs.cpSync. */
 function copyRecursive(from: string, to: string): void {
   if (fs.statSync(from).isDirectory()) {
@@ -32,10 +23,20 @@ function copyRecursive(from: string, to: string): void {
   }
 }
 
+/**
+ * The map geometry, the flags, the sitemap and the SQLite database are produced
+ * by the editor, not authored here, so they live in the repo's data/ directory
+ * instead of this app's public/. The deployed site still serves them from its
+ * root, so this plugin serves them from there in dev and copies them into the
+ * build.
+ *
+ * The same directory is ASSETS_DIR in apps/backend/src/config/paths.ts, which
+ * is where the editor writes them.
+ */
 function serveDataDir(): Plugin {
   /** Everything under data/, addressed from the site root. */
   const entries = ["maps", "flags", "customFlags"];
-  const files = ["front.sqlite3.png"];
+  const files = ["front.sqlite3.png", "sitemap.xml"];
   const types: Record<string, string> = {
     ".geojson": "application/geo+json",
     ".json": "application/json",
