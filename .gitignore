@@ -16,6 +16,10 @@ node_modules
 # production
 /build
 
+# Deploy credentials. Never commit: this repository is public.
+.env.deploy
+.deploy-manifest.json
+
 # misc
 .DS_Store
 .env.local

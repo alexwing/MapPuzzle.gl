@@ -60,7 +60,8 @@
     "typecheck": "tsc -p apps/game/tsconfig.json",
     "typecheck:editor": "tsc -p apps/editor/tsconfig.json",
     "typecheck:backend": "tsc -p apps/backend/tsconfig.build.json --noEmit",
-    "publish-db": "node scripts/publish-db.mjs"
+    "publish-db": "node scripts/publish-db.mjs",
+    "deploy": "node scripts/deploy.mjs"
   },
   "browserslist": {
     "production": [
@@ -86,6 +87,7 @@
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "basic-ftp": "^6.2.0",
     "eslint": "^7.9.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.0",
