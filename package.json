@@ -57,7 +57,8 @@
     "preview": "vite preview --config apps/game/vite.config.ts",
     "eslint:fix": "yarn run eslint --fix",
     "typecheck": "tsc -p apps/game/tsconfig.json",
-    "typecheck:backend": "tsc -p apps/backend/tsconfig.build.json --noEmit"
+    "typecheck:backend": "tsc -p apps/backend/tsconfig.build.json --noEmit",
+    "publish-db": "node scripts/publish-db.mjs"
   },
   "browserslist": {
     "production": [
