@@ -27,6 +27,7 @@ mapCreator.post("/importShapefile", async (req: Request, res: Response) => {
 
   if (!req.files) return res.status(400).send("No files were uploaded.");
 
+  try {
   const file = req.files.file;
   //const name = req.body.name;
   // @ts-ignore
@@ -84,42 +85,51 @@ mapCreator.post("/importShapefile", async (req: Request, res: Response) => {
       success: true,
       msg: "Shapefile imported successfully",
     });
+    } else {
+      res.status(400).json({ success: false, msg: "Only .zip files are accepted" });
+    }
+  } catch (e) {
+    unavailable(res, "importShapefile", e);
   }
 });
+
+/**
+ * Answers with 503 and the reason instead of letting the rejection escape.
+ *
+ * Express 4 does not catch errors thrown from an async handler, so an
+ * unreachable PostgreSQL became an unhandled rejection that killed the process.
+ * These four routes are the only ones that need PostGIS.
+ */
+function unavailable(res: Response, action: string, e: unknown): void {
+  const message = e instanceof Error ? e.message : String(e);
+  console.error(`${action} failed: ${message}`);
+  res.status(503).json({ success: false, msg: message, data: null });
+}
 
 //gettables endpoint
 // @ts-ignore
 mapCreator.get("/getTables", async (req: Request, res: Response) => {
-  const mapGenerator = new MapGenerator();
-  const mapGeneratorResult = await mapGenerator.getTables().then((result: any) => {
-    return result;
-  });
-  console.log("mapGeneratorResult", mapGeneratorResult);
-  res.json({
-    success: true,
-    msg: "Tables retrieved successfully",
-    data: mapGeneratorResult,
-  });
+  try {
+    const data = await new MapGenerator().getTables();
+    res.json({ success: true, msg: "Tables retrieved successfully", data });
+  } catch (e) {
+    unavailable(res, "getTables", e);
+  }
 });
 
 //get all columns from table
 mapCreator.post("/getColumns", async (req: Request, res: Response) => {
-  const mapGenerator = new MapGenerator();
-  const mapGeneratorResult = await mapGenerator
-    .getColumns(req.body.table)
-    .then((result) => {
-      return result;
-    });
-  console.log("mapGeneratorResult", mapGeneratorResult);
-  res.json({
-    success: true,
-    msg: "Columns retrieved successfully",
-    data: mapGeneratorResult,
-  });
+  try {
+    const data = await new MapGenerator().getColumns(req.body.table);
+    res.json({ success: true, msg: "Columns retrieved successfully", data });
+  } catch (e) {
+    unavailable(res, "getColumns", e);
+  }
 });
 
 //generate geojson in public map folder
 mapCreator.post("/generateJson", async (req: Request, res: Response) => {
+  try {
   const mapGenerator = new MapGenerator();
   const mapGeneratorData = req.body as MapGeneratorModel;
   const mapGeneratorResult = await mapGenerator
@@ -181,12 +191,14 @@ mapCreator.post("/generateJson", async (req: Request, res: Response) => {
         });
       return result;
     });
-  console.log("mapGeneratorResult", mapGeneratorResult);
   res.json({
     success: true,
     msg: "Json generated successfully",
     data: mapGeneratorResult,
   });
+  } catch (e) {
+    unavailable(res, "generateJson", e);
+  }
 });
 
 export default mapCreator;

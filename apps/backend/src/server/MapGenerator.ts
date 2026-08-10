@@ -1,4 +1,4 @@
-import { Pool, ClientConfig } from "pg";
+import { Pool, ClientConfig, PoolClient } from "pg";
 import { exec } from "child_process";
 import fs from "fs";
 import path from "path";
@@ -7,10 +7,58 @@ import ViewState from "../models/viewState";
 import { TEMP_DIR, ensureDir, mapsDir } from "../config/paths";
 
 
+/**
+ * A readable reason from a connection failure. pg rejects with an AggregateError
+ * whose own message is empty, hiding the one detail that matters: it holds one
+ * error per address it tried, typically ECONNREFUSED for ::1 and for 127.0.0.1.
+ */
+function describe(e: unknown): string {
+  const inner = (e as { errors?: unknown[] })?.errors;
+  if (Array.isArray(inner) && inner.length > 0) {
+    const seen = new Set(
+      inner.map((x) => (x as Error)?.message ?? String(x)).filter(Boolean)
+    );
+    if (seen.size > 0) return `(${[...seen].join("; ")})`;
+  }
+  const message = e instanceof Error ? e.message : String(e);
+  return message ? `(${message})` : "";
+}
+
 export class MapGenerator {
   private clientConfig: ClientConfig;
 
   private pool: Pool;
+
+  /**
+   * Borrows a pooled client, runs the work, and always releases it.
+   *
+   * connect() used to sit outside the try in all five callers, so with
+   * PostgreSQL down its rejection was unhandled and took the whole API process
+   * with it: opening the editor's New Map tab, which lists the PostGIS tables,
+   * was enough to kill port 5000. The callers also swallowed query errors and
+   * returned undefined, which the routes reported as success.
+   */
+  private async withClient<T>(
+    run: (client: PoolClient) => Promise<T>
+  ): Promise<T> {
+    let client: PoolClient;
+    try {
+      client = await this.pool.connect();
+    } catch (e) {
+      const where = `${process.env.PGHOST}:${process.env.PGPORT}`;
+      throw new Error(
+        `Cannot reach PostgreSQL at ${where}. Creating maps needs PostgreSQL ` +
+          `with PostGIS running; everything else in the editor works without ` +
+          `it. ${describe(e)}`
+      );
+    }
+    try {
+      return await run(client);
+    } finally {
+      client.release();
+    }
+  }
+
   constructor() {
     this.clientConfig = {
       user: process.env.PGUSER,
@@ -24,8 +72,7 @@ export class MapGenerator {
   }
 
   public async generateJson(data: MapGeneratorModel): Promise<ViewState> {
-    const client = await this.pool.connect();
-    try {
+    await this.withClient(async (client) => {
       // The features carry geometry and metadata only. The piece silhouettes
       // used to be baked in here as `poly` (ST_AsSVG) plus a `box` viewBox,
       // which duplicated the geometry the client already loads for deck.gl and
@@ -71,27 +118,19 @@ export class MapGenerator {
         fs.unlinkSync(geojsonPath);
       }
 
-      fs.writeFile(
+      // Written synchronously: the callback used to return a ViewState that
+      // nothing received, and the route replied before the file existed.
+      fs.writeFileSync(
         geojsonPath,
         // @ts-ignore
-        JSON.stringify(res.rows[0].jsonb_build_object),
-        function (err) {
-          if (err) {
-            return { latitude: 0, longitude: 0, zoom: 0} as ViewState;
-          }
-          console.log("The file was saved!");
-        }
+        JSON.stringify(res.rows[0].jsonb_build_object)
       );
-      return await this.calcCenter(data.table);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      client.release();
-    }
-    return { latitude: 0, longitude: 0, zoom: 0} as ViewState;
+      console.log(`Wrote ${geojsonPath}`);
+    });
+    return this.calcCenter(data.table);
   }
   private async calcCenter(table: string): Promise<ViewState> {
-      const client = await this.pool.connect();
+    return this.withClient(async (client) => {
       let sql = `SELECT ST_X(ST_Centroid(ST_Extent(geom))) as lon, ST_Y(ST_Centroid(ST_Extent(geom))) as lat FROM public.[table]`;
       sql = sql.replace("[table]", table);
       const res = await client.query(sql);
@@ -99,7 +138,8 @@ export class MapGenerator {
       center.latitude = res.rows[0].lat;
       center.longitude = res.rows[0].lon;
       center.zoom = 5;
-      return center;      
+      return center;
+    });
   }
 
       
@@ -113,9 +153,8 @@ export class MapGenerator {
 
 
   //get all tables
-  public async getTables(): Promise<any> {
-    const client = await this.pool.connect();
-    try {
+  public async getTables(): Promise<string[]> {
+    return this.withClient(async (client) => {
       const res = await client.query(
         `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name`
       );
@@ -123,42 +162,28 @@ export class MapGenerator {
       //add empty table first
       tables.unshift("");
       return tables;
-    } catch (e) {
-      console.log(e);
-    } finally {
-      client.release();
-    }
+    });
   }
 
   //get all columns from table
-  public async getColumns(table: string): Promise<any> {
-    const client = await this.pool.connect();
-    let sql = `SELECT column_name FROM information_schema.columns WHERE table_name = '[table]'`;
-    sql = sql.replace("[table]", table);
-    try {
+  public async getColumns(table: string): Promise<string[]> {
+    return this.withClient(async (client) => {
+      let sql = `SELECT column_name FROM information_schema.columns WHERE table_name = '[table]'`;
+      sql = sql.replace("[table]", table);
       const res = await client.query(sql);
       const columns = res.rows.map((row) => row.column_name);
       //add empty column first
       columns.unshift("");
       return columns;
-    } catch (e) {
-      console.log(e);
-    } finally {
-      client.release();
-    }
+    });
   }
 
   //drop table if exist
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async dropTable(table: string): Promise<any> {
-    const client = await this.pool.connect();
-    try {
-      const res = await client.query(`DROP TABLE IF EXISTS public.${table}`);
-      return res;
-    } catch (e) {
-      console.log(e);
-    } finally {
-      client.release();
-    }
+    return this.withClient((client) =>
+      client.query(`DROP TABLE IF EXISTS public.${table}`)
+    );
   }
 
     

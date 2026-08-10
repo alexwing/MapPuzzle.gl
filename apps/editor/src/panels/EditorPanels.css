@@ -1,16 +1,7 @@
-.editor-dialog .modal-header {
-  background-color: goldenrod;
-}
-.editor-dialog .modal-body {
-  padding: 0.5rem 1rem;
-  overflow-y: auto;
-  min-height: calc(100vh - 250px);
-}
-.editor-dialog .modal-body p {
+/* The editor is the page now, not a dialog on top of the game, so the modal
+   rules that used to live here are gone. */
+.editor-panels p {
   margin-bottom: 0px;
-}
-.editor-dialog-backdrop.modal-backdrop.show {
-  opacity: 0.8;
 }
 .piece-preview {
   border: 1px solid #ccc;
@@ -76,9 +67,6 @@ iframe {
   max-height: calc(100vh - 19em);
 }
 
-.editor-dialog .modal-xl {
-  --bs-modal-width: 1365px;
-}
 .save-btn {
   margin-left: auto;
   height: 2em;

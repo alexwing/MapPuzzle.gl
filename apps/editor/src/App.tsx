@@ -10,7 +10,7 @@ import type {
   PieceProps,
   Puzzles,
 } from "@mappuzzle/shared";
-import EditorDialog from "./panels/editorDialog";
+import EditorPanels from "./panels/EditorPanels";
 
 /**
  * Shell of the map editor.
@@ -114,12 +114,7 @@ function App(): JSX.Element {
           </Alert>
         )}
         {puzzle && !loading && (
-          <EditorDialog
-            show
-            onHide={() => setPuzzle(null)}
-            puzzleSelected={puzzle}
-            pieces={pieces}
-          />
+          <EditorPanels puzzleSelected={puzzle} pieces={pieces} />
         )}
       </Container>
     </React.Fragment>

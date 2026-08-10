@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -11,27 +10,29 @@ import EditMap from "./editMap";
 import type { Puzzles } from "@mappuzzle/shared";
 import { Tab, Tabs } from "react-bootstrap";
 import EditPiece from "./editPiece";
-import "./editorDialog.css";
+import "./EditorPanels.css";
 import { AlertMessage } from "@mappuzzle/core";
 import { ConfigService } from "@mappuzzle/core";
 import NewMap from "./newMap";
 import { BackMapEditorService } from "../services/BackMapEditorService";
 
-interface EditorDialogProps {
-  show: boolean;
-  onHide: (val: boolean) => void;
+interface EditorPanelsProps {
   puzzleSelected: Puzzles;
   pieces: PieceProps[];
 }
 
-function EditorDialog({
-  show = false,
-  onHide,
+/**
+ * The editor's panels, rendered in the page.
+ *
+ * This was a modal, because the editor lived inside the game and had to sit on
+ * top of it. Now that it is the page, the dialog chrome only got in the way, so
+ * the show/onHide plumbing and the footer's Ok button are gone.
+ */
+function EditorPanels({
   puzzleSelected = {} as Puzzles,
   pieces = new Array<PieceProps>(),
-}: EditorDialogProps): JSX.Element | null {
+}: EditorPanelsProps): JSX.Element | null {
   const [loading, setLoading] = useState(false);
-  const [showIn, setShowIn] = useState(false);
   const [pieceSelected, setPieceSelected] = useState(-1);
   const [pieceSelectedData, setPieceSelectedData] = useState({} as PieceProps);
   const [showAlert, setShowAlert] = useState(false);
@@ -50,18 +51,6 @@ function EditorDialog({
     setShowAlert(false);
   };
 
-  //on load show modal
-  useEffect(() => {
-    setShowIn(show);
-  }, [show]);
-
-  //is showing modal
-  useEffect(() => {
-    if (showIn) {
-      setLoading(false);
-    }
-  }, [showIn, puzzleSelected]);
-
   /* Piece is selected on list */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onPieceSelectedHandler = async (val: any) => {
@@ -79,10 +68,6 @@ function EditorDialog({
       setPieceSelectedData(piece);
       setPieceSelected(pieceId);
     }
-  };
-
-  const handleClose = () => {
-    onHide(false);
   };
 
   const handleSiteMap = () => {
@@ -131,25 +116,21 @@ function EditorDialog({
   return !puzzleSelected ? null : (
     <React.Fragment>
       <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
-      <Modal
-        show={showIn}
-        size="xl"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-        onHide={handleClose}
-        className="editor-dialog"
-        backdropClassName="editor-dialog-backdrop"
-      >
-        <Modal.Header>
-          <Modal.Title id="contained-modal-title-vcenter">
-            {puzzleSelected.name}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <div className="editor-panels">
+        <div className="d-flex align-items-center justify-content-between mb-3">
+          <h4 className="mb-0">{puzzleSelected.name}</h4>
+          <Button variant="outline-secondary" onClick={handleSiteMap}>
+            Generate Sitemap
+          </Button>
+        </div>
+          {/* mountOnEnter so New Map only queries PostGIS when its tab is
+              opened: react-bootstrap renders every pane otherwise, and that
+              call used to bring the whole API down when PostGIS was off. */}
           <Tabs
             defaultActiveKey="pieces"
-            id="uncontrolled-tab-example"
+            id="editor-tabs"
             className="mb-3"
+            mountOnEnter
           >
             <Tab eventKey="newMap" title="New Map">
               <Row>
@@ -193,19 +174,8 @@ function EditorDialog({
               </Row>
             </Tab>
           </Tabs>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={handleSiteMap}
-            style={{ marginRight: "auto" }}
-          >
-            Generate Sitemap
-          </Button>
-          <Button onClick={handleClose}>Ok</Button>
-        </Modal.Footer>
-      </Modal>
+      </div>
     </React.Fragment>
   );
 }
-export default EditorDialog;
+export default EditorPanels;

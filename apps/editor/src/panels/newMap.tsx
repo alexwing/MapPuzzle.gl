@@ -32,7 +32,19 @@ function NewMap(): JSX.Element | null {
     const tables = await BackMapCreatorService.getTables();
     if (tables.data) {
       setTableList(tables.data);
+      return;
     }
+    // Creating maps is the one thing here that needs PostgreSQL with PostGIS.
+    // Without it the table list just came back empty and the form sat there
+    // looking broken, so say what is actually wrong.
+    setAlert({
+      title: "PostGIS not available",
+      message:
+        tables.msg ??
+        "Could not list the PostGIS tables. Creating maps needs PostgreSQL with PostGIS running; the rest of the editor works without it.",
+      type: "warning",
+    } as AlertModel);
+    setShowAlert(true);
   };
   //load tables at start
   useEffect(() => {
