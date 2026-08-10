@@ -135,6 +135,8 @@ function EditMap({
     job: (onProgress: (p: JobProgress) => void) => Promise<any>
   ) => {
     setProgress({ running: true, title, done: 0, total: 0, label: "starting…" });
+    // Otherwise the previous run's failures sit under a new run's summary.
+    setLangErrors([]);
     try {
       const res = await job((p) =>
         setProgress({ running: true, title, ...p })
@@ -145,8 +147,10 @@ function EditMap({
         type: res?.success === false ? "warning" : "success",
       } as AlertModel);
       setShowAlert(true);
-      if (res?.langErrors) setLangErrors(res.langErrors);
-      if (res?.error && Array.isArray(res.error)) setLangErrors(res.error);
+      // Both jobs report the pieces they could not resolve; wiki links puts them
+      // in `error` and translations in `langErrors`.
+      const unresolved = res?.langErrors ?? (Array.isArray(res?.error) ? res.error : null);
+      if (unresolved) setLangErrors(unresolved);
     } catch (e) {
       setAlert({
         title: `${title}: failed`,

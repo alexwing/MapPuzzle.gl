@@ -80,12 +80,14 @@ wikiImport.post("/generateTranslation", async (req, res) => {
               );
             });
         }
-        //if translation lang is active
+        // A piece Wikipedia had nothing for arrives under the pseudo-language
+        // "Error", carrying the piece's name. It is not a skipped language, so
+        // the two counts stay apart: counting it in both made one failed piece
+        // read as a skip *and* a failure.
         if (translation.lang === "Error") {
-          console.error("Error: " + JSON.stringify(translation));
+          console.error("No languages found for: " + translation.translation);
           langErrors.push(translation);
-        }
-        if (!activeLangs.find((lang) => lang.lang === translation.lang)) {
+        } else if (!activeLangs.find((lang) => lang.lang === translation.lang)) {
           inactive++;
         }
         if (activeLangs.find((lang) => lang.lang === translation.lang)) {
@@ -101,12 +103,19 @@ wikiImport.post("/generateTranslation", async (req, res) => {
       }
     }
   }
+  // The failures carry the piece's name in `translation`, put there by the
+  // client when Wikipedia returned no languages for it. Naming them beats a
+  // count: "1 pieces failed" left nowhere to start looking.
+  const failedNames = langErrors.map((l) => String(l.translation));
   progress.finish({
     success: langErrors.length === 0,
     msg:
       `${saved} translation${saved === 1 ? "" : "s"} saved` +
       (inactive > 0 ? `, ${inactive} skipped for inactive languages` : "") +
-      (langErrors.length > 0 ? `, ${langErrors.length} pieces failed` : ""),
+      (failedNames.length > 0
+        ? `, no languages found for ${failedNames.slice(0, 4).join(", ")}` +
+          (failedNames.length > 4 ? ` and ${failedNames.length - 4} more` : "")
+        : ""),
     langErrors: langErrors,
     counts: { saved, inactive, failed: langErrors.length },
   });
