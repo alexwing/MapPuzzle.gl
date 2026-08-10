@@ -12,6 +12,7 @@ import type {
 } from "@mappuzzle/shared";
 import EditorPanels from "./panels/EditorPanels";
 import NewMap from "./panels/newMap";
+import { BackMapEditorService } from "./services/BackMapEditorService";
 
 /**
  * Shell of the map editor.
@@ -33,6 +34,18 @@ function App(): JSX.Element {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [mode, setMode] = useState<Mode>("edit");
+  const [notice, setNotice] = useState("");
+
+  /**
+   * Rewrites sitemap.xml for the whole site, so it belongs here and not next to
+   * the open puzzle's name, where it used to sit taking the header's best spot.
+   */
+  const generateSitemap = () => {
+    setNotice("Generating sitemap…");
+    BackMapEditorService.generateSitemap()
+      .then(() => setNotice("sitemap.xml regenerated"))
+      .catch((e) => setNotice(`Could not generate the sitemap: ${String(e)}`));
+  };
 
   const loadPuzzles = () => {
     PuzzleService.getPuzzles()
@@ -106,6 +119,15 @@ function App(): JSX.Element {
             </Button>
           </ButtonGroup>
 
+          <Button
+            size="sm"
+            variant="outline-light"
+            className="ms-auto"
+            onClick={generateSitemap}
+          >
+            Generate sitemap
+          </Button>
+
           {mode === "edit" && (
             <Form.Select
               aria-label="Puzzle to edit"
@@ -129,6 +151,11 @@ function App(): JSX.Element {
 
       <Container fluid>
         {error && <Alert variant="danger">{error}</Alert>}
+        {notice && (
+          <Alert variant="info" dismissible onClose={() => setNotice("")}>
+            {notice}
+          </Alert>
+        )}
 
         {mode === "create" && (
           <React.Fragment>

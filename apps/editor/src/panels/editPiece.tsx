@@ -96,8 +96,8 @@ function EditPiece({
   };
 
   return !PieceEdited.id ? null : (
-    <Col xs={12} lg={12}>
-      <Form autoComplete="off">
+    <Col xs={12} lg={12} className="edit-piece">
+      <Form autoComplete="off" className="edit-piece-form">
         <AlertMessage
           show={showAlert}
           alertMessage={alert}
@@ -139,7 +139,7 @@ function EditPiece({
             </Form.Group>
           </Col>
         </Row>
-        <Row className="align-items-start">
+        <Row className="align-items-stretch edit-piece-body">
           <Col xs={12} lg={7}>
             <Form.Label>Grab point</Form.Label>
             <CentroidPicker
@@ -152,7 +152,7 @@ function EditPiece({
               }}
             />
           </Col>
-          <Col xs={12} lg={5}>
+          <Col xs={12} lg={5} className="d-flex flex-column">
             <div className="d-flex justify-content-end mb-2">
               <Button variant="primary" type="button" onClick={onSaveHandler}>
                 Save piece

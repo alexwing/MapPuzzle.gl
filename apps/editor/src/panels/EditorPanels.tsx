@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from "react";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
 import { LoadingDialog } from "@mappuzzle/core";
 import { PieceList } from "@mappuzzle/core";
 import type { PieceProps } from "@mappuzzle/shared";
 import { AlertModel } from "@mappuzzle/core";
 import EditMap from "./editMap";
 import type { Puzzles } from "@mappuzzle/shared";
-import { Tab, Tabs } from "react-bootstrap";
+import { Nav, Tab } from "react-bootstrap";
 import EditPiece from "./editPiece";
 import "./EditorPanels.css";
+import { BackMapEditorService } from "../services/BackMapEditorService";
 import { AlertMessage } from "@mappuzzle/core";
 import { ConfigService } from "@mappuzzle/core";
-import { BackMapEditorService } from "../services/BackMapEditorService";
 
 interface EditorPanelsProps {
   puzzleSelected: Puzzles;
@@ -69,26 +66,6 @@ function EditorPanels({
     }
   };
 
-  const handleSiteMap = () => {
-    BackMapEditorService.generateSitemap()
-      .then(() => {
-        setAlert({
-          title: "Success",
-          message: "Sitemap generated",
-          type: "success",
-        } as AlertModel);
-        setShowAlert(true);
-      })
-      .catch((err) => {
-        setAlert({
-          title: "Error",
-          message: "Error generating sitemap" + err.message,
-          type: "danger",
-        } as AlertModel);
-        setShowAlert(true);
-      });
-  };
-
   //onPieceUpHandler
   const onPieceUpHandler = () => {
     //find pieceSelected piece index
@@ -116,57 +93,51 @@ function EditorPanels({
     <React.Fragment>
       <AlertMessage show={showAlert} alertMessage={alert} onHide={clearAlert} />
       <div className="editor-panels">
-        <div className="d-flex align-items-center justify-content-between mb-3">
-          <h4 className="mb-0">{puzzleSelected.name}</h4>
-          <Button variant="outline-secondary" onClick={handleSiteMap}>
-            Generate Sitemap
-          </Button>
-        </div>
-          {/* mountOnEnter: react-bootstrap renders every pane otherwise, and
-              the piece list is the expensive one. */}
-          <Tabs
-            defaultActiveKey="pieces"
-            id="editor-tabs"
-            className="mb-3"
-            mountOnEnter
-          >
-            <Tab eventKey="puzzle" title="Puzzle settings">
-              <Row>
-                <EditMap puzzle={puzzleSelected} pieces={pieces} />
-              </Row>
-            </Tab>
-            <Tab eventKey="pieces" title="Pieces">
-              <Row>
-                <Col xs={4} lg={4} style={{ padding: "0px" }}>
-                  <div
-                    style={{
-                      overflowY: "auto",
-                      maxHeight: "calc(100vh - 300px)",
-                    }}
-                  >
-                    <PieceList
-                      pieces={pieces}
-                      founds={[]}
-                      onPieceSelected={onPieceSelectedHandler}
-                      pieceSelected={pieceSelected}
-                      handleUp={onPieceUpHandler}
-                      handleDown={onPieceDownHandler}
-                      puzzleId={puzzleSelected.id}
-                      lang={ConfigService.defaultLang}
-                      enableFlags={
-                        puzzleSelected.enableFlags
-                          ? puzzleSelected.enableFlags
-                          : false
-                      }
-                    />
-                  </div>
-                </Col>
-                <Col xs={8} lg={8}>
-                  <EditPiece piece={pieceSelectedData} />
-                </Col>
-              </Row>
-            </Tab>
-          </Tabs>
+        {/* Tab.Container instead of Tabs so the nav can share a row with the
+            puzzle name: the title used to own a line of its own above them. */}
+        <Tab.Container defaultActiveKey="pieces" mountOnEnter>
+          <div className="editor-header">
+            <h5 className="mb-0 text-truncate">{puzzleSelected.name}</h5>
+            <Nav variant="tabs">
+              <Nav.Item>
+                <Nav.Link eventKey="puzzle">Puzzle settings</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="pieces">Pieces</Nav.Link>
+              </Nav.Item>
+            </Nav>
+          </div>
+
+          <Tab.Content className="editor-content">
+            <Tab.Pane eventKey="puzzle" className="editor-pane-scroll">
+              <EditMap puzzle={puzzleSelected} pieces={pieces} />
+            </Tab.Pane>
+            <Tab.Pane eventKey="pieces" className="editor-pane-split">
+              {/* Two independently scrolling columns that fill whatever height
+                  is left, rather than guessing it with calc(100vh - 300px). */}
+              <div className="editor-piece-list">
+                <PieceList
+                  pieces={pieces}
+                  founds={[]}
+                  onPieceSelected={onPieceSelectedHandler}
+                  pieceSelected={pieceSelected}
+                  handleUp={onPieceUpHandler}
+                  handleDown={onPieceDownHandler}
+                  puzzleId={puzzleSelected.id}
+                  lang={ConfigService.defaultLang}
+                  enableFlags={
+                    puzzleSelected.enableFlags
+                      ? puzzleSelected.enableFlags
+                      : false
+                  }
+                />
+              </div>
+              <div className="editor-piece-detail">
+                <EditPiece piece={pieceSelectedData} />
+              </div>
+            </Tab.Pane>
+          </Tab.Content>
+        </Tab.Container>
       </div>
     </React.Fragment>
   );

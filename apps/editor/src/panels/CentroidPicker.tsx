@@ -24,6 +24,8 @@ import "./CentroidPicker.css";
 
 /** Width the piece is drawn at here. The offsets are relative to it. */
 const WIDTH = 220;
+/** Room around the piece so the grab point can sit outside it. */
+const BASE_PADDING = 90;
 
 interface CentroidPickerProps {
   piece: PieceProps;
@@ -44,6 +46,12 @@ function CentroidPicker({
    * read state as false and be dropped. The state below is only for the cursor.
    */
   const draggingRef = useRef(false);
+  const padding = useRef({
+    top: BASE_PADDING,
+    left: BASE_PADDING,
+    bottom: BASE_PADDING,
+    right: BASE_PADDING,
+  });
   const [dragging, setDragging] = useState(false);
 
   const setDrag = (value: boolean) => {
@@ -59,6 +67,26 @@ function CentroidPicker({
   /** Where the grab point sits, in piece pixels. */
   const markerX = (-left / 100) * WIDTH;
   const markerY = (-top / 100) * WIDTH;
+
+  /**
+   * Room around the piece, grown so the marker is always on screen.
+   *
+   * Stored offsets reach -232%, which puts the grab point well past the piece's
+   * own box — that is how a tall piece ends up held near its middle. The marker
+   * is absolutely positioned, and that does not extend a scroll area, so without
+   * this it could sit outside the stage: invisible and impossible to grab.
+   * Frozen while dragging, or the piece would shift under the pointer as the
+   * padding changed.
+   */
+  if (!draggingRef.current) {
+    const breathing = 40;
+    padding.current = {
+      top: Math.max(BASE_PADDING, breathing - markerY),
+      left: Math.max(BASE_PADDING, breathing - markerX),
+      bottom: Math.max(BASE_PADDING, markerY - height + breathing),
+      right: Math.max(BASE_PADDING, markerX - WIDTH + breathing),
+    };
+  }
 
   const offsetsFrom = (clientX: number, clientY: number) => {
     const box = area.current?.getBoundingClientRect();
@@ -112,6 +140,12 @@ function CentroidPicker({
 
       <div
         className={"centroid-stage" + (dragging ? " dragging" : "")}
+        style={{
+          paddingTop: padding.current.top,
+          paddingLeft: padding.current.left,
+          paddingBottom: padding.current.bottom,
+          paddingRight: padding.current.right,
+        }}
         onPointerDown={(event) => {
           event.currentTarget.setPointerCapture(event.pointerId);
           setDrag(true);

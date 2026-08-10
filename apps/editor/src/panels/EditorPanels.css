@@ -3,29 +3,11 @@
 .editor-panels p {
   margin-bottom: 0px;
 }
-.piece-preview {
-  border: 1px solid #ccc;
-  display: inline-flex;
-  padding: 10px;
-  transform: scale(1.5); 
-  margin-top: 20%;
-  margin-left: 50%;
-  box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.15);
-}
 .btn-cursor {
   width: 50px;
   height: 50px;
 }
 
-.piece-poi {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  background-color: #000;
-  border: 1px solid lightgray;
-  border-radius: 5px;
-  overflow: hidden;
-}
 
 .full-height {
   height: calc(30vh);
@@ -54,7 +36,10 @@
 }
 
 .wikiIframe {
-  height: calc(100vh - 27em);
+  /* Fills whatever the column has left instead of guessing the header's height
+     with calc(100vh - 27em), which is what left a gap at the bottom. */
+  flex: 1;
+  min-height: 14rem;
   width: 100%;
 }
 
@@ -64,7 +49,7 @@ iframe {
 
 .scrollable {
   overflow-y: auto;
-  max-height: calc(100vh - 19em);
+  flex: 1;
 }
 
 .save-btn {
@@ -75,4 +60,97 @@ iframe {
 
 .right-align {
   display: contents;
+}
+
+
+/* The editor fills the viewport below the navbar: one header row, then the panes
+   taking the rest, each column scrolling on its own. Before this the title had a
+   line to itself and every height was a calc() guess, so the piece list and the
+   Wikipedia frame both stopped short of the bottom of the window. */
+.editor-panels {
+  display: flex;
+  flex-direction: column;
+  /* Navbar plus the container's padding. */
+  height: calc(100vh - 5.5rem);
+  min-height: 22rem;
+}
+
+.editor-panels > .tab-container,
+.editor-panels > div {
+  min-height: 0;
+}
+
+.editor-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  flex: 0 0 auto;
+}
+
+.editor-header > h5 {
+  padding-bottom: 0.5rem;
+  max-width: 30%;
+}
+
+/* Grows so the nav's bottom border runs the full width, as the tab strip did. */
+.editor-header .nav-tabs {
+  flex: 1;
+}
+
+.editor-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.editor-content > .tab-pane.active {
+  flex: 1;
+  min-height: 0;
+}
+
+.editor-content > .editor-pane-scroll.active {
+  display: block;
+  overflow-y: auto;
+  padding: 1rem 0.25rem 2rem;
+}
+
+/* Bootstrap's `.tab-content > .active { display: block }` has two classes of
+   specificity, so a single class here loses and the columns stacked. */
+.editor-content > .editor-pane-split.active {
+  display: flex;
+  gap: 1rem;
+  padding-top: 0.75rem;
+}
+
+.editor-piece-list {
+  flex: 0 0 30%;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.editor-piece-detail {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Carries the flex chain from the column down to the Wikipedia frame, so it
+   grows to the bottom instead of stopping at a fixed height. */
+.edit-piece,
+.edit-piece-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.edit-piece-body {
+  flex: 1;
+  min-height: 0;
+}
+
+.edit-piece-body > [class*="col-"] {
+  min-height: 0;
 }

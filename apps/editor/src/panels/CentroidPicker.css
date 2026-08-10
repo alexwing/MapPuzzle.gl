@@ -3,7 +3,7 @@
    ends up held near its middle. */
 .centroid-stage {
   position: relative;
-  padding: 120px;
+  /* Set inline: it grows so the grab point is always visible. */
   background:
     linear-gradient(45deg, rgba(128, 128, 128, 0.08) 25%, transparent 25%,
       transparent 75%, rgba(128, 128, 128, 0.08) 75%),
