@@ -21,10 +21,20 @@ export const ASSETS_DIR = path.resolve(
   process.env.ASSETS_DIR ?? path.join(repoRoot, "data")
 );
 
-/** Scratch space for shapefile imports; wiped between runs. */
+/** Scratch space for uploads; wiped between runs. */
 export const TEMP_DIR = path.resolve(
   process.env.TEMP_DIR ?? path.join(repoRoot, "temp")
 );
+
+/**
+ * Unpacked shapefiles waiting to be turned into maps.
+ *
+ * These persist between the upload and the generate step, which is what the
+ * PostGIS tables used to do. Not versioned: they are source material, often
+ * tens of megabytes, and the GeoJSON they produce is what the game needs.
+ */
+export const shapefilesDir = (): string =>
+  path.resolve(process.env.SHAPEFILES_DIR ?? path.join(ASSETS_DIR, "shapefiles"));
 
 /** The map geometry the game fetches: <ASSETS_DIR>/maps/<name>.geojson */
 export const mapsDir = (): string => path.join(ASSETS_DIR, "maps");

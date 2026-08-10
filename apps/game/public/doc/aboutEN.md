@@ -46,7 +46,7 @@ Additionally, other technologies and tools such as React, Vite, sqlite, PHP, typ
 - **PHP** has been used to develop database scripts, allowing the game to be hosted on a standard web server without node.js.
 - **node.js** is used for the backend of the map editor, which was used to create the game maps.
 - **typeorm** has been used to manage the database from the map editor.
-- **Postgis** has been utilized to convert from SHP files and generate the **geojson** files for the maps.
+- Shapefiles are read directly in Node to generate the **geojson** files for the maps.
 
 Regarding the project structure, the game is divided into different components and modules responsible for various tasks. For example, there are components responsible for displaying the puzzle piece list and the map, others that manage the game logic and interact with players, and others responsible for obtaining and processing Wikipedia and translation data.
 

@@ -47,7 +47,7 @@ Además, se han utilizado otras tecnologías y herramientas como React, Vite, sq
 - **PHP** se ha utilizado para desarrollar scripts de base de datos, para poder ser alojado en un servidor web estandar, sin node.js.
 - **node.js** Sirven para el backend del editor de mapas, con el que se han creado los mapas del juego.
 - **typeorm** se ha utilizado para gestionar la base de datos desde el editor de mapas.
-- **Postgis** se ha utilizado para convertir desde ficheros SHP y generar los **geojson** de los mapas.
+- Los ficheros SHP se leen directamente en Node para generar los **geojson** de los mapas.
 
 En cuanto a la estructura del proyecto, el juego está dividido en diferentes componentes y módulos que son responsables de tareas diferentes. Por ejemplo, hay componentes que se encargan de mostrar la lista de piezas del rompecabezas y el mapa, otros que gestionan la lógica del juego e interactúan con los jugadores, y otros que se encargan de obtener y procesar datos de Wikipedia y traducciones.
 

@@ -35,3 +35,4 @@ yarn-error.log*
 # Piece flags downloaded from Wikipedia and their raster sizes: 395 MB that the
 # editor regenerates, so they are deployed but not versioned.
 /data/customFlags
+/data/shapefiles

@@ -2,9 +2,9 @@ import type { MapGeneratorModel } from "@mappuzzle/shared";
 import express, { Request, Response } from "express";
 import Puzzles from "../models/puzzles";
 import { connection } from "../server/database";
-import { MapGenerator } from "../server/MapGenerator";
+import { ShapefileImporter } from "../server/ShapefileImporter";
 import path from "path";
-import { TEMP_DIR } from "../config/paths";
+import { TEMP_DIR, ensureDir, shapefilesDir } from "../config/paths";
 import * as fs from "fs";
 
 import AdmZip from "adm-zip";
@@ -20,98 +20,79 @@ express.urlencoded({ limit: "125mb", extended: true });
 
 //mapGenerator endpoint
 mapCreator.post("/importShapefile", async (req: Request, res: Response) => {
-  /* from     const formData = new FormData();
-      formData.append("file", file);
-      formData.append("name", name);
-      */
-
   if (!req.files) return res.status(400).send("No files were uploaded.");
 
   try {
-  const file = req.files.file;
-  //const name = req.body.name;
-  // @ts-ignore
-  const ext = req.files.file.name.split(".").pop();
-
-  //if zip file
-  if (ext.toLowerCase() === "zip" && file !== undefined) {
-    //unzip file in temp folder
+    const file = req.files.file;
     // @ts-ignore
-    const zip = new AdmZip(file.data);
-    const tempDir = TEMP_DIR;
-    //delete temp folder if exists
-    if (fs.existsSync(tempDir)) {
-      fs.rmdirSync(tempDir, { recursive: true });
+    const ext = req.files.file.name.split(".").pop();
+    if (ext.toLowerCase() !== "zip" || file === undefined) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "Only .zip files are accepted" });
     }
-    //create temp folder
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir);
-    }
-    zip.extractAllTo(tempDir, true);
-    //get all files in temp folder
-    const files = fs.readdirSync(tempDir);
-    //for each file
-    let found = false;
-    for (const file of files) {
-      //get file extension
-      const ext = file.split(".").pop();
-      const nameTable = file.split(".").shift();
-      //if file is a shapefile
-      // @ts-ignore      
-      if (ext.toLowerCase() === "shp") {
-        found = true;
-        //import shapefile
-        const mapGenerator = new MapGenerator();
-        const mapGeneratorResult = await mapGenerator
-          .importShapefile(
-            path.join(tempDir, file),
-            // @ts-ignore
-            nameTable
-          )
-          .then((result) => {
-            return result;
-          });
-        console.log("mapGeneratorResult", mapGeneratorResult);
+
+    // Unpacked next to the other source data and kept: the generate step reads
+    // it later, which is the role the imported PostGIS table used to play.
+    if (fs.existsSync(TEMP_DIR)) fs.rmSync(TEMP_DIR, { recursive: true });
+    ensureDir(TEMP_DIR);
+    // @ts-ignore
+    new AdmZip(file.data).extractAllTo(TEMP_DIR, true);
+
+    // Shapefiles come as a set of sidecars, and some archives nest them in a
+    // folder, so every piece is collected wherever it sits.
+    const wanted = [".shp", ".dbf", ".shx", ".prj", ".cpg"];
+    const collected: string[] = [];
+    const collect = (dir: string): void => {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          collect(full);
+        } else if (wanted.includes(path.extname(entry.name).toLowerCase())) {
+          ensureDir(shapefilesDir());
+          fs.copyFileSync(full, path.join(shapefilesDir(), entry.name));
+          if (entry.name.toLowerCase().endsWith(".shp")) {
+            collected.push(entry.name.slice(0, -4));
+          }
+        }
       }
-    }
-    if (!found) {
-      res.json({
-        success: false,
-        msg: "No shapefile found in zip file",
-      });
-      return;
+    };
+    collect(TEMP_DIR);
+    fs.rmSync(TEMP_DIR, { recursive: true, force: true });
+
+    if (collected.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "No .shp file found in the zip" });
     }
     res.json({
       success: true,
-      msg: "Shapefile imported successfully",
+      msg: `Imported ${collected.length} layer(s): ${collected.join(", ")}`,
+      data: collected,
     });
-    } else {
-      res.status(400).json({ success: false, msg: "Only .zip files are accepted" });
-    }
   } catch (e) {
     unavailable(res, "importShapefile", e);
   }
 });
 
 /**
- * Answers with 503 and the reason instead of letting the rejection escape.
+ * Answers with the reason instead of letting the rejection escape.
  *
- * Express 4 does not catch errors thrown from an async handler, so an
- * unreachable PostgreSQL became an unhandled rejection that killed the process.
- * These four routes are the only ones that need PostGIS.
+ * Express 4 does not catch errors thrown from an async handler, so anything
+ * thrown in here used to become an unhandled rejection and kill the process.
  */
 function unavailable(res: Response, action: string, e: unknown): void {
   const message = e instanceof Error ? e.message : String(e);
   console.error(`${action} failed: ${message}`);
-  res.status(503).json({ success: false, msg: message, data: null });
+  res.status(400).json({ success: false, msg: message, data: null });
 }
 
 //gettables endpoint
 // @ts-ignore
 mapCreator.get("/getTables", async (req: Request, res: Response) => {
   try {
-    const data = await new MapGenerator().getTables();
-    res.json({ success: true, msg: "Tables retrieved successfully", data });
+    const data = new ShapefileImporter().listLayers();
+    res.json({ success: true, msg: "Layers retrieved successfully", data });
   } catch (e) {
     unavailable(res, "getTables", e);
   }
@@ -120,8 +101,14 @@ mapCreator.get("/getTables", async (req: Request, res: Response) => {
 //get all columns from table
 mapCreator.post("/getColumns", async (req: Request, res: Response) => {
   try {
-    const data = await new MapGenerator().getColumns(req.body.table);
-    res.json({ success: true, msg: "Columns retrieved successfully", data });
+    const fields = await new ShapefileImporter().listFields(req.body.table);
+    res.json({
+      success: true,
+      msg: "Fields retrieved successfully",
+      // Names only, as the editor expects; numeric/sample ride along for later.
+      data: ["", ...fields.map((f) => f.name)],
+      fields,
+    });
   } catch (e) {
     unavailable(res, "getColumns", e);
   }
@@ -130,7 +117,7 @@ mapCreator.post("/getColumns", async (req: Request, res: Response) => {
 //generate geojson in public map folder
 mapCreator.post("/generateJson", async (req: Request, res: Response) => {
   try {
-  const mapGenerator = new MapGenerator();
+  const mapGenerator = new ShapefileImporter();
   const mapGeneratorData = req.body as MapGeneratorModel;
   const mapGeneratorResult = await mapGenerator
     .generateJson(mapGeneratorData)

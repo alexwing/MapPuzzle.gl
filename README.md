@@ -84,7 +84,7 @@ Use dev to run the server in development mode.
 
 The frontend is built with React and bundled with **Vite**, it is a client that sends requests to the server and receives the response, it also has a database with the information of the puzzles.
 
-The repository is a monorepo: `apps/game` (MapPuzzle and FlagsQuiz, the only thing deployed), `apps/editor` (the map editor), `apps/backend` (Express + TypeORM + PostGIS, local authoring only), `packages/` (the contracts and the code both clients share) and `data/` (the maps, flags and SQLite database the editor produces).
+The repository is a monorepo: `apps/game` (MapPuzzle and FlagsQuiz, the only thing deployed), `apps/editor` (the map editor), `apps/backend` (Express + TypeORM, local authoring only), `packages/` (the contracts and the code both clients share) and `data/` (the maps, flags and SQLite database the editor produces).
 
 Environment configuration lives in each app's `environments/` folder and is loaded through Vite modes (`--mode <name>`, set via `envDir`). Variables are exposed with the `VITE_` prefix and read through `import.meta.env`. `npm run build` outputs to `build/` at the repo root, with the contents of `data/` copied in, which is exactly what gets uploaded.
 
@@ -94,7 +94,7 @@ The following scripts run and build the project:
 * **"pro"**: the game against the SQLite database read straight over HTTP, so it needs no backend at all.
 * **"dev-php-backend"**: the game against a PHP backend running locally on port 8888.
 * **"editor"**: the map editor, on port 3001. Always talks to the Node backend, since the production PHP gateway is read-only.
-* **"backend"**: the Express + TypeORM backend on port 5000. Map creation additionally needs PostgreSQL with PostGIS.
+* **"backend"**: the Express + TypeORM backend on port 5000. Nothing else is needed: shapefiles are read directly, so map creation no longer requires PostgreSQL or PostGIS.
 * **"build"**: the production build, in PHP-backend mode. This is what gets deployed.
 * **"preview"**: serves that build locally for verification.
 * **"typecheck"**, **"typecheck:editor"**, **"typecheck:backend"**: no-emit compiles of each project.

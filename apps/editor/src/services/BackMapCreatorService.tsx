@@ -3,7 +3,7 @@ import { ConfigService } from "@mappuzzle/core";
 import type { MapGeneratorModel } from "@mappuzzle/shared";
 
 export class BackMapCreatorService {
-  //import shapefile to postgis
+  //upload a zipped shapefile for the importer to read
   public static async importShapefile(file: File, name: string): Promise<any> {
     //importShapefile post request, body file and name
     const formData = new FormData();
@@ -22,7 +22,7 @@ export class BackMapCreatorService {
     return response.json();
   }
 
-  //get tables from postgis
+  //list the shapefile layers available to import
   public static async getTables(): Promise<any> {
     const response = await fetch(
       ConfigService.backendUrl + "/mapCreator/getTables",

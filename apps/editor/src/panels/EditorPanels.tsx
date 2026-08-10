@@ -123,9 +123,8 @@ function EditorPanels({
             Generate Sitemap
           </Button>
         </div>
-          {/* mountOnEnter so New Map only queries PostGIS when its tab is
-              opened: react-bootstrap renders every pane otherwise, and that
-              call used to bring the whole API down when PostGIS was off. */}
+          {/* mountOnEnter so New Map only loads when its tab is opened:
+              react-bootstrap renders every pane otherwise. */}
           <Tabs
             defaultActiveKey="pieces"
             id="editor-tabs"

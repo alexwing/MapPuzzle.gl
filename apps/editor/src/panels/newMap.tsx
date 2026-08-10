@@ -34,14 +34,13 @@ function NewMap(): JSX.Element | null {
       setTableList(tables.data);
       return;
     }
-    // Creating maps is the one thing here that needs PostgreSQL with PostGIS.
-    // Without it the table list just came back empty and the form sat there
-    // looking broken, so say what is actually wrong.
+    // The list came back empty, which used to leave the form sitting there
+    // looking broken with no explanation.
     setAlert({
-      title: "PostGIS not available",
+      title: "No shapefiles available",
       message:
         tables.msg ??
-        "Could not list the PostGIS tables. Creating maps needs PostgreSQL with PostGIS running; the rest of the editor works without it.",
+        "No shapefile layers found. Upload a .zip with a .shp and its sidecars first.",
       type: "warning",
     } as AlertModel);
     setShowAlert(true);
@@ -268,7 +267,7 @@ function NewMap(): JSX.Element | null {
                 type="button"
                 onClick={importShapefileHandler}
               >
-                Import Shape to Postgis
+                Upload Shapefile (.zip)
               </Button>
               <Button
                 style={{ marginTop: "10px", marginLeft: "30px" }}
