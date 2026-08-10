@@ -132,12 +132,15 @@ mapCreator.post("/generateJson", async (req: Request, res: Response) => {
             .find({ order: { id: "DESC" }, take: 1 })
             .then((puzzleLast) => {
               const puzzle = new Puzzles();
-              //replace _ by space, and capitalize words
-              puzzle.name = mapGeneratorData.fileJson
-                .replace(/_/g, " ")
-                .replace(/\w\S*/g, (w) =>
-                  w.replace(/^\w/, (c) => c.toUpperCase())
-                );
+              // The title as typed, falling back to un-slugifying the file name
+              // for older callers that do not send one.
+              puzzle.name =
+                mapGeneratorData.title?.trim() ||
+                mapGeneratorData.fileJson
+                  .replace(/_/g, " ")
+                  .replace(/\w\S*/g, (w) =>
+                    w.replace(/^\w/, (c) => c.toUpperCase())
+                  );
               puzzle.data = jsonName;
               puzzle.url = mapGeneratorData.fileJson;
               if (!puzzleSaved) {

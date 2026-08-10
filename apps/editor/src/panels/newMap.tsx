@@ -32,7 +32,10 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
     id: "",
     mapColor: "",
     fileJson: "",
+    title: "",
   } as MapGeneratorModel);
+  /** Once the file name is edited by hand, the title stops overwriting it. */
+  const [slugEdited, setSlugEdited] = useState(false);
 
   const loadTables = async () => {
     const tables = await BackMapCreatorService.getTables();
@@ -140,12 +143,11 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
       await loadTables();
       const layers: string[] = result?.data ?? [];
       // One layer in the zip is the common case, so select it and skip a step.
+      // The file name is left for the title to generate: seeding it from the
+      // layer would put "gadm41_SAU_1" in a field meant to read
+      // "saudi_arabia_provinces".
       if (layers.length === 1) {
-        setData((d) => ({
-          ...d,
-          table: layers[0],
-          fileJson: d.fileJson || layers[0],
-        }));
+        setData((d) => ({ ...d, table: layers[0] }));
       }
       setAlert({
         title: result?.success ? "Shapefile read" : "Could not read the shapefile",
@@ -157,6 +159,19 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
       setLoading(false);
     }
   };
+
+  /**
+   * "Saudi Arabia Provinces" to "saudi_arabia_provinces": accents folded, the
+   * rest reduced to letters, digits and single underscores, since this becomes a
+   * file name and a URL.
+   */
+  const slugify = (title: string): string =>
+    title
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
 
   /** Which role a field plays, or none. Empty id and colour fall back to order. */
   const roleOf = (field: string): string => {
@@ -290,18 +305,40 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
             </div>
           )}
 
-          {/* Step 4. Name the map and create it. */}
-          <Row className="align-items-end">
-            <Col xs={12} lg={5}>
-              <Form.Group controlId="formname">
+          {/* Step 4. What the map is called, and what its file is called. */}
+          <Row className="align-items-start g-3">
+            <Col xs={12} lg={4}>
+              <Form.Group controlId="formTitle">
                 <Form.Label>
-                  <strong>4.</strong> Map file name
+                  <strong>4.</strong> Map name
                 </Form.Label>
+                <Form.Control
+                  type="input"
+                  placeholder="e.g. Saudi Arabia Provinces"
+                  value={data.title ?? ""}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const title = e.target.value;
+                    setData((d) => ({
+                      ...d,
+                      title,
+                      // Kept in step with the title until the slug is edited by
+                      // hand, so the usual case needs typing in one place.
+                      fileJson: slugEdited ? d.fileJson : slugify(title),
+                    }));
+                  }}
+                />
+                <Form.Text>Shown in the puzzle list and on the page.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col xs={12} lg={4}>
+              <Form.Group controlId="formname">
+                <Form.Label>File name</Form.Label>
                 <Form.Control
                   type="input"
                   placeholder="e.g. saudi_arabia_provinces"
                   value={data.fileJson}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setSlugEdited(true);
                     setData({ ...data, fileJson: e.target.value });
                   }}
                 />
@@ -310,12 +347,14 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
                 </Form.Text>
               </Form.Group>
             </Col>
-            <Col xs={12} lg={3}>
+            <Col xs={12} lg={3} className="pt-lg-4">
               <Button
                 variant="primary"
                 type="button"
                 onClick={onSaveHandler}
-                disabled={!data.table || !data.name || !data.fileJson}
+                disabled={
+                  !data.table || !data.name || !data.fileJson || !data.title
+                }
               >
                 Import map
               </Button>

@@ -53,11 +53,21 @@ export interface PieceProps {
 
 /** Request the editor sends to turn a PostGIS table into a map. */
 export interface MapGeneratorModel {
+  /** Shapefile layer to read. */
   table: string;
+  /** Field holding each piece's id. Empty means number them in name order. */
   id: string;
+  /** Field holding each piece's name. Note: the piece's, not the puzzle's. */
   name: string;
+  /** Field holding each piece's colour. Empty means use its position. */
   mapColor: string;
+  /** Slug for maps/<fileJson>.geojson and the puzzle's URL. */
   fileJson: string;
+  /**
+   * The puzzle's display name. Optional: without it the slug is un-slugified
+   * into one, which turned "zz_prueba_import" into "Zz Prueba Import".
+   */
+  title?: string;
 }
 
 /** A flag file offered by the editor's icon picker. */
