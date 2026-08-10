@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row, Table } from "react-bootstrap";
 import { AlertMessage } from "@mappuzzle/core";
 import { LoadingDialog } from "@mappuzzle/core";
 import type { MapGeneratorModel } from "@mappuzzle/shared";
@@ -20,11 +20,12 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
     type: "danger",
   } as AlertModel);
 
-  const [shpFile, setShpFile] = useState<File | null>(null);
-
-  //string list for table and column dropdowns
   const [tableList, setTableList] = useState([]);
-  const [columnList, setColumnList] = useState([]);
+  /** The chosen layer's fields with a few values each, to pick roles from. */
+  const [fields, setFields] = useState(
+    [] as { name: string; numeric: boolean; unique: boolean; samples: string[] }[]
+  );
+  const [pieceCount, setPieceCount] = useState(0);
   const [data, setData] = useState({
     table: "",
     name: "",
@@ -60,13 +61,26 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
     loadTables();
   }, []);
 
-  //load columns when table is selected
+  //load the layer's fields when one is selected
   useEffect(() => {
     const loadColumns = async () => {
-      const columns = await BackMapCreatorService.getColumns(data.table);
-      if (columns.data) {
-        setColumnList(columns.data);
-      }
+      const preview = await BackMapCreatorService.describeLayer(data.table);
+      setFields(preview.fields ?? []);
+      setPieceCount(preview.count ?? 0);
+      // Suggest a name field, but only when the data really points at one: the
+      // first guess here was "the first unique text column", which picked GADM's
+      // GID_1 ("SAU.1_1") over NAME_1. Codes carry digits and names generally do
+      // not, so candidates are unique text whose sample values have none, and a
+      // column actually called *name* wins among them. Nothing convincing means
+      // nothing selected: a wrong default that goes unnoticed is worse than a
+      // blank one.
+      type Field = { name: string; numeric: boolean; unique: boolean; samples: string[] };
+      const candidates = ((preview.fields ?? []) as Field[]).filter(
+        (f) => !f.numeric && f.unique && !f.samples.some((v) => /\d/.test(v))
+      );
+      const likelyName =
+        candidates.find((f) => /name/i.test(f.name)) ?? candidates[0];
+      if (likelyName) setData((d) => ({ ...d, name: likelyName.name }));
     };
     loadColumns();
   }, [data.table]);
@@ -111,40 +125,55 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
     }
   };
 
-  const importShapefileHandler = async () => {
+  /**
+   * Uploads as soon as a file is chosen: there is nothing to decide in between,
+   * and the layer appears in the list straight after, which is what the separate
+   * Upload button existed to trigger.
+   */
+  const uploadShapefile = async (file: File) => {
     setLoading(true);
-    if (shpFile == null || data.fileJson === "") {
-      setShowAlert(true);
-      setAlert({
-        title: "Error",
-        message: "Please select a shapefile",
-        type: "danger",
-      } as AlertModel);
-      setLoading(false);
-    } else {
+    try {
       const result = await BackMapCreatorService.importShapefile(
-        shpFile,
-        data.fileJson
+        file,
+        file.name.replace(/\.zip$/i, "")
       );
-      await new Promise((r) => setTimeout(r, 1000));
-      loadTables();
-      if (result) {
-        setShowAlert(true);
-        setAlert({
-          title: "Success",
-          message: result.msg,
-          type: "success",
-        } as AlertModel);
-      } else {
-        setShowAlert(true);
-        setAlert({
-          title: "Error",
-          message: "Error generating geojson",
-          type: "danger",
-        } as AlertModel);
+      await loadTables();
+      const layers: string[] = result?.data ?? [];
+      // One layer in the zip is the common case, so select it and skip a step.
+      if (layers.length === 1) {
+        setData((d) => ({
+          ...d,
+          table: layers[0],
+          fileJson: d.fileJson || layers[0],
+        }));
       }
+      setAlert({
+        title: result?.success ? "Shapefile read" : "Could not read the shapefile",
+        message: result?.msg ?? "No answer from the backend",
+        type: result?.success ? "success" : "danger",
+      } as AlertModel);
+      setShowAlert(true);
+    } finally {
       setLoading(false);
     }
+  };
+
+  /** Which role a field plays, or none. Empty id and colour fall back to order. */
+  const roleOf = (field: string): string => {
+    if (data.name === field) return "name";
+    if (data.id === field) return "id";
+    if (data.mapColor === field) return "color";
+    return "";
+  };
+
+  const assignRole = (field: string, role: string) => {
+    setData((d) => ({
+      ...d,
+      // A field can only hold one role, so taking it clears it elsewhere.
+      name: role === "name" ? field : d.name === field ? "" : d.name,
+      id: role === "id" ? field : d.id === field ? "" : d.id,
+      mapColor: role === "color" ? field : d.mapColor === field ? "" : d.mapColor,
+    }));
   };
 
   return (
@@ -158,130 +187,137 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
           autoClose={0}
         />
         <Form>
-          <Row>
-            <Col xs={6} lg={6}>
-              <Form.Group className="mb-12" controlId="formname">
-                <Form.Label>Json File name: </Form.Label>
+          {/* Step 1. Choosing the file is the whole action: it uploads at once
+              and the layer shows up below, which is what the old Upload button
+              had to be pressed for. */}
+          <Form.Group className="mb-4" controlId="formFile">
+            <Form.Label>
+              <strong>1.</strong> Shapefile as a .zip
+            </Form.Label>
+            <Form.Control
+              type="file"
+              accept=".zip"
+              style={{ maxWidth: "28rem" }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const file = e.target.files?.[0];
+                if (file) uploadShapefile(file);
+              }}
+            />
+            <Form.Text>
+              Everything in the archive is kept: the .shp with its .dbf, .shx,
+              .prj and .cpg.
+            </Form.Text>
+          </Form.Group>
+
+          {/* Step 2. Which layer, when the archive holds more than one. */}
+          <Form.Group className="mb-4" controlId="table">
+            <Form.Label>
+              <strong>2.</strong> Layer
+            </Form.Label>
+            <Form.Select
+              style={{ maxWidth: "28rem" }}
+              value={data.table}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                setData({ ...data, table: e.target.value, id: "", name: "", mapColor: "" });
+              }}
+            >
+              {tableList.map((table) => (
+                <option key={table} value={table}>
+                  {table || "Select a layer…"}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+
+          {/* Step 3. The data itself, so the fields can be judged rather than
+              guessed at from names like GID_1 and VARNAME_1. */}
+          {fields.length > 0 && (
+            <div className="mb-4">
+              <Form.Label>
+                <strong>3.</strong> Fields — {pieceCount} pieces
+              </Form.Label>
+              <Form.Text className="d-block mb-2">
+                Pick which field names the pieces. The id and colour are
+                optional: without them the pieces are numbered in name order,
+                which is what most sources need.
+              </Form.Text>
+              <div className="newmap-fields">
+                <Table size="sm" bordered hover className="mb-0">
+                  <thead>
+                    <tr>
+                      {fields.map((f) => (
+                        <th key={f.name} className="align-top">
+                          <div className="text-nowrap">{f.name}</div>
+                          <div className="fw-normal text-muted small mb-1">
+                            {f.numeric ? "number" : "text"}
+                            {f.unique ? ", all different" : ""}
+                          </div>
+                          <Form.Select
+                            size="sm"
+                            value={roleOf(f.name)}
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                              assignRole(f.name, e.target.value)
+                            }
+                          >
+                            <option value="">—</option>
+                            <option value="name">Name</option>
+                            <option value="id" disabled={!f.numeric}>
+                              Piece id{f.numeric ? "" : " (needs numbers)"}
+                            </option>
+                            <option value="color" disabled={!f.numeric}>
+                              Colour{f.numeric ? "" : " (needs numbers)"}
+                            </option>
+                          </Form.Select>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Array.from({ length: fields[0]?.samples.length ?? 0 }).map(
+                      (_, row) => (
+                        <tr key={row}>
+                          {fields.map((f) => (
+                            <td key={f.name} className="text-nowrap small">
+                              {f.samples[row]}
+                            </td>
+                          ))}
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </Table>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4. Name the map and create it. */}
+          <Row className="align-items-end">
+            <Col xs={12} lg={5}>
+              <Form.Group controlId="formname">
+                <Form.Label>
+                  <strong>4.</strong> Map file name
+                </Form.Label>
                 <Form.Control
-                  size="sm"
                   type="input"
-                  placeholder="Enter puzzle name"
+                  placeholder="e.g. saudi_arabia_provinces"
                   value={data.fileJson}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setData({ ...data, fileJson: e.target.value });
                   }}
                 />
-              </Form.Group>
-              <Form.Group className="mb-12" controlId="table">
-                <Form.Label>Table: </Form.Label>
-                <Form.Control
-                  size="sm"
-                  as="select"
-                  value={data.table}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setData({ ...data, table: e.target.value });
-                  }}
-                >
-                  {tableList.map((table) => (
-                    <option key={table} value={table}>
-                      {table}
-                    </option>
-                  ))}
-                </Form.Control>
+                <Form.Text>
+                  Becomes maps/&lt;name&gt;.geojson and the puzzle&apos;s URL.
+                </Form.Text>
               </Form.Group>
             </Col>
-            <Col xs={6} lg={6}>
-              <Form.Group className="mb-12" controlId="column">
-                <Form.Label>Field to piece ID: </Form.Label>
-                <Form.Control
-                  size="sm"
-                  as="select"
-                  value={data.id}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setData({ ...data, id: e.target.value });
-                  }}
-                >
-                  {columnList.map((column) => (
-                    <option key={column} value={column}>
-                      {column}
-                    </option>
-                  ))}
-                </Form.Control>
-              </Form.Group>
-              <Form.Group className="mb-12" controlId="column">
-                <Form.Label>Field to Name: </Form.Label>
-                <Form.Control
-                  size="sm"
-                  as="select"
-                  value={data.name}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setData({ ...data, name: e.target.value });
-                  }}
-                >
-                  {columnList.map((column) => (
-                    <option key={column} value={column}>
-                      {column}
-                    </option>
-                  ))}
-                </Form.Control>
-              </Form.Group>
-              <Form.Group className="mb-12" controlId="column">
-                <Form.Label>Field to Color: </Form.Label>
-                <Form.Control
-                  size="sm"
-                  as="select"
-                  value={data.mapColor}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setData({ ...data, mapColor: e.target.value });
-                  }}
-                >
-                  {columnList.map((column) => (
-                    <option key={column} value={column}>
-                      {column}
-                    </option>
-                  ))}
-                </Form.Control>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={12} lg={12}>
-              <Form.Group className="mb-3" controlId="formFile">
-                <Form.Label>Import GeoJson</Form.Label>
-                <Form.Control
-                  size="sm"
-                  type="file"
-                  accept=".zip"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    if (e.target.files) {
-                      setShpFile(e.target.files[0]);
-                    }
-                  }}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col
-              xs={12}
-              lg={12}
-              style={{ textAlign: "center", marginTop: "50px" }}
-            >
+            <Col xs={12} lg={3}>
               <Button
-                style={{ marginTop: "10px", marginLeft: "10px" }}
-                variant="secondary"
-                type="button"
-                onClick={importShapefileHandler}
-              >
-                Upload Shapefile (.zip)
-              </Button>
-              <Button
-                style={{ marginTop: "10px", marginLeft: "30px" }}
                 variant="primary"
                 type="button"
                 onClick={onSaveHandler}
+                disabled={!data.table || !data.name || !data.fileJson}
               >
-                Generate GeoJson File
+                Import map
               </Button>
             </Col>
           </Row>

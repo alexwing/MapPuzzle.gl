@@ -170,3 +170,16 @@ iframe {
 .edit-piece-body > [class*="col-"] {
   min-height: 0;
 }
+
+/* The field preview scrolls sideways on its own: a .dbf can carry a dozen
+   columns and the pane must not grow a scrollbar because of it. */
+.newmap-fields {
+  overflow-x: auto;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 0.375rem;
+}
+
+.newmap-fields th {
+  vertical-align: top;
+  min-width: 8rem;
+}

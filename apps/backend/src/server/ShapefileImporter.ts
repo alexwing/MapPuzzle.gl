@@ -25,9 +25,22 @@ export interface ShapefileField {
   name: string;
   /** True when every value read is a safe integer: only those suit cartodb_id. */
   numeric: boolean;
-  /** First value, to show as an example. */
-  sample: string;
+  /** True when no two records share a value: what a piece id needs. */
+  unique: boolean;
+  /** First few values, so the field can be judged before importing. */
+  samples: string[];
 }
+
+/** What a layer holds, enough to choose the fields without importing first. */
+export interface LayerPreview {
+  layer: string;
+  /** Number of pieces the map would have. */
+  count: number;
+  fields: ShapefileField[];
+}
+
+/** How many values per field the preview carries. */
+const SAMPLE_ROWS = 6;
 
 const COORDINATE_DECIMALS = 6; // ~10 cm, well past what a puzzle piece needs
 
@@ -83,28 +96,59 @@ export class ShapefileImporter {
     return ["", ...layers];
   }
 
-  /** Field names of a layer's .dbf, read without touching the geometry. */
-  public async listFields(layer: string): Promise<ShapefileField[]> {
-    if (!layer) return [];
+  /**
+   * What is in a layer's .dbf, read without touching the geometry.
+   *
+   * Carries the first few values of every field and whether they are numeric and
+   * unique, so the choice of id, name and colour can be made by looking at the
+   * data rather than guessing from column names like GID_1 and VARNAME_1.
+   */
+  public async describeLayer(layer: string): Promise<LayerPreview> {
+    if (!layer) return { layer, count: 0, fields: [] };
     const dbf = layerPath(layer).replace(/\.shp$/i, ".dbf");
     if (!fs.existsSync(dbf)) throw new Error(`No .dbf next to ${layer}.shp`);
 
     const source = await shapefile.openDbf(dbf, {
       encoding: this.encodingOf(layer),
     });
-    const seen = new Map<string, { numeric: boolean; sample: string }>();
+
+    interface Column {
+      numeric: boolean;
+      samples: string[];
+      seen: Set<string>;
+      duplicated: boolean;
+    }
+    const columns = new Map<string, Column>();
+    let count = 0;
+
     for (let r = await source.read(); !r.done; r = await source.read()) {
+      count++;
       for (const [name, value] of Object.entries(r.value as object)) {
-        const isInteger = typeof value === "number" && Number.isSafeInteger(value);
-        const previous = seen.get(name);
-        if (!previous) {
-          seen.set(name, { numeric: isInteger, sample: String(value ?? "") });
-        } else if (!isInteger) {
-          previous.numeric = false;
+        const text = value === null || value === undefined ? "" : String(value);
+        let column = columns.get(name);
+        if (!column) {
+          column = { numeric: true, samples: [], seen: new Set(), duplicated: false };
+          columns.set(name, column);
         }
+        if (!(typeof value === "number" && Number.isSafeInteger(value))) {
+          column.numeric = false;
+        }
+        if (column.seen.has(text)) column.duplicated = true;
+        else column.seen.add(text);
+        if (column.samples.length < SAMPLE_ROWS) column.samples.push(text);
       }
     }
-    return [...seen.entries()].map(([name, meta]) => ({ name, ...meta }));
+
+    return {
+      layer,
+      count,
+      fields: [...columns.entries()].map(([name, c]) => ({
+        name,
+        numeric: c.numeric,
+        unique: !c.duplicated,
+        samples: c.samples,
+      })),
+    };
   }
 
   /**

@@ -101,13 +101,11 @@ mapCreator.get("/getTables", async (req: Request, res: Response) => {
 //get all columns from table
 mapCreator.post("/getColumns", async (req: Request, res: Response) => {
   try {
-    const fields = await new ShapefileImporter().listFields(req.body.table);
+    const preview = await new ShapefileImporter().describeLayer(req.body.table);
     res.json({
       success: true,
-      msg: "Fields retrieved successfully",
-      // Names only, as the editor expects; numeric/sample ride along for later.
-      data: ["", ...fields.map((f) => f.name)],
-      fields,
+      msg: `${preview.count} features, ${preview.fields.length} fields`,
+      ...preview,
     });
   } catch (e) {
     unavailable(res, "getColumns", e);

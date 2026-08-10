@@ -36,10 +36,13 @@ export class BackMapCreatorService {
     return response.json();
   }
 
-  //get all columns from table
-  public static async getColumns(table: string): Promise<any> {
+  /**
+   * The layer's fields with sample values, so the editor can show what is in
+   * each one before importing rather than making you guess from column names.
+   */
+  public static async describeLayer(table: string): Promise<any> {
     if (!table) {
-      return Promise.resolve([]);
+      return Promise.resolve({ count: 0, fields: [] });
     }
     const response = await fetch(
       ConfigService.backendUrl + "/mapCreator/getColumns",
