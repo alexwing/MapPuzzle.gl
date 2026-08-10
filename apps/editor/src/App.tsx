@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Container, Form, Navbar, Spinner } from "react-bootstrap";
+import { Alert, Button, ButtonGroup, Container, Form, Navbar, Spinner } from "react-bootstrap";
 import {
   ConfigService,
   Jsondb,
@@ -11,23 +11,30 @@ import type {
   Puzzles,
 } from "@mappuzzle/shared";
 import EditorPanels from "./panels/EditorPanels";
+import NewMap from "./panels/newMap";
 
 /**
  * Shell of the map editor.
  *
+ * Two modes, because they are two jobs. Creating a map turns a shapefile into a
+ * new puzzle and has nothing to do with whatever puzzle is open; it used to be a
+ * tab *inside* an opened puzzle, which meant you had to open an unrelated map
+ * before you could make one. Editing works on the puzzle picked in the bar.
+ *
  * The editor used to be a modal inside the game, fed by MapPuzzle's state: it
  * received the pieces already read from the map's GeoJSON, renamed and
- * translated. Now that it stands alone it has to do that itself, which is all
- * this component is: pick a puzzle, load it, hand it to the panels.
+ * translated. Standing alone, it does that itself.
  */
+type Mode = "edit" | "create";
 function App(): JSX.Element {
   const [puzzles, setPuzzles] = useState([] as Puzzles[]);
   const [puzzle, setPuzzle] = useState<Puzzles | null>(null);
   const [pieces, setPieces] = useState([] as PieceProps[]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [mode, setMode] = useState<Mode>("edit");
 
-  useEffect(() => {
+  const loadPuzzles = () => {
     PuzzleService.getPuzzles()
       .then(setPuzzles)
       .catch(() =>
@@ -35,7 +42,9 @@ function App(): JSX.Element {
           `No puzzles came back from ${ConfigService.backendUrl}. Is the backend running?`
         )
       );
-  }, []);
+  };
+
+  useEffect(loadPuzzles, []);
 
   /**
    * Same sequence the game runs on load: the puzzle row, the GeoJSON it points
@@ -79,42 +88,75 @@ function App(): JSX.Element {
   return (
     <React.Fragment>
       <Navbar bg="dark" variant="dark" className="mb-3">
-        <Container fluid>
-          <Navbar.Brand>MapPuzzle editor</Navbar.Brand>
-          <Form.Select
-            aria-label="Puzzle to edit"
-            style={{ maxWidth: "24rem" }}
-            value={puzzle?.id ?? ""}
-            onChange={(event) => {
-              const id = Number(event.target.value);
-              if (id) loadPuzzle(id);
-            }}
-          >
-            <option value="">Select a puzzle…</option>
-            {puzzles.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </Form.Select>
+        <Container fluid className="gap-3">
+          <Navbar.Brand className="me-0">MapPuzzle editor</Navbar.Brand>
+
+          <ButtonGroup size="sm">
+            <Button
+              variant={mode === "edit" ? "light" : "outline-light"}
+              onClick={() => setMode("edit")}
+            >
+              Edit a puzzle
+            </Button>
+            <Button
+              variant={mode === "create" ? "light" : "outline-light"}
+              onClick={() => setMode("create")}
+            >
+              New map
+            </Button>
+          </ButtonGroup>
+
+          {mode === "edit" && (
+            <Form.Select
+              aria-label="Puzzle to edit"
+              style={{ maxWidth: "22rem" }}
+              value={puzzle?.id ?? ""}
+              onChange={(event) => {
+                const id = Number(event.target.value);
+                if (id) loadPuzzle(id);
+              }}
+            >
+              <option value="">Select a puzzle…</option>
+              {puzzles.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </Form.Select>
+          )}
         </Container>
       </Navbar>
 
       <Container fluid>
         {error && <Alert variant="danger">{error}</Alert>}
-        {loading && (
-          <div className="text-center my-5">
-            <Spinner animation="border" variant="info" />
-          </div>
+
+        {mode === "create" && (
+          <React.Fragment>
+            <p className="text-muted">
+              Turn a zipped shapefile into a new puzzle. Once it is created,
+              switch to <strong>Edit a puzzle</strong> to fill in its name, icon,
+              translations and pieces.
+            </p>
+            <NewMap onCreated={() => loadPuzzles()} />
+          </React.Fragment>
         )}
-        {!loading && !puzzle && !error && (
-          <Alert variant="secondary">
-            Pick a puzzle above to edit it, or create a new map from the New Map
-            tab once one is open.
-          </Alert>
-        )}
-        {puzzle && !loading && (
-          <EditorPanels puzzleSelected={puzzle} pieces={pieces} />
+
+        {mode === "edit" && (
+          <React.Fragment>
+            {loading && (
+              <div className="text-center my-5">
+                <Spinner animation="border" variant="info" />
+              </div>
+            )}
+            {!loading && !puzzle && !error && (
+              <Alert variant="secondary">
+                Pick a puzzle in the bar above to edit it.
+              </Alert>
+            )}
+            {puzzle && !loading && (
+              <EditorPanels puzzleSelected={puzzle} pieces={pieces} />
+            )}
+          </React.Fragment>
         )}
       </Container>
     </React.Fragment>

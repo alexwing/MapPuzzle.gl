@@ -495,69 +495,92 @@ function EditMap({
               </Form.Group>
             </Col>
           </Row>
+          {/* Save is the puzzle's own field edits. The generators below reach
+              out to Wikipedia and rewrite rows for every piece, so they are
+              separated from it rather than sharing a row of buttons. */}
           <Row>
-            <Col
-              xs={12}
-              lg={12}
-              style={{
-                textAlign: "center",
-                marginTop: "50px",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <Form.Control
-                style={{ width: "150px" }}
-                type="input"
-                placeholder="Enter piece subfix"
-                value={subfix}
-                onChange={(e) => {
-                  setSubfix(e.target.value);
-                }}
-              />
-              <Button
-                style={{ marginLeft: "10px" }}
-                variant="secondary"
-                type="button"
-                onClick={generateWikiLinksHandler}
-              >
-                Generate wikiLinks
-              </Button>
-              <Button
-                style={{ marginLeft: "10px" }}
-                variant="secondary"
-                type="button"
-                onClick={generateTranslationHandler}
-              >
-                Generate translations
-              </Button>
-              <Button
-                style={{ marginLeft: "10px" }}
-                variant="secondary"
-                type="button"
-                onClick={generateFlagsHandler}
-              >
-                Generate flags
-              </Button>
-              <Button
-                style={{ marginLeft: "10px" }}
-                variant="secondary"
-                type="button"
-                onClick={generateThumbnailHandler}
-              >
-                Generate thumbnails
-              </Button>
-
-              <Button
-                style={{ marginLeft: "30px" }}
-                variant="primary"
-                type="button"
-                onClick={onSaveHandler}
-              >
-                Save
+            <Col xs={12} className="d-flex justify-content-end mt-3">
+              <Button variant="primary" type="button" onClick={onSaveHandler}>
+                Save puzzle
               </Button>
             </Col>
           </Row>
+
+          <hr className="mt-4" />
+
+          <Row>
+            <Col xs={12}>
+              <h5>Bulk content</h5>
+              <p className="text-muted small mb-3">
+                These run over every piece in the puzzle and call Wikipedia, so
+                they take minutes and overwrite what is already stored. Run them
+                in this order the first time.
+              </p>
+            </Col>
+          </Row>
+          <Row className="g-3">
+            <Col xs={12} lg={6}>
+              <div className="d-flex align-items-center gap-2">
+                <Button
+                  variant="outline-secondary"
+                  type="button"
+                  onClick={generateWikiLinksHandler}
+                >
+                  1. Wikipedia links
+                </Button>
+                <Form.Control
+                  style={{ maxWidth: "170px" }}
+                  type="input"
+                  placeholder="Name suffix, optional"
+                  value={subfix}
+                  onChange={(e) => {
+                    setSubfix(e.target.value);
+                  }}
+                />
+              </div>
+              <div className="form-text">
+                Resolves an article per piece. The suffix disambiguates names,
+                e.g. &quot;Province&quot;.
+              </div>
+            </Col>
+            <Col xs={12} lg={6}>
+              <Button
+                variant="outline-secondary"
+                type="button"
+                onClick={generateTranslationHandler}
+              >
+                2. Translations
+              </Button>
+              <div className="form-text">
+                Piece names in every active language, from the articles above.
+              </div>
+            </Col>
+            <Col xs={12} lg={6}>
+              <Button
+                variant="outline-secondary"
+                type="button"
+                onClick={generateFlagsHandler}
+              >
+                3. Piece flags
+              </Button>
+              <div className="form-text">
+                Downloads a flag per piece. Only useful with Enable flags on.
+              </div>
+            </Col>
+            <Col xs={12} lg={6}>
+              <Button
+                variant="outline-secondary"
+                type="button"
+                onClick={generateThumbnailHandler}
+              >
+                4. Flag thumbnails
+              </Button>
+              <div className="form-text">
+                Resizes those flags to the sizes the game requests.
+              </div>
+            </Col>
+          </Row>
+
           <Row>
             <Col xs={12} lg={12}>
               <ErrorList customTranslations={langErrors}></ErrorList>

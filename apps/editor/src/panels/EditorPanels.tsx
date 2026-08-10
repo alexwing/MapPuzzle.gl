@@ -13,7 +13,6 @@ import EditPiece from "./editPiece";
 import "./EditorPanels.css";
 import { AlertMessage } from "@mappuzzle/core";
 import { ConfigService } from "@mappuzzle/core";
-import NewMap from "./newMap";
 import { BackMapEditorService } from "../services/BackMapEditorService";
 
 interface EditorPanelsProps {
@@ -123,20 +122,15 @@ function EditorPanels({
             Generate Sitemap
           </Button>
         </div>
-          {/* mountOnEnter so New Map only loads when its tab is opened:
-              react-bootstrap renders every pane otherwise. */}
+          {/* mountOnEnter: react-bootstrap renders every pane otherwise, and
+              the piece list is the expensive one. */}
           <Tabs
             defaultActiveKey="pieces"
             id="editor-tabs"
             className="mb-3"
             mountOnEnter
           >
-            <Tab eventKey="newMap" title="New Map">
-              <Row>
-                <NewMap />
-              </Row>
-            </Tab>
-            <Tab eventKey="puzzle" title="Puzzle">
+            <Tab eventKey="puzzle" title="Puzzle settings">
               <Row>
                 <EditMap puzzle={puzzleSelected} pieces={pieces} />
               </Row>

@@ -6,7 +6,12 @@ import type { MapGeneratorModel } from "@mappuzzle/shared";
 import { AlertModel } from "@mappuzzle/core";
 import { BackMapCreatorService } from "../services/BackMapCreatorService";
 
-function NewMap(): JSX.Element | null {
+interface NewMapProps {
+  /** Called after a map is created, so the shell can refresh its puzzle list. */
+  onCreated?: () => void;
+}
+
+function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alert, setAlert] = useState({
@@ -87,13 +92,14 @@ function NewMap(): JSX.Element | null {
       //PuzzleService.generateJson
       const result = await BackMapCreatorService.generateJson(data);
       setLoading(false);
-      if (result) {
+      if (result?.success) {
         setShowAlert(true);
         setAlert({
-          title: "Success",
-          message: result.msg,
+          title: "Map created",
+          message: `${result.msg} Switch to "Edit a puzzle" to finish setting it up.`,
           type: "success",
         } as AlertModel);
+        onCreated?.();
       } else {
         setShowAlert(true);
         setAlert({

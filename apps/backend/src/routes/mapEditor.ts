@@ -49,21 +49,20 @@ mapEditor.post("/savePuzzle", (req, res) => {
 
 mapEditor.post("/savePiece", async (req, res) => {
   const { pieceToSend } = req.body;
-  console.log("piece:" + JSON.stringify(pieceToSend));
   const pieceProps: PieceProps = pieceToSend as PieceProps;
 
-  saveCustomWiki(pieceProps).then(() => {
-    res.json({
-      success: true,
-      msg: "Piece saved successfully",
-    });
-  });
-  saveCustomCentroids(pieceProps).then(() => {
-    res.json({
-      success: true,
-      msg: "Piece saved successfully",
-    });
-  });
+  // Both halves are awaited and answered once. This used to call res.json() in
+  // each of two unawaited chains, so the second reply threw
+  // ERR_HTTP_HEADERS_SENT and any failure was reported as success.
+  try {
+    await saveCustomWiki(pieceProps);
+    await saveCustomCentroids(pieceProps);
+    res.json({ success: true, msg: "Piece saved" });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    console.error(`savePiece failed: ${message}`);
+    res.status(400).json({ success: false, msg: message });
+  }
 });
 
 //get countries
@@ -128,74 +127,56 @@ mapEditor.get("/getFlags", async (_req, res) => {
 });
 
 //save custom wiki
-async function saveCustomWiki(pieceProps: PieceProps): Promise<any> {
-  if (pieceProps.customWiki) {
-    const customWikiRepository = connection!.getRepository(CustomWiki);
-    if (pieceProps.customWiki.wiki !== "") {
-      customWikiRepository
-        .save(pieceProps.customWiki)
-        .then(() => {
-          console.log("Custom wiki saved successfully");
-          return Promise.resolve();
-        })
-        .catch((err) => {
-          console.log("Error saving custom wiki");
-          return Promise.reject(err);
-        });
-    } else {
-      //delete custom centroid for this id and cartodb_id
-      customWikiRepository
-        .delete({
-          cartodb_id: pieceProps.properties.cartodb_id,
-          id: pieceProps.id,
-        })
-        .then(() => {
-          console.log("Custom wiki deleted successfully");
-          return Promise.resolve();
-        })
-        .catch((err) => {
-          console.log("Error wiki custom centroid");
-          return Promise.reject(err);
-        });
-    }
+/**
+ * The keys are taken from the piece, not from the payload.
+ *
+ * Both of these used to fire an unawaited promise chain and then return
+ * Promise.resolve() regardless, so the caller carried on before the write
+ * happened and errors vanished. And they saved whatever object arrived: a piece
+ * with no stored row yet arrives without id or cartodb_id, which is most of them
+ * on a new map, so the insert had nothing to key on.
+ */
+function keysOf(pieceProps: PieceProps): { id: number; cartodb_id: number } {
+  const id = Number(pieceProps.id);
+  const cartodb_id = Number(pieceProps.properties?.cartodb_id);
+  if (!Number.isFinite(id) || !Number.isFinite(cartodb_id)) {
+    throw new Error(
+      `A piece needs both a puzzle id and a cartodb_id to be saved, got ` +
+        `${pieceProps.id} and ${pieceProps.properties?.cartodb_id}.`
+    );
   }
-  return Promise.resolve();
+  return { id, cartodb_id };
 }
-async function saveCustomCentroids(pieceProps: PieceProps): Promise<any> {
-  if (pieceProps.customCentroid) {
-    const customCentroidRepository = connection!.getRepository(CustomCentroids);
-    if (
-      pieceProps.customCentroid.left !== 0 ||
-      pieceProps.customCentroid.top !== 0
-    ) {
-      customCentroidRepository
-        .save(pieceProps.customCentroid)
-        .then(() => {
-          console.log("Custom centroid saved successfully");
-          return Promise.resolve();
-        })
-        .catch((err) => {
-          console.log("Error saving custom centroid");
-          return Promise.reject(err);
-        });
-    } else {
-      //delete custom centroid for this id and cartodb_id
-      customCentroidRepository
-        .delete({
-          cartodb_id: pieceProps.properties.cartodb_id,
-          id: pieceProps.id,
-        })
-        .then(() => {
-          console.log("Custom centroid deleted successfully");
-          return Promise.resolve();
-        })
-        .catch((err) => {
-          console.log("Error deleting custom centroid");
-          return Promise.reject(err);
-        });
-    }
+
+async function saveCustomWiki(pieceProps: PieceProps): Promise<void> {
+  if (!pieceProps.customWiki) return;
+  const keys = keysOf(pieceProps);
+  const repository = connection!.getRepository(CustomWiki);
+  if (pieceProps.customWiki.wiki) {
+    await repository.save({ ...pieceProps.customWiki, ...keys });
+    console.log(`Saved custom_wiki ${keys.id}/${keys.cartodb_id}`);
+  } else {
+    await repository.delete(keys);
+    console.log(`Deleted custom_wiki ${keys.id}/${keys.cartodb_id}`);
   }
-  return Promise.resolve();
+}
+async function saveCustomCentroids(pieceProps: PieceProps): Promise<void> {
+  const centroid = pieceProps.customCentroid;
+  if (!centroid) return;
+  const keys = keysOf(pieceProps);
+  const repository = connection!.getRepository(CustomCentroids);
+  // 0/0 means "no offset", which is the absence of a row rather than a stored
+  // zero: the game falls back to centring the piece on the cursor.
+  if (centroid.left !== 0 || centroid.top !== 0) {
+    await repository.save({ ...centroid, ...keys });
+    console.log(
+      `Saved custom_centroids ${keys.id}/${keys.cartodb_id} ` +
+        `left=${centroid.left} top=${centroid.top}`
+    );
+  } else {
+    await repository.delete(keys);
+    console.log(`Deleted custom_centroids ${keys.id}/${keys.cartodb_id}`);
+  }
 }
 interface Link {
   url: string;
