@@ -6,16 +6,17 @@ import {
   Form,
   InputGroup,
   NavDropdown,
+  ProgressBar,
   Row,
 } from "react-bootstrap";
 import type { Puzzles } from "@mappuzzle/shared";
 import type { Countries } from "@mappuzzle/shared";
 import { AlertMessage } from "@mappuzzle/core";
-import { LoadingDialog } from "@mappuzzle/core";
 import type { FlagsIcons, PieceProps } from "@mappuzzle/shared";
 import { AlertModel } from "@mappuzzle/core";
 import { BackMapEditorService } from "../services/BackMapEditorService";
 import { BackWikiService } from "../services/BackWikiService";
+import type { JobProgress } from "../services/BackWikiService";
 import ErrorList from "./errorList";
 
 interface EditorDialogProps {
@@ -27,8 +28,14 @@ function EditMap({
   puzzle = {} as Puzzles,
   pieces = new Array<PieceProps>(),
 }: EditorDialogProps): JSX.Element | null {
-  const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [progress, setProgress] = useState({
+    running: false,
+    title: "",
+    done: 0,
+    total: 0,
+    label: "",
+  });
   const [langErrors, setLangErrors] = useState([]);
   const [alert, setAlert] = useState({
     title: "",
@@ -115,119 +122,76 @@ function EditMap({
       });
   };
 
-  const generateWikiLinksHandler = () => {
-    setLoading(true);
-    BackWikiService.generateWikiLinks(pieces, puzzle.id, subfix)
-      .then((res) => {
-        setLoading(false);
-        setAlert({
-          title: "Success",
-          message: "Wiki links generated successfully",
-          type: "success",
-        } as AlertModel);
-        setLangErrors(res.langErrors);
-        setShowAlert(true);
-      })
-      .catch((errorMessage) => {
-        setLoading(false);
-        setAlert({
-          title: "Error",
-          message: errorMessage,
-          type: "danger",
-        } as AlertModel);
-        setAlert(errorMessage);
-      });
+  /**
+   * Runs one of the content jobs, showing where it is while it works.
+   *
+   * All four walk every piece and pause between Wikipedia calls, so they take
+   * minutes. Before this the editor showed a spinner and then one fixed line —
+   * "Wiki links generated successfully" — whether it had resolved forty articles
+   * or none, and the backend's own summary was thrown away.
+   */
+  const runJob = async (
+    title: string,
+    job: (onProgress: (p: JobProgress) => void) => Promise<any>
+  ) => {
+    setProgress({ running: true, title, done: 0, total: 0, label: "starting…" });
+    try {
+      const res = await job((p) =>
+        setProgress({ running: true, title, ...p })
+      );
+      setAlert({
+        title: res?.success === false ? `${title}: finished with problems` : title,
+        message: res?.msg ?? "The job gave no summary",
+        type: res?.success === false ? "warning" : "success",
+      } as AlertModel);
+      setShowAlert(true);
+      if (res?.langErrors) setLangErrors(res.langErrors);
+      if (res?.error && Array.isArray(res.error)) setLangErrors(res.error);
+    } catch (e) {
+      setAlert({
+        title: `${title}: failed`,
+        message: e instanceof Error ? e.message : String(e),
+        type: "danger",
+      } as AlertModel);
+      setShowAlert(true);
+    } finally {
+      setProgress({ running: false, title: "", done: 0, total: 0, label: "" });
+    }
   };
 
-  const generateThumbnailHandler = async () => {
-    setLoading(true);
-    await BackWikiService.generateThumbnail(puzzle.id)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then(() => {
-        setLoading(false);
-        setAlert({
-          title: "Success",
-          message: "Thumbnail generated successfully",
-          type: "success",
-        } as AlertModel);
+  const generateWikiLinksHandler = () =>
+    runJob("Wikipedia links", (onProgress) =>
+      BackWikiService.generateWikiLinks(pieces, puzzle.id, subfix, onProgress)
+    );
 
-        setShowAlert(true);
-      })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .catch((errorMessage: any) => {
-        setLoading(false);
-        setAlert({
-          title: "Error",
-          message: errorMessage.message,
-          type: "danger",
-        } as AlertModel);
-        setAlert(errorMessage);
-      });
-  };
+  const generateThumbnailHandler = () =>
+    runJob("Flag thumbnails", (onProgress) =>
+      BackWikiService.generateThumbnail(puzzle.id, onProgress)
+    );
 
-  const generateFlagsHandler = async () => {
-    setLoading(true);
-
-    const piecesToSend: PieceProps[] = [];
+  /** Both of these need each piece's stored wiki and centroid first. */
+  const piecesWithProps = async (): Promise<PieceProps[]> => {
+    const out: PieceProps[] = [];
     for (const piece of pieces) {
       piece.id = puzzleEdited.id;
-      piecesToSend.push(await BackMapEditorService.updatePieceProps(piece));
+      out.push(await BackMapEditorService.updatePieceProps(piece));
     }
-    await BackWikiService.generateFlags(piecesToSend, puzzle.id)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then(() => {
-        setLoading(false);
-        setAlert({
-          title: "Success",
-          message: "Flags generated successfully",
-          type: "success",
-        } as AlertModel);
-
-        setShowAlert(true);
-      })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .catch((errorMessage: any) => {
-        setLoading(false);
-        setAlert({
-          title: "Error",
-          message: errorMessage.message,
-          type: "danger",
-        } as AlertModel);
-        setAlert(errorMessage);
-      });
+    return out;
   };
 
-  const generateTranslationHandler = async () => {
-    setLoading(true);
-    const piecesToSend: PieceProps[] = [];
-    for (const piece of pieces) {
-      piece.id = puzzleEdited.id;
-      piecesToSend.push(await BackMapEditorService.updatePieceProps(piece));
-    }
-    await BackWikiService.generateTranslation(piecesToSend, puzzle.id)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then((res: any) => {
-        setLoading(false);
-        setAlert({
-          title: "Success",
-          message: "Translation generated successfully",
-          type: "success",
-        } as AlertModel);
+  const generateFlagsHandler = () =>
+    runJob("Piece flags", async (onProgress) =>
+      BackWikiService.generateFlags(await piecesWithProps(), puzzle.id, onProgress)
+    );
 
-        setShowAlert(true);
-        setLangErrors(res.langErrors);
-      })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .catch((errorMessage: any) => {
-        setLoading(false);
-        setAlert({
-          title: "Error",
-          message: errorMessage.message,
-          type: "danger",
-        } as AlertModel);
-        setShowAlert(true);
-      });
-  };
+  const generateTranslationHandler = () =>
+    runJob("Translations", async (onProgress) =>
+      BackWikiService.generateTranslation(
+        await piecesWithProps(),
+        puzzle.id,
+        onProgress
+      )
+    );
 
   const navDropdownTitle = (
     <span>
@@ -245,11 +209,13 @@ function EditMap({
   return (
     <React.Fragment>
       <Col xs={12} lg={12}>
-        <LoadingDialog show={loading} delay={1000} />
+        {/* autoClose 0: the job summary is the point, and the default second
+            was not long enough to read "12 flags downloaded, 3 with no image". */}
         <AlertMessage
           show={showAlert}
           alertMessage={alert}
           onHide={clearAlert}
+          autoClose={0}
         />
         <Form>
           <Row>
@@ -508,6 +474,33 @@ function EditMap({
 
           <hr className="mt-4" />
 
+          {progress.running && (
+            <Row className="mt-3">
+              <Col xs={12}>
+                <div className="d-flex justify-content-between small mb-1">
+                  <strong>{progress.title}</strong>
+                  <span className="text-muted">
+                    {progress.total > 0
+                      ? `${progress.done} of ${progress.total} — ${progress.label}`
+                      : progress.label}
+                  </span>
+                </div>
+                <ProgressBar
+                  now={progress.total > 0 ? (progress.done / progress.total) * 100 : 100}
+                  // Striped and animated with nothing to divide by yet, so the
+                  // bar shows it is working rather than sitting empty at zero.
+                  striped={progress.total === 0}
+                  animated={progress.total === 0}
+                  label={
+                    progress.total > 0
+                      ? `${Math.round((progress.done / progress.total) * 100)}%`
+                      : undefined
+                  }
+                />
+              </Col>
+            </Row>
+          )}
+
           <Row>
             <Col xs={12}>
               <h5>Bulk content</h5>
@@ -525,6 +518,7 @@ function EditMap({
                   variant="outline-secondary"
                   type="button"
                   onClick={generateWikiLinksHandler}
+                  disabled={progress.running}
                 >
                   1. Wikipedia links
                 </Button>
@@ -548,6 +542,7 @@ function EditMap({
                 variant="outline-secondary"
                 type="button"
                 onClick={generateTranslationHandler}
+                disabled={progress.running}
               >
                 2. Translations
               </Button>
@@ -560,6 +555,7 @@ function EditMap({
                 variant="outline-secondary"
                 type="button"
                 onClick={generateFlagsHandler}
+                disabled={progress.running}
               >
                 3. Piece flags
               </Button>
@@ -572,6 +568,7 @@ function EditMap({
                 variant="outline-secondary"
                 type="button"
                 onClick={generateThumbnailHandler}
+                disabled={progress.running}
               >
                 4. Flag thumbnails
               </Button>

@@ -6,6 +6,7 @@ import Languages from "../models/languages";
 import fetch from "node-fetch";
 import path from "path";
 import { customFlagsDir, ensureDir } from "../config/paths";
+import { startProgress } from "../lib/progress";
 import * as fs from "fs";
 import sharp from "sharp";
 import CustomWiki from "../models/customWiki";
@@ -23,6 +24,9 @@ express.urlencoded({ limit: "125mb", extended: true });
 wikiImport.post("/generateTranslation", async (req, res) => {
   const generateTranslation = req.body;
   const langErrors: CustomTranslations[] = [];
+  const progress = startProgress(res);
+  let saved = 0;
+  let inactive = 0;
   if (generateTranslation) {
     const languages: Languages[] = generateTranslation.languages as Languages[];
     const languagesRepository = connection!.getRepository(Languages);
@@ -54,7 +58,14 @@ wikiImport.post("/generateTranslation", async (req, res) => {
       const customTranslationsRepository =
         connection!.getRepository(CustomTranslations);
       let first: boolean = true;
+      let walked = 0;
       for await (const translation of translations) {
+        walked++;
+        // One line per 25 rows: a big puzzle carries thousands of translations
+        // and a line each would be more traffic than the work.
+        if (walked % 25 === 0 || walked === translations.length) {
+          progress.step(walked, translations.length, `${translation.lang}`);
+        }
         if (first) {
           first = false;
           //delete al translations for this puzzle id
@@ -74,11 +85,14 @@ wikiImport.post("/generateTranslation", async (req, res) => {
           console.error("Error: " + JSON.stringify(translation));
           langErrors.push(translation);
         }
+        if (!activeLangs.find((lang) => lang.lang === translation.lang)) {
+          inactive++;
+        }
         if (activeLangs.find((lang) => lang.lang === translation.lang)) {
           await customTranslationsRepository
             .save(translation)
             .then(() => {
-              console.log("Translation saved: " + JSON.stringify(translation));
+              saved++;
             })
             .catch((err: any) => {
               console.error("Error saving custom translation: " + err.message);
@@ -87,10 +101,14 @@ wikiImport.post("/generateTranslation", async (req, res) => {
       }
     }
   }
-  res.json({
-    success: true,
-    msg: "Generate Translation languages saved successfully",
+  progress.finish({
+    success: langErrors.length === 0,
+    msg:
+      `${saved} translation${saved === 1 ? "" : "s"} saved` +
+      (inactive > 0 ? `, ${inactive} skipped for inactive languages` : "") +
+      (langErrors.length > 0 ? `, ${langErrors.length} pieces failed` : ""),
     langErrors: langErrors,
+    counts: { saved, inactive, failed: langErrors.length },
   });
 });
 
@@ -107,9 +125,16 @@ wikiImport.post("/generateFlags", async (req, res) => {
     const pieces: PieceProps[] = generateFlags.pieces as PieceProps[];
     const id: number = generateFlags.id as number;
 
+    const progress = startProgress(res);
     let success = true;
     let error: any;
+    let downloaded = 0;
+    let present = 0;
+    let missing = 0;
+    let walked = 0;
     for (const piece of pieces) {
+      walked++;
+      progress.step(walked, pieces.length, piece.properties.name);
       try {
         let pieceId = piece.name;
         if (piece.customWiki && piece.customWiki.wiki !== "") {
@@ -121,11 +146,12 @@ wikiImport.post("/generateFlags", async (req, res) => {
           String(piece.properties.cartodb_id)
         );
         //if not exist as PNG or SVG
-        if (
-          !fs.existsSync(filePathPiece + ".png") &&
-          !fs.existsSync(filePathPiece + ".svg") &&
-          !fs.existsSync(filePathPiece + ".jpg")
-        ) {
+        const alreadyOnDisk =
+          fs.existsSync(filePathPiece + ".png") ||
+          fs.existsSync(filePathPiece + ".svg") ||
+          fs.existsSync(filePathPiece + ".jpg");
+        if (alreadyOnDisk) present++;
+        if (!alreadyOnDisk) {
           if (piece) {
             const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&generator=images&gimlimit=50&prop=imageinfo&iiprop=url&format=json&titles=${pieceId}`;
             try {
@@ -194,6 +220,7 @@ wikiImport.post("/generateFlags", async (req, res) => {
                     }
                   }
                 }
+                if (urlFlagImage === "") missing++;
                 if (urlFlagImage !== "") {
                   console.log(
                     "urlFlagImage:",
@@ -222,6 +249,7 @@ wikiImport.post("/generateFlags", async (req, res) => {
                       writer.on("finish", resolve);
                       writer.on("error", reject);
                     });
+                    downloaded++;
                     //set time to wait for file to be saved
                     await new Promise((resolve) => setTimeout(resolve, 2000));
                   } else {
@@ -249,20 +277,15 @@ wikiImport.post("/generateFlags", async (req, res) => {
       }
     }
 
-    if (success) {
-      res.json({
-        success: true,
-        msg: "Generate Flags saved successfully",
-      });
-    } else {
-      res.json({
-        success: false,
-        msg: "Error saving flags",
-        error: error,
-      });
-    }
-    console.log("Success:", success);
-    console.log("Error:", error);
+    progress.finish({
+      success,
+      msg:
+        `${downloaded} flag${downloaded === 1 ? "" : "s"} downloaded, ` +
+        `${present} already there` +
+        (missing > 0 ? `, ${missing} with no image on Wikipedia` : ""),
+      error: success ? undefined : String(error),
+      counts: { downloaded, present, missing, total: pieces.length },
+    });
   }
 });
 
@@ -271,18 +294,32 @@ wikiImport.post("/generateThumbs", async (req, res) => {
   if (generateFlags) {
     const id: number = generateFlags.id as number;
 
+    const progress = startProgress(res);
     let success = true;
     let error: any;
+    let resized = 0;
+    let skipped = 0;
+    const sizeList = [64, 128, 256, 512, 1024];
     try {
       //create subfolder if not exists
       const dir = customFlagsDir(id);
       ensureDir(dir);
       //if dir exists
       if (fs.existsSync(dir)) {
-        //get all files in dir
-        const files = fs.readdirSync(dir);
+        // Only the source images at the top level. readdirSync also returns the
+        // 64/128/256/512/1024 subdirectories this job creates, and reading one
+        // as a file threw EISDIR: after the first run the job aborted on its
+        // third entry, reporting a generic failure.
+        const files = fs
+          .readdirSync(dir, { withFileTypes: true })
+          .filter(
+            (entry) =>
+              entry.isFile() &&
+              /\.(png|svg|jpe?g)$/i.test(entry.name)
+          )
+          .map((entry) => entry.name);
         //for each file
-        const sizes = [64, 128, 256, 512, 1024];
+        const sizes = sizeList;
         //delete all files in dir
         /*for (const size of sizes) {
           const sizeDir = path.join(dir, `${size}`);
@@ -295,7 +332,10 @@ wikiImport.post("/generateThumbs", async (req, res) => {
           }
         }*/
 
+        let walked = 0;
         for (const file of files) {
+          walked++;
+          progress.step(walked, files.length, file);
           //get file extension
           const ext = file.split(".").pop();
           const extOut = "png";
@@ -332,6 +372,9 @@ wikiImport.post("/generateThumbs", async (req, res) => {
                       console.error(err);
                     }
                   });
+                resized++;
+              } else {
+                skipped++;
               }
             }
             console.log(
@@ -349,20 +392,16 @@ wikiImport.post("/generateThumbs", async (req, res) => {
       error = e;
     }
 
-    if (success) {
-      res.json({
-        success: true,
-        msg: "Generate Thumbs saved successfully",
-      });
-    } else {
-      res.json({
-        success: false,
-        msg: "Error saving thumbs",
-        error: error,
-      });
-    }
-    console.log("Success:", success);
-    console.log("Error:", error);
+    progress.finish({
+      success,
+      msg: success
+        ? `${resized} image${resized === 1 ? "" : "s"} resized to ` +
+          `${sizeList.join(", ")} px` +
+          (skipped > 0 ? `, ${skipped} skipped` : "")
+        : `Could not resize: ${String(error)}`,
+      error: success ? undefined : String(error),
+      counts: { resized, skipped },
+    });
   }
 });
 
@@ -371,6 +410,10 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
 
   const langErrors: CustomTranslations[] = [];
   if (generateTranslation) {
+    const progress = startProgress(res);
+    let resolved = 0;
+    let alreadyHad = 0;
+    let walked = 0;
     const id: number = generateTranslation.id as number;
     const pieces: PieceProps[] = generateTranslation.pieces as PieceProps[];
     const subFix: string = generateTranslation.subFix as string;
@@ -382,6 +425,8 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
     });
     //for each piece
     for (const piece of pieces) {
+      walked++;
+      progress.step(walked, pieces.length, piece.properties.name);
       //if piece not exist in wikiPieces
       if (
         !wikiPieces.find(
@@ -420,6 +465,7 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
                 //save wikiPiece
                 if (wikiPiece.wiki !== "" && wikiPiece.wiki !== undefined) {
                   await wikiRepository.save(wikiPiece);
+                  resolved++;
                 }
                 break;
               }
@@ -443,18 +489,16 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
       }
       await verifyRedirection(wikiRepository, id, piece, subFix, langErrors);
     }
-    if (langErrors.length > 0) {
-      res.json({
-        success: false,
-        msg: "Error saving translations",
-        error: langErrors,
-      });
-    } else {
-      res.json({
-        success: true,
-        msg: "Translations saved successfully",
-      });
-    }
+    alreadyHad = Math.max(0, pieces.length - resolved - langErrors.length);
+    progress.finish({
+      success: langErrors.length === 0,
+      msg:
+        `${resolved} article${resolved === 1 ? "" : "s"} resolved, ` +
+        `${alreadyHad} already had one` +
+        (langErrors.length > 0 ? `, ${langErrors.length} not found` : ""),
+      error: langErrors.length > 0 ? langErrors : undefined,
+      counts: { resolved, alreadyHad, failed: langErrors.length, total: pieces.length },
+    });
   }
 });
 

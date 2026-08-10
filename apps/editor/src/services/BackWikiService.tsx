@@ -7,9 +7,65 @@ import { WikiInfoLang, WikiInfoPiece } from "@mappuzzle/core";
 import { getWikiInfo } from "@mappuzzle/core";
 import { getWikiSimple } from "@mappuzzle/core";
 
+/** What a running job reports: where it is and what it is on. */
+export interface JobProgress {
+  done: number;
+  total: number;
+  label: string;
+}
+
+/**
+ * Reads the backend's newline-delimited progress and returns the final result.
+ *
+ * These jobs walk every piece and pause between Wikipedia calls, so they run for
+ * minutes. The response is consumed as a stream: every line but the last is a
+ * progress event, and the last one is the result the caller used to await.
+ */
+async function readProgress(
+  response: Response,
+  onProgress?: (p: JobProgress) => void
+): Promise<any> {
+  if (!response.body) return response.json();
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let result: any;
+
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    // The tail may be half a line; it waits for the next chunk.
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      try {
+        const event = JSON.parse(line);
+        if (event.type === "progress") onProgress?.(event as JobProgress);
+        else result = event;
+      } catch {
+        // A malformed line should not lose the rest of the job.
+        console.warn("Unreadable progress line:", line);
+      }
+    }
+  }
+  if (buffer.trim()) {
+    try {
+      result = JSON.parse(buffer);
+    } catch {
+      /* nothing usable at the end */
+    }
+  }
+  return result ?? { success: false, msg: "The job ended without a result" };
+}
+
 export class BackWikiService {
   //generate thumbnail for a pieces
-  public static async generateThumbnail(id: number): Promise<any> {
+  public static async generateThumbnail(
+    id: number,
+    onProgress?: (p: JobProgress) => void
+  ): Promise<any> {
     const response = await fetch(ConfigService.backendUrl + "/wikiImport/generateThumbs", {
       method: "POST",
       headers: {
@@ -20,13 +76,14 @@ export class BackWikiService {
       console.log(err);
       return Promise.reject("Error generating thumbnails");
     });
-    return response.json();
+    return readProgress(response, onProgress);
   }
 
   //generate flags for a pieces
   public static async generateFlags(
     pieces: PieceProps[],
-    id: number
+    id: number,
+    onProgress?: (p: JobProgress) => void
   ): Promise<any> {
     const response = await fetch(ConfigService.backendUrl + "/wikiImport/generateFlags", {
       method: "POST",
@@ -41,13 +98,14 @@ export class BackWikiService {
       console.log(err);
       return Promise.reject("Error generating flags");
     });
-    return response.json();
+    return readProgress(response, onProgress);
   }
 
   //generate translation for a pieces
   public static async generateTranslation(
     pieces: PieceProps[],
-    id: number
+    id: number,
+    onProgress?: (p: JobProgress) => void
   ): Promise<any> {
     const languages: Languages[] = [];
     const translations: CustomTranslations[] = [];
@@ -80,7 +138,7 @@ export class BackWikiService {
       console.log(err);
       return Promise.reject("Error generating translation");
     });
-    return response.json();
+    return readProgress(response, onProgress);
   }
 
   private static async getWikiInfo(
@@ -135,7 +193,8 @@ export class BackWikiService {
   public static async generateWikiLinks(
     pieces: PieceProps[],
     id: number,
-    subFix: string
+    subFix: string,
+    onProgress?: (p: JobProgress) => void
   ): Promise<any> {
     const response = await fetch(
       ConfigService.backendUrl + "/wikiImport/generateWikiLinks",
@@ -154,6 +213,6 @@ export class BackWikiService {
       console.log(err);
       return Promise.reject("Error generating wiki links");
     });
-    return response.json();
+    return readProgress(response, onProgress);
   }
 }
