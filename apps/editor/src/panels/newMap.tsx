@@ -173,22 +173,62 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
       .replace(/[^a-z0-9]+/g, "_")
       .replace(/^_+|_+$/g, "");
 
-  /** Which role a field plays, or none. Empty id and colour fall back to order. */
+  /**
+   * A column that is not in the .dbf: the piece's position after sorting by
+   * name, 1..n.
+   *
+   * The importer already falls back to it when no id or colour field is chosen,
+   * but with a source like GADM, which has no numeric column at all, the only
+   * sign of that was two greyed-out options. Showing it as a column makes the
+   * default visible and selectable instead of implied. It stays a UI-only idea:
+   * choosing it means sending an empty field name, which is what the importer
+   * reads as "number them in order".
+   */
+  const POSITION = "__position__";
+
+  const columns = [
+    ...(fields.length > 0
+      ? [
+          {
+            name: POSITION,
+            label: "Piece order",
+            numeric: true,
+            unique: true,
+            samples: fields[0].samples.map((_, i) => String(i + 1)),
+            synthetic: true,
+          },
+        ]
+      : []),
+    ...fields.map((f) => ({ ...f, label: f.name, synthetic: false })),
+  ];
+
+  /** Which roles a column holds. Both id and colour can sit on the same one. */
   const roleOf = (field: string): string => {
-    if (data.name === field) return "name";
-    if (data.id === field) return "id";
-    if (data.mapColor === field) return "color";
+    const held = field === POSITION ? "" : field;
+    const isId = data.id === held;
+    const isColor = data.mapColor === held;
+    if (data.name === held && held !== "") return "name";
+    if (isId && isColor) return "id+color";
+    if (isId) return "id";
+    if (isColor) return "color";
     return "";
   };
 
   const assignRole = (field: string, role: string) => {
-    setData((d) => ({
-      ...d,
-      // A field can only hold one role, so taking it clears it elsewhere.
-      name: role === "name" ? field : d.name === field ? "" : d.name,
-      id: role === "id" ? field : d.id === field ? "" : d.id,
-      mapColor: role === "color" ? field : d.mapColor === field ? "" : d.mapColor,
-    }));
+    const held = field === POSITION ? "" : field;
+    setData((d) => {
+      // Each role sits on exactly one column, so taking it releases the old one.
+      // Releasing id or colour hands it back to the piece order, which is the
+      // empty string the importer expects.
+      const next = { ...d };
+      if (d.name === held) next.name = "";
+      if (d.id === held) next.id = "";
+      if (d.mapColor === held) next.mapColor = "";
+      if (role === "name") next.name = held;
+      if (role === "id" || role === "id+color") next.id = held;
+      if (role === "color" || role === "id+color") next.mapColor = held;
+      return next;
+    });
   };
 
   return (
@@ -252,37 +292,73 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
                 <strong>3.</strong> Fields — {pieceCount} pieces
               </Form.Label>
               <Form.Text className="d-block mb-2">
-                Pick which field names the pieces. The id and colour are
-                optional: without them the pieces are numbered in name order,
-                which is what most sources need.
+                Pick which field names the pieces. The id and colour default to
+                <em> Piece order</em>, the generated column on the left, which is
+                what most sources need: many, GADM among them, carry no numeric
+                column at all.
               </Form.Text>
               <div className="newmap-fields">
                 <Table size="sm" bordered hover className="mb-0">
                   <thead>
                     <tr>
-                      {fields.map((f) => (
-                        <th key={f.name} className="align-top">
-                          <div className="text-nowrap">{f.name}</div>
+                      {columns.map((f) => (
+                        <th
+                          key={f.name}
+                          className={
+                            "align-top" + (f.synthetic ? " newmap-synthetic" : "")
+                          }
+                        >
+                          <div className="text-nowrap">{f.label}</div>
                           <div className="fw-normal text-muted small mb-1">
-                            {f.numeric ? "number" : "text"}
-                            {f.unique ? ", all different" : ""}
+                            {f.synthetic
+                              ? "generated"
+                              : (f.numeric ? "number" : "text") +
+                                (f.unique ? ", all different" : "")}
                           </div>
-                          <Form.Select
-                            size="sm"
-                            value={roleOf(f.name)}
-                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                              assignRole(f.name, e.target.value)
-                            }
-                          >
-                            <option value="">—</option>
-                            <option value="name">Name</option>
-                            <option value="id" disabled={!f.numeric}>
-                              Piece id{f.numeric ? "" : " (needs numbers)"}
-                            </option>
-                            <option value="color" disabled={!f.numeric}>
-                              Colour{f.numeric ? "" : " (needs numbers)"}
-                            </option>
-                          </Form.Select>
+                          {f.synthetic ? (
+                            /* Read-only on purpose. The piece order holds
+                               whatever no real column has taken, so a select
+                               here would offer choices that change nothing;
+                               releasing a role on a real column below is what
+                               hands it back. */
+                            <div className="small">
+                              {roleOf(f.name) === "id+color"
+                                ? "Piece id and colour"
+                                : roleOf(f.name) === "id"
+                                ? "Piece id"
+                                : roleOf(f.name) === "color"
+                                ? "Colour"
+                                : "unused"}
+                            </div>
+                          ) : (
+                            <Form.Select
+                              size="sm"
+                              value={roleOf(f.name)}
+                              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                                assignRole(f.name, e.target.value)
+                              }
+                            >
+                              <option value="">—</option>
+                              <option value="name">Name</option>
+                              {/* An id keys custom_wiki and custom_centroids, so
+                                  repeated values would collide. */}
+                              <option
+                                value="id"
+                                disabled={!f.numeric || !f.unique}
+                              >
+                                Piece id
+                              </option>
+                              <option value="color" disabled={!f.numeric}>
+                                Colour
+                              </option>
+                              <option
+                                value="id+color"
+                                disabled={!f.numeric || !f.unique}
+                              >
+                                Piece id and colour
+                              </option>
+                            </Form.Select>
+                          )}
                         </th>
                       ))}
                     </tr>
@@ -291,8 +367,14 @@ function NewMap({ onCreated }: NewMapProps): JSX.Element | null {
                     {Array.from({ length: fields[0]?.samples.length ?? 0 }).map(
                       (_, row) => (
                         <tr key={row}>
-                          {fields.map((f) => (
-                            <td key={f.name} className="text-nowrap small">
+                          {columns.map((f) => (
+                            <td
+                              key={f.name}
+                              className={
+                                "text-nowrap small" +
+                                (f.synthetic ? " newmap-synthetic" : "")
+                              }
+                            >
                               {f.samples[row]}
                             </td>
                           ))}

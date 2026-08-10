@@ -183,3 +183,8 @@ iframe {
   vertical-align: top;
   min-width: 8rem;
 }
+
+/* The generated position column is not in the file, so it reads as an aside. */
+.newmap-synthetic {
+  background: rgba(13, 110, 253, 0.06);
+}
