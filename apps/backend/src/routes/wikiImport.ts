@@ -7,11 +7,11 @@ import fetch from "node-fetch";
 import path from "path";
 import { customFlagsDir, ensureDir } from "../config/paths";
 import { startProgress } from "../lib/progress";
+import { wikipediaGet, wikipediaHeaders } from "../lib/wikipedia";
 import * as fs from "fs";
 import sharp from "sharp";
 import CustomWiki from "../models/customWiki";
 import { Repository } from "typeorm";
-import axios from "axios";
 
 // eslint-disable-next-line new-cap
 const wikiImport = express.Router();
@@ -155,16 +155,15 @@ wikiImport.post("/generateFlags", async (req, res) => {
           if (piece) {
             const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&generator=images&gimlimit=50&prop=imageinfo&iiprop=url&format=json&titles=${pieceId}`;
             try {
-              const response = await axios.get(url, {
-                headers: {
-                  "Content-Type": "application/json",
-                  "Access-Control-Allow-Origin": "*",
-                },
-              });
+              const responseData = await wikipediaGet(url);
 
-              const json = response.data;
+              const json = responseData;
               if (json) {
-                const { pages } = json.query;
+                // Optional: with generator=images an article that has none comes
+                // back with no `query` at all, and destructuring it threw. The
+                // throw was caught and logged, so the piece silently counted as
+                // neither downloaded nor missing.
+                const pages = json.query?.pages;
                 let urlFlagImage = "";
                 if (pages) {
                   for (const page in pages) {
@@ -236,10 +235,7 @@ wikiImport.post("/generateFlags", async (req, res) => {
                   //if filePath not exists
                   if (!fs.existsSync(filePath)) {
                     const response = await fetch(urlFlagImage, {
-                      headers: {
-                        "User-Agent":
-                          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
-                      },
+                      headers: { "User-Agent": wikipediaHeaders["User-Agent"] },
                     });
                     //create subfolder if not exists
                     ensureDir(customFlagsDir(id));
@@ -414,6 +410,7 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
     let resolved = 0;
     let alreadyHad = 0;
     let walked = 0;
+    let lastFailure: string | undefined;
     const id: number = generateTranslation.id as number;
     const pieces: PieceProps[] = generateTranslation.pieces as PieceProps[];
     const subFix: string = generateTranslation.subFix as string;
@@ -424,15 +421,21 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
       where: { id: id },
     });
     //for each piece
+    const broken: string[] = [];
+    const unmatched: string[] = [];
     for (const piece of pieces) {
       walked++;
       progress.step(walked, pieces.length, piece.properties.name);
-      //if piece not exist in wikiPieces
-      if (
-        !wikiPieces.find(
-          (wikiPiece) => wikiPiece.cartodb_id === piece.properties.cartodb_id
-        )
-      ) {
+      // One piece that Wikipedia refuses should cost that piece, not the job.
+      // An uncaught rejection here used to take the whole API process down with
+      // it, and the editor saw the stream cut off mid-progress.
+      try {
+      const hadOne = !!wikiPieces.find(
+        (wikiPiece) => wikiPiece.cartodb_id === piece.properties.cartodb_id
+      );
+      if (hadOne) alreadyHad++;
+      const before = resolved;
+      if (!hadOne) {
         //new CustomWiki
         const wikiPiece = new CustomWiki();
         //set id
@@ -443,9 +446,11 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         //wipedia get request for find wiki page
         //with axios
-        const wikiResponse = await axios.get(`https://en.wikipedia.org/w/api.php?action=query&format=json&prop=info&generator=allpages&inprop=url&gaplimit=5&gapfrom=${wikiPiece.wiki}`);
+        const wikiJsonData = await wikipediaGet(
+          `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=info&generator=allpages&inprop=url&gaplimit=5&gapfrom=${wikiPiece.wiki}`
+        );
         //get json from response
-        const wikiJson = wikiResponse.data;
+        const wikiJson = wikiJsonData;
         //get pages from json
         if (wikiJson.query) {
           const wikiPages = wikiJson.query.pages;
@@ -487,17 +492,42 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
           langErrors.push(customTranslations);
         }
       }
+      // Looked it up and saved nothing: Wikipedia has pages but none matching.
+      // Counted rather than inferred by subtraction, which reported these two as
+      // "already had one" when they had nothing at all.
+      if (!hadOne && resolved === before) unmatched.push(piece.properties.name);
       await verifyRedirection(wikiRepository, id, piece, subFix, langErrors);
+      } catch (e) {
+        const why = e instanceof Error ? e.message : String(e);
+        console.error(`${piece.properties.name}: ${why}`);
+        broken.push(piece.properties.name);
+        // Reported once at the end rather than per piece: a policy or rate-limit
+        // problem hits every one of them the same way.
+        lastFailure = why;
+      }
     }
-    alreadyHad = Math.max(0, pieces.length - resolved - langErrors.length);
+    const noMatch = unmatched.length + langErrors.length;
     progress.finish({
-      success: langErrors.length === 0,
+      success: noMatch === 0 && broken.length === 0,
       msg:
         `${resolved} article${resolved === 1 ? "" : "s"} resolved, ` +
         `${alreadyHad} already had one` +
-        (langErrors.length > 0 ? `, ${langErrors.length} not found` : ""),
+        (noMatch > 0
+          ? `, no match for ${unmatched.concat(
+              langErrors.map((l) => String(l.translation))
+            ).slice(0, 4).join(", ")}${noMatch > 4 ? ` and ${noMatch - 4} more` : ""}`
+          : "") +
+        (broken.length > 0
+          ? `, ${broken.length} failed: ${lastFailure ?? "unknown error"}`
+          : ""),
       error: langErrors.length > 0 ? langErrors : undefined,
-      counts: { resolved, alreadyHad, failed: langErrors.length, total: pieces.length },
+      counts: {
+        resolved,
+        alreadyHad,
+        noMatch,
+        failed: broken.length,
+        total: pieces.length,
+      },
     });
   }
 });
@@ -518,8 +548,10 @@ async function verifyRedirection(
     if (wikiPiece) {
       try {
         //with axios
-        const wikiResponse = await axios.get(`https://en.wikipedia.org/w/api.php?action=query&origin=*&gimlimit=50&format=json&redirects&prop=redirects&rdlimit=max&titles=${wikiPiece.wiki}`);
-        const wikiJson = wikiResponse.data;
+        const redirectJson = await wikipediaGet(
+          `https://en.wikipedia.org/w/api.php?action=query&origin=*&gimlimit=50&format=json&redirects&prop=redirects&rdlimit=max&titles=${wikiPiece.wiki}`
+        );
+        const wikiJson = redirectJson;
         if (wikiJson.query) {
           if (wikiJson.query.redirects) {
             const wikiRedirects = wikiJson.query.redirects;
