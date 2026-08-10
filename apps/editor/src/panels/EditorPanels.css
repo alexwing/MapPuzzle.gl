@@ -45,6 +45,10 @@
 
 iframe {
   overflow-x: hidden;
+  /* Inline by default, so it sat on a text baseline and left the descender's
+     6 px underneath it. That sliver was the whole reason the piece pane still
+     had a vertical scrollbar with room to spare. */
+  display: block;
 }
 
 .scrollable {
@@ -111,7 +115,10 @@ iframe {
 .editor-content > .editor-pane-scroll.active {
   display: block;
   overflow-y: auto;
-  padding: 1rem 0.25rem 2rem;
+  /* Same gutter absorption as the piece pane: the settings form's rows hang
+     past the edge otherwise and raise a horizontal scrollbar. */
+  overflow-x: hidden;
+  padding: 1rem 0.75rem 2rem;
 }
 
 /* Bootstrap's `.tab-content > .active { display: block }` has two classes of
@@ -125,12 +132,21 @@ iframe {
 .editor-piece-list {
   flex: 0 0 30%;
   overflow-y: auto;
+  overflow-x: hidden;
   min-height: 0;
 }
 
 .editor-piece-detail {
   flex: 1;
   overflow-y: auto;
+  /* Bootstrap rows carry a negative horizontal margin that their columns pay
+     back as padding. With none here the row hung 12 px past the left edge, which
+     clipped the first characters of every label and raised a horizontal
+     scrollbar; that bar then ate the height and raised a vertical one too. The
+     padding absorbs the gutter, and hidden keeps a stray wide child from
+     bringing the bar back. */
+  padding-inline: 0.75rem;
+  overflow-x: hidden;
   min-height: 0;
   display: flex;
   flex-direction: column;
