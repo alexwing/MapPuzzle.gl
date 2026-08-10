@@ -8,8 +8,11 @@ import Countries from "../models/countries";
 import { SitemapStream, streamToPromise } from "sitemap";
 import { Readable } from "stream";
 import * as fs from "fs";
+import path from "path";
+import fetch from "node-fetch";
+import sharp from "sharp";
 import ViewState from "../models/viewState";
-import { flagsDir, sitemapPath } from "../config/paths";
+import { customFlagsDir, ensureDir, flagsDir, sitemapPath } from "../config/paths";
 
 // eslint-disable-next-line new-cap
 const mapEditor = express.Router();
@@ -61,6 +64,96 @@ mapEditor.post("/savePiece", async (req, res) => {
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     console.error(`savePiece failed: ${message}`);
+    res.status(400).json({ success: false, msg: message });
+  }
+});
+
+mapEditor.post("/replacePieceFlag", async (req, res) => {
+  try {
+    const puzzleId = Number(req.body?.id);
+    const cartodbId = Number(req.body?.cartodb_id);
+    const imageUrl = String(req.body?.imageUrl ?? "").trim();
+    if (!Number.isFinite(puzzleId) || !Number.isFinite(cartodbId)) {
+      return res.status(400).json({ success: false, msg: "Missing id/cartodb_id" });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const uploaded = (req as any).files?.file;
+    const outDir = customFlagsDir(puzzleId);
+    ensureDir(outDir);
+
+    const basename = String(cartodbId);
+    const originals = [".png", ".svg", ".jpg", ".jpeg"];
+    originals.forEach((ext) => {
+      const p = path.join(outDir, basename + ext);
+      if (fs.existsSync(p)) fs.unlinkSync(p);
+    });
+
+    let sourceBuffer: Buffer;
+    let ext = "";
+
+    if (uploaded) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const file = uploaded as any;
+      sourceBuffer = file.data as Buffer;
+      const lower = String(file.name ?? "").toLowerCase();
+      const mime = String(file.mimetype ?? "").toLowerCase();
+      if (lower.endsWith(".svg") || mime.includes("svg")) ext = "svg";
+      if (lower.endsWith(".png") || mime.includes("png")) ext = "png";
+      if (!ext) {
+        return res.status(400).json({ success: false, msg: "Only .svg or .png are supported" });
+      }
+    } else if (imageUrl) {
+      const response = await fetch(imageUrl);
+      if (!response.ok || !response.body) {
+        return res.status(400).json({ success: false, msg: `Could not download image from URL (${response.status})` });
+      }
+      const mime = String(response.headers.get("content-type") ?? "").toLowerCase();
+      let extGuess = "";
+      try {
+        const pathname = new URL(imageUrl).pathname.toLowerCase();
+        if (pathname.endsWith(".svg")) extGuess = "svg";
+        if (pathname.endsWith(".png")) extGuess = "png";
+      } catch {
+        // ignore URL parsing errors and keep mime-based guess
+      }
+      if (!extGuess && mime.includes("svg")) extGuess = "svg";
+      if (!extGuess && mime.includes("png")) extGuess = "png";
+      if (!extGuess) {
+        return res.status(400).json({ success: false, msg: "URL must point to a .svg or .png image" });
+      }
+      ext = extGuess;
+      sourceBuffer = Buffer.from(await response.arrayBuffer());
+    } else {
+      return res.status(400).json({ success: false, msg: "Provide an image URL or upload a file" });
+    }
+
+    const sourcePath = path.join(outDir, `${basename}.${ext}`);
+    fs.writeFileSync(sourcePath, sourceBuffer);
+
+    const sizes = [64, 128, 256, 512, 1024];
+    for (const size of sizes) {
+      const sizeDir = path.join(outDir, String(size));
+      ensureDir(sizeDir);
+      const thumbPath = path.join(sizeDir, `${basename}.png`);
+      await sharp(sourceBuffer)
+        .resize(size, size, { fit: "inside", withoutEnlargement: true })
+        .png()
+        .toFile(thumbPath);
+    }
+
+    res.json({
+      success: true,
+      msg: `Flag replaced for piece ${cartodbId} and thumbnails regenerated`,
+      data: {
+        id: puzzleId,
+        cartodb_id: cartodbId,
+        original: `${basename}.${ext}`,
+      },
+    });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    console.error(`replacePieceFlag failed: ${message}`);
     res.status(400).json({ success: false, msg: message });
   }
 });
@@ -184,12 +277,14 @@ interface Link {
   priority: number;
 }
 
+const SITE_HOST = "https://mappuzzle.xyz";
+
 mapEditor.get("/generateSitemap", async (_req, res) => {
   const pieces = await connection!.getRepository(Puzzles).find();
   //create links from pieces format  const links = [{ url: '/page-1/',  changefreq: 'daily', priority: 0.3  }]
   let links = pieces.map((piece) => {
     return {
-      url: `http://mappuzzle.xyz/?map=${piece.url}`,
+      url: `${SITE_HOST}/?map=${piece.url}`,
       changefreq: "monthly",
       priority: 0.8,
     } as Link;
@@ -201,7 +296,7 @@ mapEditor.get("/generateSitemap", async (_req, res) => {
   pieces.forEach((piece) => {
     if (piece.enableFlags === true) {
       links.push({
-        url: `http://mappuzzle.xyz/?flagQuiz=${piece.url}`,
+        url: `${SITE_HOST}/?flagQuiz=${piece.url}`,
         changefreq: "monthly",
         priority: 0.8,
       } as Link);
@@ -212,7 +307,7 @@ mapEditor.get("/generateSitemap", async (_req, res) => {
   if (linksQuiz){
     links = links.concat(linksQuiz as Link[]);
   } 
-  const stream = new SitemapStream({ hostname: "http://mappuzzle.xyz" });
+  const stream = new SitemapStream({ hostname: SITE_HOST });
 
   let sitemap = await streamToPromise(Readable.from(links).pipe(stream)).then(
     (sm) => sm.toString()
@@ -230,6 +325,48 @@ mapEditor.get("/generateSitemap", async (_req, res) => {
     if (err) return console.log(err);
     console.log("sitemap.xml written");
   });
+});
+
+mapEditor.get("/wikiRender", async (req, res) => {
+  try {
+    const raw = String(req.query.title ?? "").trim();
+    if (!raw) {
+      return res.status(400).send("Missing title");
+    }
+    const title = (() => {
+      try {
+        return decodeURIComponent(raw);
+      } catch {
+        return raw;
+      }
+    })();
+
+    const sourceUrl =
+      "https://en.wikipedia.org/w/index.php?title=" +
+      encodeURIComponent(title) +
+      "&action=render";
+
+    const response = await fetch(sourceUrl, {
+      headers: {
+        "User-Agent": "MapPuzzle/0.2 (https://mappuzzle.xyz; map puzzle editor)",
+        Accept: "text/html",
+      },
+    });
+    if (!response.ok) {
+      return res.status(502).send(`Wikipedia returned ${response.status}`);
+    }
+    const html = await response.text();
+    // A base tag keeps relative links and assets pointing to Wikipedia.
+    const withBase = html.replace(
+      /<head([^>]*)>/i,
+      '<head$1><base href="https://en.wikipedia.org/">'
+    );
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.send(withBase);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    res.status(500).send(message);
+  }
 });
 
 export default mapEditor;

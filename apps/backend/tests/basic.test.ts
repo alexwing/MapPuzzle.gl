@@ -21,4 +21,13 @@ describe('API tests', () => {
         done();
       });
   });
+
+  test('sitemap endpoint should emit HTTPS URLs', async () => {
+    const response = await request(app).get('/api/mapEditor/generateSitemap');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['content-type']).toContain('application/xml');
+    expect(response.text).toContain('https://mappuzzle.xyz/?map=');
+    expect(response.text).not.toContain('http://mappuzzle.xyz/?map=');
+  });
 });

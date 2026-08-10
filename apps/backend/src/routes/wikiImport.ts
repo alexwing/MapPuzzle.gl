@@ -12,10 +12,104 @@ import * as fs from "fs";
 import sharp from "sharp";
 import CustomWiki from "../models/customWiki";
 import { Repository } from "typeorm";
+import Puzzles from "../models/puzzles";
 
 // eslint-disable-next-line new-cap
 const wikiImport = express.Router();
 // Route: <HOST>:PORT/api/wikiImport
+
+function normalizeText(value: string): string {
+  return decodeURI(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function extFromUrl(url: string): string {
+  try {
+    const pathname = new URL(url).pathname;
+    return (pathname.split(".").pop() ?? "").toLowerCase();
+  } catch {
+    return (url.split("?")[0].split(".").pop() ?? "").toLowerCase();
+  }
+}
+
+function slugTokens(value: string): string[] {
+  return normalizeText(value)
+    .replace(/[()]/g, " ")
+    .replace(/[_\-]+/g, " ")
+    .split(/\s+/)
+    .filter((t) => t.length > 2)
+    .filter((t) => !["state", "province", "region", "department", "governorate"].includes(t));
+}
+
+type AdminContext =
+  | "canton"
+  | "state"
+  | "province"
+  | "county"
+  | "region"
+  | "department"
+  | "district"
+  | "governorate"
+  | "";
+
+function detectAdminContext(url: string, name: string): AdminContext {
+  const text = normalizeText(`${url} ${name}`);
+  if (text.includes("canton")) return "canton";
+  if (text.includes("state")) return "state";
+  if (text.includes("province")) return "province";
+  if (text.includes("county")) return "county";
+  if (text.includes("region")) return "region";
+  if (text.includes("department")) return "department";
+  if (text.includes("district")) return "district";
+  if (text.includes("governorate")) return "governorate";
+  return "";
+}
+
+function buildSearchTitles(pieceId: string, pieceName: string, context: AdminContext): string[] {
+  const base = pieceId?.trim() || pieceName.trim().replace(/\s+/g, "_");
+  const stems = new Set<string>([base, pieceName.trim().replace(/\s+/g, "_")]);
+
+  for (const stem of Array.from(stems)) {
+    const ascii = decodeURI(stem)
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    stems.add(ascii);
+    if (ascii.startsWith("Sankt_")) {
+      stems.add(ascii.replace(/^Sankt_/, "St._"));
+      stems.add(ascii.replace(/^Sankt_/, "Saint_"));
+    }
+  }
+
+  const titles = Array.from(stems);
+  const extra: string[] = [];
+  const addQualified = (prefix: string, suffix: string) => {
+    for (const stem of stems) {
+      extra.push(`${stem}${suffix}`);
+      extra.push(`${prefix}${stem}`);
+    }
+  };
+
+  if (context === "canton") {
+    addQualified("Canton_of_", "_(canton)");
+  } else if (context === "state") {
+    addQualified("State_of_", "_(state)");
+  } else if (context === "province") {
+    addQualified("Province_of_", "_(province)");
+  } else if (context === "county") {
+    addQualified("County_of_", "_(county)");
+  } else if (context === "region") {
+    addQualified("Region_of_", "_(region)");
+  } else if (context === "department") {
+    addQualified("Department_of_", "_(department)");
+  } else if (context === "district") {
+    addQualified("District_of_", "_(district)");
+  } else if (context === "governorate") {
+    addQualified("Governorate_of_", "_(governorate)");
+  }
+  return Array.from(new Set([...titles, ...extra].filter(Boolean)));
+}
 
 //express enable upload files
 express.json({ limit: "125mb" });
@@ -133,6 +227,8 @@ wikiImport.post("/generateFlags", async (req, res) => {
   if (generateFlags) {
     const pieces: PieceProps[] = generateFlags.pieces as PieceProps[];
     const id: number = generateFlags.id as number;
+    const puzzle = await connection!.getRepository(Puzzles).findOne({ where: { id } });
+    const adminContext = detectAdminContext(puzzle?.url ?? "", puzzle?.name ?? "");
 
     const progress = startProgress(res);
     let success = true;
@@ -162,72 +258,123 @@ wikiImport.post("/generateFlags", async (req, res) => {
         if (alreadyOnDisk) present++;
         if (!alreadyOnDisk) {
           if (piece) {
-            const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&generator=images&gimlimit=50&prop=imageinfo&iiprop=url&format=json&titles=${pieceId}`;
             try {
-              const responseData = await wikipediaGet(url);
+              const includeFlagWords = ["flag", "bandera", "bandeira"];
+              const exclude = ["coat_of_arms", "wappen", "locator", "location_map"];
+              const cityMarkers = ["city", "municipality", "town", "village", "commune"];
+              const adminMarkers = [
+                "canton",
+                "state",
+                "province",
+                "county",
+                "region",
+                "department",
+                "district",
+                "governorate",
+              ];
+              const formats = ["png", "svg", "jpg", "jpeg"];
 
-              const json = responseData;
-              if (json) {
-                // Optional: with generator=images an article that has none comes
-                // back with no `query` at all, and destructuring it threw. The
-                // throw was caught and logged, so the piece silently counted as
-                // neither downloaded nor missing.
-                const pages = json.query?.pages;
-                let urlFlagImage = "";
-                if (pages) {
-                  for (const page in pages) {
-                    try {
-                      if (pages[page].imageinfo) {
-                        // @ts-ignore
-                        const url = decodeURI(pages[page].imageinfo[0].url)
-                          .normalize("NFD")
-                          .replace(/[\u0300-\u036f]/g, "")
-                          .toString()
-                          .toLowerCase();
-                        try {
-                          const exclude = ["puerto_rico","spain","italy","france","united","mexico","poland"];
-                          const includes = ["flag", "bandera", "bandeira"];
-                          const formats = ["png", "svg"];
-                          const firstWordPiece = pieceId
-                            .split("_")
-                            .shift()
-                            ?.toLocaleLowerCase()
-                            .normalize("NFD")
-                            .replace(/[\u0300-\u036f]/g, "");
-                          /*console.log(
-                            "url:" + url,
-                            "firstWordPiece:" + firstWordPiece
-                          );*/
-                          /*const lastWordPiece = pieceId
-                              .split("_")
-                              .pop()
-                              ?.toLocaleLowerCase();*/
-                          // @ts-ignore
-                          if (
-                            includes.some((word) =>
-                              url.toLowerCase().includes(word.toLocaleLowerCase())
-                            ) /*url.includes(lastWordPiece) ||*/ &&
-                            // @ts-ignore
-                            url.includes(firstWordPiece) &&
-                            formats.includes(url.split(".").pop()?.toLocaleLowerCase()!)
-                            // @ts-ignore
-                             && !url.toLocaleLowerCase().includes(exclude)
-                          ) {
-                            urlFlagImage = pages[page].imageinfo[0].url;
-                            break;
-                          }
-                        } catch (err: any) {
-                          if (url.includes("flag")) {
-                            urlFlagImage = pages[page].imageinfo[0].url;
-                            break;
-                          }
-                        }
-                      }
-                    } catch (err: any) {
-                      console.error("Error parsing imageinfo: " + err.message);
+              const pieceTokens = Array.from(
+                new Set([
+                  ...slugTokens(pieceId),
+                  ...slugTokens(piece.properties?.name ?? piece.name ?? ""),
+                ])
+              );
+
+              const searchTitles = buildSearchTitles(
+                pieceId,
+                piece.properties?.name ?? piece.name ?? pieceId,
+                adminContext
+              );
+
+              let urlFlagImage = "";
+              let bestScore = Number.NEGATIVE_INFINITY;
+              for (const title of searchTitles) {
+                const url =
+                  "https://en.wikipedia.org/w/api.php?action=query&origin=*&generator=images" +
+                  "&gimlimit=50&prop=imageinfo&iiprop=url&format=json&titles=" +
+                  encodeURIComponent(title);
+                const json = await wikipediaGet(url);
+                const pages = json?.query?.pages;
+                if (!pages) continue;
+
+                for (const page in pages) {
+                  try {
+                    if (!pages[page].imageinfo) continue;
+                    // @ts-ignore
+                    const originalUrl = String(pages[page].imageinfo[0].url);
+                    const normalizedUrl = normalizeText(originalUrl);
+                    const ext = extFromUrl(originalUrl);
+                    if (!formats.includes(ext)) continue;
+                    if (!includeFlagWords.some((w) => normalizedUrl.includes(w))) continue;
+                    if (exclude.some((word) => normalizedUrl.includes(word))) continue;
+
+                    const matched = pieceTokens.filter((token) => normalizedUrl.includes(token)).length;
+                    let score = matched * 20;
+                    if (pieceTokens.length > 0 && matched === pieceTokens.length) score += 40;
+
+                    if (adminContext && normalizedUrl.includes(adminContext)) score += 35;
+                    if (adminMarkers.some((m) => normalizedUrl.includes(m))) score += 8;
+                    if (cityMarkers.some((m) => normalizedUrl.includes(m))) score -= 30;
+
+                    if (normalizedUrl.includes("flag_of_austria") && !normalizedUrl.includes("lower_austria") && !normalizedUrl.includes("upper_austria")) {
+                      score -= 25;
                     }
+
+                    if (score > bestScore) {
+                      bestScore = score;
+                      urlFlagImage = originalUrl;
+                    }
+                  } catch (err: any) {
+                    console.error("Error parsing imageinfo: " + err.message);
                   }
                 }
+              }
+
+              if (urlFlagImage === "") {
+                const pieceLabel = piece.properties?.name ?? piece.name ?? pieceId;
+                const commonsQuery = [
+                  "flag",
+                  adminContext || "state",
+                  normalizeText(pieceLabel),
+                  puzzle?.wiki ? normalizeText(String(puzzle.wiki)) : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+                const commonsUrl =
+                  "https://commons.wikimedia.org/w/api.php?action=query&origin=*" +
+                  "&list=search&srlimit=20&srnamespace=6&format=json&srsearch=" +
+                  encodeURIComponent(commonsQuery);
+
+                const commonsJson = await wikipediaGet(commonsUrl);
+                const hits = commonsJson?.query?.search ?? [];
+                let fallbackName = "";
+                let fallbackScore = Number.NEGATIVE_INFINITY;
+                for (const hit of hits) {
+                  const title: string = String(hit?.title ?? "");
+                  if (!title.startsWith("File:")) continue;
+                  const fileName = title.slice(5);
+                  const normalized = normalizeText(fileName);
+                  if (!includeFlagWords.some((w) => normalized.includes(w))) continue;
+                  const ext = extFromUrl(fileName);
+                  if (!formats.includes(ext)) continue;
+
+                  const matched = pieceTokens.filter((token) => normalized.includes(token)).length;
+                  let score = matched * 20;
+                  if (adminContext && normalized.includes(adminContext)) score += 35;
+                  if (cityMarkers.some((m) => normalized.includes(m))) score -= 30;
+                  if (score > fallbackScore) {
+                    fallbackScore = score;
+                    fallbackName = fileName;
+                  }
+                }
+                if (fallbackName) {
+                  urlFlagImage =
+                    "https://commons.wikimedia.org/wiki/Special:FilePath/" +
+                    encodeURIComponent(fallbackName);
+                }
+              }
+
                 if (urlFlagImage === "") missing++;
                 if (urlFlagImage !== "") {
                   console.log(
@@ -235,8 +382,8 @@ wikiImport.post("/generateFlags", async (req, res) => {
                     urlFlagImage + " pieceId: " + pieceId
                   );
                   //save flag image to file
-                  //get file extension
-                  const ext = urlFlagImage.split(".").pop();
+                  // Use the URL pathname extension, not the last dot in the full URL.
+                  const ext = extFromUrl(urlFlagImage) || "png";
                   const fileName = `${piece.properties.cartodb_id}.${ext}`;
                   const filePath = path.join(customFlagsDir(id), fileName);
                   console.log("filePath:", filePath);
@@ -270,7 +417,6 @@ wikiImport.post("/generateFlags", async (req, res) => {
                     "No original image found for piece: " + piece.name
                   );
                 }
-              }
             } catch (err: any) {
               console.error("Error parsing json: " + err.message);
             }

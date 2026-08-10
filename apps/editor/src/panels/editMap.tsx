@@ -22,11 +22,13 @@ import ErrorList from "./errorList";
 interface EditorDialogProps {
   puzzle: Puzzles;
   pieces: PieceProps[];
+  mode?: "settings" | "bulk" | "all";
 }
 
 function EditMap({
   puzzle = {} as Puzzles,
   pieces = new Array<PieceProps>(),
+  mode = "all",
 }: EditorDialogProps): JSX.Element | null {
   const [showAlert, setShowAlert] = useState(false);
   const [progress, setProgress] = useState({
@@ -48,12 +50,26 @@ function EditMap({
   const [subfix, setSubfix] = useState("");
   const [countryList, setCountryList] = useState([] as Countries[]);
   const [countryFlags, setCountryFlags] = useState([] as FlagsIcons[]);
+  const [jobLog, setJobLog] = useState([] as string[]);
+  const showSettings = mode !== "bulk";
+  const showBulk = mode !== "settings";
   //oninit     loadCountries();
 
+  const appendLog = (line: string) => {
+    const stamp = new Date().toLocaleTimeString();
+    setJobLog((prev) => {
+      const next = [...prev, `[${stamp}] ${line}`];
+      // Keep the latest lines only so long sessions stay responsive.
+      return next.length > 800 ? next.slice(next.length - 800) : next;
+    });
+  };
+
   useEffect(() => {
-    loadCountries();
-    loadFlags();
-  }, []);
+    if (showSettings) {
+      loadCountries();
+      loadFlags();
+    }
+  }, [showSettings]);
 
   useEffect(() => {
     setPuzzleEdited({
@@ -134,18 +150,29 @@ function EditMap({
     title: string,
     job: (onProgress: (p: JobProgress) => void) => Promise<any>
   ) => {
+    let lastDone = -1;
     setProgress({ running: true, title, done: 0, total: 0, label: "starting…" });
+    appendLog(`${title}: started`);
     // Otherwise the previous run's failures sit under a new run's summary.
     setLangErrors([]);
     try {
-      const res = await job((p) =>
-        setProgress({ running: true, title, ...p })
-      );
+      const res = await job((p) => {
+        setProgress({ running: true, title, ...p });
+        if (p.done !== lastDone) {
+          lastDone = p.done;
+          const total = p.total > 0 ? ` ${p.done}/${p.total}` : "";
+          appendLog(`${title}:${total} ${p.label}`.trim());
+        }
+      });
       setAlert({
         title: res?.success === false ? `${title}: finished with problems` : title,
         message: res?.msg ?? "The job gave no summary",
         type: res?.success === false ? "warning" : "success",
       } as AlertModel);
+      appendLog(
+        `${title}: ${res?.success === false ? "finished with problems" : "finished"}` +
+          ` | ${res?.msg ?? "The job gave no summary"}`
+      );
       setShowAlert(true);
       // Both jobs report the pieces they could not resolve; wiki links puts them
       // in `error` and translations in `langErrors`.
@@ -157,6 +184,7 @@ function EditMap({
         message: e instanceof Error ? e.message : String(e),
         type: "danger",
       } as AlertModel);
+      appendLog(`${title}: failed | ${e instanceof Error ? e.message : String(e)}`);
       setShowAlert(true);
     } finally {
       setProgress({ running: false, title: "", done: 0, total: 0, label: "" });
@@ -222,6 +250,7 @@ function EditMap({
           autoClose={0}
         />
         <Form>
+          {showSettings && (
           <Row>
             <Col xs={6} lg={6}>
               <Form.Group className="mb-12" controlId="formname">
@@ -465,9 +494,11 @@ function EditMap({
               </Form.Group>
             </Col>
           </Row>
+          )}
           {/* Save is the puzzle's own field edits. The generators below reach
               out to Wikipedia and rewrite rows for every piece, so they are
               separated from it rather than sharing a row of buttons. */}
+          {showSettings && (
           <Row>
             <Col xs={12} className="d-flex justify-content-end mt-3">
               <Button variant="primary" type="button" onClick={onSaveHandler}>
@@ -475,10 +506,11 @@ function EditMap({
               </Button>
             </Col>
           </Row>
+          )}
 
-          <hr className="mt-4" />
+          {showSettings && showBulk && <hr className="mt-4" />}
 
-          {progress.running && (
+          {showBulk && progress.running && (
             <Row className="mt-3">
               <Col xs={12}>
                 <div className="d-flex justify-content-between small mb-1">
@@ -505,9 +537,10 @@ function EditMap({
             </Row>
           )}
 
+          {showBulk && (
           <Row>
             <Col xs={12}>
-              <h5>Bulk content</h5>
+              <h5>Bulk process</h5>
               <p className="text-muted small mb-3">
                 These run over every piece in the puzzle and call Wikipedia, so
                 they take minutes and overwrite what is already stored. Run them
@@ -515,6 +548,8 @@ function EditMap({
               </p>
             </Col>
           </Row>
+          )}
+          {showBulk && (
           <Row className="g-3">
             <Col xs={12} lg={6}>
               <div className="d-flex align-items-center gap-2">
@@ -581,12 +616,45 @@ function EditMap({
               </div>
             </Col>
           </Row>
+          )}
 
+          {showBulk && (
+          <Row className="mt-4">
+            <Col xs={12}>
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <h6 className="mb-0">Process log</h6>
+                <Button
+                  size="sm"
+                  variant="outline-secondary"
+                  type="button"
+                  onClick={() => setJobLog([])}
+                  disabled={progress.running || jobLog.length === 0}
+                >
+                  Clear log
+                </Button>
+              </div>
+              <div className="bulk-log-window">
+                {jobLog.length === 0 ? (
+                  <div className="bulk-log-empty">No logs yet. Run a bulk job to start.</div>
+                ) : (
+                  jobLog.map((line, index) => (
+                    <div className="bulk-log-line" key={`${index}-${line.slice(0, 24)}`}>
+                      {line}
+                    </div>
+                  ))
+                )}
+              </div>
+            </Col>
+          </Row>
+          )}
+
+          {showBulk && (
           <Row>
             <Col xs={12} lg={12}>
               <ErrorList customTranslations={langErrors}></ErrorList>
             </Col>
           </Row>
+          )}
         </Form>
       </Col>
     </React.Fragment>

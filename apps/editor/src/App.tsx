@@ -27,6 +27,22 @@ import { BackMapEditorService } from "./services/BackMapEditorService";
  * translated. Standing alone, it does that itself.
  */
 type Mode = "edit" | "create";
+
+function selectedMapFromUrl(): string {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("map") ?? "";
+}
+
+function pushSelectedMap(mapUrl: string): void {
+  const next = new URL(window.location.href);
+  if (mapUrl) {
+    next.searchParams.set("map", mapUrl);
+  } else {
+    next.searchParams.delete("map");
+  }
+  window.history.replaceState({}, "", `${next.pathname}?${next.searchParams.toString()}`.replace(/\?$/, ""));
+}
+
 function App(): JSX.Element {
   const [puzzles, setPuzzles] = useState([] as Puzzles[]);
   const [puzzle, setPuzzle] = useState<Puzzles | null>(null);
@@ -49,7 +65,15 @@ function App(): JSX.Element {
 
   const loadPuzzles = () => {
     PuzzleService.getPuzzles()
-      .then(setPuzzles)
+      .then((list) => {
+        setPuzzles(list);
+        const wanted = selectedMapFromUrl();
+        if (!wanted) return;
+        const hit = list.find((p) => p.url === wanted);
+        if (hit) {
+          loadPuzzle(hit.id);
+        }
+      })
       .catch(() =>
         setError(
           `No puzzles came back from ${ConfigService.backendUrl}. Is the backend running?`
@@ -90,9 +114,11 @@ function App(): JSX.Element {
 
       setPuzzle(selected);
       setPieces(loaded);
+      pushSelectedMap(selected.url);
     } catch (err) {
       setError(`Could not load the puzzle: ${String(err)}`);
       setPuzzle(null);
+      pushSelectedMap("");
     } finally {
       setLoading(false);
     }
@@ -135,7 +161,13 @@ function App(): JSX.Element {
               value={puzzle?.id ?? ""}
               onChange={(event) => {
                 const id = Number(event.target.value);
-                if (id) loadPuzzle(id);
+                if (id) {
+                  loadPuzzle(id);
+                } else {
+                  setPuzzle(null);
+                  setPieces([]);
+                  pushSelectedMap("");
+                }
               }}
             >
               <option value="">Select a puzzle…</option>

@@ -39,7 +39,7 @@
   /* Fills whatever the column has left instead of guessing the header's height
      with calc(100vh - 27em), which is what left a gap at the bottom. */
   flex: 1;
-  min-height: 14rem;
+  min-height: 10rem;
   width: 100%;
 }
 
@@ -187,4 +187,29 @@ iframe {
 /* The generated position column is not in the file, so it reads as an aside. */
 .newmap-synthetic {
   background: rgba(13, 110, 253, 0.06);
+}
+
+.bulk-log-window {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 0.5rem;
+  border: 1px solid #1e293b;
+  min-height: 12rem;
+  max-height: 40vh;
+  overflow: auto;
+  padding: 0.75rem;
+}
+
+.bulk-log-line {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 0.15rem;
+}
+
+.bulk-log-empty {
+  color: #94a3b8;
+  font-size: 0.9rem;
 }

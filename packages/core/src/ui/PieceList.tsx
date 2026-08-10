@@ -22,6 +22,7 @@ interface PieceListProps {
   puzzleId: number;
   enableFlags: boolean;
   lang: string;
+  flagsVersion?: number;
 }
 
 export default function PieceList({
@@ -34,6 +35,7 @@ export default function PieceList({
   puzzleId,
   enableFlags,
   lang,
+  flagsVersion = 0,
 }: PieceListProps): JSX.Element {
   const [rtlClass, setRtlClass] = useState("");
   const upPress = useKeyPress("ArrowUp");
@@ -115,7 +117,7 @@ export default function PieceList({
   const paintFlag = (c: PieceProps) => {
     if (!enableFlags) return null;
     //create flag image from piece id
-    const flag = `../customFlags/${puzzleId.toString()}/64/${c.properties.cartodb_id}.png`;
+    const flag = `../customFlags/${puzzleId.toString()}/64/${c.properties.cartodb_id}.png?v=${flagsVersion}`;
     //  const flag = `../customFlags/${puzzleId.toString()}/${c.properties.cartodb_id}.svg`;
     return (
       <td className="imgflag">

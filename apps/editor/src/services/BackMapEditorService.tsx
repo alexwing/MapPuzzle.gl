@@ -112,4 +112,29 @@ export class BackMapEditorService {
     });
     return response.json();
   }
+
+  public static async replacePieceFlag(
+    id: number,
+    cartodb_id: number,
+    imageUrl?: string,
+    file?: File
+  ): Promise<any> {
+    const form = new FormData();
+    form.append("id", String(id));
+    form.append("cartodb_id", String(cartodb_id));
+    if (imageUrl && imageUrl.trim() !== "") {
+      form.append("imageUrl", imageUrl.trim());
+    }
+    if (file) {
+      form.append("file", file, file.name);
+    }
+    const response = await fetch(ConfigService.backendUrl + "/mapEditor/replacePieceFlag", {
+      method: "POST",
+      body: form,
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error replacing piece flag");
+    });
+    return response.json();
+  }
 }

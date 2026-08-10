@@ -32,6 +32,7 @@ function EditorPanels({
   const [pieceSelected, setPieceSelected] = useState(-1);
   const [pieceSelectedData, setPieceSelectedData] = useState({} as PieceProps);
   const [showAlert, setShowAlert] = useState(false);
+  const [flagsVersion, setFlagsVersion] = useState(0);
   const [alert, setAlert] = useState({
     title: "",
     message: "",
@@ -103,6 +104,9 @@ function EditorPanels({
                 <Nav.Link eventKey="puzzle">Puzzle settings</Nav.Link>
               </Nav.Item>
               <Nav.Item>
+                <Nav.Link eventKey="bulk">Bulk process</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
                 <Nav.Link eventKey="pieces">Pieces</Nav.Link>
               </Nav.Item>
             </Nav>
@@ -110,7 +114,10 @@ function EditorPanels({
 
           <Tab.Content className="editor-content">
             <Tab.Pane eventKey="puzzle" className="editor-pane-scroll">
-              <EditMap puzzle={puzzleSelected} pieces={pieces} />
+              <EditMap puzzle={puzzleSelected} pieces={pieces} mode="settings" />
+            </Tab.Pane>
+            <Tab.Pane eventKey="bulk" className="editor-pane-scroll">
+              <EditMap puzzle={puzzleSelected} pieces={pieces} mode="bulk" />
             </Tab.Pane>
             <Tab.Pane eventKey="pieces" className="editor-pane-split">
               {/* Two independently scrolling columns that fill whatever height
@@ -125,6 +132,7 @@ function EditorPanels({
                   handleDown={onPieceDownHandler}
                   puzzleId={puzzleSelected.id}
                   lang={ConfigService.defaultLang}
+                  flagsVersion={flagsVersion}
                   enableFlags={
                     puzzleSelected.enableFlags
                       ? puzzleSelected.enableFlags
@@ -133,7 +141,11 @@ function EditorPanels({
                 />
               </div>
               <div className="editor-piece-detail">
-                <EditPiece piece={pieceSelectedData} />
+                <EditPiece
+                  piece={pieceSelectedData}
+                  flagsVersion={flagsVersion}
+                  onFlagUpdated={() => setFlagsVersion((v) => v + 1)}
+                />
               </div>
             </Tab.Pane>
           </Tab.Content>
