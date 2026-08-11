@@ -40,7 +40,15 @@ function slugTokens(value: string): string[] {
     .replace(/[_\-]+/g, " ")
     .split(/\s+/)
     .filter((t) => t.length > 2)
-    .filter((t) => !["state", "province", "region", "department", "governorate"].includes(t));
+    .filter((t) => !["state", "province", "region", "department", "governorate", "canton", "district"].includes(t))
+    .map((t) => {
+      // For Czech/Slovak names, also try removing trailing 'ý', 'í', 'á' etc
+      // which are common adjective endings but don't appear in English file names
+      if (/[ýíáé]$/i.test(t) && t.length > 3) {
+        return t.slice(0, -1);
+      }
+      return t;
+    });
 }
 
 type AdminContext =
@@ -68,8 +76,17 @@ function detectAdminContext(url: string, name: string): AdminContext {
 }
 
 function buildSearchTitles(pieceId: string, pieceName: string, context: AdminContext): string[] {
-  const base = pieceId?.trim() || pieceName.trim().replace(/\s+/g, "_");
-  const stems = new Set<string>([base, pieceName.trim().replace(/\s+/g, "_")]);
+  // pieceId (from customWiki) is the authoritative title, pieceName is the display name
+  const primary = pieceId?.trim() || pieceName.trim().replace(/\s+/g, "_");
+  
+  // Build stems from the wiki title, not the display name
+  const stems = new Set<string>([primary]);
+  
+  // If pieceName is different from primary and seems useful, add it as fallback
+  const displayStem = pieceName.trim().replace(/\s+/g, "_");
+  if (displayStem !== primary && displayStem.length > 3) {
+    stems.add(displayStem);
+  }
 
   for (const stem of Array.from(stems)) {
     const ascii = decodeURI(stem)
@@ -241,7 +258,7 @@ wikiImport.post("/generateFlags", async (req, res) => {
       walked++;
       progress.step(walked, pieces.length, piece.properties.name);
       try {
-        let pieceId = piece.name;
+        let pieceId = piece.properties?.name ?? piece.name ?? "";
         if (piece.customWiki && piece.customWiki.wiki !== "") {
           pieceId = piece.customWiki.wiki;
         }
@@ -292,11 +309,14 @@ wikiImport.post("/generateFlags", async (req, res) => {
               for (const title of searchTitles) {
                 const url =
                   "https://en.wikipedia.org/w/api.php?action=query&origin=*&generator=images" +
-                  "&gimlimit=50&prop=imageinfo&iiprop=url&format=json&titles=" +
+                  "&gimlimit=50&prop=imageinfo&iiprop=url&format=json&redirects=1&titles=" +
                   encodeURIComponent(title);
                 const json = await wikipediaGet(url);
                 const pages = json?.query?.pages;
-                if (!pages) continue;
+                if (!pages) {
+                  console.log(`No pages for ${title}`);
+                  continue;
+                }
 
                 for (const page in pages) {
                   try {
