@@ -51,6 +51,18 @@ function App(): JSX.Element {
   const [error, setError] = useState("");
   const [mode, setMode] = useState<Mode>("edit");
   const [notice, setNotice] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const filteredPuzzles = puzzles.filter((p) =>
+    p.name.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
+  const onSelectPuzzle = (id: number) => {
+    loadPuzzle(id);
+    setSearchInput("");
+    setShowDropdown(false);
+  };
 
   /**
    * Rewrites sitemap.xml for the whole site, so it belongs here and not next to
@@ -155,28 +167,59 @@ function App(): JSX.Element {
           </Button>
 
           {mode === "edit" && (
-            <Form.Select
-              aria-label="Puzzle to edit"
-              style={{ maxWidth: "22rem" }}
-              value={puzzle?.id ?? ""}
-              onChange={(event) => {
-                const id = Number(event.target.value);
-                if (id) {
-                  loadPuzzle(id);
-                } else {
-                  setPuzzle(null);
-                  setPieces([]);
-                  pushSelectedMap("");
-                }
-              }}
-            >
-              <option value="">Select a puzzle…</option>
-              {puzzles.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </Form.Select>
+            <div style={{ position: "relative", maxWidth: "22rem" }}>
+              <Form.Control
+                type="text"
+                placeholder="Search puzzle by name…"
+                value={searchInput}
+                onChange={(e) => {
+                  setSearchInput(e.target.value);
+                  setShowDropdown(true);
+                }}
+                onFocus={() => setShowDropdown(true)}
+                onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+              />
+              {showDropdown && filteredPuzzles.length > 0 && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    background: "#fff",
+                    border: "1px solid #ced4da",
+                    borderTop: "none",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                    zIndex: 1000,
+                  }}
+                >
+                  {filteredPuzzles.slice(0, 50).map((option) => (
+                    <div
+                      key={option.id}
+                      style={{
+                        padding: "8px 12px",
+                        cursor: "pointer",
+                        background:
+                          puzzle?.id === option.id
+                            ? "#e7f3ff"
+                            : "transparent",
+                      }}
+                      onMouseDown={() => onSelectPuzzle(option.id)}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "#f0f0f0";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                          puzzle?.id === option.id ? "#e7f3ff" : "transparent";
+                      }}
+                    >
+                      {option.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
         </Container>
       </Navbar>
