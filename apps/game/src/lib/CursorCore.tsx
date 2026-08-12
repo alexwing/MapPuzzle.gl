@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import type { CustomCentroids } from "@mappuzzle/shared";
 import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
 import { pieceBox, pieceSilhouette } from "@mappuzzle/core";
 import { setColor } from "./Utils";
 import "./CursorCore.css";
+
 /**
  * Cursor Core
  * Replaces the native cursor with a custom animated cursor, consisting
  * of an inner and outer dot that scale inversely based on hover or click.
  *
  * @author Alejandro Aranda (github.com/alexwing)
- * @author Folk from Stephen Scaff (github.com/stephenscaff)
+ * @author Fork from Stephen Scaff (github.com/stephenscaff)
  *
  * @param {number} clickScale - inner cursor scale amount
- *
  */
 
 interface CursorCoreProps {
@@ -33,163 +33,132 @@ function CursorCore({
   tooltip = "",
   zoom = 2,
 }: CursorCoreProps): JSX.Element {
-  const pieceCursorRef: any = useRef();
-  const tooltipRef: any = useRef();
-  const requestRef: any = useRef();
-  const previousTimeRef: any = useRef();
-  const [coords, setCoords]: any = useState({ x: 0, y: 0 });
-  const [isVisible, setIsVisible] = useState(false);
-  const [isActive, setIsActive] = useState(false);
-  const [isActiveClickable, setIsActiveClickable] = useState(false);
+  const pieceCursorRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const requestRef = useRef<number>();
+  const previousTimeRef = useRef<number>();
+  const coords = useRef({ x: 0, y: 0 });
   const endX = useRef(0);
   const endY = useRef(0);
+  const isVisibleRef = useRef(false);
+  const isActiveRef = useRef(false);
+  const isActiveClickableRef = useRef(false);
 
-  // Primary Mouse Move event
-  const onMouseMove = useCallback(({ clientX, clientY }: any) => {
-    setCoords({ x: clientX, y: clientY });
-    tooltipRef.current.style.top = clientY + "px";
-    tooltipRef.current.style.left = clientX + "px";
-    endX.current = clientX;
-    endY.current = clientY;
-  }, []);
+  // Primary Mouse Move event without triggering React re-renders
+  const onMouseMove = useCallback(
+    ({ clientX, clientY }: MouseEvent) => {
+      endX.current = clientX;
+      endY.current = clientY;
 
-  // Outer Cursor Animation Delay
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true;
+        if (tooltipRef.current) tooltipRef.current.style.opacity = "1";
+        if (pieceCursorRef.current) pieceCursorRef.current.style.opacity = "1";
+      }
+
+      if (tooltipRef.current) {
+        const scale = isActiveRef.current ? clickScale : 1;
+        tooltipRef.current.style.transform = `translate3d(${clientX}px, ${clientY}px, 0) scale(${scale})`;
+      }
+    },
+    [clickScale]
+  );
+
+  // Outer Cursor Animation with RAF and lerp positioning on GPU
   const animateOuterCursor = useCallback(
-    (time: any) => {
-      if (previousTimeRef)
-        if (previousTimeRef.current !== undefined && pieceCursorRef && coords) {
-          coords.x += (endX.current - coords.x) / 8;
-          coords.y += (endY.current - coords.y) / 8;
-          if (pieceCursorRef.current) {
-            pieceCursorRef.current.style.top = coords.y + "px";
-            pieceCursorRef.current.style.left = coords.x + "px";
-          }
-        }
+    (time: number) => {
+      if (previousTimeRef.current !== undefined && pieceCursorRef.current) {
+        coords.current.x += (endX.current - coords.current.x) / 8;
+        coords.current.y += (endY.current - coords.current.y) / 8;
+        const scale =
+          isActiveRef.current || isActiveClickableRef.current ? clickScale : 1;
+        pieceCursorRef.current.style.transform = `translate3d(${coords.current.x}px, ${coords.current.y}px, 0) scale(${scale})`;
+      }
       previousTimeRef.current = time;
       requestRef.current = requestAnimationFrame(animateOuterCursor);
     },
-    [requestRef] // eslint-disable-line
+    [clickScale]
   );
 
-  // RAF for animateOuterCursor
+  // RAF lifecycle
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animateOuterCursor);
     return () => {
-      cancelAnimationFrame(requestRef.current);
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current);
+      }
     };
   }, [animateOuterCursor]);
 
-  // Mouse Events State updates
-  const onMouseDown = useCallback(() => {
-    setIsActive(true);
-  }, []);
-
-  const onMouseUp = useCallback(() => {
-    setIsActive(false);
-  }, []);
-
-  const onMouseEnterViewport = useCallback(() => {
-    setIsVisible(true);
-  }, []);
-
-  const onMouseLeaveViewport = useCallback(() => {
-    setIsVisible(false);
-  }, []);
-
   useEventListener("mousemove", onMouseMove);
-  useEventListener("mousedown", onMouseDown);
-  useEventListener("mouseup", onMouseUp);
-  useEventListener("mouseover", onMouseEnterViewport);
-  useEventListener("mouseout", onMouseLeaveViewport);
 
-  // Cursors Hover/Active State
+  // Event delegation for clickable elements and viewport tracking
   useEffect(() => {
-    if (isActive) {
-      tooltipRef.current.style.transform = `translateZ(0) scale(${clickScale})`;
-      pieceCursorRef.current.style.transform = `translateZ(0) scale(${clickScale})`;
-    } else {
-      tooltipRef.current.style.transform = "translateZ(0) scale(1)";
-      pieceCursorRef.current.style.transform = "translateZ(0) scale(1)";
-    }
-  }, [clickScale, isActive]);
+    const isClickable = (el: EventTarget | null): boolean => {
+      if (!el || !(el instanceof Element)) return false;
+      return Boolean(
+        el.closest(
+          'a, input[type="submit"], input[type="image"], label[for], select, button, .link'
+        )
+      );
+    };
 
-  // Cursors Click States
-  useEffect(() => {
-    tooltipRef.current.style.transform = `translateZ(0) scale(${clickScale})`;
-    if (isActiveClickable) {
-      pieceCursorRef.current.style.transform = `translateZ(0) scale(${clickScale})`;
-    }
-  }, [clickScale, isActiveClickable]);
-
-  // Cursor Visibility State
-  useEffect(() => {
-    if (isVisible) {
-      tooltipRef.current.style.opacity = 1;
-      pieceCursorRef.current.style.opacity = 1;
-    } else {
-      tooltipRef.current.style.opacity = 1;
-      pieceCursorRef.current.style.opacity = 0;
-    }
-  }, [isVisible]);
-
-  // Target all possible clickables
-  useEffect(() => {
-    const clickables = document.querySelectorAll(
-      'a, input[type="submit"], input[type="image"], label[for], select, button, .link'
-    );
-    clickables.forEach((el: unknown): void => {
-      if (el instanceof HTMLElement) {
-        el.style.cursor = "none";
-
-        el.addEventListener("mouseover", () => {
-          setIsActive(true);
-        });
-        el.addEventListener("click", () => {
-          setIsActive(true);
-          setIsActiveClickable(false);
-        });
-        el.addEventListener("mousedown", () => {
-          setIsActiveClickable(true);
-        });
-        el.addEventListener("mouseup", () => {
-          setIsActive(true);
-        });
-        el.addEventListener("mouseout", () => {
-          setIsActive(false);
-          setIsActiveClickable(false);
-        });
+    const handleMouseOver = (e: MouseEvent) => {
+      if (isClickable(e.target)) {
+        isActiveRef.current = true;
       }
-    });
+    };
+
+    const handleMouseOut = (e: MouseEvent) => {
+      if (isClickable(e.target)) {
+        isActiveRef.current = false;
+        isActiveClickableRef.current = false;
+      }
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      if (isClickable(e.target)) {
+        isActiveClickableRef.current = true;
+      } else {
+        isActiveRef.current = true;
+      }
+    };
+
+    const handleMouseUp = () => {
+      isActiveRef.current = false;
+      isActiveClickableRef.current = false;
+    };
+
+    const handleMouseLeave = () => {
+      isVisibleRef.current = false;
+      if (tooltipRef.current) tooltipRef.current.style.opacity = "0";
+      if (pieceCursorRef.current) pieceCursorRef.current.style.opacity = "0";
+    };
+
+    const handleMouseEnter = () => {
+      isVisibleRef.current = true;
+      if (tooltipRef.current) tooltipRef.current.style.opacity = "1";
+      if (pieceCursorRef.current) pieceCursorRef.current.style.opacity = "1";
+    };
+
+    window.addEventListener("mouseover", handleMouseOver, { passive: true });
+    window.addEventListener("mouseout", handleMouseOut, { passive: true });
+    window.addEventListener("mousedown", handleMouseDown, { passive: true });
+    window.addEventListener("mouseup", handleMouseUp, { passive: true });
+    document.documentElement.addEventListener("mouseleave", handleMouseLeave);
+    document.documentElement.addEventListener("mouseenter", handleMouseEnter);
 
     return () => {
-      clickables.forEach((el) => {
-        el.removeEventListener("mouseover", () => {
-          setIsActive(true);
-        });
-        el.removeEventListener("click", () => {
-          setIsActive(true);
-          setIsActiveClickable(false);
-        });
-        el.removeEventListener("mousedown", () => {
-          setIsActiveClickable(true);
-        });
-        el.removeEventListener("mouseup", () => {
-          setIsActive(true);
-        });
-        el.removeEventListener("mouseout", () => {
-          setIsActive(false);
-          setIsActiveClickable(false);
-        });
-      });
+      window.removeEventListener("mouseover", handleMouseOver);
+      window.removeEventListener("mouseout", handleMouseOut);
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mouseup", handleMouseUp);
+      document.documentElement.removeEventListener("mouseleave", handleMouseLeave);
+      document.documentElement.removeEventListener("mouseenter", handleMouseEnter);
     };
-  }, [isActive]);
-
-  // Hide / Show global cursor
-  //document.body.style.cursor = 'none'
+  }, []);
 
   let PieceCursor;
-  // The box is in EPSG:3857 metres, so the piece scales with the map: metres
-  // times the zoom factor over the metres-per-pixel deck.gl draws at.
   const box = pieceBox(selected);
   if (box) {
     const scale = Math.pow(2, zoom);
@@ -201,7 +170,6 @@ function CursorCore({
       marginLeft = centroid.left + "%";
       marginTop = centroid.top + "%";
     }
-    // Ask for the detail the piece is actually being drawn at.
     const { poly } = pieceSilhouette(selected, Math.max(sizeX, sizeY));
     PieceCursor = (
       <svg
@@ -225,6 +193,7 @@ function CursorCore({
   } else {
     PieceCursor = <span></span>;
   }
+
   const TooltipCursor = tooltip ? <span>{tooltip}</span> : undefined;
 
   return (

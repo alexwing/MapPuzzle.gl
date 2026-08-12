@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useId } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Table from "react-bootstrap/Table";
 import { useKeyPress } from "../hooks/useKeyPress";
 import { className } from "../lib/pieces";
@@ -41,9 +41,7 @@ export default function PieceList({
   const upPress = useKeyPress("ArrowUp");
   const downPress = useKeyPress("ArrowDown");
   const [enablePress, setEnablePress] = useState(true);
-
-  const identify = "id_" + useId().replaceAll(":", "");
-  const concernedElement = document.querySelector("#" + identify);
+  const tableRef = useRef<HTMLTableElement>(null);
 
   //on init load if rtl lang
   useEffect(() => {
@@ -73,52 +71,36 @@ export default function PieceList({
     // eslint-disable-next-line
   }, [downPress, enablePress]);
 
-  //scroll to piece selected selected
+  //scroll to piece selected
   const scrollToSelected = () => {
-    if (concernedElement) {
-      // get element id identify and get class table-primary selected
-      const element = document.querySelector(
-        "#" + identify + " .table-primary"
-      );
-      //if element exist scroll to element
+    if (tableRef.current) {
+      const element = tableRef.current.querySelector(".table-primary");
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
   };
 
-  const enablePressHandler = () => {
-    setEnablePress(true);
-  };
-
-  const disablePressHandler = () => {
-    setEnablePress(false);
-  };
   useEffect(() => {
-    document.addEventListener("mouseup", (event: MouseEvent) => {
-      if (concernedElement && event) {
-        if (
-          concernedElement.contains(
-            event.target ? (event.target as Element) : null
-          )
-        ) {
-          // Clicked in box
-          enablePressHandler();
+    const handleMouseUp = (event: MouseEvent) => {
+      if (tableRef.current) {
+        if (tableRef.current.contains(event.target as Node)) {
+          setEnablePress(true);
         } else {
-          // Clicked outside the box
-          disablePressHandler();
+          setEnablePress(false);
         }
       }
-      event.stopPropagation();
-      event.preventDefault();
-    });
-  }, [concernedElement]);
-  
+    };
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
   const paintFlag = (c: PieceProps) => {
     if (!enableFlags) return null;
     //create flag image from piece id
     const flag = `../customFlags/${puzzleId.toString()}/64/${c.properties.cartodb_id}.png?v=${flagsVersion}`;
-    //  const flag = `../customFlags/${puzzleId.toString()}/${c.properties.cartodb_id}.svg`;
     return (
       <td className="imgflag">
         <div>
@@ -127,47 +109,15 @@ export default function PieceList({
       </td>
     );
   };
-  
- /*
-  const paintFlag = (c: PieceProps) => {
-    if (!enableFlags) return null;
-
-    const svgFlag = `../customFlags/${puzzleId.toString()}/${
-      c.properties.cartodb_id
-    }.svg`;
-    const pngFlag = `../customFlags/${puzzleId.toString()}/${
-      c.properties.cartodb_id
-    }.png`;
-
-    return (
-      <td className="imgflag">
-        <div>
-          <img
-            src={svgFlag}
-            alt={c.properties.name}
-            onError={(e) => {
-              const imgElement = e.target as HTMLImageElement;
-              if (imgElement.src === svgFlag) {
-                imgElement.src = `${pngFlag}?timestamp=${new Date().getTime()}`;
-              } else if (imgElement.src.includes(pngFlag)) {
-                imgElement.style.display = "none";
-              }
-            }}
-          />
-        </div>
-      </td>
-    );
-  };
-  */
 
   return (
     <React.Fragment>
       <Table
+        ref={tableRef}
         striped
         hover
         size="sm"
         className={"legend " + rtlClass}
-        id={identify}
       >
         <tbody>
           {pieces.map((c: PieceProps) => {

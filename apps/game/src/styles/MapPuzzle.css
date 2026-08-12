@@ -52,6 +52,9 @@ code {
   z-index: 999;
   display: block;
   position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
   border-radius: 15px;
   padding: 0px 10px;
   font-size: 11px;
@@ -60,7 +63,7 @@ code {
   color: white;
   backface-visibility: hidden;
   will-change: transform;
-  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+  transition: opacity 0.15s ease-in-out;
 }
 
 .form-group {
@@ -108,7 +111,8 @@ code {
   z-index: 79;
 }
 .navbar {
-  z-index: 89;
+  position: relative;
+  z-index: 1000 !important;
 }
 
 .form-inline button {

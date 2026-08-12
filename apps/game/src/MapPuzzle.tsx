@@ -69,10 +69,6 @@ function MapPuzzle(): JSX.Element {
     }
   }, []);
 
-  useEffect(() => {
-    handleResize();
-  }, [height]);
-  
   /*
   * Handle resize of the window set the height of tools panel
   */
@@ -83,10 +79,16 @@ function MapPuzzle(): JSX.Element {
     } else {
       heightAux = window.innerHeight;
     }
-    if (height !== heightAux) {
-      setHeight(heightAux);
-    }
+    setHeight(heightAux);
   };
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
 
   /* 
@@ -441,7 +443,6 @@ function MapPuzzle(): JSX.Element {
     }
   };
 
-  window.addEventListener('resize', handleResize)
 
   return (
     <React.Fragment>

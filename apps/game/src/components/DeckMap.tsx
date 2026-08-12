@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useMemo } from "react";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import {
@@ -30,50 +30,40 @@ function DeckMap({
   founds,
   data,
 }: DeckMapProps): JSX.Element | null {
-  const [layers, setLayers] = React.useState([] as Array<GeoJsonLayer>);
   const { theme } = useContext(ThemeContext);
-  const [mapStyle, setMapStyle] = React.useState("");
 
-  //set mapStyle by theme
-  useEffect(() => {
-    setMapStyle(
-      theme === "light"
-        ? "https://basemaps.cartocdn.com/gl/voyager-nolabels-gl-style/style.json"
-        : "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json"
-    );
+  const mapStyle = useMemo(() => {
+    return theme === "light"
+      ? "https://basemaps.cartocdn.com/gl/voyager-nolabels-gl-style/style.json"
+      : "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json";
   }, [theme]);
 
-  useEffect(() => {
-    setLayers(
+  const layers = useMemo(() => {
+    if (!data) return [];
+    return [
       new GeoJsonLayer({
+        id: "geojson-layer",
         data: data,
         pointRadiusMinPixels: 6,
         getLineColor: colorStroke,
         getFillColor: (object: PieceProps) =>
           AlphaColor({
-            col: hexToRgb(setColor(object.properties.mapcolor)),
-            alpha: founds.includes(object.properties.cartodb_id) ? 150 : 0,
+            col: hexToRgb(setColor(object?.properties?.mapcolor)),
+            alpha: founds.includes(object?.properties?.cartodb_id) ? 150 : 0,
           }),
         opacity: 1,
         pickable: true,
         lineWidthMinPixels: lineWidth,
         updateTriggers: {
-          lineWidthMinPixels: lineWidth,
-          getLineColor: colorStroke,
-          getFillColor: (object: PieceProps) =>
-            AlphaColor({
-              col: hexToRgb(setColor(object.properties.mapcolor)),
-              alpha: founds?.includes(object.properties.cartodb_id) ? 150 : 0,
-            }),
+          getFillColor: [founds],
         },
-        onClick: (info: PieceEvent) => onClickMap(info),
-        onPress: (info: PieceEvent) => onClickMap(info),
-        onHover: (info: PieceEvent) => onHoverMap(info),
-      })
-    );
-  }, [data, founds, onClickMap, onHoverMap, viewState]);
+        onClick: onClickMap,
+        onHover: onHoverMap,
+      }),
+    ];
+  }, [data, founds, onClickMap, onHoverMap]);
 
-  return !viewState.zoom || !data ? null : (
+  return !viewState?.zoom || !data ? null : (
     <React.Fragment>
       <DeckGL
         width="100%"
@@ -81,9 +71,9 @@ function DeckMap({
         initialViewState={viewState}
         onViewStateChange={onViewStateChange}
         controller={true}
-        layers={[layers]}
+        layers={layers}
       >
-        <Map  mapStyle={mapStyle}  />
+        <Map mapStyle={mapStyle} />
       </DeckGL>
     </React.Fragment>
   );

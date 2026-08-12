@@ -3,12 +3,14 @@
     filter: drop-shadow(rgba(0, 0, 0, 0.2) 5px 5px 5px);
   }
   
-  .mousePiece {
+.mousePiece {
     z-index: 1;
     display: block;
     position: fixed;
+    top: 0;
+    left: 0;
     pointer-events: none;
     backface-visibility: hidden;
     will-change: transform;
-    transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+    transition: opacity 0.15s ease-in-out;
   }
