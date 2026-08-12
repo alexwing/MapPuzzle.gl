@@ -63,6 +63,14 @@ function DeckMap({
     ];
   }, [data, founds, onClickMap, onHoverMap]);
 
+  const getCursor = useMemo(() => {
+    return ({ isDragging, isHovering }: { isDragging?: boolean; isHovering?: boolean }) => {
+      if (isDragging) return "url('/cursors/grabbing.svg') 12 8, grabbing";
+      if (isHovering) return "pointer";
+      return "url('/cursors/grab.svg') 12 8, grab";
+    };
+  }, []);
+
   return !viewState?.zoom || !data ? null : (
     <React.Fragment>
       <DeckGL
@@ -72,6 +80,7 @@ function DeckMap({
         onViewStateChange={onViewStateChange}
         controller={true}
         layers={layers}
+        getCursor={getCursor}
       >
         <Map mapStyle={mapStyle} />
       </DeckGL>

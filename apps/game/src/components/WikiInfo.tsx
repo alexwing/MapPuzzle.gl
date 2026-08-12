@@ -158,9 +158,9 @@ function WikiInfo({
   const wikiTitle = () => {
     if (pieceInfo.title !== "") {
       return (
-        <span>
-          <Wikipedia size={28} className="me-2" />
-          {titleLang}
+        <span className="d-inline-flex align-items-center">
+          <Wikipedia size={26} className="me-2 wikiIcon" />
+          <span>{titleLang}</span>
         </span>
       );
     } else {
@@ -218,8 +218,8 @@ function WikiInfo({
         <Modal.Body className={rtlClass}>
           <Row>{printContent()}</Row>
         </Modal.Body>
-        <Modal.Footer>
-          <Modal.Body id="contained-modal-title-vcenter">
+        <Modal.Footer className="wiki-footer">
+          <div className="wiki-attribution">
             <small>
               This article uses material from the Wikipedia article&nbsp;
               <a
@@ -230,12 +230,16 @@ function WikiInfo({
                 {pieceInfo.title}
               </a>
               , which is released under the&nbsp;
-              <a href="https://creativecommons.org/licenses/by-sa/3.0/">
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href="https://creativecommons.org/licenses/by-sa/3.0/"
+              >
                 Creative Commons Attribution-Share-Alike License 3.0
               </a>
               .
             </small>
-          </Modal.Body>
+          </div>
           <Button onClick={handleClose}>
             <Check size={22} className="me-2" />
             Ok

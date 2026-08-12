@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <filter id="shadow" x="0" y="0" width="32" height="32" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="1.5" stdDeviation="1.2" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <linearGradient id="handGrad" x1="8" y1="2" x2="24" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e8eef5"/>
+    </linearGradient>
+  </defs>
+  <!-- Hand Palm & Fingers -->
+  <path d="M11 4.5C9.89543 4.5 9 5.39543 9 6.5V14.5L7.70711 13.2071C6.92606 12.4261 5.65973 12.4261 4.87868 13.2071C4.09763 13.9882 4.09763 15.2545 4.87868 16.0355L10.5 21.6569C12.3754 23.5322 14.9189 24.5858 17.5711 24.5858H18.5C22.0899 24.5858 25 21.6756 25 18.0858V11C25 9.89543 24.1046 9 23 9C22.7791 9 22.5678 9.03585 22.3705 9.10214C22.0127 8.16335 21.0833 7.5 20 7.5C19.6722 7.5 19.3582 7.57941 19.0811 7.7208C18.6468 6.70298 17.6567 6 16.5 6C16.1593 6 15.8335 6.08529 15.5469 6.23668C15.1472 5.21334 14.1568 4.5 13 4.5C12.8304 4.5 12.6644 4.51523 12.5036 4.54449C12.1672 4.20815 11.6074 4.5 11 4.5Z" fill="url(#handGrad)" stroke="#0f172a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow)"/>
+  <!-- Subtle finger definition lines -->
+  <path d="M13 10V15.5" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"/>
+  <path d="M16.5 11V16" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"/>
+  <path d="M20 12V16.5" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"/>
+</svg>

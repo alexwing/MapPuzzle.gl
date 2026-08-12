@@ -43,11 +43,7 @@ body{
   background-position: center;
   flex: 1;
   max-height: calc(42vh - 56px - 37px);
-  border-radius: 14px;
   overflow: hidden;
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-  margin-top: 4px;
 }
 
 .questions {

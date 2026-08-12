@@ -1,4 +1,13 @@
-.btn-quiz {
+.btn-quiz,
+.btn-quiz.btn-primary {
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-bg: transparent;
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-active-bg: transparent;
+  --bs-btn-active-border-color: transparent;
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-color: var(--text-main);
   cursor: pointer;
   border-radius: 12px;
   font-family: var(--font-family-body);
@@ -6,27 +15,35 @@
   font-weight: 600;
   padding: 0.75rem 1.2rem;
   position: relative;
-  z-index: 0;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
+  z-index: 1;
   overflow: hidden;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
+  white-space: nowrap;
   text-overflow: ellipsis;
   text-align: left;
   border: 1px solid var(--glass-border) !important;
-  background: var(--surface-card) !important;
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
   color: var(--text-main) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+[data-bs-theme="dark"] .btn-quiz {
+  background: rgba(30, 41, 59, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .btn-quiz.rtl {
   text-align: right;
 }
 
-.btn-quiz:hover {
+.btn-quiz:hover:not(.btn-success):not(.btn-danger) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.18), inset 0 0 0 1px rgba(37, 99, 235, 0.4);
   border-color: var(--accent-color) !important;
-  background: rgba(37, 99, 235, 0.08) !important;
+  background: rgba(37, 99, 235, 0.12) !important;
   color: var(--accent-color) !important;
 }
 
@@ -34,17 +51,213 @@
   transform: translateY(0);
 }
 
-.btn-quiz.btn-success {
-  background: linear-gradient(135deg, #10b981, #059669) !important;
-  border-color: #059669 !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5) !important;
-  transform: scale(1.02);
+/* Expanding ripple/glow sphere from center */
+.btn-quiz::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0px;
+  height: 0px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
 }
 
-.btn-quiz.btn-danger {
-  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-  border-color: #dc2626 !important;
+/* Light beam shimmer effect */
+.btn-quiz::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Correct Answer: Grows from center, then pulses with neon green glow */
+.btn-quiz.quiz-correct,
+.btn-quiz.btn-success {
   color: #ffffff !important;
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  background: transparent !important;
+  animation: buttonSuccessPulse 1.85s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.btn-quiz.quiz-correct::before,
+.btn-quiz.btn-success::before {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.98) 100%);
+  animation: expandFromCenter 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.btn-quiz.quiz-correct::after,
+.btn-quiz.btn-success::after {
+  animation: shimmerSweep 0.9s ease-in-out 0.2s infinite;
+}
+
+/* Selected Incorrect Answer ONLY: Shakes immediately on click, then holds red glow */
+.btn-quiz.quiz-wrong-selected {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  background: transparent !important;
+  animation: buttonDangerShakeStart 1.85s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.btn-quiz.quiz-wrong-selected::before {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.98) 100%);
+  animation: expandFromCenter 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.btn-quiz.quiz-wrong-selected::after {
+  animation: shimmerSweep 0.9s ease-in-out 0.2s infinite;
+}
+
+/* Other unselected incorrect answers: Also marked in red, but static with NO vibration */
+.btn-quiz.quiz-wrong-unselected {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+  background: transparent !important;
+  animation: buttonDangerStatic 1.85s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  pointer-events: none !important;
+}
+
+.btn-quiz.quiz-wrong-unselected::before {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.98) 100%);
+  animation: expandFromCenter 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.btn-quiz.quiz-wrong-unselected::after {
+  animation: shimmerSweep 0.9s ease-in-out 0.2s infinite;
+}
+
+/* Keyframes */
+@keyframes expandFromCenter {
+  0% {
+    width: 0px;
+    height: 0px;
+    opacity: 0.2;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  40% {
+    opacity: 0.9;
+  }
+  100% {
+    width: 450px;
+    height: 450px;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes buttonSuccessPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  }
+  35% {
+    transform: scale(1.02);
+    box-shadow: 
+      0 0 16px rgba(16, 185, 129, 0.6),
+      0 0 32px rgba(16, 185, 129, 0.35),
+      inset 0 0 10px rgba(255, 255, 255, 0.35);
+  }
+  60% {
+    transform: scale(1.04);
+    box-shadow: 
+      0 0 24px rgba(16, 185, 129, 0.95),
+      0 0 50px rgba(16, 185, 129, 0.55),
+      inset 0 0 16px rgba(255, 255, 255, 0.5);
+  }
+  80% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1.03);
+    box-shadow: 
+      0 0 22px rgba(16, 185, 129, 0.95),
+      0 0 48px rgba(16, 185, 129, 0.6),
+      inset 0 0 16px rgba(255, 255, 255, 0.55);
+  }
+}
+
+@keyframes buttonDangerShakeStart {
+  /* 0% to 35%: Immediate vibration right upon click */
+  0% {
+    transform: translateX(0) scale(1);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  }
+  6% {
+    transform: translateX(-9px) scale(1.02);
+    box-shadow: 
+      0 0 22px rgba(239, 68, 68, 0.95),
+      0 0 45px rgba(239, 68, 68, 0.6),
+      inset 0 0 14px rgba(255, 255, 255, 0.5);
+  }
+  12% {
+    transform: translateX(9px) scale(1.02);
+  }
+  18% {
+    transform: translateX(-7px) scale(1.02);
+    box-shadow: 
+      0 0 26px rgba(239, 68, 68, 0.95),
+      0 0 55px rgba(239, 68, 68, 0.65),
+      inset 0 0 18px rgba(255, 255, 255, 0.55);
+  }
+  24% {
+    transform: translateX(7px) scale(1.02);
+  }
+  30% {
+    transform: translateX(-4px) scale(1.01);
+  }
+  36% {
+    transform: translateX(0) scale(1.02);
+  }
+  /* 40% to 100%: Steady glowing red feedback */
+  100% {
+    transform: translateX(0) scale(1.02);
+    box-shadow: 
+      0 0 22px rgba(239, 68, 68, 0.9),
+      0 0 48px rgba(239, 68, 68, 0.55),
+      inset 0 0 14px rgba(255, 255, 255, 0.45);
+  }
+}
+
+@keyframes buttonDangerStatic {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  }
+  35% {
+    transform: scale(1.02);
+    box-shadow: 
+      0 0 16px rgba(239, 68, 68, 0.6),
+      0 0 32px rgba(239, 68, 68, 0.35),
+      inset 0 0 10px rgba(255, 255, 255, 0.35);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 
+      0 0 20px rgba(239, 68, 68, 0.85),
+      0 0 42px rgba(239, 68, 68, 0.5),
+      inset 0 0 14px rgba(255, 255, 255, 0.4);
+  }
+}
+
+@keyframes shimmerSweep {
+  0% {
+    left: -120%;
+  }
+  100% {
+    left: 140%;
+  }
 }

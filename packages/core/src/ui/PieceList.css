@@ -7,38 +7,114 @@
   width: 80px;
   opacity: 0.7;
   filter: drop-shadow(rgba(0, 0, 0, 0.5) 1px 1px 1px);
+  transition: opacity 0.15s ease;
 }
 
 table.legend {
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
   margin-bottom: 0px !important;
   border: none !important;
+  background: transparent !important;
+  --bs-table-bg: transparent !important;
+  --bs-table-striped-bg: transparent !important;
+  --bs-table-hover-bg: transparent !important;
+  --bs-table-border-color: transparent !important;
 }
+
 table.legend td,
 table.legend th {
   border: none !important;
-  cursor: default;
-}
-table.legend tbody tr {
-  transition: transform 0.18s ease;
-}
-table.legend tbody tr:hover {
-  transform: translateX(3px);
+  border-width: 0px !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  padding: 0.45rem 0.6rem;
+  vertical-align: middle;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  font-family: var(--font-family-body);
+  font-size: 0.92rem;
 }
 
-table.legend .imgflag img {
-  height: 25px;
+/* Semi-transparent alternating zebra rows */
+table.legend tbody tr:nth-of-type(odd) td {
+  background-color: rgba(0, 0, 0, 0.025) !important;
+}
+
+table.legend tbody tr:nth-of-type(even) td {
+  background-color: rgba(0, 0, 0, 0.065) !important;
+}
+
+/* Hover effect matching map selector */
+table.legend tbody tr:hover td {
+  background-color: rgba(37, 99, 235, 0.12) !important;
+}
+
+table.legend tbody tr:hover .legendPiece > svg {
+  opacity: 0.95;
+}
+
+[data-bs-theme="dark"] table.legend tbody tr:nth-of-type(odd) td {
+  background-color: rgba(255, 255, 255, 0.025) !important;
+}
+
+[data-bs-theme="dark"] table.legend tbody tr:nth-of-type(even) td {
+  background-color: rgba(255, 255, 255, 0.065) !important;
+}
+
+[data-bs-theme="dark"] table.legend tbody tr:hover td {
+  background-color: rgba(59, 130, 246, 0.16) !important;
+}
+
+/* Selected Piece Row - matching map selector */
+table.legend tbody tr.table-primary td {
+  background-color: rgba(37, 99, 235, 0.18) !important;
+  color: var(--accent-color) !important;
+  font-weight: 700;
+}
+
+table.legend tbody tr.table-primary td:first-child {
+  box-shadow: inset 4px 0 0 var(--accent-color) !important;
+}
+
+table.legend tbody tr.table-primary .legendPiece > svg {
+  opacity: 1;
+}
+
+[data-bs-theme="dark"] table.legend tbody tr.table-primary td {
+  background-color: rgba(59, 130, 246, 0.28) !important;
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] table.legend tbody tr.table-primary td:first-child {
+  box-shadow: inset 4px 0 0 var(--accent-color) !important;
+}
+
+/* Flag styling matching map selector */
+table.legend .imgflag {
+  width: 44px;
+  max-width: 44px;
+  min-width: 44px;
+  padding-left: 0.5rem !important;
+}
+
+table.legend .imgflag div {
   width: 40px;
   max-width: 40px;
   min-width: 40px;
-  box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 1px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
 }
-table.legend .imgflag {
-  max-width: 45px;
-  min-width: 50px;
+
+table.legend .imgflag img {
+  height: 24px;
+  width: 38px;
+  max-width: 38px;
+  min-width: 38px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
 }
-table.legend .imgflag div {
-  max-width: 55px;
-  min-width: 55px;
+
+table.legend tbody tr.table-primary .imgflag img {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
   

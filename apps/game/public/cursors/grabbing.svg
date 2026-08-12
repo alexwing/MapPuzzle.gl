@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <filter id="shadowG" x="0" y="0" width="32" height="32" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="1.5" stdDeviation="1.2" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <linearGradient id="handGradG" x1="8" y1="6" x2="24" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+  </defs>
+  <!-- Gripping Closed Hand -->
+  <path d="M8 11.5C6.89543 11.5 6 12.3954 6 13.5C6 14.2384 6.40131 14.8831 7 15.2236V18C7 22.4183 10.5817 26 15 26H16.5C20.6421 26 24 22.6421 24 18.5V14.5C24 13.3954 23.1046 12.5 22 12.5C21.7791 12.5 21.5678 12.5358 21.3705 12.6021C21.0127 11.6633 20.0833 11 19 11C18.6722 11 18.3582 11.0794 18.0811 11.2208C17.6468 10.203 16.6567 9.5 15.5 9.5C15.1593 9.5 14.8335 9.58529 14.5469 9.73668C14.1472 8.71334 13.1568 8 12 8C10.8954 8 10 8.89543 10 10V14.5L8.70711 13.2071C8.31658 12.8166 7.68342 12.8166 7.29289 13.2071C7.10536 13.3946 7 13.649 7 13.9142V15C8.2 16.2 9.8 17.5 12 17.5H18" fill="url(#handGradG)" stroke="#0f172a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadowG)"/>
+  <!-- Knuckle crease details -->
+  <path d="M12 13.5H14.5" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"/>
+  <path d="M15.5 14H18" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"/>
+  <path d="M19 14.5H21" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"/>
+</svg>

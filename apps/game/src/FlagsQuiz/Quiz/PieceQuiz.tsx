@@ -45,9 +45,10 @@ function PieceQuiz({
   onCorrect,
   onWrong,
 }: PieceQuizProps): JSX.Element {
-  const [rtlClass, setRtlClass] = useState("");
+  const [isRtl, setIsRtl] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState("");
-  const [quizResponse, setQuizResponse] = useState(false)
+  const [quizResponse, setQuizResponse] = useState(false);
+  const [selectedAnswerId, setSelectedAnswerId] = useState<number | null>(null);
 
   // get background image from distance from ecuador
   useEffect(() => {
@@ -68,27 +69,47 @@ function PieceQuiz({
   //on init load if rtl lang
   useEffect(() => {
     PuzzleService.getLangIsRtl(lang)
-      .then((isRtl) => {
-        setRtlClass(isRtl ? "rtl btn-quiz" : "btn-quiz");
+      .then((rtl) => {
+        setIsRtl(rtl);
       })
       .catch((err) => {
         console.log(err);
-        setRtlClass("btn-quiz");
+        setIsRtl(false);
       });
   }, [lang]);
+
+  // compute dynamic class for each button based on whether it is correct, selected wrong, or unselected
+  const getButtonClass = (c: PieceProps) => {
+    let classes = "btn-quiz";
+    if (isRtl) {
+      classes += " rtl";
+    }
+    if (quizResponse) {
+      if (c.properties.cartodb_id === pieceSelectedData.properties.cartodb_id) {
+        classes += " quiz-correct btn-success";
+      } else if (c.properties.cartodb_id === selectedAnswerId) {
+        classes += " quiz-wrong-selected btn-danger";
+      } else {
+        classes += " quiz-wrong-unselected";
+      }
+    }
+    return classes;
+  };
 
   // set variant for buttons if quizResponse is true
   const variant = (c: PieceProps) => {
     if (quizResponse) {
       if (c.properties.cartodb_id === pieceSelectedData.properties.cartodb_id) {
         return "success";
-      } else {
+      } else if (c.properties.cartodb_id === selectedAnswerId) {
         return "danger";
+      } else {
+        return "secondary";
       }
-    }else {
-      return "primary";
+    } else {
+      return undefined;
     }
-  }
+  };
 
   //create buttons from questions if pieceSelected === question goto correct or wrong
   const buttons = questions.map((c) => {
@@ -97,7 +118,7 @@ function PieceQuiz({
         key={c.properties.cartodb_id}
         variant={variant(c)}
         size="lg"      
-        className={rtlClass}
+        className={getButtonClass(c)}
         onClick={() => onClickHandler(c)}
       >
         {c.properties.name}
@@ -105,24 +126,24 @@ function PieceQuiz({
     );
   });
 
-
   // on click button check if correct or wrong
   // and init animate button and show correct or wrong
   const onClickHandler = (c: PieceProps) => {
-  //prevent clicks if quizResponse is true
-  if (quizResponse) return;
-   setQuizResponse(true)    
+    //prevent clicks if quizResponse is true
+    if (quizResponse) return;
+    setQuizResponse(true);
+    setSelectedAnswerId(c.properties.cartodb_id);
     // Delay before resetting button states
     setTimeout(() => {
-        setQuizResponse(false)
-        if (c.properties.cartodb_id === pieceSelectedData.properties.cartodb_id) {
-          onCorrect();
-        } else {
-          onWrong();
-        }
-      }, ConfigService.flagQuizResponseTime);
-    
-  }
+      setQuizResponse(false);
+      setSelectedAnswerId(null);
+      if (c.properties.cartodb_id === pieceSelectedData.properties.cartodb_id) {
+        onCorrect();
+      } else {
+        onWrong();
+      }
+    }, ConfigService.flagQuizResponseTime);
+  };
   // get flag image url
   const getFlag = (puzzleId: number, c: PieceProps): string => {
     return `../customFlags/${puzzleId.toString()}/1024/${

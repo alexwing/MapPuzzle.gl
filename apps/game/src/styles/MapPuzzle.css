@@ -57,7 +57,9 @@
   --text-muted: #475569;
   --accent-color: #2563eb;
   --accent-hover: #1d4ed8;
-  --accent-glow: rgba(37, 99, 235, 0.25);
+  --accent-glow: rgba(37, 99, 255, 0.25);
+  --cursor-grab: url("/cursors/grab.svg") 12 8, grab;
+  --cursor-grabbing: url("/cursors/grabbing.svg") 12 8, grabbing;
 }
 
 [data-bs-theme="dark"] {
@@ -271,18 +273,45 @@ span.navbar-brand {
   display: none !important;
 }
 
-/* Score Alerts */
+/* Custom Vector Hand Cursors on DeckGL Map Canvas */
+#deckgl-wrapper,
+.deckgl-container,
+.deckgl-container canvas,
+.mapboxgl-canvas {
+  cursor: var(--cursor-grab) !important;
+}
+
+#deckgl-wrapper:active,
+.deckgl-container:active,
+.deckgl-container canvas:active,
+.mapboxgl-canvas:active {
+  cursor: var(--cursor-grabbing) !important;
+}
+
+/* Score Alerts - Continuous Translucent Blurred Bar */
 .score {
+  padding: 0px;
+  margin: 0px;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+}
+
+.score .col-lg-4,
+.score .col-4 {
   padding-right: 0px;
   padding-left: 0px;
-  margin: 0px;
 }
+
 .score .alert {
-  padding: 0px;
+  padding: 4px 2px;
   margin: 0px;
   border: 0px;
   border-radius: 0px;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  text-align: center;
 }
+
 .score .alert-heading.h4,
 .score .alert-heading {
   font-size: 11.5px !important;
@@ -294,6 +323,7 @@ span.navbar-brand {
   line-height: 1.2;
   margin-bottom: 0px;
 }
+
 .score .mb-0 {
   font-size: 13px !important;
   font-weight: 800;
@@ -305,20 +335,53 @@ span.navbar-brand {
   margin-bottom: 0px;
 }
 
-.score hr {
-  margin: 0px;
+/* Success / Encontrados */
+.score .alert-success {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #059669 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
-.score .col-lg-4,
-.score .col-4 {
-  padding-right: 0px;
-  padding-left: 0px;
+[data-bs-theme="dark"] .score .alert-success {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #34d399 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Warning / Restantes */
+.score .alert-warning {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #d97706 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-bs-theme="dark"] .score .alert-warning {
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #fbbf24 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Danger / Errores */
+.score .alert-danger {
+  background: rgba(239, 68, 68, 0.16) !important;
+  color: #dc2626 !important;
+}
+
+[data-bs-theme="dark"] .score .alert-danger {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: #f87171 !important;
+}
+
+.score hr {
+  margin: 0px;
 }
 
 .card {
   border-radius: 0px;
   z-index: 79;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 12px;
+  box-shadow: none;
+  background: transparent !important;
+  border: none !important;
 }
 .card-body {
   padding: 0px !important;
@@ -361,7 +424,7 @@ span.navbar-brand {
 
 .modal-header {
   border-bottom: none !important;
-  padding: 1.2rem 1.4rem 0.5rem 1.4rem;
+  padding: 0.4rem 1.4rem 0.5rem 1.4rem;
   background: transparent !important;
 }
 
