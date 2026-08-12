@@ -1,88 +1,147 @@
+.toolsPanelContainer {
+  --bs-accordion-bg: transparent !important;
+  --bs-accordion-btn-bg: transparent !important;
+  --bs-accordion-btn-active-bg: transparent !important;
+  --bs-accordion-active-bg: transparent !important;
+  --bs-card-bg: transparent !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  border: 1px solid var(--glass-border) !important;
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  box-shadow: var(--glass-shadow);
+  transition: all 0.3s ease;
+}
+
+.toolsPanelContainer .accordion-item {
+  border: none !important;
+  background: transparent !important;
+}
+
+.toolsPanelContainer .accordion-header {
+  border-bottom: 1px solid var(--glass-border);
+  background: transparent !important;
+  transition: border-color 0.35s ease;
+}
+
+.toolsPanelContainer .accordion-button {
+  min-height: 42px;
+  height: 42px;
+  padding: 0 0.45rem 0 0 !important;
+  background: transparent !important;
+  color: var(--text-main) !important;
+  font-family: var(--font-family-title);
+  box-shadow: none !important;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  border: none !important;
+  border-top-left-radius: 12px !important;
+  border-top-right-radius: 12px !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  transition: border-bottom-left-radius 0.35s ease, border-bottom-right-radius 0.35s ease, background-color 0.35s ease !important;
+}
+
+.toolsPanelContainer .accordion-button.collapsed {
+  border-bottom-left-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
+}
+
+.toolsPanelContainer .accordion-button::after {
+  margin-left: 4px !important;
+  margin-right: 2px !important;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.toolsPanelContainer .accordion-button:not(.collapsed) {
+  background: rgba(37, 99, 235, 0.04) !important;
+}
+
+.accordion-header-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Flag with CSS Mask and Glassmorphism (Bleed to edges to eliminate any subpixel gap) */
+.flagGradient {
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  bottom: -2px;
+  height: calc(100% + 4px);
+  width: 85px;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 0;
+  transition: border-bottom-left-radius 0.35s ease;
+}
+
+.toolsPanelContainer .accordion-button.collapsed .flagGradient {
+  border-bottom-left-radius: 12px;
+}
+
 .flagGradient img {
-    width: 75px;
-    height: 75px;
-    padding: 0;
-    display: block;
-    position: absolute;
-    opacity: 0.25;
-    z-index: -2;
-    top: -16px;
-  }
-  .flagGradient {
-    position: absolute;
-    margin-top: -12px;
-    margin-left: -13.5px;
-  }
-  .flagGradient::after {
-    content: " ";
-    position: absolute;
-    width: 76px;
-    height: 47px;
-    background: linear-gradient(
-  to right,
-  rgba(255, 255, 255, 0) 25%,
-  rgba(255, 255, 255, 1) 90%
-  );
-    z-index: -1;
-    top: -2px;
-  }
-  [data-bs-theme="dark"] .flagGradient::after {
-    background: linear-gradient(
-      to right,
-      rgba(39, 43, 48, 0) 25%,
-      rgba(39, 43, 48, 1) 100%
-      );
-  }
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left center;
+  opacity: 0.55;
+  image-rendering: -webkit-optimize-contrast;
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.75) 45%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.75) 45%, rgba(0, 0, 0, 0) 100%);
+}
 
-  .toolsPanelContainer .accordion-button {
-    min-height: 3em;
-    padding: 0.7em;
-    background: white;
-    z-index: 1;
-    display:inline-block;
-    border-radius: 0;
-    margin-bottom: -2px;
+.toolsPanelContainer .mapName {
+  font-family: var(--font-family-title);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-main);
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 12px;
+  padding-right: 8px;
+  line-height: 1.2;
+}
 
-  }
-  .toolsPanelContainer .accordion-button::after {
-    z-index: 1;
-    position: absolute;
-    top: 29px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    opacity: 0.5;
-  }
-  .toolsPanelContainer .mapTimer {
-    min-height: 20px;
-  }
+.toolsPanelContainer .mapName.has-flag {
+  padding-left: 34px;
+}
 
-  .toolsPanelContainer .accordion-button {
-    background: white;
-  }
+.toolsPanelContainer .timer {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  margin-left: auto;
+  margin-right: 4px;
+}
 
-  [data-bs-theme="dark"] .toolsPanelContainer .accordion-button {
-    background: #272b30;
-  }
-  
-  .toolsPanelContainer .accordion-item:first-of-type {
-    border-radius: 0;
-  }
-  .toolsPanelContainer .mapName {
-    font-weight: 600;
-    margin: -0.75rem -0.25rem;
-    height: 3em;
-    position: absolute;
-    width: calc(100% - 5.5rem);
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    flex-direction: column;
-    line-height: 0.95em;
-  }
-  .toolsPanelContainer .timer {
-    min-height: 20px;
-    max-height: 20px;
-    overflow: visible;
-  }
+.toolsPanelContainer .card {
+  background: transparent !important;
+  border: none !important;
+}
+
+.toolsPanelContainer .card-body {
+  padding: 0px !important;
+  background: transparent !important;
+}
+
+.pieceListContainer {
+  padding: 0px;
+  overflow-x: hidden !important;
+}

@@ -1,55 +1,50 @@
 .btn-quiz {
   cursor: pointer;
-  border-width: 1px;
-  border-radius: 5px;
-  font-size: 2vh;
-  font-weight: 500;
-  -webkit-box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow:0px 4px 4px 0px rgba(0, 0, 0, 0.2);
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  font-family: var(--font-family-body);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 1.2rem;
   position: relative;
   z-index: 0;
-  -moz-transition: all 0.6s ease;
-  -o-transition: all 0.6s ease;
-  -webkit-transition: all 0.6s ease;
-  -ms-transition: all 0.6s ease;
-  transition: all 0.6s ease;
-
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: left;
+  border: 1px solid var(--glass-border) !important;
+  background: var(--surface-card) !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .btn-quiz.rtl {
   text-align: right;
 }
 
+.btn-quiz:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  border-color: var(--accent-color) !important;
+  background: rgba(37, 99, 235, 0.08) !important;
+  color: var(--accent-color) !important;
+}
 
-.btn-quiz span {
-  z-index: 1;
+.btn-quiz:active {
+  transform: translateY(0);
 }
-.btn-quiz:hover,
-.btn-quiz:active,
-.btn-quiz:focus {
-  outline: none !important;
-}
-.btn-quiz:hover:after {
-  top: 0;
-}
-.btn-quiz.btn-primary {
-  border: 0px;
-}
-.btn-quiz.btn-primary:hover,
-.btn-quiz.btn-primary:focus {
-  background: #0525a7 !important;
-    -webkit-box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.6);
-  -moz-box-shadow:0px 4px 8px 0px rgba(0, 0, 0, 0.6);
-  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.6);
 
+.btn-quiz.btn-success {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border-color: #059669 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5) !important;
+  transform: scale(1.02);
 }
-.btn-quiz.btn-primary.btn-link {
-  background: transparent;
-  color: #fff;
-  border: none;
+
+.btn-quiz.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.5) !important;
 }

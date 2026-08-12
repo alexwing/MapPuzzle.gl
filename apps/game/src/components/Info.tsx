@@ -75,7 +75,7 @@ function Info({
   const hashtag = t("common.share.hashtag");
   const title = t("common.share.title");
   const infoPuzzles = !content ? null : (
-    <Table striped bordered size="sm" className="legendInfo">
+    <Table size="sm" className="legendInfo">
       <thead>
         <tr>
           <th scope="col"></th>

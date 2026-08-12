@@ -64,7 +64,7 @@
 }
 
 [data-bs-theme="dark"] .alertWiki .modal-header {
-  background-color: #343a40;
+  background-color: transparent !important;
 }
 
 [data-bs-theme="dark"] .alertWiki .infoWiki {

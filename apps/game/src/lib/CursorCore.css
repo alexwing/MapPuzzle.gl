@@ -4,12 +4,12 @@
   }
   
 .mousePiece {
-    z-index: 1;
+    z-index: 99999 !important;
     display: block;
     position: fixed;
     top: 0;
     left: 0;
-    pointer-events: none;
+    pointer-events: none !important;
     backface-visibility: hidden;
     will-change: transform;
     transition: opacity 0.15s ease-in-out;

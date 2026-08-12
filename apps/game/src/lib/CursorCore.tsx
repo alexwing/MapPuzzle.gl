@@ -190,20 +190,18 @@ function CursorCore({
         />
       </svg>
     );
-  } else {
-    PieceCursor = <span></span>;
   }
-
-  const TooltipCursor = tooltip ? <span>{tooltip}</span> : undefined;
 
   return (
     <React.Fragment>
       <div ref={pieceCursorRef} className="mousePiece">
         {PieceCursor}
       </div>
-      <div ref={tooltipRef} className="tooltipRef">
-        {TooltipCursor}
-      </div>
+      {tooltip ? (
+        <div ref={tooltipRef} className="tooltipRef">
+          <span>{tooltip}</span>
+        </div>
+      ) : null}
     </React.Fragment>
   );
 }

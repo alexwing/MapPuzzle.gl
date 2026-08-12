@@ -117,7 +117,7 @@ function PuzzleOptions({
 
   return (
     <React.Fragment>
-      <Form>
+      <Form style={{ marginTop: "3px" }}>
         {buttons.map((button, index) => (
           <OverlayTrigger
             key={index}

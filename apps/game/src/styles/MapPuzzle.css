@@ -1,75 +1,277 @@
-body {
-  background-color: darkgray;
+/* Local Font Declarations */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/inter-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/outfit-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/outfit-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/outfit-800.woff2') format('woff2');
+}
+
+:root {
+  --font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-family-title: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Light theme tokens */
+  --bg-app: #f1f5f9;
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-bg-hover: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --surface-card: rgba(255, 255, 255, 0.7);
+  --text-main: #1e293b;
+  --text-muted: #475569;
+  --accent-color: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.25);
+}
+
+[data-bs-theme="dark"] {
+  --bg-app: #090d16;
+  --glass-bg: rgba(15, 23, 42, 0.48);
+  --glass-bg-hover: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --surface-card: rgba(15, 23, 42, 0.7);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent-color: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-glow: rgba(59, 130, 246, 0.35);
+}
+
+html,
+body,
+#root {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  padding: 0;
+  background-color: var(--bg-app);
+  font-family: var(--font-family-body);
+  color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-span.navbar-brand {
-  margin-left: 8px;
+/* Compact Glassmorphic Navbar */
+.navbar {
+  position: relative;
+  z-index: 1000 !important;
+  background: transparent !important;
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  padding-left: 0.35rem !important;
+  padding-right: 0.5rem !important;
+  transition: all 0.3s ease;
 }
-.navbar-brand > img {
-  max-height: 32px;
-  padding-right: 15px;
-  height: 32px;
-  width: 47px;
-} 
 
-.dropdown-menu.show > .dropdown-item img {
-  max-height: 32px;
-  padding-right: 0.5em;
-  margin: -0.5em 0;
+.navbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: -1;
   pointer-events: none;
 }
 
-select {
-  cursor: auto !important;
+span.navbar-brand {
+  margin-left: 0px !important;
 }
 
-button,
-.btn,
-.navbar-nav .dropdown-menu,
-.navbar-brand,
-.dropdown-item,
-.dropdown-toggle,
-a {
-  cursor: pointer !important;
-}
-.card-body,
 .navbar-brand {
+  font-family: var(--font-family-title);
+  font-weight: 700;
+  font-size: 1.18rem;
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-main) !important;
   padding: 0px !important;
+  margin-left: 0px !important;
+  margin-right: 12px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+.navbar-brand > img {
+  max-height: 30px;
+  padding-right: 0px !important;
+  height: 30px;
+  width: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
+/* Nav Buttons */
+.navbar form {
+  margin-top: 3px;
+}
+
+.navbar .btn {
+  border-radius: 6px;
+  font-family: var(--font-family-body);
+  font-weight: 600;
+  font-size: 0.81rem;
+  padding: 0.22rem 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+#puzzleSelect {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.2);
+  color: var(--accent-color);
+}
+
+#puzzleSelect:hover {
+  background: var(--accent-color);
+  color: #ffffff;
+  box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+#flagsQuiz {
+  margin-left: 10px;
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #f59e0b;
+}
+
+#flagsQuiz:hover {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+.navbar .btn.btn-none,
+.navbar .btn-none {
+  border-radius: 6px;
+  padding: 0.22rem 0.4rem;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.navbar .btn.btn-none:hover,
+.navbar .btn-none:hover {
+  background: rgba(100, 116, 139, 0.12);
+  color: var(--text-main);
+}
+
+/* Dropdown Menus (Frosted Glassmorphism) */
+.dropdown-menu {
+  --bs-dropdown-bg: rgba(255, 255, 255, 0.75) !important;
+  --bs-dropdown-border-color: rgba(255, 255, 255, 0.6) !important;
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 12px 36px 0 rgba(31, 38, 135, 0.16), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 12px !important;
+  padding: 0.4rem;
+}
+
+[data-bs-theme="dark"] .dropdown-menu {
+  --bs-dropdown-bg: rgba(15, 23, 42, 0.78) !important;
+  --bs-dropdown-border-color: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(15, 23, 42, 0.78) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.45), 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+}
+
+.dropdown-item {
+  border-radius: 6px;
+  font-family: var(--font-family-body);
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.4rem 0.7rem;
+  color: var(--text-main);
+  transition: all 0.15s ease;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--accent-color);
+}
+
+.dropdown-menu.show > .dropdown-item img {
+  max-height: 24px;
+  margin-right: 8px;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Tooltip Cursor */
 .tooltipRef {
-  z-index: 999;
+  z-index: 9999;
   display: block;
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
-  border-radius: 15px;
-  padding: 0px 10px;
-  font-size: 11px;
-  font-weight: bold;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-family: var(--font-family-body);
+  font-size: 12px;
+  font-weight: 600;
+  background-color: rgba(15, 23, 42, 0.85);
+  color: #ffffff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   backface-visibility: hidden;
   will-change: transform;
   transition: opacity 0.15s ease-in-out;
 }
 
-.form-group {
-  margin-bottom: 0px !important;
+.tooltipRef:empty {
+  display: none !important;
 }
 
+/* Score Alerts */
 .score {
   padding-right: 0px;
   padding-left: 0px;
@@ -82,9 +284,19 @@ code {
   border-radius: 0px;
 }
 .score .alert-heading.h4,
+.score .alert-heading {
+  font-size: 11.5px !important;
+  font-weight: 700;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+  margin-bottom: 0px;
+}
 .score .mb-0 {
-  font-size: 15px !important;
-  font-weight: bolder;
+  font-size: 13px !important;
+  font-weight: 800;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -97,126 +309,252 @@ code {
   margin: 0px;
 }
 
-.score .col-lg-4 {
+.score .col-lg-4,
+.score .col-4 {
   padding-right: 0px;
   padding-left: 0px;
 }
 
-.card,
-.navbar {
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 12px;
-}
 .card {
   border-radius: 0px;
   z-index: 79;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 12px;
 }
-.navbar {
-  position: relative;
-  z-index: 1000 !important;
+.card-body {
+  padding: 0px !important;
 }
 
-.form-inline button {
-  padding-left: 5px;
-  padding-right: 5px;
+.form-group {
+  margin-bottom: 0px !important;
 }
+
+/* Modern Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.55);
+}
+
+/* Modern Modals */
+.modal-content {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 16px;
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+.modal-header {
+  border-bottom: none !important;
+  padding: 1.2rem 1.4rem 0.5rem 1.4rem;
+  background: transparent !important;
+}
+
 .modal-title {
-  font-size: 2.5vh;
-  margin: auto 1vh;
+  font-family: var(--font-family-title);
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
+
+.modal-body {
+  background: transparent !important;
+}
+
+.modal-footer {
+  border-top: none !important;
+  padding: 0.5rem 1.4rem 1.2rem 1.4rem;
+  background: transparent !important;
+  gap: 10px;
+}
+
+/* ==========================================================================
+   Glassmorphism Modal Buttons (Tactile Frosted Glass & Dynamic Glows)
+   ========================================================================== */
+.modal-footer .btn,
+.modal .modal-footer .btn,
+.modal-footer .btn-lg,
+.modal .modal-footer .btn-lg {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-family-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.55rem 1.25rem;
+  --bs-btn-border-radius: 10px;
+  border-radius: 10px !important;
+  border: none !important;
+  outline: none !important;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Primary Glass Button (Play, Accept, OK, Confirm) */
+.modal-footer .btn-primary,
+.modal-footer .btn:not([class*="btn-"]):not([class*="btn-secondary"]):not([class*="btn-danger"]):not([class*="btn-outline"]):not([class*="btn-none"]) {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35), 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+}
+
+.modal-footer .btn-primary:hover,
+.modal-footer .btn:not([class*="btn-"]):not([class*="btn-secondary"]):not([class*="btn-danger"]):not([class*="btn-outline"]):not([class*="btn-none"]):hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6), 0 6px 20px rgba(37, 99, 235, 0.5) !important;
+  transform: none;
+}
+
+.modal-footer .btn-primary:active,
+.modal-footer .btn:not([class*="btn-"]):not([class*="btn-secondary"]):not([class*="btn-danger"]):not([class*="btn-outline"]):not([class*="btn-none"]):active {
+  transform: scale(0.98);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4), 0 2px 8px rgba(37, 99, 235, 0.25) !important;
+}
+
+/* Secondary Glass Button (Cancel, Close, No) */
+.modal-footer .btn-secondary,
+.modal-footer .btn-outline-secondary {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%) !important;
+  color: var(--text-main) !important;
+  box-shadow: inset 0 0 0 1px var(--glass-border), 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.modal-footer .btn-secondary:hover,
+.modal-footer .btn-outline-secondary:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0.18) 100%) !important;
+  color: var(--text-main) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6), 0 6px 18px rgba(0, 0, 0, 0.1) !important;
+  transform: none;
+}
+
+.modal-footer .btn-secondary:active,
+.modal-footer .btn-outline-secondary:active {
+  transform: scale(0.98);
+  box-shadow: inset 0 0 0 1px var(--glass-border), 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-bs-theme="dark"] .modal-footer .btn-secondary,
+[data-bs-theme="dark"] .modal-footer .btn-outline-secondary {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-bs-theme="dark"] .modal-footer .btn-secondary:hover,
+[data-bs-theme="dark"] .modal-footer .btn-outline-secondary:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 100%) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35), 0 6px 18px rgba(0, 0, 0, 0.35) !important;
+  transform: none;
+}
+
+/* Outline Primary Glass Button (Explore, Actions) */
+.modal-footer .btn-outline-primary {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.04) 100%) !important;
+  color: var(--accent-color) !important;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.35), 0 4px 12px rgba(37, 99, 235, 0.1) !important;
+}
+
+.modal-footer .btn-outline-primary:hover {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.22) 0%, rgba(37, 99, 235, 0.1) 100%) !important;
+  color: var(--accent-color) !important;
+  box-shadow: inset 0 0 0 1px var(--accent-color), 0 6px 18px rgba(37, 99, 235, 0.25) !important;
+  transform: none;
+}
+
+.modal-footer .btn-outline-primary:active {
+  transform: scale(0.98);
+}
+
+/* Danger Glass Button (Donate, Reset) */
+.modal-footer .btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35), 0 4px 15px rgba(239, 68, 68, 0.35) !important;
+}
+
+.modal-footer .btn-danger:hover {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6), 0 6px 20px rgba(239, 68, 68, 0.5) !important;
+  transform: none;
+}
+
+.modal-footer .btn-danger:active {
+  transform: scale(0.98);
+}
+
+/* Disabled State */
+.modal-footer .btn:disabled,
+.modal-footer .btn.disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
+
 .modal-backdrop.show {
-  opacity: 0.2;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0.45;
 }
 
-/* Modal alert */
-
-.alert-message .modal-title {
-  font-size: 2.5vh;
-  margin: auto 1vh;
-}
-.alert-message .modal-title-error {
-  font-size: 1.7vh;
-  line-height: 1.7vh;
-  font-weight: bold;
-  margin: auto 1vh;
-}
-
-.alert-message .modal-body {
-  font-size: 1.7vh;
-  border-bottom-left-radius: var(--bs-modal-inner-border-radius);
-  border-bottom-right-radius: var(--bs-modal-inner-border-radius);
-}
-
-.alert-message .modal-content {
-  border-bottom-left-radius: var(--bs-modal-inner-border-radius);
-  border-bottom-right-radius: var(--bs-modal-inner-border-radius);
+/* Donate Floating Pill Button */
+.donateButton {
+  position: absolute;
+  right: 18px;
+  top: 57px;
+  z-index: 1000;
+  font-family: var(--font-family-body);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border-radius: 9999px;
+  padding: 0.35rem 0.8rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #ef4444;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.12);
+  transition: all 0.25s ease;
 }
 
-.alert-message .modal-header {
-  border-bottom: 0px;
-  padding: 0.5rem;
+.donateButton:hover {
+  background: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.35);
+  transform: translateY(-2px);
 }
-.alert-message .bg-success {
-  background-color: #7cac7c !important;
-}
-.alert-message .bg-danger {
-  background-color: #e47681 !important;
-}
-
-/* End Modal alert */
 
 .rtl {
   direction: rtl;
   text-align: right;
-}
-#flagsQuiz > .logo {
-  width: 32px;
-  height: 32px;
-  margin: -3px -10px;
-  cursor: pointer;
-  position: absolute;
-}
-.navbar-toggler:focus {
-  text-decoration: none;
-  outline: 0;
-  box-shadow: none;
-}
-.navbar-toggler:hover {
-  background-color: #ffbf40;
-}
-.navbar-toggler {
-  border-radius: 0px;
-  border: 0px;
-}
-
-/* Estilos para resaltar el botón */
-#flagsQuiz {
-  margin-left: 10px;
-  color: #ff9900; /* Color del texto */
-  border-color: #ff9900; /* Color del borde */
-  transition: background-color 0.3s ease; /* Transición suave al pasar el ratón por encima */
-}
-
-#flagsQuiz:hover {
-  background-color: #ffbf40; /* Color de fondo al pasar el ratón por encima */
-  border-color: #ffbf40; /* Color del borde al pasar el ratón por encima */
-  color: white;
-}
-
-.btn > svg {
-  vertical-align:bottom;
-}
-
-.mapboxgl-ctrl.mapboxgl-ctrl-attrib {
-	color: black;
-}
-.donateButton {
-  position: absolute;
-  right: 10px;
-  top: 70px;
-  z-index: 1000;
-  font-size: 1.5vh;
-  text-transform: uppercase;
-  font-weight: bold;
-  opacity: 0.7;
-  letter-spacing: 0.08em;
 }

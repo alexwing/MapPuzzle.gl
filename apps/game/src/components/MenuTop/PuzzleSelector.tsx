@@ -269,7 +269,7 @@ function PuzzleSelector({
     mode: "radio",
     hideSelectColumn: true,
     clickToSelect: true,
-    style: { filter: "invert(0.2) sepia(0.5)  hue-rotate(175deg)" },
+    classes: "selected-puzzle-row",
     onSelect: (row, _isSelect, _rowIndex, _e) => {
       setSelectedPuzzle(parseInt(row.id));
     },
@@ -330,18 +330,16 @@ function PuzzleSelector({
             onClick={handleOK}
             disabled={selectedPuzzle === 0}
             size="lg"
-            className="mb-4"
           >
-            <Icon.Play size={28} className="me-2" />
+            <Icon.Play size={24} className="me-2" />
             {t("puzzleSelector.buttons.play")}
           </Button>
           <Button
             variant="secondary"
             onClick={handleCancel}
             size="lg"
-            className="mb-4"
           >
-            <Icon.X size={28} className="me-2" />
+            <Icon.X size={24} className="me-2" />
             {t("puzzleSelector.buttons.cancel")}
           </Button>
         </Modal.Footer>

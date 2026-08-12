@@ -51,20 +51,18 @@ function ToolsPanel({
   const { t } = useTranslation();
 
   const accordionTitle = (): JSX.Element => {
-    if (flag) {
-      return (
-        <React.Fragment>
-          <div className="flagGradient">
-            <img src={flag} />
-          </div>
-          <div className="mapName">{getTranslation("puzzles", puzzleSelected.toString() ,name)}</div>
-          {showTimer}
-        </React.Fragment>
-      );
-    }
+    const titleText = flag
+      ? getTranslation("puzzles", puzzleSelected.toString(), name)
+      : name;
+
     return (
-      <div>
-        <span className="mapName">{name}</span>
+      <div className="accordion-header-content">
+        {flag && (
+          <div className="flagGradient">
+            <img src={flag} alt="" />
+          </div>
+        )}
+        <div className={`mapName ${flag ? "has-flag" : ""}`}>{titleText}</div>
         {showTimer}
       </div>
     );
@@ -108,6 +106,7 @@ function ToolsPanel({
                   className="pieceListContainer"
                   style={{
                     overflowY: "auto",
+                    overflowX: "hidden",
                     maxHeight: height - 190 + "px",
                   }}
                 >

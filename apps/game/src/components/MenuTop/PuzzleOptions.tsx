@@ -122,7 +122,7 @@ function PuzzleOptions({
 
   return (
     <React.Fragment>
-      <Form>
+      <Form style={{ marginTop: "3px" }}>
         {/* Filtered, not hidden with CSS: a disabled feature should leave
             nothing in the DOM for the player to find. */}
         {buttons

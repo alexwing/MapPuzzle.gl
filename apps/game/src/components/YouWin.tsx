@@ -142,13 +142,12 @@ export default function YouWin({
             variant="outline-primary"
             onClick={handleClose}
             size="lg"
-            className="mb-4"
           >
-            <Icon.Globe size={28} className="me-2" />
+            <Icon.Globe size={24} className="me-2" />
             {t("YouWin.buttons.explore")}
           </Button>
-          <Button onClick={onResetGame} size="lg" className="mb-4">
-            <Icon.Play size={28} className="me-2" />
+          <Button variant="primary" onClick={onResetGame} size="lg">
+            <Icon.Play size={24} className="me-2" />
             {t("YouWin.buttons.playAgain")}
           </Button>
         </Modal.Footer>
