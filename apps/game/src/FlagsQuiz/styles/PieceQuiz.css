@@ -57,8 +57,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 0px;
-  height: 0px;
+  width: 0%;
+  height: 0%;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
@@ -71,7 +71,7 @@
   content: "";
   position: absolute;
   top: 0;
-  left: -120%;
+  left: -150%;
   width: 80%;
   height: 100%;
   background: linear-gradient(
@@ -97,7 +97,7 @@
 .btn-quiz.quiz-correct::before,
 .btn-quiz.btn-success::before {
   background: radial-gradient(circle, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.98) 100%);
-  animation: expandFromCenter 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: expandFromCenter 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .btn-quiz.quiz-correct::after,
@@ -115,7 +115,7 @@
 
 .btn-quiz.quiz-wrong-selected::before {
   background: radial-gradient(circle, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.98) 100%);
-  animation: expandFromCenter 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: expandFromCenter 1.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .btn-quiz.quiz-wrong-selected::after {
@@ -133,7 +133,7 @@
 
 .btn-quiz.quiz-wrong-unselected::before {
   background: radial-gradient(circle, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.98) 100%);
-  animation: expandFromCenter 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: expandFromCenter 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .btn-quiz.quiz-wrong-unselected::after {
@@ -143,19 +143,16 @@
 /* Keyframes */
 @keyframes expandFromCenter {
   0% {
-    width: 0px;
-    height: 0px;
-    opacity: 0.2;
-    transform: translate(-50%, -50%) scale(0);
-  }
-  40% {
-    opacity: 0.9;
+    width: 0%;
+    height: 0%;
+    opacity: 0.5;
+    transform: translate(-50%, -50%);
   }
   100% {
-    width: 450px;
-    height: 450px;
+    width: 260%;
+    height: 900%;
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%);
   }
 }
 
@@ -255,9 +252,9 @@
 
 @keyframes shimmerSweep {
   0% {
-    left: -120%;
+    left: -150%;
   }
   100% {
-    left: 140%;
+    left: 180%;
   }
 }

@@ -3,10 +3,12 @@
 }
 
 .puzzle-selector {
-  max-height: calc(35em);
-  min-height: calc(35em);
-  overflow-y: auto;
-  overflow-x: hidden;
+  min-height: calc(32em);
+  overflow: visible !important;
+}
+
+.puzzle-selector-modal .modal-body {
+  overflow: visible !important;
 }
 
 .puzzle-selector table,
@@ -15,8 +17,6 @@ table.puzzle-selector {
   width: 100%;
   border-collapse: separate !important;
   border-spacing: 0 !important;
-  border-radius: 8px;
-  overflow: hidden;
   background: transparent !important;
   --bs-table-bg: transparent !important;
   --bs-table-striped-bg: transparent !important;
@@ -24,6 +24,25 @@ table.puzzle-selector {
   --bs-table-border-color: transparent !important;
   margin-bottom: 0px !important;
   border: none !important;
+}
+
+.puzzle-selector thead th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.puzzle-selector thead th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.puzzle-selector .dropdown-menu {
+  z-index: 1060 !important;
+  max-height: 280px;
+  overflow-y: auto;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .puzzle-selector table,
@@ -259,7 +278,8 @@ table.puzzle-selector {
 }
 
 .puzzle-selector .react-bootstrap-table {
-  min-height: calc(30em);
+  min-height: calc(28em);
+  overflow: visible !important;
 }
 
 .puzzle-selector .pagination {
