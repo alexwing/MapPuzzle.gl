@@ -1,45 +1,23 @@
-/* Local Font Declarations */
+/* Local Font Declarations
+ *
+ * Both families are variable fonts with a wght axis from 100 to 900, so one
+ * file covers every weight: the browser instantiates the axis at whatever
+ * font-weight is asked for. They were declared once per weight, all six rules
+ * pointing at copies of the same two binaries under different names, which
+ * downloaded the same bytes again for each weight the page used. */
 @font-face {
   font-family: 'Inter';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 100 900;
   font-display: swap;
-  src: url('/fonts/inter-400.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/inter-600.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/inter-700.woff2') format('woff2');
+  src: url('/fonts/inter-var.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Outfit';
   font-style: normal;
-  font-weight: 600;
+  font-weight: 100 900;
   font-display: swap;
-  src: url('/fonts/outfit-600.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Outfit';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/outfit-700.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Outfit';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url('/fonts/outfit-800.woff2') format('woff2');
+  src: url('/fonts/outfit-var.woff2') format('woff2');
 }
 
 :root {
