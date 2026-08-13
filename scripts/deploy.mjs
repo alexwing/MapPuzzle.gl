@@ -34,29 +34,26 @@ const onlyApp = args.some((a) => a === "--only=app");
 const skipBuild = has("--no-build") || has("--skip-build");
 const verbose = has("--verbose");
 
-/**
- * The app shell: small, changes every deploy, always sent. front.sqlite3.png is
- * here because the PHP gateway reads it and it is only 2.4 MB.
- */
-const SHELL = [
-  "index.html",
-  "assets",
-  "backendPHP",
-  "sw.js",
-  "manifest.json",
-  "manifest.webmanifest",
-  "favicon.ico",
-  "logo192.png",
-  "logo512.png",
-  "logoFlagsQuiz192.png",
-  "robots.txt",
-  "sitemap.xml",
-  "front.sqlite3.png",
-  "demoimage.jpg",
-  "ogimage.jpg",
-];
 /** Generated content: compared by size before sending. */
 const BULK = ["maps", "flags", "customFlags", "flagQuiz", "doc"];
+
+/**
+ * The app shell: everything in the build that is not bulk content. Small,
+ * changes every deploy, always sent — front.sqlite3.png included, because the
+ * PHP gateway reads it and it is only 2.4 MB.
+ *
+ * This was a fixed list of names, which silently dropped anything the build
+ * started producing. A redesign added fonts/ and cursors/, neither was ever
+ * uploaded, and the deploy still reported success: production fell back to
+ * system fonts and the default cursor. Reading the build instead means a new
+ * asset cannot be missed, and the workbox runtime that sw.js loads keeps
+ * working when its content hash changes its filename.
+ */
+function shellNames() {
+  return fs
+    .readdirSync(buildDir)
+    .filter((name) => !name.startsWith(".") && !BULK.includes(name));
+}
 
 /** Minimal .env reader: no expansion, splits on the first = only. */
 function readEnvFile(file) {
@@ -163,7 +160,7 @@ async function main() {
     process.exit(1);
   }
 
-  const shell = collect(SHELL);
+  const shell = collect(shellNames());
   const bulk = onlyApp ? [] : collect(BULK);
 
   const client = new Client(30_000);
