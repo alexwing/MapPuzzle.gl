@@ -178,9 +178,23 @@ const sitemap =
     .join("\n") +
   `\n</urlset>\n`;
 
+/*
+ * Two names, one content.
+ *
+ * sitemap-index.xml is the one robots.txt declares and the one submitted to
+ * Search Console. Google never managed to read /sitemap.xml — it kept reporting
+ * "couldn't fetch" with an empty last-read date long after the host's bot
+ * challenge was switched off, while an identical file under a different name
+ * was read first time. The old name keeps being written so that whatever still
+ * links to it gets current content instead of a stale file or a 404.
+ */
+const SITEMAP_NAMES = ["sitemap-index.xml", "sitemap.xml"];
+
 if (!checkOnly) {
-  fs.writeFileSync(path.join(buildDir, "sitemap.xml"), sitemap);
-  fs.writeFileSync(path.join(dataDir, "sitemap.xml"), sitemap);
+  for (const name of SITEMAP_NAMES) {
+    fs.writeFileSync(path.join(buildDir, name), sitemap);
+    fs.writeFileSync(path.join(dataDir, name), sitemap);
+  }
 }
 
 const maps = written.filter((w) => w.url.includes("/map/")).length;

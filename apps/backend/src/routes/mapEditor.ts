@@ -12,7 +12,7 @@ import path from "path";
 import fetch from "node-fetch";
 import sharp from "sharp";
 import ViewState from "../models/viewState";
-import { customFlagsDir, ensureDir, flagsDir, sitemapPath } from "../config/paths";
+import { customFlagsDir, ensureDir, flagsDir, sitemapPaths } from "../config/paths";
 
 // eslint-disable-next-line new-cap
 const mapEditor = express.Router();
@@ -293,13 +293,20 @@ const puzzlePath = (slug: string, isQuiz = false): string =>
 mapEditor.get("/generateSitemap", async (_req, res) => {
   const pieces = await connection!.getRepository(Puzzles).find();
   //create links from pieces format  const links = [{ url: '/page-1/',  changefreq: 'daily', priority: 0.3  }]
-  let links = pieces.map((piece) => {
-    return {
-      url: `${SITE_HOST}${puzzlePath(piece.url)}`,
-      changefreq: "monthly",
-      priority: 0.8,
-    } as Link;
-  });
+  // The home page first, as scripts/prerender.mjs also lists it; without it the
+  // two generators disagree by one entry.
+  let links: Link[] = [
+    { url: `${SITE_HOST}/`, changefreq: "weekly", priority: 1.0 } as Link,
+  ];
+  links.push(
+    ...pieces.map((piece) => {
+      return {
+        url: `${SITE_HOST}${puzzlePath(piece.url)}`,
+        changefreq: "monthly",
+        priority: 0.8,
+      } as Link;
+    })
+  );
 
   //links to flagsQuiz
   const linksQuiz: Link[] = [];
@@ -331,11 +338,12 @@ mapEditor.get("/generateSitemap", async (_req, res) => {
   res.header("Content-Type", "application/xml");
   res.send(sitemap);
 
-  //save to disk in ../public/sitemap.xml
-  fs.writeFile(sitemapPath(), sitemap, function (err: any) {
-    if (err) return console.log(err);
-    console.log("sitemap.xml written");
-  });
+  for (const file of sitemapPaths()) {
+    fs.writeFile(file, sitemap, function (err: any) {
+      if (err) return console.log(err);
+      console.log(`${file} written`);
+    });
+  }
 });
 
 mapEditor.get("/wikiRender", async (req, res) => {

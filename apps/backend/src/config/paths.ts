@@ -47,7 +47,16 @@ export const customFlagsDir = (puzzleId: number | string): string =>
   path.join(ASSETS_DIR, "customFlags", String(puzzleId));
 
 /** Written by the editor, served from the site root. */
-export const sitemapPath = (): string => path.join(ASSETS_DIR, "sitemap.xml");
+/**
+ * Where the editor writes the sitemap.
+ *
+ * Two names with the same content: sitemap-index.xml is the one robots.txt
+ * declares and the one Search Console is given, because Google never managed to
+ * read /sitemap.xml even after the host stopped challenging crawlers. The old
+ * name is still written so nothing that links to it goes stale.
+ */
+export const sitemapPaths = (): string[] =>
+  ["sitemap-index.xml", "sitemap.xml"].map((name) => path.join(ASSETS_DIR, name));
 
 /** Creates a directory and its parents; a no-op when it already exists. */
 export function ensureDir(dir: string): void {

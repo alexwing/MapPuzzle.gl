@@ -71,7 +71,7 @@ function App(): JSX.Element {
   const generateSitemap = () => {
     setNotice("Generating sitemap…");
     BackMapEditorService.generateSitemap()
-      .then(() => setNotice("sitemap.xml regenerated"))
+      .then(() => setNotice("Sitemap regenerated: sitemap-index.xml and sitemap.xml"))
       .catch((e) => setNotice(`Could not generate the sitemap: ${String(e)}`));
   };
 
