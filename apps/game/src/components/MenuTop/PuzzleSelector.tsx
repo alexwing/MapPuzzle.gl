@@ -16,6 +16,7 @@ import BootstrapTable, {
 } from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import { getTranslation } from "../../lib/Utils";
+import { siteAsset } from "@mappuzzle/core";
 
 interface PuzzleSelectorProps {
   show: boolean;
@@ -234,7 +235,9 @@ function PuzzleSelector({
       dataField: "icon",
       text: "",
       formatter: (cell: any, row: any) => {
-        return <img src={cell} alt={row.name} />;
+        // The icon comes out of the database as "flags/AMERICA.png", which a
+        // page served from /map/<slug>/ would look for inside that directory.
+        return <img src={siteAsset(cell)} alt={row.name} />;
       },
       headerFormatter: cleanButton(),
       classes: "icon",
