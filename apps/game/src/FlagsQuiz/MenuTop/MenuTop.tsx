@@ -17,6 +17,7 @@ import Info from "../../components/Info";
 import WikiInfo from "../../components/WikiInfo";
 import ThemeContext from "../../components/ThemeProvider";
 import { PuzzleFill, CollectionPlay } from "react-bootstrap-icons";
+import { siteAsset } from "@mappuzzle/core";
 
 interface MenuTopProps {
   name: string;
@@ -112,7 +113,7 @@ function MenuTop({
     <React.Fragment>
       <Navbar bg={theme} expand="lg">
         <Navbar.Brand>
-          <img src="./logoFlagsQuiz192.png" alt="" />
+          <img src={siteAsset("logoFlagsQuiz192.png")} alt="" />
           {name}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

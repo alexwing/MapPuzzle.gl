@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/MapPuzzle.css";
 import "./styles/icons.css";
 import "./styles/responsive.css";
+import { puzzleFromLocation } from "./lib/Utils";
 
 const MapPuzzle = lazy(() => import("./MapPuzzle"));
 const FlagQuiz = lazy(() => import("./FlagsQuiz/FlagQuiz"));
@@ -14,9 +15,8 @@ const FlagQuiz = lazy(() => import("./FlagsQuiz/FlagQuiz"));
 const container = createRoot(document.getElementById("root") as HTMLElement);
 
 const App = () => {
-  const isQuiz =
-    window.location.href.includes("flagQuiz") ||
-    window.location.search.includes("flagQuiz");
+  // Either address shape: /flag-quiz/<slug>/ or the older /?flagQuiz=<slug>.
+  const isQuiz = puzzleFromLocation()?.isQuiz ?? false;
   return (
     <ThemeProvider>
       <Router>

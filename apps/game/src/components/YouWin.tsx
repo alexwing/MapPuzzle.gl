@@ -9,7 +9,7 @@ import "../i18n/config";
 import { useTranslation } from "react-i18next";
 import * as Icon from "react-bootstrap-icons";
 
-import { getUrl, getTexTime, getTime } from "../lib/Utils";
+import { getSiteUrl, getTexTime, getTime, puzzlePath } from "../lib/Utils";
 import "./YouWin.css";
 import {
   FacebookShareButton,
@@ -56,7 +56,7 @@ export default function YouWin({
     }
   }, [winner]);
 
-  const url = "http://" + getUrl() + "/?map=" + path;
+  const url = getSiteUrl(puzzlePath(path));
   const quote = t("common.share.quote", {
     name,
     time: getTexTime(t),

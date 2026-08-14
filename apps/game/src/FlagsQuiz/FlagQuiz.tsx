@@ -15,7 +15,8 @@ import {
   Jsondb,
   shuffle,
   getWiki,
-  cleanUrlParams,
+  puzzleFromLocation,
+  puzzlePath,
   calculateZoom,
 } from "../lib/Utils";
 import GameTime from "../lib/GameTime";
@@ -65,9 +66,9 @@ function FlagQuiz(): JSX.Element {
 
   // load puzzle from url
   useEffect(() => {
-    if (window.location.pathname) {
-      const puzzleUrl = cleanUrlParams(window.location.search.substring(10));
-      PuzzleService.getPuzzleIdByUrl(puzzleUrl).then((content: number) => {
+    const asked = puzzleFromLocation();
+    if (asked) {
+      PuzzleService.getPuzzleIdByUrl(asked.slug).then((content: number) => {
         loadGame(content);
       });
     } else {
@@ -198,11 +199,7 @@ function FlagQuiz(): JSX.Element {
       //get map data from geojson
       Jsondb(puzzleData.data).then((response) => {
         getCustomWikis(puzzleData.id);
-        window.history.pushState(
-          {},
-          puzzleData.name,
-          "./?flagQuiz=" + puzzleData.url
-        );
+        window.history.pushState({}, puzzleData.name, puzzlePath(puzzleData.url, true));
         //change title
         document.title = "MapPuzzle.xyz / FlagQuiz - " + puzzleData.name;
         const piecesAux: PieceProps[] = response.features;

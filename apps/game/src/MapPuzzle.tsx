@@ -10,7 +10,7 @@ import MenuTop from "./components/MenuTop/MenuTop";
 import DeckMap from "./components/DeckMap";
 import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
-import { Jsondb, getWiki, copyViewState, getLang, cleanUrlParams } from "./lib/Utils";
+import { Jsondb, getWiki, copyViewState, getLang, puzzleFromLocation, puzzlePath } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
@@ -59,9 +59,9 @@ function MapPuzzle(): JSX.Element {
   * Load the game on start
   */
   useEffect(() => {
-    if (window.location.pathname) {
-      const puzzleUrl = cleanUrlParams(window.location.search.substring(5));
-      PuzzleService.getPuzzleIdByUrl(puzzleUrl).then((content: number) => {
+    const asked = puzzleFromLocation();
+    if (asked) {
+      PuzzleService.getPuzzleIdByUrl(asked.slug).then((content: number) => {
         loadGame(content);
       });
     } else {
@@ -110,12 +110,8 @@ function MapPuzzle(): JSX.Element {
       Jsondb(puzzleData.data).then((response) => {
         getCustomCentroids(puzzleData.id);
         getCustomWikis(puzzleData.id);
-        //// change path  route to "./?map=" + puzzleData.url
-        window.history.pushState(
-          {},
-          puzzleData.name,
-          "./?map=" + puzzleData.url
-        );
+        // The canonical address, the one the prerendered page declares.
+        window.history.pushState({}, puzzleData.name, puzzlePath(puzzleData.url));
         //change title
         document.title = "MapPuzzle.xyz - " + puzzleData.name;
 

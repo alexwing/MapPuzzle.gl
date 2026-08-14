@@ -7,6 +7,7 @@ import { pieceSilhouette } from "../geometry/pieceSilhouette";
 import type { PieceProps } from "@mappuzzle/shared";
 import { PuzzleService } from "../services/puzzleService";
 import "./PieceList.css";
+import { siteAsset } from "../lib/data";
 
 /** Width the silhouette is painted at, see .legendPiece > svg in PieceList.css. */
 const PIECE_WIDTH_PX = 80;
@@ -100,7 +101,7 @@ export default function PieceList({
   const paintFlag = (c: PieceProps) => {
     if (!enableFlags) return null;
     //create flag image from piece id
-    const flag = `../customFlags/${puzzleId.toString()}/64/${c.properties.cartodb_id}.png?v=${flagsVersion}`;
+    const flag = siteAsset(`customFlags/${puzzleId.toString()}/64/${c.properties.cartodb_id}.png`) + `?v=${flagsVersion}`;
     return (
       <td className="imgflag">
         <div>

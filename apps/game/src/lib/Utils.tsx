@@ -136,6 +136,65 @@ export function getUrl(): string {
   return url;
 }
 
+/** The site, with protocol, for links that leave the page: shares, og:url. */
+export function getSiteUrl(path = ""): string {
+  return "https://" + getUrl() + path;
+}
+
+/*
+ * Puzzle addresses.
+ *
+ * A puzzle's canonical address is a path — /map/croatia-counties/ — because that
+ * is what the build prerenders a real page for, with its own title, description
+ * and canonical link. The query form, /?map=croatia_counties, is what the app
+ * produced before and is still read: those links are out in the wild and in
+ * other people's pages.
+ *
+ * Slugs are stored with underscores and every one of the 70 matches [a-z0-9_]+,
+ * so trading underscores for hyphens is reversible. Hyphens because search
+ * engines read them as spaces between words and underscores as glue.
+ *
+ * scripts/prerender.mjs builds the same paths from the same slugs. If this
+ * changes, that changes with it.
+ */
+const MAP_PREFIX = "/map/";
+const QUIZ_PREFIX = "/flag-quiz/";
+
+/**
+ * Where a puzzle lives: the address to link to and to put in the sitemap.
+ *
+ * The slug is optional because callers read it off a puzzle that may not have
+ * loaded yet — YouWin builds its share link on every render, long before there
+ * is anything to share. Those callers used to concatenate strings and got
+ * "undefined" in the URL; throwing there takes the whole app down instead.
+ */
+export function puzzlePath(slug: string | undefined, isQuiz = false): string {
+  if (!slug) return "/";
+  return (isQuiz ? QUIZ_PREFIX : MAP_PREFIX) + slug.replace(/_/g, "-") + "/";
+}
+
+/** Which puzzle the current address asks for, in either shape, or null. */
+export function puzzleFromLocation(): { slug: string; isQuiz: boolean } | null {
+  const path = window.location.pathname;
+  for (const [prefix, isQuiz] of [
+    [MAP_PREFIX, false],
+    [QUIZ_PREFIX, true],
+  ] as [string, boolean][]) {
+    if (path.startsWith(prefix)) {
+      const slug = path.slice(prefix.length).replace(/\/.*$/, "");
+      if (slug) return { slug: slug.replace(/-/g, "_"), isQuiz };
+    }
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const quiz = params.get("flagQuiz");
+  if (quiz) return { slug: quiz, isQuiz: true };
+  const map = params.get("map");
+  if (map) return { slug: map, isQuiz: false };
+
+  return null;
+}
+
 
 
 

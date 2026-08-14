@@ -11,6 +11,7 @@ import { PieceList } from "@mappuzzle/core";
 import { PieceProps } from "../models/Interfaces";
 import { useTranslation } from "react-i18next";
 import { getTranslation } from "../lib/Utils";
+import { siteAsset } from "@mappuzzle/core";
 
 interface ToolsPanelProps {
   name: string;
@@ -59,7 +60,7 @@ function ToolsPanel({
       <div className="accordion-header-content">
         {flag && (
           <div className="flagGradient">
-            <img src={flag} alt="" />
+            <img src={siteAsset(flag)} alt="" />
           </div>
         )}
         <div className={`mapName ${flag ? "has-flag" : ""}`}>{titleText}</div>

@@ -13,6 +13,7 @@ import * as turf from "@turf/turf";
 import { calculateDistanceFromEcuador } from "../../lib/Utils";
 import { ConfigService } from "@mappuzzle/core";
 import FlagSelector from "./FlagSelector";
+import { siteAsset } from "@mappuzzle/core";
 
 interface PieceQuizProps {
   puzzleSelected: number;
@@ -146,9 +147,9 @@ function PieceQuiz({
   };
   // get flag image url
   const getFlag = (puzzleId: number, c: PieceProps): string => {
-    return `../customFlags/${puzzleId.toString()}/1024/${
-      c.properties.cartodb_id
-    }.png`;
+    return siteAsset(
+      `customFlags/${puzzleId.toString()}/1024/${c.properties.cartodb_id}.png`
+    );
   };
   
   // show timer if not winner

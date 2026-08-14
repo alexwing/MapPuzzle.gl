@@ -51,7 +51,7 @@
     "dev": "vite --config apps/game/vite.config.ts",
     "pro": "vite --config apps/game/vite.config.ts --mode production",
     "dev-php-backend": "vite --config apps/game/vite.config.ts --mode devphpbackend",
-    "build": "vite build --config apps/game/vite.config.ts --mode phpbackend",
+    "build": "vite build --config apps/game/vite.config.ts --mode phpbackend && node --no-warnings scripts/prerender.mjs",
     "preview": "vite preview --config apps/game/vite.config.ts",
     "editor": "vite --config apps/editor/vite.config.ts",
     "backend": "npm --prefix apps/backend run dev",
@@ -60,7 +60,8 @@
     "typecheck:backend": "tsc -p apps/backend/tsconfig.build.json --noEmit",
     "publish-db": "node scripts/publish-db.mjs",
     "deploy": "node scripts/deploy.mjs",
-    "deploy:app": "node scripts/deploy.mjs --only=app"
+    "deploy:app": "node scripts/deploy.mjs --only=app",
+    "prerender": "node --no-warnings scripts/prerender.mjs"
   },
   "browserslist": {
     "production": [

@@ -8,7 +8,7 @@ import "../i18n/config";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 
-import { getLang, getTranslation, getUrl } from "../lib/Utils";
+import { getLang, getTranslation, getSiteUrl } from "../lib/Utils";
 import { Check, Heart, ShieldShaded, Github } from "react-bootstrap-icons";
 import "./Info.css";
 import {
@@ -28,6 +28,7 @@ import {
 import { PuzzleService } from "@mappuzzle/core";
 import type { Puzzles } from "@mappuzzle/shared";
 import Privacy from "./Privacy";
+import { siteAsset } from "@mappuzzle/core";
 //to function hooks
 
 interface InfoProps {
@@ -70,7 +71,7 @@ function Info({
     });
   }, [showIn]);
 
-  const url = "http://" + getUrl();
+  const url = getSiteUrl();
   const quote = t("info.quote");
   const hashtag = t("common.share.hashtag");
   const title = t("common.share.title");
@@ -87,7 +88,7 @@ function Info({
         {content.map((c: Puzzles) => (
           <tr key={c.id} id={c.id.toString()}>
             <td width="1%">
-              <img src={c.icon} alt={c.name} />
+              <img src={siteAsset(c.icon)} alt={c.name} />
             </td>
             <td width="30%">{getTranslation("puzzles", c.id.toString(), c.name)}</td>
             <td width="50%">

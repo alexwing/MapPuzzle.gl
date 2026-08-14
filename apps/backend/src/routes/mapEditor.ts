@@ -279,12 +279,23 @@ interface Link {
 
 const SITE_HOST = "https://mappuzzle.xyz";
 
+/**
+ * A puzzle's canonical address.
+ *
+ * The build prerenders a real page per puzzle at these paths, so the sitemap
+ * has to name them and not the older /?map= form, or it would be advertising
+ * pages that declare a different URL as canonical. The same rule lives in
+ * scripts/prerender.mjs and in the game's Utils.tsx: all three change together.
+ */
+const puzzlePath = (slug: string, isQuiz = false): string =>
+  `/${isQuiz ? "flag-quiz" : "map"}/${slug.replace(/_/g, "-")}/`;
+
 mapEditor.get("/generateSitemap", async (_req, res) => {
   const pieces = await connection!.getRepository(Puzzles).find();
   //create links from pieces format  const links = [{ url: '/page-1/',  changefreq: 'daily', priority: 0.3  }]
   let links = pieces.map((piece) => {
     return {
-      url: `${SITE_HOST}/?map=${piece.url}`,
+      url: `${SITE_HOST}${puzzlePath(piece.url)}`,
       changefreq: "monthly",
       priority: 0.8,
     } as Link;
@@ -296,7 +307,7 @@ mapEditor.get("/generateSitemap", async (_req, res) => {
   pieces.forEach((piece) => {
     if (piece.enableFlags === true) {
       links.push({
-        url: `${SITE_HOST}/?flagQuiz=${piece.url}`,
+        url: `${SITE_HOST}${puzzlePath(piece.url, true)}`,
         changefreq: "monthly",
         priority: 0.8,
       } as Link);

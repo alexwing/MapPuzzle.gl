@@ -22,6 +22,7 @@ import {
 import { PuzzleService } from "@mappuzzle/core";
 import "../i18n/config";
 import { useTranslation } from "react-i18next";
+import { siteAsset } from "@mappuzzle/core";
 
 interface WikiInfoProps {
   show: boolean;
@@ -268,7 +269,7 @@ function WikiInfo({
           <div className="imgFlag">
             <span className="fakeFlag"></span>
             <img
-              src={`../customFlags/${puzzleSelected.toString()}/512/${piece.toString()}.png`}
+              src={siteAsset(`customFlags/${puzzleSelected.toString()}/512/${piece.toString()}.png`)}
               alt={currentLang}
             />
           </div>

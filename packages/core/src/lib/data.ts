@@ -4,8 +4,22 @@
 
 import { SqlValue } from "sql.js";
 
+/**
+ * A path anchored at the site root.
+ *
+ * Content paths come out of the database and out of the markup in the shape
+ * they had when every page lived at "/": "maps/spain.geojson", "flags/ES.png",
+ * "../customFlags/2/64/1.png". Now that a puzzle is served from its own
+ * directory — /map/spanish-provinces/ — a browser resolves those against that
+ * directory and asks for /map/customFlags/..., which is not there. Anchoring
+ * them makes both addresses work.
+ */
+export function siteAsset(filepath: string): string {
+  return "/" + String(filepath ?? "").replace(/^(?:\.{1,2}\/)+/, "").replace(/^\/+/, "");
+}
+
 export async function Jsondb(filepath: string): Promise<any> {
-  return fetch(filepath, {
+  return fetch(siteAsset(filepath), {
     method: "GET",
     headers: new Headers({
       Accept: "application/json",

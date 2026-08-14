@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import WikiInfo from "../WikiInfo";
 import { FlagFill, CollectionPlay } from "react-bootstrap-icons";
 import ThemeContext from "../../components/ThemeProvider";
+import { siteAsset } from "@mappuzzle/core";
 
 interface MenuTopProps {
   name: string;
@@ -113,7 +114,7 @@ function MenuTop({
     <React.Fragment>
       <Navbar bg={theme} expand="lg">
         <Navbar.Brand>
-          <img src="./logo192.png" alt="" />
+          <img src={siteAsset("logo192.png")} alt="" />
           {name}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
