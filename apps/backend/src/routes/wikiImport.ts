@@ -37,7 +37,7 @@ function extFromUrl(url: string): string {
 function slugTokens(value: string): string[] {
   return normalizeText(value)
     .replace(/[()]/g, " ")
-    .replace(/[_\-]+/g, " ")
+    .replace(/[_-]+/g, " ")
     .split(/\s+/)
     .filter((t) => t.length > 2)
     .filter((t) => !["state", "province", "region", "department", "governorate", "canton", "district"].includes(t))
@@ -168,7 +168,7 @@ wikiImport.post("/generateTranslation", async (req, res) => {
     if (translations.length > 0) {
       const customTranslationsRepository =
         connection!.getRepository(CustomTranslations);
-      let first: boolean = true;
+      let first = true;
       let walked = 0;
       for await (const translation of translations) {
         walked++;
@@ -321,7 +321,6 @@ wikiImport.post("/generateFlags", async (req, res) => {
                 for (const page in pages) {
                   try {
                     if (!pages[page].imageinfo) continue;
-                    // @ts-ignore
                     const originalUrl = String(pages[page].imageinfo[0].url);
                     const normalizedUrl = normalizeText(originalUrl);
                     const ext = extFromUrl(originalUrl);
@@ -371,7 +370,7 @@ wikiImport.post("/generateFlags", async (req, res) => {
                 let fallbackName = "";
                 let fallbackScore = Number.NEGATIVE_INFINITY;
                 for (const hit of hits) {
-                  const title: string = String(hit?.title ?? "");
+                  const title = String(hit?.title ?? "");
                   if (!title.startsWith("File:")) continue;
                   const fileName = title.slice(5);
                   const normalized = normalizeText(fileName);
@@ -634,13 +633,15 @@ wikiImport.post("/generateWikiLinks", async (req, res) => {
             //if page title is equal to wikiPiece.wiki separated by _
             if (wikiPage) {
               if (
-                /// @ts-ignore
+                // @ts-expect-error untyped Wikipedia page: title is present on
+                // the query this asks for.
                 wikiPage.title.replace(/ /g, "_") === wikiPiece.wiki ||
-                /// @ts-ignore
+                // @ts-expect-error same untyped page.
                 wikiPage.title.toLowerCase() === wikiPiece.wiki.toLowerCase()
               ) {
                 //last value after / in fullurl
-                // @ts-ignore
+                // @ts-expect-error untyped Wikipedia page: fullurl is present
+                // on the query this asks for.
                 wikiPiece.wiki = decodeURI(wikiPage.fullurl.split("/").pop());
                 //save wikiPiece
                 if (wikiPiece.wiki !== "" && wikiPiece.wiki !== undefined) {
@@ -730,18 +731,18 @@ async function verifyRedirection(
         if (wikiJson.query) {
           if (wikiJson.query.redirects) {
             const wikiRedirects = wikiJson.query.redirects;
-            for (const wikiRedirect of Object.values(wikiRedirects)) {
-              if (wikiRedirect) {
-                // @ts-ignore
+            // Saying what a redirect looks like, rather than suppressing the
+            // three complaints that came of not saying it. It also skips an
+            // entry with no target instead of throwing on one.
+            const redirects = Object.values(wikiRedirects) as { to?: string }[];
+            for (const wikiRedirect of redirects) {
+              if (wikiRedirect?.to) {
                 console.log(
                   "wikiPiece.wiki: " +
-                    // @ts-ignore
                     wikiPiece.wiki +
                     " wikiRedirect.to: " +
-                    // @ts-ignore
                     wikiRedirect.to
                 );
-                // @ts-ignore
                 wikiPiece.wiki = decodeURI(wikiRedirect.to.replace(/ /g, "_"));
                 await wikiRepository.save(wikiPiece);
                 break;

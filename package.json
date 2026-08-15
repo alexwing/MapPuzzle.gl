@@ -56,7 +56,7 @@
     "typecheck:game": "tsc -p apps/game/tsconfig.json",
     "typecheck:editor": "tsc -p apps/editor/tsconfig.json",
     "typecheck:backend": "tsc -p apps/backend/tsconfig.build.json --noEmit",
-    "lint": "eslint \"apps/game/src/**/*.{ts,tsx}\" \"apps/editor/src/**/*.{ts,tsx}\" \"packages/*/src/**/*.{ts,tsx}\"",
+    "lint": "eslint \"apps/*/src/**/*.{ts,tsx}\" \"packages/*/src/**/*.{ts,tsx}\"",
     "publish-db": "node scripts/publish-db.mjs",
     "deploy": "node scripts/deploy.mjs",
     "deploy:app": "node scripts/deploy.mjs --only=app"

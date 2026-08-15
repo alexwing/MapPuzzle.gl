@@ -38,6 +38,25 @@ const verbose = has("--verbose");
 const BULK = ["maps", "flags", "customFlags", "flagQuiz", "doc", "og"];
 
 /**
+ * The piece-flag sizes the site actually asks for: 64 in the piece list, 128 on
+ * the share cards, 512 in the wiki panel, 1024 on the quiz's waving flag.
+ *
+ * Everything else under customFlags stays on disk — the 256s, and the originals
+ * the editor downloaded, which are 171 MB of SVG and PNG — because the games
+ * being planned may want them. None of it is uploaded: the browser has never
+ * asked for any of it, and it is most of what the server would be holding.
+ */
+const FLAG_SIZES_IN_USE = new Set(["64", "128", "512", "1024"]);
+
+function deployable(file) {
+  if (!file.startsWith("customFlags/")) return true;
+  const parts = file.split("/");
+  // customFlags/<puzzle>/<size>/<piece>.png — anything shallower is a source.
+  if (parts.length !== 4) return false;
+  return FLAG_SIZES_IN_USE.has(parts[2]);
+}
+
+/**
  * The app shell: everything in the build that is not bulk content. Small,
  * changes every deploy, always sent — front.sqlite3.png included, because the
  * PHP gateway reads it and it is only 2.4 MB.
@@ -161,7 +180,7 @@ async function main() {
   }
 
   const shell = collect(shellNames());
-  const bulk = onlyApp ? [] : collect(BULK);
+  const bulk = (onlyApp ? [] : collect(BULK)).filter(deployable);
 
   const client = new Client(30_000);
   client.ftp.verbose = verbose;

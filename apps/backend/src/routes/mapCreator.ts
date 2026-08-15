@@ -24,7 +24,8 @@ mapCreator.post("/importShapefile", async (req: Request, res: Response) => {
 
   try {
     const file = req.files.file;
-    // @ts-ignore
+    // @ts-expect-error express-fileupload types req.files as a union that is
+    // not narrowed here; the guard above already ruled the other side out.
     const ext = req.files.file.name.split(".").pop();
     if (ext.toLowerCase() !== "zip" || file === undefined) {
       return res
@@ -36,7 +37,7 @@ mapCreator.post("/importShapefile", async (req: Request, res: Response) => {
     // it later, which is the role the imported PostGIS table used to play.
     if (fs.existsSync(TEMP_DIR)) fs.rmSync(TEMP_DIR, { recursive: true });
     ensureDir(TEMP_DIR);
-    // @ts-ignore
+    // @ts-expect-error same union: file is UploadedFile here, not an array.
     new AdmZip(file.data).extractAllTo(TEMP_DIR, true);
 
     // Shapefiles come as a set of sidecars, and some archives nest them in a
@@ -88,7 +89,8 @@ function unavailable(res: Response, action: string, e: unknown): void {
 }
 
 //gettables endpoint
-// @ts-ignore
+// @ts-expect-error the handler answers with res.json in some branches and
+// returns the response object in others, which the Router overload rejects.
 mapCreator.get("/getTables", async (req: Request, res: Response) => {
   try {
     const data = new ShapefileImporter().listLayers();

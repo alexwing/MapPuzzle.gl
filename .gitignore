@@ -18,6 +18,11 @@ node_modules
 
 # Deploy credentials. Never commit: this repository is public.
 .env.deploy
+
+# The backend's own environment: the path to the database and the port it
+# listens on. It was tracked, in a public repository, carrying a secret that
+# nothing read. apps/backend/.env.example lists the keys.
+apps/backend/.env
 .deploy-manifest.json
 
 # misc

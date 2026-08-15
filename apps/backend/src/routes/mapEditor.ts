@@ -331,7 +331,7 @@ mapEditor.get("/generateSitemap", async (_req, res) => {
   } 
   const stream = new SitemapStream({ hostname: SITE_HOST });
 
-  let sitemap = await streamToPromise(Readable.from(links).pipe(stream)).then(
+  const sitemap = await streamToPromise(Readable.from(links).pipe(stream)).then(
     (sm) => sm.toString()
   );
   //write links to stream
