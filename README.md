@@ -32,74 +32,81 @@ You can play the game in the following link: [MapPuzzle.xyz](http://mappuzzle.xy
 
 ## Code Description
 
-**MapPuzzle.xyz** has been developed using advanced technologies such as React, Vite, Deck.gl, sqlite, PHP, typeorm, and node.js.
+**MapPuzzle.xyz** is a React application built with Vite, drawing its maps with
+deck.gl. The published site is nothing but static files plus a small read-only
+PHP gateway over a SQLite file: there is no Node.js on the server. The map
+editor and its Node backend run locally only, to author the content that gets
+uploaded.
 
-To develop the game, the Deck.gl library was used, allowing the creation of interactive maps on the web using JavaScript and WebGL. This library is a powerful and versatile tool that facilitates the development of map applications on the web, offering a wide variety of components and layers for creating custom and highly interactive maps.
+- **React 18** for the interface, **Vite 6** for the build and dev server, with
+  offline support through `vite-plugin-pwa`.
+- **deck.gl** renders the map and its pieces over WebGL.
+- **SQLite** holds the puzzles, the Wikipedia links, the flags and the 73k name
+  translations. In production it is read-only, reached through the PHP gateway
+  in `apps/game/public/backendPHP/`.
+- **Express + TypeORM** is the editor's backend. It writes the database, imports
+  shapefiles and pulls content from Wikipedia. Local only.
+- **Shapefiles are read directly** with the `shapefile` package. PostgreSQL and
+  PostGIS are no longer involved anywhere, and the piece silhouettes are
+  generated at runtime from the geometry instead of being stored in the map.
 
-Additionally, other technologies and tools such as React, Vite, sqlite, PHP, typeorm, and node.js have been used to implement various functionalities and enhance the gaming experience.
+## Project layout
 
-- **React** has been used as the user interface development framework.
-- **Vite** is the build tool and dev server for the frontend (migrated from Create React App / react-scripts). It also provides a PWA (offline support) via `vite-plugin-pwa`.
-- **sqlite** serves as a local database to store game data, with the published version on the web using it in read-only mode.
-- **PHP** has been used to develop database scripts, allowing the game to be hosted on a standard web server without node.js.
-- **node.js** is used for the backend of the map editor, which was used to create the game maps.
-- **typeorm** has been used to manage the database from the map editor.
-- **Postgis** has been utilized to convert from SHP files and generate the **geojson** files for the maps.
+The repository is a monorepo. npm workspaces cover `packages/*`; the apps are
+built through their own Vite configs from the root.
 
-Regarding the project structure, the game is divided into different components and modules responsible for various tasks. For example, there are components responsible for displaying the puzzle piece list and the map, others that manage the game logic and interact with players, and others responsible for obtaining and processing Wikipedia and translation data.
+| Path | What it is |
+| --- | --- |
+| `apps/game` | MapPuzzle and FlagsQuiz. The only thing deployed. |
+| `apps/editor` | The map editor, a separate client. |
+| `apps/backend` | Express + TypeORM. Authoring only, never published. |
+| `packages/core` | Code both clients share: services, geometry, UI pieces. |
+| `packages/shared` | Type declarations only, the contract between the two sides. |
+| `data/` | What the editor produces: maps, flags, sitemap and the SQLite file. |
+| `scripts/` | Build and release helpers: prerender, publish-db, deploy. |
+| `build/` | The output, and exactly what gets uploaded. |
 
+## Requirements
 
-The project repository can be found at: https://github.com/alexwing/MapPuzzle.gl
+**Node.js 22 or newer** — the prerender step reads the database through
+`node:sqlite`, which is not in earlier versions. Tested on Node 24.
 
-## Build
+One pinned dependency worth knowing about: `"react-map-gl": "5.3.21"`. From 6.0.0
+onwards it requires a Mapbox access token, and that means a paid plan.
 
-The project Front-end is in main directory, and the project Back-end is in the directory Backend
+## Scripts
 
-Each project has its own Package.json with the configuration of the dependencies.
+| Script | What it does |
+| --- | --- |
+| `dev` | The game against the local Node backend. Needs `backend` running. |
+| `pro` | The game reading the SQLite file straight over HTTP, no backend at all. |
+| `dev-php-backend` | The game against a PHP backend on port 8888. |
+| `editor` | The map editor, on port 3001. Always needs the Node backend. |
+| `backend` | Express + TypeORM on port 5000. |
+| `build` | The production build, then the prerender step. What gets deployed. |
+| `prerender` | Just the prerender step, over an existing build. |
+| `preview` | Serves the build locally. Use port 3000: the production PHP gateway only allows that origin. |
+| `typecheck`, `typecheck:editor`, `typecheck:backend` | No-emit compiles. |
+| `publish-db` | Copies the authoring database over the published one, showing both digests first. `--check` fails instead of writing. |
+| `deploy`, `deploy:app` | Uploads over FTP. The first compares the generated content by size and sends what differs; the second sends only the app shell. `--dry-run` prints the plan. Credentials live in `.env.deploy`, which is gitignored. |
 
-### Dependencies considerations
+## How a puzzle is addressed
 
-The project requires **Node.js 18 or higher** (Vite 5 requirement). It has been tested with Node.js 20+.
+Every puzzle has a page of its own — `/map/<slug>/`, and `/flag-quiz/<slug>/`
+for the ones with flags — and `scripts/prerender.mjs` writes a real HTML file
+for each at build time, carrying its own title, description, canonical link and
+the region names as text. They are files rather than rewrite rules because the
+host answers 404 to any path that is not one.
 
-- ```json "react-map-gl": "5.3.21"```, This version of react-map-gl is necessary to use the deck.gl library, after this version, in 6.0.0 has necesary ACCESS_TOKEN to use the  mapbox API, require a payment plan to use the mapbox API.
-- ```json "sass": "^1.93.3"```, Dart Sass (replaces the deprecated `node-sass`); no special Node version is required.
+The older query form, `/?map=<slug>`, still works and is rewritten to the
+canonical path once the app boots. Slugs are stored with underscores and use
+hyphens in URLs. The same step regenerates `sitemap-index.xml`, which is the
+sitemap `robots.txt` declares; the editor's *Generate sitemap* writes the same
+thing.
 
-### Backend
-
-The backend is built with Node.js, it is a server that receives the requests from the client and sends the response, it also has a database with the information of the puzzles.
-
-This backend use "typeorm" and sqlite3 databases, the entities are defined in the "models" folder, and the endpoints are defined in the "routes" folder.
-
-The backend use Sqlite3 as a database, so it is necessary to install it. the database is allocated in the "db" folder.
-
-The Front use the entities classes from the backend, if you can't use the backend, you can copy the entities from the backend to the Frontend.
-
-
-```json
-"dev": "ts-node-dev src/index.ts",
-```
-Use dev to run the server in development mode.
-
-### Frontend
-
-The frontend is built with React and bundled with **Vite**, it is a client that sends requests to the server and receives the response, it also has a database with the information of the puzzles.
-
-The repository is a monorepo: `apps/game` (MapPuzzle and FlagsQuiz, the only thing deployed), `apps/editor` (the map editor), `apps/backend` (Express + TypeORM, local authoring only), `packages/` (the contracts and the code both clients share) and `data/` (the maps, flags and SQLite database the editor produces).
-
-Environment configuration lives in each app's `environments/` folder and is loaded through Vite modes (`--mode <name>`, set via `envDir`). Variables are exposed with the `VITE_` prefix and read through `import.meta.env`. `npm run build` outputs to `build/` at the repo root, with the contents of `data/` copied in, which is exactly what gets uploaded.
-
-The following scripts run and build the project:
-
-* **"dev"**: the game against the local Node backend (loads `environments/.env.development`). Needs `npm run backend`.
-* **"pro"**: the game against the SQLite database read straight over HTTP, so it needs no backend at all.
-* **"dev-php-backend"**: the game against a PHP backend running locally on port 8888.
-* **"editor"**: the map editor, on port 3001. Always talks to the Node backend, since the production PHP gateway is read-only.
-* **"backend"**: the Express + TypeORM backend on port 5000. Nothing else is needed: shapefiles are read directly, so map creation no longer requires PostgreSQL or PostGIS.
-* **"build"**: the production build, in PHP-backend mode. This is what gets deployed.
-* **"preview"**: serves that build locally for verification.
-* **"typecheck"**, **"typecheck:editor"**, **"typecheck:backend"**: no-emit compiles of each project.
-* **"publish-db"**: copies the authoring database over the published one, after showing both digests. `--check` fails instead of writing.
-* **"deploy"** / **"deploy:app"**: uploads the build over FTP. The first compares the generated content by size and sends only what differs; the second sends just the app shell, which is the usual case. `--dry-run` prints the plan without uploading. Credentials come from `.env.deploy`, which is gitignored.
+Because a page is served from its own directory, anything addressed from the
+site root has to say so: `siteAsset()` in `packages/core/src/lib/data.ts` is
+what pins content paths — maps, flags, logos, textures — to `/`.
 
 ## Design
 
@@ -110,51 +117,6 @@ The design of the game is based on the following principles:
 * https://icons.getbootstrap.com/: The game uses the Bootstrap icons to facilitate the development of the user interface.
 * **Colors**: The puzzle pieces have bright, eye-catching colors that contrast with the white background of the map, making them easy to identify and locate on the map.
 
-## Query Example for Postgis shape table export to Geojson
-
-This query get the geojson necessary to render the map.
-
-In the query we use the ST_AsGeoJSON function to convert the geometry to a geojson format.
-
-The Gson require this fields to create map layer in Mappuzzle.gl:
-
-- **cartodb_id**: The id of the row in the pieces table
-- **geom**: Geometry of the row, is the polygon version of the shape, is use to render the map in deck.gl.
-- **name**: Name of the map piece
-- **poly**: SVG of the map piece to show in the list.
-- **box**: Bounding box of the map piece in 3857 coordinates for SVG format.
-- **mapcolor**: Color of the map piece, this color is asigned from a array of colors.
-
-```sql
-SELECT jsonb_build_object(
-    'type',     'FeatureCollection',
-    'features', jsonb_agg(feature)
-)
-FROM (
-  SELECT jsonb_build_object(
-    'type',       'Feature',
-    'geometry',   ST_AsGeoJSON(geom)::jsonb,
-    'properties', to_jsonb(row) - 'geom'
-  ) AS feature
-  FROM (	
- 			select
-				gid as cartodb_id,   		
-				geom,
-				name as name,
-				ST_AsSVG(ST_Translate(ST_Transform(ST_SetSRID(geom,4326),3857),-ST_Xmin(ST_Transform(ST_SetSRID(geom,4326),3857)),-ST_YMax(ST_Transform(ST_SetSRID(geom,4326),3857)))) as poly,
-				CONCAT('0 0 ', ST_Distance(CONCAT('SRID=3857;POINT(', ST_XMin(ST_Transform(ST_SetSRID(geom,4326), 3857)), ' 0)')::geometry, CONCAT('SRID=3857;POINT(', ST_XMax(ST_Transform(ST_SetSRID(geom,4326), 3857)), ' 0)')::geometry), ' ', ST_Distance(CONCAT('SRID=3857;POINT(0 ', ST_YMin(ST_Transform(ST_SetSRID(geom,4326), 3857)), ')')::geometry, CONCAT('SRID=3857;POINT(0 ', ST_YMax(ST_Transform(ST_SetSRID(geom,4326), 3857)), ')')::geometry)) as box,
-				gid as mapcolor
-			from
-				public.mexico_states
-			order by
-				name 
-  )
- row) features;
-  
-      
-  
-```
-  
 ## Credits
 
 This project was developed by Alejandro Aranda, and is a part of the [MapPuzzle.gl](http://mappuzzle.xyz/) project.
