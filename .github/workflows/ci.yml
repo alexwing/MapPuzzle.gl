@@ -29,6 +29,12 @@ jobs:
           cache: npm
 
       - run: npm ci
+      # The workspaces are packages/* only, so the root install does not reach
+      # the backend — and npm run typecheck typechecks it. Without this the job
+      # failed on every push with "Cannot find module 'typeorm'", which is not a
+      # check, it is a red light nobody can act on. The smoke job below has
+      # always done this; this one was missing it.
+      - run: npm --prefix apps/backend ci
       - run: npm run typecheck
       - run: npm run lint
 
