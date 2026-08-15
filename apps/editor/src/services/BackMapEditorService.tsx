@@ -6,23 +6,6 @@ import { PuzzleService } from "@mappuzzle/core";
 import { readProgress, type JobProgress } from "./BackWikiService";
 
 export class BackMapEditorService {
-  //call endpoint get generateSitemap return xml sitemap
-  public static generateSitemap(): Promise<any> {
-    return fetch(ConfigService.backendUrl + "/mapEditor/generateSitemap", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/xml",
-      },
-    })
-      .then((response) => {
-        //response is a xml
-        return response.text();
-      })
-      .catch((err) => {
-        console.log(err);
-        return Promise.reject("Error generating sitemap");
-      });
-  }
   /**
    * Builds the share card for every puzzle. Runs for a couple of minutes, so it
    * reports progress the same way the content jobs do: newline-delimited JSON
@@ -57,7 +40,7 @@ export class BackMapEditorService {
     return readProgress(response, onProgress);
   }
 
-  //get all countries 
+  //get all countries
   public static async getCountries(): Promise<any> {
     const response = await fetch(ConfigService.backendUrl + "/mapEditor/getCountries", {
       method: "GET",

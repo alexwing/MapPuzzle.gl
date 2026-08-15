@@ -5,14 +5,12 @@ import { connection } from "../server/database";
 import CustomWiki from "../models/customWiki";
 import CustomCentroids from "../models/customCentroids";
 import Countries from "../models/countries";
-import { SitemapStream, streamToPromise } from "sitemap";
-import { Readable } from "stream";
 import * as fs from "fs";
 import path from "path";
 import fetch from "node-fetch";
 import sharp from "sharp";
 import ViewState from "../models/viewState";
-import { ASSETS_DIR, customFlagsDir, ensureDir, flagsDir, ogDir, siteLogoPath, sitemapPaths } from "../config/paths";
+import { ASSETS_DIR, customFlagsDir, ensureDir, flagsDir, ogDir, siteLogoPath } from "../config/paths";
 import { buildCard } from "../lib/ogImage";
 import { adjacency, areaOf, centreComputed, centreFromCurated } from "../lib/pieceGeometry";
 import { startProgress } from "../lib/progress";
@@ -276,80 +274,19 @@ async function saveCustomCentroids(pieceProps: PieceProps): Promise<void> {
     console.log(`Deleted custom_centroids ${keys.id}/${keys.cartodb_id}`);
   }
 }
-interface Link {
-  url: string;
-  changefreq: string;
-  priority: number;
-}
 
-const SITE_HOST = "https://mappuzzle.xyz";
-
-/**
- * A puzzle's canonical address.
+/*
+ * The sitemap is not written here any more.
  *
- * The build prerenders a real page per puzzle at these paths, so the sitemap
- * has to name them and not the older /?map= form, or it would be advertising
- * pages that declare a different URL as canonical. The same rule lives in
- * scripts/prerender.mjs and in the game's Utils.tsx: all three change together.
+ * It lists 840 urls now — every puzzle in each of seven languages — and the
+ * only thing that knows how to build that list is scripts/prerender.mjs, which
+ * writes it as part of the build. A second generator here would have to repeat
+ * the language rules a third time, and until this was deleted it did not: it
+ * still produced the 120-url, English-only version, so pressing the button
+ * quietly threw away six languages. Adding a map means deploying anyway, and
+ * deploying rewrites the sitemap.
  */
-const puzzlePath = (slug: string, isQuiz = false): string =>
-  `/${isQuiz ? "flag-quiz" : "map"}/${slug.replace(/_/g, "-")}/`;
 
-mapEditor.get("/generateSitemap", async (_req, res) => {
-  const pieces = await connection!.getRepository(Puzzles).find();
-  //create links from pieces format  const links = [{ url: '/page-1/',  changefreq: 'daily', priority: 0.3  }]
-  // The home page first, as scripts/prerender.mjs also lists it; without it the
-  // two generators disagree by one entry.
-  let links: Link[] = [
-    { url: `${SITE_HOST}/`, changefreq: "weekly", priority: 1.0 } as Link,
-  ];
-  links.push(
-    ...pieces.map((piece) => {
-      return {
-        url: `${SITE_HOST}${puzzlePath(piece.url)}`,
-        changefreq: "monthly",
-        priority: 0.8,
-      } as Link;
-    })
-  );
-
-  //links to flagsQuiz
-  const linksQuiz: Link[] = [];
-  //foreach link in linksQuiz add to links
-  pieces.forEach((piece) => {
-    if (piece.enableFlags === true) {
-      links.push({
-        url: `${SITE_HOST}${puzzlePath(piece.url, true)}`,
-        changefreq: "monthly",
-        priority: 0.8,
-      } as Link);
-    }
-  });
-  
-
-  if (linksQuiz){
-    links = links.concat(linksQuiz as Link[]);
-  } 
-  const stream = new SitemapStream({ hostname: SITE_HOST });
-
-  const sitemap = await streamToPromise(Readable.from(links).pipe(stream)).then(
-    (sm) => sm.toString()
-  );
-  //write links to stream
-  links.forEach((link) => stream.write(link));
-  //end stream
-  stream.end();
-  //send sitemap
-  res.header("Content-Type", "application/xml");
-  res.send(sitemap);
-
-  for (const file of sitemapPaths()) {
-    fs.writeFile(file, sitemap, function (err: any) {
-      if (err) return console.log(err);
-      console.log(`${file} written`);
-    });
-  }
-});
 
 mapEditor.get("/wikiRender", async (req, res) => {
   try {

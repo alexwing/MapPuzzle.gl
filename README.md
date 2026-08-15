@@ -125,11 +125,20 @@ for each at build time, carrying its own title, description, canonical link and
 the region names as text. They are files rather than rewrite rules because the
 host answers 404 to any path that is not one.
 
+Each page exists in all seven interface languages: `/es/map/<slug>/`,
+`/fr/map/<slug>/` and so on, with the default language keeping the bare path so
+English is not duplicated at two addresses. The title, the description and the
+region names are in that language — none of it newly translated, the interface
+already carried the puzzle names and the editor imported the region ones — and
+`hreflang` ties the seven copies together, with `x-default` on English. That is
+833 pages, plus a home page per language.
+
 The older query form, `/?map=<slug>`, still works and is rewritten to the
 canonical path once the app boots. Slugs are stored with underscores and use
 hyphens in URLs. The same step regenerates `sitemap-index.xml`, which is the
-sitemap `robots.txt` declares; the editor's *Generate sitemap* writes the same
-thing.
+sitemap `robots.txt` declares, with all 840 urls in it. It is the only thing
+that writes a sitemap: the editor used to have a button for it, which after the
+languages landed would have replaced 840 urls with the 120 it knew about.
 
 Because a page is served from its own directory, anything addressed from the
 site root has to say so: `siteAsset()` in `packages/core/src/lib/data.ts` is

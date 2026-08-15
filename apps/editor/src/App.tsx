@@ -65,17 +65,6 @@ function App(): JSX.Element {
   };
 
   /**
-   * Rewrites sitemap.xml for the whole site, so it belongs here and not next to
-   * the open puzzle's name, where it used to sit taking the header's best spot.
-   */
-  const generateSitemap = () => {
-    setNotice("Generating sitemap…");
-    BackMapEditorService.generateSitemap()
-      .then(() => setNotice("Sitemap regenerated: sitemap-index.xml and sitemap.xml"))
-      .catch((e) => setNotice(`Could not generate the sitemap: ${String(e)}`));
-  };
-
-  /**
    * Rebuilds the share card for every puzzle: what a link to it looks like when
    * someone pastes it into a chat. A hundred and nineteen images, so unlike the
    * sitemap it says where it has got to while it works.
@@ -185,9 +174,6 @@ function App(): JSX.Element {
           </ButtonGroup>
 
           <ButtonGroup className="ms-auto">
-            <Button size="sm" variant="outline-light" onClick={generateSitemap}>
-              Generate sitemap
-            </Button>
             <Button size="sm" variant="outline-light" onClick={generateOgImages}>
               Build share cards
             </Button>
