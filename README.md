@@ -43,7 +43,9 @@ uploaded.
 - **deck.gl** renders the map and its pieces over WebGL.
 - **SQLite** holds the puzzles, the Wikipedia links, the flags and the 73k name
   translations. In production it is read-only, reached through the PHP gateway
-  in `apps/game/public/backendPHP/`.
+  in `apps/game/public/backendPHP/`; locally the Node backend answers instead.
+  The client never opens the database itself: it used to, through sql.js over
+  range requests, which cost 1.3 MB of WebAssembly and a worker on every visit.
 - **Express + TypeORM** is the editor's backend. It writes the database, imports
   shapefiles and pulls content from Wikipedia. Local only.
 - **Shapefiles are read directly** with the `shapefile` package. PostgreSQL and

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { QueryExecResult, SqlValue } from "sql.js";
+import type { QueryExecResult, SqlValue } from "@mappuzzle/shared";
 import type { CustomCentroids } from "@mappuzzle/shared";
 import type { CustomTranslations } from "@mappuzzle/shared";
 import type { CustomWiki } from "@mappuzzle/shared";

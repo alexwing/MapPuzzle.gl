@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { QueryExecResult } from "sql.js";
+import type { QueryExecResult } from "@mappuzzle/shared";
 import { ConfigService } from "../services/configService";
 import { mapResultToQueryExecResult } from "./modelMappers";
 

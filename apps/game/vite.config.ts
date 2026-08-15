@@ -67,8 +67,8 @@ function serveDataDir(): Plugin {
           "Content-Type",
           types[path.extname(file).toLowerCase()] ?? "application/octet-stream"
         );
-        // sql.js-httpvfs reads the database in 4 KB pages over range requests
-        // and refuses to start without a known length, so both are required.
+        // Range support stays: it costs nothing, and a client asking for part
+        // of a file should get part of a file.
         res.setHeader("Accept-Ranges", "bytes");
 
         const headers = (req as { headers?: Record<string, string | undefined> })
@@ -136,8 +136,6 @@ export default defineConfig({
       workbox: {
         globIgnores: [
           "**/*.sqlite3.png",
-          "**/sql-wasm.wasm",
-          "**/sqlite.worker.js",
           // The editor is lazy-loaded authoring tooling; precaching it would
           // push it to every player anyway, which is what the split avoids.
           "**/editorDialog-*",

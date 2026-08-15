@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { query } from "../db/dbFactory";
-import { QueryExecResult } from "sql.js";
+import type { QueryExecResult } from "@mappuzzle/shared";
 import type { Puzzles } from "@mappuzzle/shared";
 import type { CustomCentroids } from "@mappuzzle/shared";
 import type { CustomWiki } from "@mappuzzle/shared";

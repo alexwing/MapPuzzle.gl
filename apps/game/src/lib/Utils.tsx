@@ -34,7 +34,7 @@ import { getCookie } from "react-simple-cookie-store";
 import type { Languages } from "@mappuzzle/shared";
 import { ConfigService } from "@mappuzzle/core";
 import { TFunction } from "i18next";
-import { SqlValue } from "sql.js";
+import type { SqlValue } from "@mappuzzle/shared";
 import i18n from 'i18next';
 
 

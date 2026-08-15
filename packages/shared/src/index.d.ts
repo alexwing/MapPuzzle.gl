@@ -8,4 +8,5 @@
  */
 
 export * from "./models";
+export * from "./sql";
 export * from "./domain";

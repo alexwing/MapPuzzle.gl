@@ -2,7 +2,7 @@
  * Fetching the static map JSON and normalising values coming out of SQLite.
  */
 
-import { SqlValue } from "sql.js";
+import type { SqlValue } from "@mappuzzle/shared";
 
 /**
  * A path anchored at the site root.

@@ -2,7 +2,7 @@
 //global config class for the app
 export class ConfigService {
   //VITE_FOO
-  public static backend:string = import.meta.env.VITE_FOO || "sqlite";
+  public static backend:string = import.meta.env.VITE_FOO || "php";
   public static langWikiSelector = false;
   public static cookieDays:number =   parseInt(import.meta.env.VITE_COOKIE_DAYS || "1");
   public static backendUrl:string = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
