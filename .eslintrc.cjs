@@ -20,6 +20,11 @@ module.exports = {
         "react",
         "@typescript-eslint"
     ],
+    "settings": {
+        // Without this, eslint-plugin-react warns on every run that it cannot
+        // tell which React it is linting against.
+        "react": { "version": "detect" }
+    },
     "rules": {
     }
 }

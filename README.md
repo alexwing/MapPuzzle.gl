@@ -76,6 +76,11 @@ built through their own Vite configs from the root.
 One pinned dependency worth knowing about: `"react-map-gl": "5.3.21"`. From 6.0.0
 onwards it requires a Mapbox access token, and that means a paid plan.
 
+`.npmrc` sets `legacy-peer-deps`, and `npm install` fails without it: two
+dependencies declare peers that cannot hold at once — `react-bootstrap-table-next`
+asks for React 16, and a `react-native` reached through `@react-three/fiber` asks
+for React 19. Neither is a problem in practice; the reasons are in the file.
+
 ## Scripts
 
 Thirteen, and each one is a job someone actually does.
@@ -95,6 +100,7 @@ Thirteen, and each one is a job someone actually does.
 | --- | --- |
 | `typecheck` | All three projects. |
 | `typecheck:game`, `typecheck:editor`, `typecheck:backend` | One at a time. |
+| `lint` | ESLint over the game, the editor and the packages. The backend keeps its own config and an older toolchain — `eslint-config-airbnb-typescript@12` pins `@typescript-eslint@4`, which ESLint 8 cannot run — so it is not in this pass. |
 
 **Releasing**
 

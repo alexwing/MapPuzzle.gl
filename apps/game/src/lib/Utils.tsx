@@ -28,13 +28,7 @@ export {
 import GameTime from "../lib/GameTime";
 import React from "react";
 import { ViewState } from "react-map-gl";
-import type { CustomWiki } from "@mappuzzle/shared";
-import { PieceProps, WikiInfoLang } from "../models/Interfaces";
-import { getCookie } from "react-simple-cookie-store";
-import type { Languages } from "@mappuzzle/shared";
-import { ConfigService } from "@mappuzzle/core";
 import { TFunction } from "i18next";
-import type { SqlValue } from "@mappuzzle/shared";
 import i18n from 'i18next';
 
 
