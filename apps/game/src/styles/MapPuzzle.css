@@ -38,6 +38,11 @@
   --accent-glow: rgba(37, 99, 255, 0.25);
   --cursor-grab: url("/cursors/grab.svg") 12 8, grab;
   --cursor-grabbing: url("/cursors/grabbing.svg") 12 8, grabbing;
+  --scrollbar-thumb: rgba(100, 116, 139, 0.35);
+  --scrollbar-thumb-hover: rgba(100, 116, 139, 0.55);
+
+  /* Native scrollbars, form controls and any default background follow this. */
+  color-scheme: light;
 }
 
 [data-bs-theme="dark"] {
@@ -52,6 +57,9 @@
   --accent-color: #3b82f6;
   --accent-hover: #60a5fa;
   --accent-glow: rgba(59, 130, 246, 0.35);
+  --scrollbar-thumb: rgba(148, 163, 184, 0.32);
+  --scrollbar-thumb-hover: rgba(148, 163, 184, 0.55);
+  color-scheme: dark;
 }
 
 html,
@@ -369,7 +377,18 @@ span.navbar-brand {
   margin-bottom: 0px !important;
 }
 
-/* Modern Custom Scrollbar */
+/* Modern Custom Scrollbar
+ *
+ * The thumb colour was written out here instead of coming from a token, so it
+ * kept the same slate grey when the theme changed — visible in the piece list
+ * and in the info and wiki panels, which are the parts that scroll. It follows
+ * the theme now. scrollbar-color is the standard property and the only one
+ * Firefox reads; the ::-webkit- rules are what Chrome and Safari use. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -380,12 +399,12 @@ span.navbar-brand {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.35);
+  background: var(--scrollbar-thumb);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.55);
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* Modern Modals */
