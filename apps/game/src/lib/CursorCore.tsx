@@ -5,6 +5,9 @@ import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
 import { pieceBox, pieceSilhouette } from "@mappuzzle/core";
 import { setColor } from "./Utils";
+import { groundTransform, viewportFor } from "./pieceProjection";
+import type { ViewState } from "react-map-gl";
+import type { WebMercatorViewport } from "@deck.gl/core";
 import "./CursorCore.css";
 
 /**
@@ -39,6 +42,8 @@ interface CursorCoreProps {
   bearing: number;
   /** Map pitch in degrees away from straight down. */
   pitch: number;
+  /** The map's live view, for laying the piece on the ground when tilted. */
+  view: ViewState;
 }
 
 function CursorCore({
@@ -49,6 +54,7 @@ function CursorCore({
   zoom = 2,
   bearing = 0,
   pitch = 0,
+  view,
 }: CursorCoreProps): JSX.Element {
   const pieceCursorRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -63,10 +69,19 @@ function CursorCore({
   // Read inside the animation frame rather than closed over, so turning the map
   // does not tear the loop down and build it again on every view change.
   const attitude = useRef({ bearing: 0, pitch: 0 });
+  const viewRef = useRef<ViewState>({} as ViewState);
+  /** The piece as drawn, and where the pointer holds it. Pixels. */
+  const shape = useRef({ width: 0, height: 0, grabX: 0, grabY: 0 });
+  /** Rebuilt only when the view moves, not on every mouse move. */
+  const viewport = useRef<{ of: ViewState | null; vp: WebMercatorViewport | null }>({
+    of: null,
+    vp: null,
+  });
 
   useEffect(() => {
     attitude.current = { bearing, pitch };
-  }, [bearing, pitch]);
+    viewRef.current = view;
+  }, [bearing, pitch, view]);
 
   // Primary Mouse Move event without triggering React re-renders
   const onMouseMove = useCallback(
@@ -96,25 +111,65 @@ function CursorCore({
         coords.current.y += (endY.current - coords.current.y) / 8;
         const scale =
           isActiveRef.current || isActiveClickableRef.current ? clickScale : 1;
-        // The map's attitude, given to the piece.
+        // Two ways of putting the piece in step with the map, one per view.
         //
-        // Turn it by -bearing, then squash the screen's vertical axis by
-        // cos(pitch): that pair is exactly how an orthographic camera lays the
-        // ground plane onto the screen, and it is the foreshortening the real
-        // map applies in the middle of the viewport, where you are looking.
+        // Flat, the map turns every shape by the same amount wherever it is, so
+        // turning the piece by -bearing is exact and it keeps its silhouette.
         //
-        // Not the true perspective, on purpose. Projected properly the same
-        // piece is 31 pixels tall at the top of a 60° view and 177 at the
-        // bottom — it would stop being a silhouette you can recognise. This
-        // holds its shape wherever the cursor goes.
-        //
-        // Rightmost applies first, so the rotation happens in the piece's own
-        // space and the squash in the screen's, which is the order that matches.
+        // Tilted, that stops being true — a perspective camera foreshortens by
+        // distance — so the piece is projected onto the ground under the
+        // pointer instead, corner by corner, through the map's own viewport.
+        // It changes shape as it travels, which is what the tilted view is
+        // for: the piece belongs to the ground it is over.
         const { bearing: b, pitch: p } = attitude.current;
-        const tilt = Math.cos((p * Math.PI) / 180);
-        pieceCursorRef.current.style.transform =
-          `translate3d(${coords.current.x}px, ${coords.current.y}px, 0)` +
-          ` scale(${scale}) scaleY(${tilt}) rotate(${-b}deg)`;
+        const x = coords.current.x;
+        const y = coords.current.y;
+        let ground: string | null = null;
+
+        if (p > 0) {
+          const live = viewRef.current;
+          if (viewport.current.of !== live) {
+            // deck reports the canvas size it drew with alongside the camera;
+            // react-map-gl's ViewState type does not declare those two, hence
+            // the read. The window is the fallback: the map fills it.
+            const canvas = live as unknown as { width?: number; height?: number };
+            viewport.current = {
+              of: live,
+              vp: viewportFor(
+                live,
+                canvas?.width || window.innerWidth,
+                canvas?.height || window.innerHeight
+              ),
+            };
+          }
+          if (viewport.current.vp) {
+            ground = groundTransform(viewport.current.vp, live, {
+              x,
+              y,
+              ...shape.current,
+            });
+          }
+        }
+
+        if (ground) {
+          // The matrix already carries the position, so the click pulse is
+          // applied afterwards, in screen space, about the pointer itself.
+          pieceCursorRef.current.style.transform =
+            scale === 1
+              ? ground
+              : `translate(${x}px, ${y}px) scale(${scale}) translate(${-x}px, ${-y}px) ${ground}`;
+        } else {
+          // Flat, or the ground could not be trusted — past the edge of the
+          // world, or a corner behind the camera. When the margins have been
+          // dropped for the tilted view the grab offset has to be put back by
+          // hand, since it was the margins that used to supply it.
+          const tilt = Math.cos((p * Math.PI) / 180);
+          const offX = p > 0 ? x - shape.current.grabX : x;
+          const offY = p > 0 ? y - shape.current.grabY : y;
+          pieceCursorRef.current.style.transform =
+            `translate3d(${offX}px, ${offY}px, 0)` +
+            ` scale(${scale}) scaleY(${tilt}) rotate(${-b}deg)`;
+        }
       }
       previousTimeRef.current = time;
       requestRef.current = requestAnimationFrame(animateOuterCursor);
@@ -202,16 +257,30 @@ function CursorCore({
 
   let PieceCursor;
   const box = pieceBox(selected);
+  const onTheGround = pitch > 0;
   if (box) {
     const scale = Math.pow(2, zoom);
     const sizeX = (parseInt(box.split(" ")[2]) * scale) / METRES_PER_PIXEL_AT_ZOOM_0;
     const sizeY = (parseInt(box.split(" ")[3]) * scale) / METRES_PER_PIXEL_AT_ZOOM_0;
-    let marginLeft = "-50%";
-    let marginTop = "-50%";
-    if (centroid.id) {
-      marginLeft = centroid.left + "%";
-      marginTop = centroid.top + "%";
-    }
+    const leftPct = centroid.id ? centroid.left : -50;
+    const topPct = centroid.id ? centroid.top : -50;
+
+    // Where the pointer holds the piece, in the piece's own pixels.
+    //
+    // Flat, the margins below do this: they shift the svg so the grab point
+    // lands on the div's corner, which is the pointer. Percentage margins
+    // resolve against the containing block's WIDTH on both axes and
+    // .mousePiece shrink-wraps the svg, so both offsets are fractions of
+    // sizeX — a quirk, but the one the map editor's centroid picker was
+    // calibrated against. It is reproduced rather than corrected here, so the
+    // piece is held at the same point whichever view is on.
+    shape.current = {
+      width: sizeX,
+      height: sizeY,
+      grabX: (-leftPct / 100) * sizeX,
+      grabY: (-topPct / 100) * sizeX,
+    };
+
     const { poly } = pieceSilhouette(selected, Math.max(sizeX, sizeY));
     PieceCursor = (
       <svg
@@ -220,8 +289,10 @@ function CursorCore({
         viewBox={box}
         style={{
           border: "0px solid lightgray",
-          marginLeft: marginLeft,
-          marginTop: marginTop,
+          // On the ground the transform carries the whole placement, grab
+          // point included, so the margins would shift it twice.
+          marginLeft: onTheGround ? 0 : leftPct + "%",
+          marginTop: onTheGround ? 0 : topPct + "%",
         }}
       >
         <path

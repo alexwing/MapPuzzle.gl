@@ -3,6 +3,7 @@ import IsDevice from "./helpers/isDevice";
 import CursorCore from "./CursorCore";
 import { PieceProps } from "../models/Interfaces";
 import type { CustomCentroids } from "@mappuzzle/shared";
+import type { ViewState } from "react-map-gl";
 
 /**
  * AnimatedCursor
@@ -18,6 +19,7 @@ interface AnimatedCursorProps {
   zoom: number;
   bearing?: number;
   pitch?: number;
+  view: ViewState;
 }
 
 function AnimatedCursor({
@@ -28,6 +30,7 @@ function AnimatedCursor({
   zoom = 2,
   bearing = 0,
   pitch = 0,
+  view,
 }: AnimatedCursorProps): JSX.Element | null {
   if (typeof navigator !== "undefined" && IsDevice?.any()) {
     return <React.Fragment></React.Fragment>;
@@ -40,6 +43,7 @@ function AnimatedCursor({
       zoom={zoom}
       bearing={bearing}
       pitch={pitch}
+      view={view}
       tooltip={tooltip}
     />
   );

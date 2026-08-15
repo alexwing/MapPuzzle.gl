@@ -629,6 +629,7 @@ function MapPuzzle(): JSX.Element {
               zoom={liveView?.zoom}
               bearing={liveView?.bearing}
               pitch={liveView?.pitch}
+              view={liveView}
               selected={pieceSelectedData}
               centroid={pieceSelectedCentroid}
               tooltip={tooltipValue}
