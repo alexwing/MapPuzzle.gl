@@ -35,6 +35,139 @@ const checkOnly = process.argv.includes("--check");
 const puzzlePath = (slug, isQuiz) =>
   `/${isQuiz ? "flag-quiz" : "map"}/${slug.replace(/_/g, "-")}/`;
 
+
+/**
+ * The seven languages the interface speaks, and enough words to describe a
+ * puzzle in each. The names themselves are not translated here: the interface
+ * already carries all seventy in apps/game/src/i18n, and the regions come from
+ * the 73,249 rows in custom_translations, which is the whole point of doing
+ * this — the content exists, it just had no address.
+ *
+ * English keeps the phrasing it was indexed with. The rest use a separator
+ * rather than an English-shaped noun pile, which does not survive translation.
+ *
+ * The copy below is mine and should be read by someone who speaks the language
+ * before it is treated as final, particularly the Greek and the German.
+ */
+const LANGS = [
+  {
+    code: "en",
+    title: (name, kind) => `${name} ${kind} | MapPuzzle.xyz`,
+    map: "map puzzle",
+    quiz: "flag quiz",
+    describeMap: (name, n, sample) =>
+      `Put ${name} back together piece by piece: ${n} regions to place, including ${sample}. A free interactive map puzzle, no sign-up, playable in your browser.`,
+    describeQuiz: (name, n, sample) =>
+      `Guess the flag of every region in ${name}. ${n} flags to learn, including ${sample}. Free, no sign-up, playable in your browser.`,
+    heading: (name, kind) => `${name} ${kind}`,
+    regions: (n) => `The ${n} regions`,
+  },
+  {
+    code: "es",
+    title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    map: "puzle de mapa",
+    quiz: "quiz de banderas",
+    describeMap: (name, n, sample) =>
+      `Recompón ${name} pieza a pieza: ${n} regiones que colocar, entre ellas ${sample}. Un puzle de mapas gratuito, sin registro, para jugar en el navegador.`,
+    describeQuiz: (name, n, sample) =>
+      `Adivina la bandera de cada región de ${name}. ${n} banderas que aprender, entre ellas ${sample}. Gratis, sin registro, para jugar en el navegador.`,
+    heading: (name, kind) => `${name}: ${kind}`,
+    regions: (n) => `Las ${n} regiones`,
+  },
+  {
+    code: "fr",
+    title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    map: "puzzle de carte",
+    quiz: "quiz de drapeaux",
+    describeMap: (name, n, sample) =>
+      `Reconstituez ${name} pièce par pièce : ${n} régions à placer, dont ${sample}. Un puzzle de cartes gratuit, sans inscription, jouable dans le navigateur.`,
+    describeQuiz: (name, n, sample) =>
+      `Devinez le drapeau de chaque région de ${name}. ${n} drapeaux à apprendre, dont ${sample}. Gratuit, sans inscription, jouable dans le navigateur.`,
+    heading: (name, kind) => `${name} : ${kind}`,
+    regions: (n) => `Les ${n} régions`,
+  },
+  {
+    code: "pt",
+    title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    map: "puzzle de mapa",
+    quiz: "quiz de bandeiras",
+    describeMap: (name, n, sample) =>
+      `Recomponha ${name} peça a peça: ${n} regiões para colocar, entre elas ${sample}. Um puzzle de mapas gratuito, sem registo, para jogar no navegador.`,
+    describeQuiz: (name, n, sample) =>
+      `Adivinhe a bandeira de cada região de ${name}. ${n} bandeiras para aprender, entre elas ${sample}. Grátis, sem registo, para jogar no navegador.`,
+    heading: (name, kind) => `${name}: ${kind}`,
+    regions: (n) => `As ${n} regiões`,
+  },
+  {
+    code: "de",
+    title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    map: "Karten-Puzzle",
+    quiz: "Flaggen-Quiz",
+    describeMap: (name, n, sample) =>
+      `Setze ${name} Stück für Stück zusammen: ${n} Regionen zu platzieren, darunter ${sample}. Ein kostenloses Karten-Puzzle, ohne Anmeldung, im Browser spielbar.`,
+    describeQuiz: (name, n, sample) =>
+      `Errate die Flagge jeder Region in ${name}. ${n} Flaggen zum Lernen, darunter ${sample}. Kostenlos, ohne Anmeldung, im Browser spielbar.`,
+    heading: (name, kind) => `${name}: ${kind}`,
+    regions: (n) => `Die ${n} Regionen`,
+  },
+  {
+    code: "el",
+    title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    map: "παζλ χάρτη",
+    quiz: "κουίζ σημαιών",
+    describeMap: (name, n, sample) =>
+      `Συναρμολόγησε ${name} κομμάτι κομμάτι: ${n} περιοχές για τοποθέτηση, όπως ${sample}. Ένα δωρεάν παζλ χαρτών, χωρίς εγγραφή, παίζεται στον περιηγητή.`,
+    describeQuiz: (name, n, sample) =>
+      `Μάντεψε τη σημαία κάθε περιοχής: ${name}. ${n} σημαίες για μάθηση, όπως ${sample}. Δωρεάν, χωρίς εγγραφή, παίζεται στον περιηγητή.`,
+    heading: (name, kind) => `${name}: ${kind}`,
+    regions: (n) => `Οι ${n} περιοχές`,
+  },
+  {
+    code: "it",
+    title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    map: "puzzle di mappa",
+    quiz: "quiz di bandiere",
+    describeMap: (name, n, sample) =>
+      `Ricomponi ${name} pezzo per pezzo: ${n} regioni da posizionare, tra cui ${sample}. Un puzzle di mappe gratuito, senza registrazione, giocabile nel browser.`,
+    describeQuiz: (name, n, sample) =>
+      `Indovina la bandiera di ogni regione di ${name}. ${n} bandiere da imparare, tra cui ${sample}. Gratis, senza registrazione, giocabile nel browser.`,
+    heading: (name, kind) => `${name}: ${kind}`,
+    regions: (n) => `Le ${n} regioni`,
+  },
+];
+
+const DEFAULT_LANG = "en";
+
+/** Where a language's copy of a path lives; the default keeps the bare path. */
+const localised = (path, lang) => (lang === DEFAULT_LANG ? path : `/${lang}${path}`);
+
+/** The puzzle names the interface already carries, one file per language. */
+function uiNames(lang) {
+  const file = path.join(repoRoot, "apps/game/src/i18n", lang, "translation.json");
+  try {
+    return JSON.parse(fs.readFileSync(file, "utf8")).puzzles ?? {};
+  } catch {
+    return {};
+  }
+}
+
+/** The region names, per language, out of the translations the editor imported. */
+function regionNames(db, lang) {
+  const rows = db
+    .prepare("SELECT id, cartodb_id, translation FROM custom_translations WHERE lang = ?")
+    .all(lang);
+  const byPuzzle = new Map();
+  for (const row of rows) {
+    let one = byPuzzle.get(row.id);
+    if (!one) {
+      one = new Map();
+      byPuzzle.set(row.id, one);
+    }
+    one.set(row.cartodb_id, unquote(String(row.translation)));
+  }
+  return byPuzzle;
+}
+
 const escape = (s) =>
   String(s)
     .replace(/&/g, "&amp;")
@@ -48,61 +181,81 @@ const unquote = (s) => (typeof s === "string" ? s.replace(/^'|'$/g, "") : s);
 /** The region names, which are the part of the page worth indexing. */
 function piecesOf(dataPath) {
   const file = path.join(dataDir, dataPath);
-  if (!fs.existsSync(file)) return [];
+  const empty = { names: [], ids: [] };
+  if (!fs.existsSync(file)) return empty;
   try {
     const geo = JSON.parse(fs.readFileSync(file, "utf8"));
-    return (geo.features ?? [])
-      .map((f) => f?.properties?.name)
-      .filter((n) => typeof n === "string" && n.trim())
-      .map((n) => n.trim());
+    const names = [];
+    const ids = [];
+    for (const feature of geo.features ?? []) {
+      const name = feature?.properties?.name;
+      if (typeof name !== "string" || !name.trim()) continue;
+      names.push(name.trim());
+      ids.push(feature?.properties?.cartodb_id);
+    }
+    return { names, ids };
   } catch (err) {
     console.warn(`  ${dataPath}: unreadable (${err.message})`);
-    return [];
+    return empty;
   }
 }
 
-function describe(puzzle, names, isQuiz) {
+/**
+ * One page, in one language.
+ *
+ * Everything a crawler reads is in the page's own language: the title, the
+ * description, the heading and the region names. hreflang links the seven
+ * copies to each other, and x-default points at English, so a search engine
+ * knows they are one page in seven languages rather than seven pages competing.
+ */
+function page(template, puzzle, names, isQuiz, lang) {
+  const bare = puzzlePath(puzzle.url, isQuiz);
+  const url = SITE + localised(bare, lang.code);
+  const kind = isQuiz ? lang.quiz : lang.map;
+  const title = lang.title(puzzle.name, kind);
   const sample = names.slice(0, 8).join(", ");
-  return isQuiz
-    ? `Guess the flag of every region in ${puzzle.name}. ${names.length} flags to learn, including ${sample}. Free, no sign-up, playable in your browser.`
-    : `Put ${puzzle.name} back together piece by piece: ${names.length} regions to place, including ${sample}. A free interactive map puzzle, no sign-up, playable in your browser.`;
-}
-
-function page(template, puzzle, names, isQuiz) {
-  const url = SITE + puzzlePath(puzzle.url, isQuiz);
-  const title = isQuiz
-    ? `${puzzle.name} flag quiz | MapPuzzle.xyz`
-    : `${puzzle.name} map puzzle | MapPuzzle.xyz`;
-  const description = describe(puzzle, names, isQuiz);
+  const description = isQuiz
+    ? lang.describeQuiz(puzzle.name, names.length, sample)
+    : lang.describeMap(puzzle.name, names.length, sample);
 
   let html = template;
 
-  /**
-   * Replaces a meta tag by its name or property. Tolerant of newlines inside
-   * the tag, because index.html is written by hand and the description is
-   * spread over three lines there; a pattern expecting single spaces missed it
-   * and every page shipped the generic description.
-   */
-  const meta = (kind, key, content) => {
-    const pattern = new RegExp(`<meta\\s+${kind}="${key}"[\\s\\S]*?>`, "i");
-    const tag = `<meta ${kind}="${key}" content="${escape(content)}" />`;
-    if (!pattern.test(html)) throw new Error(`index.html has no ${kind}="${key}" to replace`);
+  const meta = (kindOf, key, content) => {
+    const pattern = new RegExp(`<meta\\s+${kindOf}="${key}"[\\s\\S]*?>`, "i");
+    const tag = `<meta ${kindOf}="${key}" content="${escape(content)}" />`;
+    if (!pattern.test(html)) throw new Error(`index.html has no ${kindOf}="${key}" to replace`);
     html = html.replace(pattern, tag);
   };
+
+  html = html.replace(/<html lang="[^"]*"/i, `<html lang="${lang.code}"`);
 
   const title_re = /<title>[\s\S]*?<\/title>/;
   if (!title_re.test(html)) throw new Error("index.html has no <title> to replace");
   html = html.replace(title_re, `<title>${escape(title)}</title>`);
 
+  /* The canonical is this language's own address, and every language points at
+     every other. Without the alternates the copies read as duplicates of each
+     other; with them they read as one page a reader can have in their own. */
+  const alternates = LANGS.map(
+    (other) =>
+      `<link rel="alternate" hreflang="${other.code}" href="${SITE}${localised(bare, other.code)}" />`
+  ).join("");
   const canonical_re = /<link\s+rel="canonical"[\s\S]*?>/i;
   if (!canonical_re.test(html)) throw new Error("index.html has no canonical link to replace");
-  html = html.replace(canonical_re, `<link rel="canonical" href="${url}" />`);
+  html = html.replace(
+    canonical_re,
+    `<link rel="canonical" href="${url}" />` +
+      alternates +
+      `<link rel="alternate" hreflang="x-default" href="${SITE}${bare}" />`
+  );
 
-  /* The share card, one per puzzle, written by the editor's own batch. Both
-     the size and the twitter copy matter: without the dimensions some clients
-     lay the card out before it loads, and Twitter reads its own tags first. */
-  const card = `${SITE}/og${puzzlePath(puzzle.url, isQuiz)}`.replace(/\/$/, "") + ".png";
-  const cardFile = path.join(dataDir, "og", isQuiz ? "flag-quiz" : "map", `${puzzle.url.replace(/_/g, "-")}.png`);
+  const card = `${SITE}/og${bare}`.replace(/\/$/, "") + ".png";
+  const cardFile = path.join(
+    dataDir,
+    "og",
+    isQuiz ? "flag-quiz" : "map",
+    `${puzzle.url.replace(/_/g, "-")}.png`
+  );
   if (fs.existsSync(cardFile)) {
     meta("property", "og:image", card);
     meta("name", "twitter:image", card);
@@ -118,20 +271,18 @@ function page(template, puzzle, names, isQuiz) {
   meta("property", "og:title", title);
   meta("property", "og:description", description);
   meta("property", "og:url", url);
+  meta("property", "og:locale", lang.code);
   meta("name", "twitter:title", title);
   meta("name", "twitter:description", description);
 
   // Inside #root, so React clears it on mount: it is a loading state that says
   // what the page is, and it is what a crawler reads before running any script.
-  const heading = isQuiz
-    ? `${escape(puzzle.name)} flag quiz`
-    : `${escape(puzzle.name)} map puzzle`;
   const list = names.map((n) => `<li>${escape(n)}</li>`).join("");
   const placeholder =
     `<div id="root"><div class="prerendered-intro">` +
-    `<h1>${heading}</h1>` +
-    `<p>${escape(describe(puzzle, names, isQuiz))}</p>` +
-    (names.length ? `<h2>The ${names.length} regions</h2><ul>${list}</ul>` : "") +
+    `<h1>${escape(lang.heading(puzzle.name, kind))}</h1>` +
+    `<p>${escape(description)}</p>` +
+    (names.length ? `<h2>${escape(lang.regions(names.length))}</h2><ul>${list}</ul>` : "") +
     `</div></div>`;
   html = html.replace(/<div id="root">\s*<\/div>/, placeholder);
 
@@ -164,28 +315,76 @@ db.close();
 const written = [];
 let noNames = 0;
 
+/* The region names in each language, read once rather than per puzzle: the
+   translations table is 73,249 rows and this walks it seven times, not 833. */
+const db2 = new DatabaseSync(dbPath, { readOnly: true });
+const namesByLang = new Map(LANGS.map((lang) => [lang.code, regionNames(db2, lang.code)]));
+db2.close();
+const titlesByLang = new Map(LANGS.map((lang) => [lang.code, uiNames(lang.code)]));
+
 for (const puzzle of puzzles) {
-  const names = piecesOf(puzzle.data);
-  if (names.length === 0) noNames++;
+  const original = piecesOf(puzzle.data);
+  if (original.names.length === 0) noNames++;
 
-  const targets = [[false, puzzle]];
-  if (puzzle.enableFlags) targets.push([true, puzzle]);
+  const targets = [false];
+  if (puzzle.enableFlags) targets.push(true);
 
-  for (const [isQuiz] of targets) {
-    const rel = puzzlePath(puzzle.url, isQuiz);
-    written.push({ url: SITE + rel, pieces: names.length });
-    if (checkOnly) continue;
-    const dir = path.join(buildDir, rel);
-    fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, "index.html"), page(template, puzzle, names, isQuiz));
+  for (const isQuiz of targets) {
+    for (const lang of LANGS) {
+      /* The puzzle's name as the interface says it in this language, and the
+         regions as the editor imported them. Anything without a translation
+         keeps the name the map carries, which is better than a gap. */
+      const localName = unquote(String(titlesByLang.get(lang.code)?.[puzzle.id] ?? puzzle.name));
+      const perPiece = namesByLang.get(lang.code)?.get(puzzle.id);
+      const names = original.ids.map(
+        (id, i) => perPiece?.get(id) ?? original.names[i]
+      );
+
+      const rel = localised(puzzlePath(puzzle.url, isQuiz), lang.code);
+      written.push({ url: SITE + rel, lang: lang.code });
+      if (checkOnly) continue;
+
+      const dir = path.join(buildDir, rel);
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(
+        path.join(dir, "index.html"),
+        page(template, { ...puzzle, name: localName }, names, isQuiz, lang)
+      );
+    }
   }
 }
 
-/** The sitemap lists the canonical pages, the ones just written. */
+/* The home page in each language, so a reader landing on /es/ stays in Spanish
+   instead of being handed English and a language menu. */
+if (!checkOnly) {
+  for (const lang of LANGS) {
+    if (lang.code === DEFAULT_LANG) continue;
+    const dir = path.join(buildDir, lang.code);
+    fs.mkdirSync(dir, { recursive: true });
+    let home = template.replace(/<html lang="[^"]*"/i, `<html lang="${lang.code}"`);
+    const alternates = LANGS.map(
+      (other) =>
+        `<link rel="alternate" hreflang="${other.code}" href="${SITE}${localised("/", other.code)}" />`
+    ).join("");
+    home = home.replace(
+      /<link\s+rel="canonical"[\s\S]*?>/i,
+      `<link rel="canonical" href="${SITE}/${lang.code}/" />` +
+        alternates +
+        `<link rel="alternate" hreflang="x-default" href="${SITE}/" />`
+    );
+    fs.writeFileSync(path.join(dir, "index.html"), home);
+  }
+}
+
+/** The sitemap lists every page in every language, each as its own entry. */
 const sitemap =
   `<?xml version="1.0" encoding="UTF-8"?>\n` +
   `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  `  <url><loc>${SITE}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>\n` +
+  LANGS.map(
+    (lang) =>
+      `  <url><loc>${SITE}${localised("/", lang.code)}</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>`
+  ).join("\n") +
+  "\n" +
   written
     .map(
       (w) =>
@@ -194,16 +393,6 @@ const sitemap =
     .join("\n") +
   `\n</urlset>\n`;
 
-/*
- * Two names, one content.
- *
- * sitemap-index.xml is the one robots.txt declares and the one submitted to
- * Search Console. Google never managed to read /sitemap.xml — it kept reporting
- * "couldn't fetch" with an empty last-read date long after the host's bot
- * challenge was switched off, while an identical file under a different name
- * was read first time. The old name keeps being written so that whatever still
- * links to it gets current content instead of a stale file or a 404.
- */
 const SITEMAP_NAMES = ["sitemap-index.xml", "sitemap.xml"];
 
 if (!checkOnly) {
@@ -213,11 +402,12 @@ if (!checkOnly) {
   }
 }
 
-const maps = written.filter((w) => w.url.includes("/map/")).length;
+const perLang = new Map();
+for (const w of written) perLang.set(w.lang, (perLang.get(w.lang) ?? 0) + 1);
 console.log(
-  `${checkOnly ? "Would write" : "Wrote"} ${written.length} pages: ` +
-    `${maps} maps, ${written.length - maps} flag quizzes, ` +
-    `${written.length + 1} urls in the sitemap.`
+  `${checkOnly ? "Would write" : "Wrote"} ${written.length} pages across ${LANGS.length} languages ` +
+    `(${[...perLang.entries()].map(([l, n]) => `${l}:${n}`).join(", ")}), ` +
+    `${written.length + LANGS.length} urls in the sitemap.`
 );
 if (noNames > 0) {
   console.warn(`${noNames} puzzles contributed no region names; their pages carry only the heading.`);

@@ -10,7 +10,7 @@ import MenuTop from "./components/MenuTop/MenuTop";
 import DeckMap from "./components/DeckMap";
 import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
-import { Jsondb, getWiki, copyViewState, getLang, puzzleFromLocation, puzzlePath } from "./lib/Utils";
+import { Jsondb, getWiki, copyViewState, getLang, getTranslation, languageFromLocation, puzzleFromLocation, puzzlePath } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
@@ -100,7 +100,9 @@ function MapPuzzle(): JSX.Element {
   * @remarks Load the game from db and set the pieces and founds
   */
   const loadGame = (puzzleId: number) => {
-    const langAux = getLang();
+    // An address in a language wins over the cookie: someone sent
+    // /es/map/... asked for Spanish, whatever this browser last chose.
+    const langAux = languageFromLocation() ?? getLang();
     i18n.changeLanguage(langAux);
     setPieces([]);
     setFounds([]);
@@ -113,9 +115,20 @@ function MapPuzzle(): JSX.Element {
         getCustomCentroids(puzzleData.id);
         getCustomWikis(puzzleData.id);
         // The canonical address, the one the prerendered page declares.
-        window.history.pushState({}, puzzleData.name, puzzlePath(puzzleData.url));
+        window.history.pushState(
+          {},
+          puzzleData.name,
+          // Keep the language the address came in: picking another puzzle from
+          // /es/ should not silently drop you back into English.
+          puzzlePath(puzzleData.url, false, languageFromLocation() ?? undefined)
+        );
         //change title
-        document.title = "MapPuzzle.xyz - " + puzzleData.name;
+        // The interface carries all seventy names in each language; without
+        // this the Spanish page's title reverted to English the moment the app
+        // booted, undoing what the prerendered page had said.
+        document.title =
+          "MapPuzzle.xyz - " +
+          getTranslation("puzzles", String(puzzleData.id), puzzleData.name);
 
         if (
           puzzleData.view_state !== null &&

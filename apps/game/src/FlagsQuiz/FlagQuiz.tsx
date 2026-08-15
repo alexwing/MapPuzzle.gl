@@ -15,6 +15,8 @@ import {
   Jsondb,
   shuffle,
   getWiki,
+  getTranslation,
+  languageFromLocation,
   puzzleFromLocation,
   puzzlePath,
   calculateZoom,
@@ -185,7 +187,9 @@ function FlagQuiz(): JSX.Element {
 
   /* load game from db */
   const loadGame = (puzzleId: number) => {
-    const langAux = getLang();
+    // An address in a language wins over the cookie: someone sent
+    // /es/map/... asked for Spanish, whatever this browser last chose.
+    const langAux = languageFromLocation() ?? getLang();
     i18n.changeLanguage(langAux);
     setPieces([]);
     setFounds([]);
@@ -201,9 +205,15 @@ function FlagQuiz(): JSX.Element {
       //get map data from geojson
       Jsondb(puzzleData.data).then((response) => {
         getCustomWikis(puzzleData.id);
-        window.history.pushState({}, puzzleData.name, puzzlePath(puzzleData.url, true));
+        window.history.pushState(
+          {},
+          puzzleData.name,
+          puzzlePath(puzzleData.url, true, languageFromLocation() ?? undefined)
+        );
         //change title
-        document.title = "MapPuzzle.xyz / FlagQuiz - " + puzzleData.name;
+        document.title =
+          "MapPuzzle.xyz / FlagQuiz - " +
+          getTranslation("puzzles", String(puzzleData.id), puzzleData.name);
         const piecesAux: PieceProps[] = response.features;
         //set name to pieces from pieces.properties.name
         piecesAux.forEach((piece: PieceProps) => {

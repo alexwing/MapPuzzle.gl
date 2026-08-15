@@ -44,6 +44,16 @@ const cases = [
     want: "the flags quiz with nothing after the parameter",
     check: (s) => /FlagQuiz/.test(s.title),
   },
+  {
+    url: "/es/map/spanish-provinces/",
+    want: "a puzzle in Spanish, from its Spanish address",
+    check: (s) => s.pieces === 52 && s.path === "/es/map/spanish-provinces/",
+  },
+  {
+    url: "/de/flag-quiz/austria-states/",
+    want: "the quiz in German, staying German",
+    check: (s) => /FlagQuiz/.test(s.title) && s.path === "/de/flag-quiz/austria-states/",
+  },
 ];
 
 /**
@@ -53,7 +63,8 @@ const cases = [
  * picker, so this does.
  */
 async function checkPicker(browser, origin) {
-  const page = await browser.newPage();
+  const context = await browser.newContext({ locale: "en-US" });
+  const page = await context.newPage();
   const bad = [];
   page.on("response", (r) => {
     if (r.status() >= 400) bad.push(`${r.status()} ${new URL(r.url()).pathname}`);
@@ -62,14 +73,14 @@ async function checkPicker(browser, origin) {
   await page.waitForTimeout(8_000);
   const opened = await page.evaluate(() => {
     const button = [...document.querySelectorAll("button")].find((b) =>
-      /Seleccionar Puzle|Select Puzzle/i.test(b.textContent + (b.getAttribute("title") ?? ""))
+      /Select Puzzle|Seleccionar Puzle/i.test(b.textContent + (b.getAttribute("title") ?? ""))
     );
     if (!button) return false;
     button.click();
     return true;
   });
   if (!opened) {
-    await page.close();
+    await context.close();
     return "could not find the button that opens the picker";
   }
   await page.waitForTimeout(4_000);
@@ -82,7 +93,7 @@ async function checkPicker(browser, origin) {
       sample: images[0]?.getAttribute("src") ?? null,
     };
   });
-  await page.close();
+  await context.close();
   if (flags.total === 0) return "the picker opened with no flags in it";
   if (flags.broken > 0) return `${flags.broken} of ${flags.total} flags did not load (${flags.sample})`;
   if (bad.length) return `requests failed: ${[...new Set(bad)].join(", ")}`;
@@ -94,7 +105,11 @@ const browser = await chromium.launch();
 const failures = [];
 
 for (const one of cases) {
-  const page = await browser.newPage();
+  /* A fixed locale. Without a language in the address the app follows the
+     browser's, by design, so a Spanish machine turned the English page Spanish
+     and the run depended on who was running it. */
+  const context = await browser.newContext({ locale: "en-US" });
+  const page = await context.newPage();
   const errors = [];
   const missing = [];
   page.on("pageerror", (e) => errors.push(String(e.message).split("\n")[0]));
@@ -136,7 +151,7 @@ for (const one of cases) {
   } else {
     console.log(`  ok    ${label} -> ${JSON.stringify(state)}`);
   }
-  await page.close();
+  await context.close();
 }
 
 const pickerProblem = await checkPicker(browser, origin);

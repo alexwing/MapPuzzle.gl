@@ -30,6 +30,7 @@ import React from "react";
 import { ViewState } from "react-map-gl";
 import { TFunction } from "i18next";
 import i18n from 'i18next';
+import { ConfigService } from "@mappuzzle/core";
 
 
 
@@ -155,6 +156,34 @@ const MAP_PREFIX = "/map/";
 const QUIZ_PREFIX = "/flag-quiz/";
 
 /**
+ * The interface exists in seven languages and, until now, none of them had an
+ * address: which one you saw came from a cookie, so there was no way to link
+ * anyone to the Spanish version, and nothing for a search engine to index in
+ * any language but English. A page in Spanish lives under /es/, and the default
+ * one keeps the bare path so English is not duplicated at two addresses.
+ */
+export const SITE_LANGS = ConfigService.langs;
+export const DEFAULT_LANG = ConfigService.defaultLang;
+
+/** The language this address asks for, or null when it does not say. */
+export function languageFromLocation(): string | null {
+  const first = window.location.pathname.split("/")[1];
+  return first && SITE_LANGS.includes(first) && first !== DEFAULT_LANG ? first : null;
+}
+
+/** The path with its language prefix taken off, so the rest can be read. */
+function withoutLanguage(pathname: string): string {
+  const first = pathname.split("/")[1];
+  return first && SITE_LANGS.includes(first) ? pathname.slice(first.length + 1) || "/" : pathname;
+}
+
+/** Where a language's copy of a path lives. */
+export function localisedPath(path: string, lang: string): string {
+  const bare = withoutLanguage(path);
+  return lang === DEFAULT_LANG ? bare : `/${lang}${bare}`;
+}
+
+/**
  * Where a puzzle lives: the address to link to and to put in the sitemap.
  *
  * The slug is optional because callers read it off a puzzle that may not have
@@ -162,9 +191,14 @@ const QUIZ_PREFIX = "/flag-quiz/";
  * is anything to share. Those callers used to concatenate strings and got
  * "undefined" in the URL; throwing there takes the whole app down instead.
  */
-export function puzzlePath(slug: string | undefined, isQuiz = false): string {
-  if (!slug) return "/";
-  return (isQuiz ? QUIZ_PREFIX : MAP_PREFIX) + slug.replace(/_/g, "-") + "/";
+export function puzzlePath(
+  slug: string | undefined,
+  isQuiz = false,
+  lang?: string
+): string {
+  const prefix = lang && lang !== DEFAULT_LANG ? `/${lang}` : "";
+  if (!slug) return prefix || "/";
+  return prefix + (isQuiz ? QUIZ_PREFIX : MAP_PREFIX) + slug.replace(/_/g, "-") + "/";
 }
 
 /**
@@ -176,7 +210,7 @@ export function puzzlePath(slug: string | undefined, isQuiz = false): string {
  * asks has() rather than get() — an empty value is still an answer.
  */
 export function puzzleFromLocation(): { slug: string; isQuiz: boolean } | null {
-  const path = window.location.pathname;
+  const path = withoutLanguage(window.location.pathname);
   for (const [prefix, isQuiz] of [
     [MAP_PREFIX, false],
     [QUIZ_PREFIX, true],
