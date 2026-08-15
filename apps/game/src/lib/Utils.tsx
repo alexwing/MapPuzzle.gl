@@ -173,7 +173,14 @@ export function puzzlePath(slug: string | undefined, isQuiz = false): string {
   return (isQuiz ? QUIZ_PREFIX : MAP_PREFIX) + slug.replace(/_/g, "-") + "/";
 }
 
-/** Which puzzle the current address asks for, in either shape, or null. */
+/**
+ * Which game the current address asks for, and which puzzle within it.
+ *
+ * The slug can be empty: "/?flagQuiz" with nothing after it has always opened
+ * the flags quiz on its default puzzle, and so has "/flag-quiz/". What decides
+ * the game is that the parameter or the prefix is *there*, which is why this
+ * asks has() rather than get() — an empty value is still an answer.
+ */
 export function puzzleFromLocation(): { slug: string; isQuiz: boolean } | null {
   const path = window.location.pathname;
   for (const [prefix, isQuiz] of [
@@ -182,15 +189,17 @@ export function puzzleFromLocation(): { slug: string; isQuiz: boolean } | null {
   ] as [string, boolean][]) {
     if (path.startsWith(prefix)) {
       const slug = path.slice(prefix.length).replace(/\/.*$/, "");
-      if (slug) return { slug: slug.replace(/-/g, "_"), isQuiz };
+      return { slug: slug.replace(/-/g, "_"), isQuiz };
     }
   }
 
   const params = new URLSearchParams(window.location.search);
-  const quiz = params.get("flagQuiz");
-  if (quiz) return { slug: quiz, isQuiz: true };
-  const map = params.get("map");
-  if (map) return { slug: map, isQuiz: false };
+  if (params.has("flagQuiz")) {
+    return { slug: params.get("flagQuiz") ?? "", isQuiz: true };
+  }
+  if (params.has("map")) {
+    return { slug: params.get("map") ?? "", isQuiz: false };
+  }
 
   return null;
 }

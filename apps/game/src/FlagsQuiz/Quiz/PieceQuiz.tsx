@@ -64,7 +64,7 @@ function PieceQuiz({
     // get distance from ecuador and multiply by flagQuizBackgrounds number
     const n = Math.floor(distance * ConfigService.flagQuizBackgrounds) + 1;
 
-    setBackgroundImage(`./flagQuiz/flagBackground${n}.jpeg`);
+    setBackgroundImage(siteAsset(`flagQuiz/flagBackground${n}.jpeg`));
   }, [pieceSelectedData]);
 
   //on init load if rtl lang

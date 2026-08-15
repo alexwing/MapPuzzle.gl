@@ -59,8 +59,10 @@ function MapPuzzle(): JSX.Element {
   * Load the game on start
   */
   useEffect(() => {
+    // An address with no puzzle in it — "/", "/?flagQuiz", "/flag-quiz/" —
+    // opens the default one, as it always did.
     const asked = puzzleFromLocation();
-    if (asked) {
+    if (asked?.slug) {
       PuzzleService.getPuzzleIdByUrl(asked.slug).then((content: number) => {
         loadGame(content);
       });

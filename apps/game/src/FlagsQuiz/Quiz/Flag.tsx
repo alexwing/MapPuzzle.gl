@@ -3,6 +3,7 @@
 import * as THREE from "three";
 import React, { useRef, useEffect } from "react";
 import { useFrame, extend } from "@react-three/fiber";
+import { siteAsset } from "@mappuzzle/core";
 
 extend({ THREE });
 
@@ -42,7 +43,7 @@ function Flag({ flagImageUrl }: { flagImageUrl: string }): JSX.Element {
     if (flagFakeShadow.current) {
       const loader = new THREE.TextureLoader();
       loader.load(
-        "./flagQuiz/shadow.png",
+        siteAsset("flagQuiz/shadow.png"),
         (texture) => {
           //the texture is a png with transparency, so we need to set the transparent flag to true
           const material = new THREE.MeshPhongMaterial({
