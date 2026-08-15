@@ -1,0 +1,83 @@
+name: CI
+
+# Everything that can be checked without a person looking at it.
+#
+# The static half is cheap and catches the obvious. The smoke job exists
+# because the static half is not enough: three changes in one afternoon passed
+# typecheck and lint and still took the app down the moment a browser loaded it.
+# It builds against the local backend rather than the live site, so a failure
+# here is always about this commit and never about the hosting.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  static:
+    name: Typecheck, lint and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # 22 is the floor: scripts/prerender.mjs reads the database through
+          # node:sqlite, which earlier versions do not have.
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+
+      # The real artefact, in the mode that ships: PHP gateway, prerendered
+      # pages, share cards copied in.
+      - run: npm run build
+
+      - name: Check the build came out whole
+        run: |
+          test -f build/index.html
+          test -f build/sitemap-index.xml
+          test -d build/map && test -d build/flag-quiz
+          pages=$(find build/map build/flag-quiz -name index.html | wc -l)
+          echo "prerendered pages: $pages"
+          test "$pages" -ge 100
+
+  smoke:
+    name: Does it run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm --prefix apps/backend ci
+
+      - name: Install the browser
+        run: npx playwright install chromium --with-deps
+
+      # Development mode points the client at the local backend, so the run is
+      # self-contained: no request leaves the machine.
+      - name: Build against the local backend
+        run: |
+          npx vite build --config apps/game/vite.config.ts --mode development
+          node --no-warnings scripts/prerender.mjs
+
+      - name: Start the backend
+        run: |
+          cp apps/backend/.env.example apps/backend/.env
+          npm --prefix apps/backend run dev &
+          timeout 90 bash -c 'until curl -sf http://localhost:5000/api/mapEditor/getCountries >/dev/null; do sleep 2; done' 
+
+      - name: Serve the build
+        run: |
+          npm run preview &
+          timeout 60 bash -c 'until curl -sf http://localhost:3000/ >/dev/null; do sleep 2; done' 
+
+      - run: node scripts/smoke.mjs

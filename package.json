@@ -57,6 +57,7 @@
     "typecheck:editor": "tsc -p apps/editor/tsconfig.json",
     "typecheck:backend": "tsc -p apps/backend/tsconfig.build.json --noEmit",
     "lint": "eslint \"apps/*/src/**/*.{ts,tsx}\" \"packages/*/src/**/*.{ts,tsx}\"",
+    "smoke": "node scripts/smoke.mjs",
     "publish-db": "node scripts/publish-db.mjs",
     "deploy": "node scripts/deploy.mjs",
     "deploy:app": "node scripts/deploy.mjs --only=app"
@@ -88,6 +89,7 @@
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.34.1",
     "http-server": "^14.1.1",
+    "playwright": "^1.62.1",
     "sass": "^1.93.3",
     "typescript": "^5.4.5",
     "vite": "^6.4.1",
