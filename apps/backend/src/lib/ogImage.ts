@@ -47,7 +47,19 @@ export interface CardInput {
   logo?: string;
   /** Flags quiz cards say something different underneath the name. */
   isQuiz?: boolean;
+  /**
+   * Directory of the puzzle's piece flags, one PNG per cartodb_id. Quiz cards
+   * show a panel of them instead of the country's own flag: the quiz is about
+   * those flags, and the country's says nothing about which quiz this is.
+   */
+  pieceFlags?: string;
 }
+
+/**
+ * The panel on quiz cards: below the subtitle, above the wordmark, from the
+ * text's own left margin to the middle of the card where the map begins.
+ */
+const PANEL = { left: 70, right: 600, bottom: 505 };
 
 interface TextLayer {
   input: Buffer;
@@ -260,6 +272,112 @@ function pathData(path: opentype.Path, decimals = 2): string {
   return d;
 }
 
+interface Mosaic {
+  /** The panel outline, drawn with the rest of the card. */
+  frame: string;
+  /** One composite layer per flag, already resized to its cell. */
+  layers: Promise<TextLayer>[];
+  /** How many were laid out, of how many the puzzle has. */
+  shown: number;
+  total: number;
+}
+
+/**
+ * Lays the piece flags out in a grid inside the panel.
+ *
+ * The grid is chosen to show every flag at the largest size that fits; when
+ * they cannot all fit legibly it shows as many as it can at a floor of 44 px
+ * wide, below which a flag is a smudge rather than a flag.
+ */
+function mosaic(dir: string, ids: number[], top: number): Mosaic | null {
+  const files = ids
+    .map((id) => path.join(dir, `${id}.png`))
+    .filter((file) => fs.existsSync(file));
+  if (files.length === 0) return null;
+
+  const width = PANEL.right - PANEL.left;
+  const height = PANEL.bottom - top;
+  if (height < 90) return null;
+
+  const pad = 18;
+  const gap = 9;
+  const innerW = width - pad * 2;
+  const innerH = height - pad * 2;
+
+  let choice: { cols: number; rows: number; cellW: number; cellH: number } | null = null;
+  for (let cols = 3; cols <= 10; cols++) {
+    const cellW = (innerW - gap * (cols - 1)) / cols;
+    if (cellW < 44) break;
+    const cellH = cellW / 1.5;
+    const rows = Math.floor((innerH + gap) / (cellH + gap));
+    if (rows < 1) continue;
+    const capacity = cols * rows;
+    const fitsAll = capacity >= files.length;
+    if (!choice) {
+      choice = { cols, rows, cellW, cellH };
+    } else {
+      const has = choice.cols * choice.rows;
+      const hadAll = has >= files.length;
+      // Everything at the biggest size wins; failing that, the most flags.
+      if ((fitsAll && !hadAll) || (!hadAll && capacity > has)) {
+        choice = { cols, rows, cellW, cellH };
+      }
+    }
+    if (fitsAll) break;
+  }
+  if (!choice) return null;
+
+  const { cols, rows, cellW, cellH } = choice;
+  const shown = Math.min(files.length, cols * rows);
+
+  /* Spread over the rows evenly rather than filling each one before starting
+     the next: four flags in a three-wide grid look better as two and two than
+     as three and a stray. */
+  const usedRows = Math.ceil(shown / cols);
+  const perRow: number[] = [];
+  const base = Math.floor(shown / usedRows);
+  const extra = shown % usedRows;
+  for (let r = 0; r < usedRows; r++) perRow.push(base + (r < extra ? 1 : 0));
+
+  const gridH = usedRows * cellH + (usedRows - 1) * gap;
+  const startY = top + (height - gridH) / 2;
+
+  const places: { file: string; left: number; top: number }[] = [];
+  let index = 0;
+  for (let r = 0; r < usedRows; r++) {
+    const count = perRow[r];
+    const rowW = count * cellW + (count - 1) * gap;
+    const rowX = PANEL.left + (width - rowW) / 2;
+    for (let c = 0; c < count; c++) {
+      places.push({
+        file: files[index++],
+        left: Math.round(rowX + c * (cellW + gap)),
+        top: Math.round(startY + r * (cellH + gap)),
+      });
+    }
+  }
+
+  const layers = places.map(async ({ file, left, top: cellTop }) => ({
+    input: await sharp(file)
+      .resize(Math.round(cellW), Math.round(cellH), {
+        fit: "inside",
+        kernel: "lanczos3",
+      })
+      .toBuffer(),
+    left,
+    top: cellTop,
+  }));
+
+  return {
+    frame:
+      `<rect x="${PANEL.left}" y="${top}" width="${width}" height="${height}" rx="18" ` +
+      `fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>`,
+    layers,
+    shown,
+    total: files.length,
+  };
+}
+
 function drawText(
   text: string,
   fontFile: string,
@@ -359,6 +477,18 @@ export async function buildCard(input: CardInput): Promise<Buffer> {
     ).svg
   );
 
+  /* On a quiz card the flags are the subject, so they take the space the
+     country's own flag used to sit in — and the country's comes off, since it
+     is the one thing on the card that says nothing about this quiz. */
+  const pieceIds: number[] = (geojson?.features ?? [])
+    .map((f: any) => f?.properties?.cartodb_id)
+    .filter((id: unknown): id is number => typeof id === "number")
+    .sort((a: number, b: number) => a - b);
+  const panel =
+    input.isQuiz && input.pieceFlags && fs.existsSync(input.pieceFlags)
+      ? mosaic(input.pieceFlags, pieceIds, subtitleBaseline + 26)
+      : null;
+
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_WIDTH}" height="${CARD_HEIGHT}">
   <defs>
     <radialGradient id="glow" cx="72%" cy="45%" r="55%">
@@ -377,11 +507,14 @@ export async function buildCard(input: CardInput): Promise<Buffer> {
     <path d="${mapPath}" fill="url(#land)" stroke="#93c5fd" stroke-width="1.5" stroke-linejoin="round"/>
   </g>
   <rect x="70" y="70" width="6" height="${subtitleBaseline - 58}" rx="3" fill="#3b82f6"/>
+  ${panel ? panel.frame : ""}
   ${text.join(" ")}
 </svg>`;
 
   const layers: TextLayer[] = [];
-  if (input.icon && fs.existsSync(input.icon)) {
+  if (panel) {
+    layers.push(...(await Promise.all(panel.layers)));
+  } else if (input.icon && fs.existsSync(input.icon)) {
     layers.push({
       input: await sharp(input.icon)
         .resize(112, 112, { fit: "inside", kernel: "lanczos3" })

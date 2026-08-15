@@ -429,6 +429,9 @@ mapEditor.get("/generateOgImages", async (_req, res) => {
         icon: puzzle.icon ? path.join(ASSETS_DIR, String(puzzle.icon)) : undefined,
         logo,
         isQuiz,
+        // 128px: big enough for a cell in the panel, small enough that a
+        // hundred of them do not take a minute to composite.
+        pieceFlags: isQuiz ? path.join(customFlagsDir(puzzle.id), "128") : undefined,
       });
       const dir = ogDir(isQuiz ? "flag-quiz" : "map");
       ensureDir(dir);
