@@ -18,7 +18,7 @@ Currently, there are two different games: Geographical Puzzles and Guess the Fla
 
 Both games offer detailed tracking of your successes, the list of remaining elements, errors made, and the time devoted to the activity.
 
-Players can choose the map they want to play, filtering by continent and region. One interesting feature of the game is that it allows players to translate the names of the puzzle pieces into different languages. This enriches their gaming experience and helps them develop their language skills.
+Players can choose the map they want to play, filtering by continent and region. The site itself is available in seven languages, each with an address of its own. One interesting feature of the game is that it allows players to translate the names of the puzzle pieces into different languages. This enriches their gaming experience and helps them develop their language skills.
 
 ## MapPuzzle.xyz as a native app
 
@@ -34,29 +34,33 @@ For best integration in Windows I recommend using Microsoft Edge, although you c
    
 ## Code Description
 
-**MapPuzzle.xyz** has been developed using advanced technologies such as React, Vite, Deck.gl, sqlite, PHP, typeorm, and node.js.
+**MapPuzzle.xyz** is a React application built with Vite, drawing its maps with
+deck.gl over WebGL, and installable as a Progressive Web App for offline play.
 
-To develop the game, the Deck.gl library was used, allowing the creation of interactive maps on the web using JavaScript and WebGL. This library is a powerful and versatile tool that facilitates the development of map applications on the web, offering a wide variety of components and layers for creating custom and highly interactive maps.
+What is published is only static files plus a small read-only PHP gateway over a
+SQLite file, so the game runs on ordinary hosting with no Node.js on the server.
+Every puzzle has a page of its own, written at build time in each of the seven
+interface languages, with its own title, description and region names, so a link
+to a puzzle says what it is before any script runs.
 
-Additionally, other technologies and tools such as React, Vite, sqlite, PHP, typeorm, and node.js have been used to implement various functionalities and enhance the gaming experience.
-
-- **React** has been used as the user interface development framework.
-- **Vite** is the build tool and dev server for the frontend, and provides the Progressive Web App (offline support) capabilities.
-- **sqlite** serves as a local database to store game data, with the published version on the web using it in read-only mode.
-- **PHP** has been used to develop database scripts, allowing the game to be hosted on a standard web server without node.js.
-- **node.js** is used for the backend of the map editor, which was used to create the game maps.
-- **typeorm** has been used to manage the database from the map editor.
-- Shapefiles are read directly in Node to generate the **geojson** files for the maps.
-
-Regarding the project structure, the game is divided into different components and modules responsible for various tasks. For example, there are components responsible for displaying the puzzle piece list and the map, others that manage the game logic and interact with players, and others responsible for obtaining and processing Wikipedia and translation data.
+The map editor is a separate application that runs locally, on Node.js with
+TypeORM. It reads shapefiles directly to produce each map's **geojson**, pulls
+names, flags and translations from Wikipedia, and works out every piece's
+centre, area and neighbours. Nothing of that runs on the server.
 
 ## Design
 
-The design of the game is based on the following principles:
+The interface is a set of glass panels over the map, all of it driven by CSS
+variables declared in one place, so a change lands everywhere at once.
 
-* **Minimalism**: The game has a minimalist design, with a simple and clean interface that allows players to focus on the game and not be distracted by other elements.
-* **Bootstrap**: The game uses the Bootstrap framework to facilitate the development of the user interface and make it responsive.
-* https://icons.getbootstrap.com/: The game uses the Bootstrap icons to facilitate the development of the user interface.
-* **Colors**: The puzzle pieces have bright, eye-catching colors that contrast with the white background of the map, making them easy to identify and locate on the map.
+* **Light and dark**: the same tokens redefined, and the choice is remembered on
+  your device.
+* **Typography**: Outfit for titles and Inter for text, served from this site
+  rather than from a font service.
+* **Cursors**: the pointer says whether a piece can be taken and whether it is
+  being held.
+* **Bootstrap** underneath, and https://icons.getbootstrap.com/ for the icons.
+* **Colours**: the pieces keep bright, contrasting colours — they are the one
+  thing that has to read instantly against the map.
 
 ## Credits

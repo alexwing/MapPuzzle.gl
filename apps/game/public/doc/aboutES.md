@@ -12,18 +12,18 @@ Actualmente, se ofrecen dos juegos diferentes: Rompecabezas Geográficos y Adivi
 ### Adivina la Bandera
 - Observa una bandera ondeando y la silueta del país en la parte derecha.
 - Elige entre seis opciones disponibles para identificar correctamente el país al que pertenece.
-- Una ves terminado el juego, puedes explorar el mapa y obtener información adicional sobre el país obtenido de Wikipedia.
+- Una vez terminado el juego, puedes explorar el mapa y obtener información adicional sobre el país obtenido de Wikipedia.
 
 ## Modos de Juego
 
 Ambos juegos ofrecen un seguimiento detallado de tus aciertos, la lista de elementos restantes, los errores cometidos y el tiempo dedicado a la actividad.
 
-Los jugadores pueden elegir el mapa en el que quieren jugar y filtrando por continente y región. 
+Los jugadores pueden elegir el mapa en el que quieren jugar, filtrando por continente y región. El sitio entero está además en siete idiomas, cada uno con su propia dirección. 
 Una de las características interesantes del juego es que permite a los jugadores traducir los nombres de las piezas del rompecabezas a diferentes idiomas. Esto les permite aprender los nombres de los lugares en diferentes idiomas, enriqueciendo su experiencia de juego y ayudándoles a desarrollar sus habilidades lingüísticas.
 
 ## MapPuzzle.xyz como una aplicación nativa
 
-Ahora puedes instala MapPuzzle.xyz como una Aplicación Web Progresiva (PWA). Una PWA ofrece una experiencia de aplicación nativa que se instala directamente desde tu navegador, sin necesidad de descargarla desde una tienda de aplicaciones o usar un instalador.
+Ahora puedes instalar MapPuzzle.xyz como una Aplicación Web Progresiva (PWA). Una PWA ofrece una experiencia de aplicación nativa que se instala directamente desde tu navegador, sin necesidad de descargarla desde una tienda de aplicaciones o usar un instalador.
 
 Para su mejor integración en Windows recomiendo usar Microsoft Edge, aunque también puedes instalarlo en otros sistemas operativos y navegadores compatibles.
 
@@ -35,30 +35,37 @@ Para su mejor integración en Windows recomiendo usar Microsoft Edge, aunque tam
 
 ## Descripción del código
 
-**MapPuzzle.xyz** ha sido desarrollado utilizando tecnologías avanzadas como React, Vite, Deck.gl, sqlite, PHP, typeorm y node.js.
+**MapPuzzle.xyz** es una aplicación React construida con Vite, que dibuja sus
+mapas con deck.gl sobre WebGL y se puede instalar como Aplicación Web Progresiva
+para jugar sin conexión.
 
-Para desarrollar el juego, se utilizó la biblioteca Deck.gl, que permite crear mapas interactivos en la web utilizando JavaScript y WebGL. Esta biblioteca es una herramienta poderosa y versátil que facilita el desarrollo de aplicaciones de mapas en la web, ofreciendo una amplia variedad de componentes y capas que se pueden utilizar para crear mapas personalizados y altamente interactivos.
+Lo que se publica son solo ficheros estáticos más una pequeña pasarela PHP de
+solo lectura sobre un fichero SQLite, así que el juego funciona en un alojamiento
+corriente, sin Node.js en el servidor. Cada puzle tiene su propia página, escrita
+durante la compilación en cada uno de los siete idiomas de la interfaz, con su
+título, su descripción y los nombres de sus regiones: un enlace a un puzle ya
+dice lo que es antes de que se ejecute ningún script.
 
-Además, se han utilizado otras tecnologías y herramientas como React, Vite, sqlite, PHP, typeorm y node.js para implementar diferentes funcionalidades y mejorar la experiencia del juego.
-
-- **React** se ha utilizado como marco de desarrollo de interfaz de usuario. 
-- **Vite** es la herramienta de compilación y servidor de desarrollo del frontend, y proporciona las capacidades de Aplicación Web Progresiva (PWA, soporte offline).
-- **sqlite** base de datos local para almacenar los datos del juego, la version publicada en la web solo la usa en modo lectura.
-- **PHP** se ha utilizado para desarrollar scripts de base de datos, para poder ser alojado en un servidor web estandar, sin node.js.
-- **node.js** Sirven para el backend del editor de mapas, con el que se han creado los mapas del juego.
-- **typeorm** se ha utilizado para gestionar la base de datos desde el editor de mapas.
-- Los ficheros SHP se leen directamente en Node para generar los **geojson** de los mapas.
-
-En cuanto a la estructura del proyecto, el juego está dividido en diferentes componentes y módulos que son responsables de tareas diferentes. Por ejemplo, hay componentes que se encargan de mostrar la lista de piezas del rompecabezas y el mapa, otros que gestionan la lógica del juego e interactúan con los jugadores, y otros que se encargan de obtener y procesar datos de Wikipedia y traducciones.
+El editor de mapas es una aplicación aparte que corre en local, sobre Node.js con
+TypeORM. Lee los ficheros shapefile directamente para producir el **geojson** de
+cada mapa, trae nombres, banderas y traducciones de Wikipedia, y calcula el
+centro, la superficie y los vecinos de cada pieza. Nada de eso corre en el
+servidor.
 
 ## Diseño
 
-El diseño del juego se basa en los siguientes principios:
+La interfaz es un conjunto de paneles de cristal sobre el mapa, gobernados por
+variables CSS declaradas en un único sitio, de modo que un cambio se aplica en
+todas partes a la vez.
 
-* **Minimalismo**: El juego tiene un diseño minimalista, con una interfaz simple y limpia que permite a los jugadores centrarse en el juego y no distraerse con otros elementos.
-* **Bootstrap**: El juego utiliza el framework Bootstrap para facilitar el desarrollo de la interfaz de usuario y hacerla responsive.
-* https://icons.getbootstrap.com/: El juego utiliza los iconos de Bootstrap para facilitar el desarrollo de la interfaz de usuario.
-* **Colores**: Las piezas del rompecabezas tienen colores brillantes y llamativos que contrastan con el fondo blanco del mapa, lo que facilita su identificación y localización en el mapa.
-
+* **Claro y oscuro**: los mismos valores redefinidos, y la elección se recuerda
+  en tu dispositivo.
+* **Tipografía**: Outfit para los títulos e Inter para el texto, servidas desde
+  este sitio y no desde un servicio de fuentes.
+* **Cursores**: el puntero indica si una pieza se puede coger y si la estás
+  sujetando.
+* **Bootstrap** por debajo, y https://icons.getbootstrap.com/ para los iconos.
+* **Colores**: las piezas conservan colores vivos y contrastados: son lo único
+  que tiene que distinguirse de un vistazo sobre el mapa.
 
 ## Créditos
