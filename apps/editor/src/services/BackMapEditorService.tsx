@@ -3,6 +3,7 @@ import { ConfigService } from "@mappuzzle/core";
 import type { Puzzles } from "@mappuzzle/shared";
 import type { PieceProps } from "@mappuzzle/shared";
 import { PuzzleService } from "@mappuzzle/core";
+import { readProgress, type JobProgress } from "./BackWikiService";
 
 export class BackMapEditorService {
   //call endpoint get generateSitemap return xml sitemap
@@ -22,6 +23,24 @@ export class BackMapEditorService {
         return Promise.reject("Error generating sitemap");
       });
   }
+  /**
+   * Builds the share card for every puzzle. Runs for a couple of minutes, so it
+   * reports progress the same way the content jobs do: newline-delimited JSON
+   * over the same response, with the result on the last line.
+   */
+  public static async generateOgImages(
+    onProgress?: (p: JobProgress) => void
+  ): Promise<any> {
+    const response = await fetch(
+      ConfigService.backendUrl + "/mapEditor/generateOgImages",
+      { method: "GET" }
+    ).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error generating share cards");
+    });
+    return readProgress(response, onProgress);
+  }
+
   //get all countries 
   public static async getCountries(): Promise<any> {
     const response = await fetch(ConfigService.backendUrl + "/mapEditor/getCountries", {

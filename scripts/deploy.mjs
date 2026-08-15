@@ -35,7 +35,7 @@ const skipBuild = has("--no-build") || has("--skip-build");
 const verbose = has("--verbose");
 
 /** Generated content: compared by size before sending. */
-const BULK = ["maps", "flags", "customFlags", "flagQuiz", "doc"];
+const BULK = ["maps", "flags", "customFlags", "flagQuiz", "doc", "og"];
 
 /**
  * The app shell: everything in the build that is not bulk content. Small,

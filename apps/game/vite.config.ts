@@ -35,7 +35,7 @@ function copyRecursive(from: string, to: string): void {
  */
 function serveDataDir(): Plugin {
   /** Everything under data/, addressed from the site root. */
-  const entries = ["maps", "flags", "customFlags"];
+  const entries = ["maps", "flags", "customFlags", "og"];
   const files = ["front.sqlite3.png", "sitemap.xml"];
   const types: Record<string, string> = {
     ".geojson": "application/geo+json",

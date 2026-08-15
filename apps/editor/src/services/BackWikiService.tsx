@@ -21,7 +21,7 @@ export interface JobProgress {
  * minutes. The response is consumed as a stream: every line but the last is a
  * progress event, and the last one is the result the caller used to await.
  */
-async function readProgress(
+export async function readProgress(
   response: Response,
   onProgress?: (p: JobProgress) => void
 ): Promise<any> {

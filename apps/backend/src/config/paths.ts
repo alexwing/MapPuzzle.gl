@@ -42,6 +42,17 @@ export const mapsDir = (): string => path.join(ASSETS_DIR, "maps");
 /** Country flags offered by the editor's icon picker, read-only. */
 export const flagsDir = (): string => path.join(ASSETS_DIR, "flags");
 
+/**
+ * The share cards, one per puzzle: <ASSETS_DIR>/og/map/<slug>.png and
+ * <ASSETS_DIR>/og/flag-quiz/<slug>.png, mirroring the addresses they belong to.
+ */
+export const ogDir = (kind: "map" | "flag-quiz"): string =>
+  path.join(ASSETS_DIR, "og", kind);
+
+/** The site logo the share cards stamp in their corner. */
+export const siteLogoPath = (): string =>
+  path.join(repoRoot, "apps/game/public/logo192.png");
+
 /** Per-piece flags downloaded from Wikipedia, plus their raster sizes. */
 export const customFlagsDir = (puzzleId: number | string): string =>
   path.join(ASSETS_DIR, "customFlags", String(puzzleId));

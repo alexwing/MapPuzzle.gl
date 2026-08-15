@@ -98,6 +98,22 @@ function page(template, puzzle, names, isQuiz) {
   if (!canonical_re.test(html)) throw new Error("index.html has no canonical link to replace");
   html = html.replace(canonical_re, `<link rel="canonical" href="${url}" />`);
 
+  /* The share card, one per puzzle, written by the editor's own batch. Both
+     the size and the twitter copy matter: without the dimensions some clients
+     lay the card out before it loads, and Twitter reads its own tags first. */
+  const card = `${SITE}/og${puzzlePath(puzzle.url, isQuiz)}`.replace(/\/$/, "") + ".png";
+  const cardFile = path.join(dataDir, "og", isQuiz ? "flag-quiz" : "map", `${puzzle.url.replace(/_/g, "-")}.png`);
+  if (fs.existsSync(cardFile)) {
+    meta("property", "og:image", card);
+    meta("name", "twitter:image", card);
+    html = html.replace(
+      /<meta property="og:image:alt"[\s\S]*?>/i,
+      `<meta property="og:image:alt" content="${escape(title)}" />` +
+        `<meta property="og:image:width" content="1200" />` +
+        `<meta property="og:image:height" content="630" />`
+    );
+  }
+
   meta("name", "description", description);
   meta("property", "og:title", title);
   meta("property", "og:description", description);

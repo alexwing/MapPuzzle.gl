@@ -12,7 +12,9 @@ import path from "path";
 import fetch from "node-fetch";
 import sharp from "sharp";
 import ViewState from "../models/viewState";
-import { customFlagsDir, ensureDir, flagsDir, sitemapPaths } from "../config/paths";
+import { ASSETS_DIR, customFlagsDir, ensureDir, flagsDir, ogDir, siteLogoPath, sitemapPaths } from "../config/paths";
+import { buildCard } from "../lib/ogImage";
+import { startProgress } from "../lib/progress";
 
 // eslint-disable-next-line new-cap
 const mapEditor = express.Router();
@@ -388,6 +390,68 @@ mapEditor.get("/wikiRender", async (req, res) => {
     const message = e instanceof Error ? e.message : String(e);
     res.status(500).send(message);
   }
+});
+
+/**
+ * Builds a share card for every puzzle.
+ *
+ * One pass over the catalogue: a card per map, and another for each puzzle that
+ * has flags, since the flags quiz is a separate address with a separate page.
+ * The prerender step points each page's og:image at what this writes.
+ */
+mapEditor.get("/generateOgImages", async (_req, res) => {
+  const progress = startProgress(res);
+  const puzzles = await connection!.getRepository(Puzzles).find();
+  const logo = siteLogoPath();
+
+  const jobs: { puzzle: Puzzles; isQuiz: boolean }[] = [];
+  for (const puzzle of puzzles) {
+    jobs.push({ puzzle, isQuiz: false });
+    if (puzzle.enableFlags === true) jobs.push({ puzzle, isQuiz: true });
+  }
+
+  let written = 0;
+  const failures: string[] = [];
+  let done = 0;
+
+  for (const { puzzle, isQuiz } of jobs) {
+    done++;
+    progress.step(done, jobs.length, `${puzzle.name}${isQuiz ? " (flags)" : ""}`);
+    try {
+      const geojson = path.join(ASSETS_DIR, String(puzzle.data));
+      if (!fs.existsSync(geojson)) {
+        failures.push(`${puzzle.name}: no geojson at ${puzzle.data}`);
+        continue;
+      }
+      const card = await buildCard({
+        name: String(puzzle.name),
+        geojson,
+        icon: puzzle.icon ? path.join(ASSETS_DIR, String(puzzle.icon)) : undefined,
+        logo,
+        isQuiz,
+      });
+      const dir = ogDir(isQuiz ? "flag-quiz" : "map");
+      ensureDir(dir);
+      // Uint8Array, for the same reason as the flag writer above: these
+      // @types/node no longer accept a Buffer here.
+      fs.writeFileSync(
+        path.join(dir, `${String(puzzle.url).replace(/_/g, "-")}.png`),
+        new Uint8Array(card)
+      );
+      written++;
+    } catch (err) {
+      failures.push(`${puzzle.name}: ${(err as Error).message}`);
+    }
+  }
+
+  progress.finish({
+    success: failures.length === 0,
+    msg:
+      `${written} share card${written === 1 ? "" : "s"} written` +
+      (failures.length > 0 ? `, ${failures.length} failed` : ""),
+    failures,
+    counts: { written, failed: failures.length },
+  });
 });
 
 export default mapEditor;

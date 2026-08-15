@@ -75,6 +75,20 @@ function App(): JSX.Element {
       .catch((e) => setNotice(`Could not generate the sitemap: ${String(e)}`));
   };
 
+  /**
+   * Rebuilds the share card for every puzzle: what a link to it looks like when
+   * someone pastes it into a chat. A hundred and nineteen images, so unlike the
+   * sitemap it says where it has got to while it works.
+   */
+  const generateOgImages = () => {
+    setNotice("Building share cards…");
+    BackMapEditorService.generateOgImages((p) =>
+      setNotice(`Building share cards… ${p.done} of ${p.total} — ${p.label}`)
+    )
+      .then((res) => setNotice(res?.msg ?? "Share cards rebuilt"))
+      .catch((e) => setNotice(`Could not build the share cards: ${String(e)}`));
+  };
+
   const loadPuzzles = () => {
     PuzzleService.getPuzzles()
       .then((list) => {
@@ -157,14 +171,14 @@ function App(): JSX.Element {
             </Button>
           </ButtonGroup>
 
-          <Button
-            size="sm"
-            variant="outline-light"
-            className="ms-auto"
-            onClick={generateSitemap}
-          >
-            Generate sitemap
-          </Button>
+          <ButtonGroup className="ms-auto">
+            <Button size="sm" variant="outline-light" onClick={generateSitemap}>
+              Generate sitemap
+            </Button>
+            <Button size="sm" variant="outline-light" onClick={generateOgImages}>
+              Build share cards
+            </Button>
+          </ButtonGroup>
 
           {mode === "edit" && (
             <div style={{ position: "relative", maxWidth: "22rem" }}>
