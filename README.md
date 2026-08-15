@@ -2,7 +2,7 @@
 
 **MapPuzzle.xyz** is a platform that immerses you in hours of entertainment through flags, maps, and puzzles from various parts of the world. The game is designed for players of all ages and skill levels, offering a comprehensive and enriching educational experience.
 
-![MapPuzzle.gl](http://mappuzzle.xyz/ogimage.jpg)
+![MapPuzzle.gl](https://mappuzzle.xyz/ogimage.jpg)
 
 ## Available Games
 
@@ -26,9 +26,9 @@ Players can choose the map they want to play, filtering by continent and region.
 
 ## How to play
 
-You can play the game in the following link: [MapPuzzle.xyz](http://mappuzzle.xyz/)
+You can play the game in the following link: [MapPuzzle.xyz](https://mappuzzle.xyz/)
 
-![MapPuzzle.xyz](http://mappuzzle.xyz/demoimage.jpg)
+![MapPuzzle.xyz](apps/game/public/demoimage.jpg)
 
 ## Code Description
 
@@ -110,16 +110,38 @@ what pins content paths — maps, flags, logos, textures — to `/`.
 
 ## Design
 
-The design of the game is based on the following principles:
+The interface is a set of glass panels floating over the map. Everything that
+defines the look is a CSS custom property declared once, at the top of
+`apps/game/src/styles/MapPuzzle.css`, so a change lands everywhere at once.
 
-* **Minimalism**: The game has a minimalist design, with a simple and clean interface that allows players to focus on the game and not be distracted by other elements.
-* **Bootstrap**: The game uses the Bootstrap framework to facilitate the development of the user interface and make it responsive.
-* https://icons.getbootstrap.com/: The game uses the Bootstrap icons to facilitate the development of the user interface.
-* **Colors**: The puzzle pieces have bright, eye-catching colors that contrast with the white background of the map, making them easy to identify and locate on the map.
+- **Glass surfaces.** `--glass-bg`, `--glass-border` and `--glass-shadow` with
+  `backdrop-filter`, on the tool panel, the piece list, the top bar and the
+  dialogs — eighteen places in the main stylesheet, two more in the quiz.
+- **Light and dark.** The same tokens redefined under `[data-bs-theme="dark"]`,
+  from `#f1f5f9` on white glass to `#090d16` on slate. The choice is the
+  player's and is remembered on their device.
+- **Typography.** Outfit for titles, Inter for text, both self-hosted as
+  variable fonts — one file per family covering weights 100 to 900, so the page
+  asks nothing of a font CDN and no weight costs an extra download.
+- **Custom cursors.** `--cursor-grab` and `--cursor-grabbing` point at SVGs, so
+  the pointer says whether a piece can be taken and whether it is being held.
+- **Accent.** One `--accent-color` with a matching `--accent-glow` for focus and
+  hover, blue on both themes.
+- **Bootstrap underneath.** Its own `--bs-*` variables are overridden rather
+  than fought, and the iconography is Bootstrap Icons.
+- **Responsive.** `styles/responsive.css`, including specific work for ultrawide
+  screens, where the quiz's radial fill needed its own handling.
+
+The pieces keep their bright, contrasting colours: they are the one thing that
+has to read instantly against the map.
+
+Alongside the redesign the client was made lighter — cursor tracking and the
+deck.gl layers were reworked, and the two secondary screens (the flags quiz and
+the donate page) load as separate chunks instead of riding in the main bundle.
 
 ## Credits
 
-This project was developed by Alejandro Aranda, and is a part of the [MapPuzzle.gl](http://mappuzzle.xyz/) project.
+This project was developed by Alejandro Aranda, and is a part of the [MapPuzzle.gl](https://mappuzzle.xyz/) project.
 
 ## License
 
