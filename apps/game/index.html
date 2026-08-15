@@ -45,6 +45,56 @@
     -->
     <link rel="manifest" href="/manifest.json" />
     <title>MapPuzzle.xyz</title>
+
+    <!--
+      What the page looks like before the app takes over.
+
+      Two things used to happen on every reload. The stylesheet is a separate
+      file, so until it arrived the page painted with the browser defaults:
+      white, Times, a bulleted list — visible for as long as the network took,
+      and more visible since prerendering put real text inside #root. And the
+      theme is chosen by ThemeProvider in an effect, so anyone on dark got a
+      white page first and the dark one a frame later.
+
+      So the theme is decided here, before the first paint, by the same rule
+      the provider uses (the cookie, then the system preference), and enough
+      style to paint that first frame is inline. Keep the colours below in step
+      with --bg-app and --text-main in styles/MapPuzzle.css.
+    -->
+    <script>
+      (function () {
+        var m = document.cookie.match(/(?:^|;\s*)theme=([^;]*)/);
+        var theme = m ? decodeURIComponent(m[1]) : null;
+        if (theme !== "dark" && theme !== "light") {
+          theme =
+            window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        }
+        document.documentElement.setAttribute("data-bs-theme", theme);
+      })();
+    </script>
+    <style>
+      :root { --boot-bg: #f1f5f9; --boot-text: #1e293b; --boot-muted: #64748b;
+              --boot-line: rgba(15, 23, 42, .12); color-scheme: light }
+      [data-bs-theme="dark"] { --boot-bg: #090d16; --boot-text: #f8fafc; --boot-muted: #94a3b8;
+              --boot-line: rgba(255, 255, 255, .12); color-scheme: dark }
+      body { margin: 0; background: var(--boot-bg); color: var(--boot-text);
+             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif }
+
+      /* The text prerender.mjs leaves inside #root. React replaces it on mount. */
+      .prerendered-intro { max-width: 46rem; margin: 0 auto; padding: 14vh 1.5rem 4rem }
+      .prerendered-intro h1 { font-family: 'Outfit', 'Inter', sans-serif; font-weight: 700;
+             font-size: clamp(1.75rem, 4vw, 2.75rem); line-height: 1.15; margin: 0 0 .6rem }
+      .prerendered-intro p { color: var(--boot-muted); font-size: 1.05rem; line-height: 1.5;
+             margin: 0 0 2rem }
+      .prerendered-intro h2 { font-size: .8rem; font-weight: 600; letter-spacing: .08em;
+             text-transform: uppercase; color: var(--boot-muted); margin: 0 0 .75rem }
+      .prerendered-intro ul { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem;
+             padding: 0; margin: 0 }
+      .prerendered-intro li { border: 1px solid var(--boot-line); border-radius: 999px;
+             padding: .2rem .7rem; font-size: .82rem; color: var(--boot-muted) }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

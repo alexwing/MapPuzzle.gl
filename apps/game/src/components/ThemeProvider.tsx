@@ -27,10 +27,17 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): Reac
   }
   const [theme, setTheme] = useState(getSavedTheme());
 
-  //set data-bs-theme={theme} to body element when theme changes
+  // Set data-bs-theme={theme} when the theme changes.
+  //
+  // On <html> as well as on <body>: index.html decides the theme before the
+  // first paint, and the only element it can mark that early is <html>. If the
+  // toggle then only wrote to <body>, the two would disagree — <html> would
+  // still carry the old theme, and since only the dark tokens are keyed on the
+  // attribute (the light ones live on :root), switching back to light would
+  // keep inheriting the dark palette.
   useEffect(() => {
+    document.documentElement.setAttribute("data-bs-theme", theme);
     document.body.setAttribute("data-bs-theme", theme);
-    console.log("theme changed to: " + theme);
   }, [theme]);
   
   // Provide the theme state and the function to update it
