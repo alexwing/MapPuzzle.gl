@@ -16,6 +16,8 @@ interface AnimatedCursorProps {
   centroid: CustomCentroids;
   tooltip: string;
   zoom: number;
+  bearing?: number;
+  pitch?: number;
 }
 
 function AnimatedCursor({
@@ -24,6 +26,8 @@ function AnimatedCursor({
   centroid,
   tooltip = "",
   zoom = 2,
+  bearing = 0,
+  pitch = 0,
 }: AnimatedCursorProps): JSX.Element | null {
   if (typeof navigator !== "undefined" && IsDevice?.any()) {
     return <React.Fragment></React.Fragment>;
@@ -34,6 +38,8 @@ function AnimatedCursor({
       selected={selected}
       centroid={centroid}
       zoom={zoom}
+      bearing={bearing}
+      pitch={pitch}
       tooltip={tooltip}
     />
   );

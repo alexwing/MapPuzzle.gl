@@ -18,12 +18,27 @@ import "./CursorCore.css";
  * @param {number} clickScale - inner cursor scale amount
  */
 
+/**
+ * Web Mercator metres per pixel at zoom 0.
+ *
+ * deck.gl lays the world out on 512-pixel tiles, so a metre of EPSG:3857 — the
+ * units pieceSilhouette works in — is 2^zoom / this many pixels. It is the
+ * number the map itself draws with, so a piece scaled by it is the size of the
+ * hole it has to fill. It used to be 74000, which drew every dragged piece 5.8%
+ * too large; invisible while nothing overlaid them, not invisible now.
+ */
+const METRES_PER_PIXEL_AT_ZOOM_0 = (2 * Math.PI * 6378137) / 512;
+
 interface CursorCoreProps {
   clickScale: number;
   selected: PieceProps;
   centroid: CustomCentroids;
   tooltip: string;
   zoom: number;
+  /** Map bearing in degrees, clockwise. */
+  bearing: number;
+  /** Map pitch in degrees away from straight down. */
+  pitch: number;
 }
 
 function CursorCore({
@@ -32,6 +47,8 @@ function CursorCore({
   centroid,
   tooltip = "",
   zoom = 2,
+  bearing = 0,
+  pitch = 0,
 }: CursorCoreProps): JSX.Element {
   const pieceCursorRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -43,6 +60,13 @@ function CursorCore({
   const isVisibleRef = useRef(false);
   const isActiveRef = useRef(false);
   const isActiveClickableRef = useRef(false);
+  // Read inside the animation frame rather than closed over, so turning the map
+  // does not tear the loop down and build it again on every view change.
+  const attitude = useRef({ bearing: 0, pitch: 0 });
+
+  useEffect(() => {
+    attitude.current = { bearing, pitch };
+  }, [bearing, pitch]);
 
   // Primary Mouse Move event without triggering React re-renders
   const onMouseMove = useCallback(
@@ -72,7 +96,25 @@ function CursorCore({
         coords.current.y += (endY.current - coords.current.y) / 8;
         const scale =
           isActiveRef.current || isActiveClickableRef.current ? clickScale : 1;
-        pieceCursorRef.current.style.transform = `translate3d(${coords.current.x}px, ${coords.current.y}px, 0) scale(${scale})`;
+        // The map's attitude, given to the piece.
+        //
+        // Turn it by -bearing, then squash the screen's vertical axis by
+        // cos(pitch): that pair is exactly how an orthographic camera lays the
+        // ground plane onto the screen, and it is the foreshortening the real
+        // map applies in the middle of the viewport, where you are looking.
+        //
+        // Not the true perspective, on purpose. Projected properly the same
+        // piece is 31 pixels tall at the top of a 60° view and 177 at the
+        // bottom — it would stop being a silhouette you can recognise. This
+        // holds its shape wherever the cursor goes.
+        //
+        // Rightmost applies first, so the rotation happens in the piece's own
+        // space and the squash in the screen's, which is the order that matches.
+        const { bearing: b, pitch: p } = attitude.current;
+        const tilt = Math.cos((p * Math.PI) / 180);
+        pieceCursorRef.current.style.transform =
+          `translate3d(${coords.current.x}px, ${coords.current.y}px, 0)` +
+          ` scale(${scale}) scaleY(${tilt}) rotate(${-b}deg)`;
       }
       previousTimeRef.current = time;
       requestRef.current = requestAnimationFrame(animateOuterCursor);
@@ -162,8 +204,8 @@ function CursorCore({
   const box = pieceBox(selected);
   if (box) {
     const scale = Math.pow(2, zoom);
-    const sizeX = (parseInt(box.split(" ")[2]) * scale) / 74000;
-    const sizeY = (parseInt(box.split(" ")[3]) * scale) / 74000;
+    const sizeX = (parseInt(box.split(" ")[2]) * scale) / METRES_PER_PIXEL_AT_ZOOM_0;
+    const sizeY = (parseInt(box.split(" ")[3]) * scale) / METRES_PER_PIXEL_AT_ZOOM_0;
     let marginLeft = "-50%";
     let marginTop = "-50%";
     if (centroid.id) {

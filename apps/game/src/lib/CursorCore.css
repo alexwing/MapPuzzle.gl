@@ -9,6 +9,11 @@
     position: fixed;
     top: 0;
     left: 0;
+    /* The box's top-left corner is the point under the cursor — the piece's own
+       centroid, put there by the negative margins on the svg. Pivoting there is
+       what makes the turn and the tilt happen about the centroid instead of
+       swinging the piece away from the pointer. */
+    transform-origin: 0 0;
     pointer-events: none !important;
     backface-visibility: hidden;
     will-change: transform;

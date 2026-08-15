@@ -520,6 +520,8 @@ function MapPuzzle(): JSX.Element {
             <AnimatedCursor
               clickScale={0.95}
               zoom={viewState?.zoom}
+              bearing={viewState?.bearing}
+              pitch={viewState?.pitch}
               selected={pieceSelectedData}
               centroid={pieceSelectedCentroid}
               tooltip={tooltipValue}
