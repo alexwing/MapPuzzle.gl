@@ -129,7 +129,9 @@ mapEditor.post("/replacePieceFlag", async (req, res) => {
     }
 
     const sourcePath = path.join(outDir, `${basename}.${ext}`);
-    fs.writeFileSync(sourcePath, sourceBuffer);
+    // Uint8Array rather than the Buffer itself: the installed @types/node types
+    // writeFileSync against ArrayBufferView, and Buffer no longer satisfies it.
+    fs.writeFileSync(sourcePath, new Uint8Array(sourceBuffer));
 
     const sizes = [64, 128, 256, 512, 1024];
     for (const size of sizes) {

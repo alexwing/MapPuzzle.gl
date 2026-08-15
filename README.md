@@ -76,19 +76,38 @@ onwards it requires a Mapbox access token, and that means a paid plan.
 
 ## Scripts
 
+Thirteen, and each one is a job someone actually does.
+
+**Developing**
+
 | Script | What it does |
 | --- | --- |
 | `dev` | The game against the local Node backend. Needs `backend` running. |
-| `pro` | The game reading the SQLite file straight over HTTP, no backend at all. |
-| `dev-php-backend` | The game against a PHP backend on port 8888. |
+| `dev-php-backend` | The game against a PHP backend on port 8888, to try changes to the gateway itself. |
 | `editor` | The map editor, on port 3001. Always needs the Node backend. |
 | `backend` | Express + TypeORM on port 5000. |
+
+**Checking**
+
+| Script | What it does |
+| --- | --- |
+| `typecheck` | All three projects. |
+| `typecheck:game`, `typecheck:editor`, `typecheck:backend` | One at a time. |
+
+**Releasing**
+
+| Script | What it does |
+| --- | --- |
 | `build` | The production build, then the prerender step. What gets deployed. |
-| `prerender` | Just the prerender step, over an existing build. |
-| `preview` | Serves the build locally. Use port 3000: the production PHP gateway only allows that origin. |
-| `typecheck`, `typecheck:editor`, `typecheck:backend` | No-emit compiles. |
+| `preview` | Serves that build on port 3000. The port is fixed on purpose: the production PHP gateway only accepts that origin, so any other one fails CORS and the game loads without data. |
 | `publish-db` | Copies the authoring database over the published one, showing both digests first. `--check` fails instead of writing. |
-| `deploy`, `deploy:app` | Uploads over FTP. The first compares the generated content by size and sends what differs; the second sends only the app shell. `--dry-run` prints the plan. Credentials live in `.env.deploy`, which is gitignored. |
+| `deploy` | Uploads over FTP, comparing the generated content by size and sending only what differs. |
+| `deploy:app` | The same, skipping that comparison — the app shell only, which is the usual case after a code change. |
+
+`--dry-run` prints a deploy plan without uploading anything. FTP credentials come
+from `.env.deploy`, which is gitignored. The prerender step can be run on its own
+against an existing build with `node scripts/prerender.mjs`, and `--check` there
+reports what it would write.
 
 ## How a puzzle is addressed
 

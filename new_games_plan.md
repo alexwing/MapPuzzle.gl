@@ -34,12 +34,7 @@ Hoy la aplicación usa cookies a través de `react-simple-cookie-store`:
 | `puzzleLanguage` | idioma del panel de Wikipedia |
 | `<nombre><idPuzzle>` | tiempo de juego, una cookie **por puzzle jugado** |
 
-Hay dos problemas medibles antes de construir nada encima:
-
-**Caducan en un día.** `ConfigService.cookieDays` sale de `VITE_COOKIE_DAYS`, que
-no está definida en ningún `.env`, así que toma el valor por defecto: `1`. El
-progreso y las preferencias se pierden a las veinticuatro horas. Para un juego de
-rachas diarias eso es fatal: la racha se rompe sola.
+Hay un problema medible antes de construir nada encima:
 
 **Las cookies viajan.** Una cookie se envía al servidor en **cada** petición
 HTTP: en el `index.html`, en cada `.woff2`, en cada bandera y en los geojson, que
@@ -47,6 +42,10 @@ llegan a 4,3 MB. Con una cookie de tiempo por puzzle y 70 puzzles, un jugador
 veterano acaba adjuntando decenas de cookies a cada descarga. Es justo lo
 contrario de lo que persigue la filosofía del proyecto: es el único
 almacenamiento de navegador que sí sale del dispositivo.
+
+La caducidad, en cambio, no es problema: `ConfigService.cookieDays` sale de
+`VITE_COOKIE_DAYS`, definida por modo en `apps/game/environments/`, y la build de
+producción usa 256 días. Una racha diaria sobrevive de sobra.
 
 **Propuesta:** el estado de los juegos nuevos va a `localStorage`, que nunca se
 envía al servidor y ofrece unos 5 MB en lugar de 4 KB. Las cookies actuales se

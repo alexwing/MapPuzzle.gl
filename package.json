@@ -49,19 +49,18 @@
   ],
   "scripts": {
     "dev": "vite --config apps/game/vite.config.ts",
-    "pro": "vite --config apps/game/vite.config.ts --mode production",
     "dev-php-backend": "vite --config apps/game/vite.config.ts --mode devphpbackend",
-    "build": "vite build --config apps/game/vite.config.ts --mode phpbackend && node --no-warnings scripts/prerender.mjs",
-    "preview": "vite preview --config apps/game/vite.config.ts",
     "editor": "vite --config apps/editor/vite.config.ts",
     "backend": "npm --prefix apps/backend run dev",
-    "typecheck": "tsc -p apps/game/tsconfig.json",
+    "build": "vite build --config apps/game/vite.config.ts --mode phpbackend && node --no-warnings scripts/prerender.mjs",
+    "preview": "vite preview --config apps/game/vite.config.ts --port 3000 --strictPort",
+    "typecheck": "npm run typecheck:game && npm run typecheck:editor && npm run typecheck:backend",
+    "typecheck:game": "tsc -p apps/game/tsconfig.json",
     "typecheck:editor": "tsc -p apps/editor/tsconfig.json",
     "typecheck:backend": "tsc -p apps/backend/tsconfig.build.json --noEmit",
     "publish-db": "node scripts/publish-db.mjs",
     "deploy": "node scripts/deploy.mjs",
-    "deploy:app": "node scripts/deploy.mjs --only=app",
-    "prerender": "node --no-warnings scripts/prerender.mjs"
+    "deploy:app": "node scripts/deploy.mjs --only=app"
   },
   "browserslist": {
     "production": [
