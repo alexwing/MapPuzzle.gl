@@ -401,14 +401,24 @@ function MapPuzzle(): JSX.Element {
    * the map back there as it leaned.
    */
   const onToggleTiltHandler = () => {
+    const goingFlat = tilted;
     setViewState({
       ...liveView,
-      pitch: tilted ? 0 : TILTED_PITCH,
+      pitch: goingFlat ? 0 : TILTED_PITCH,
+      // Coming back down also unwinds the turn, in the same movement: flat
+      // means north up, the way the puzzle was framed. Going the other way
+      // leaves the bearing alone — leaning over is no reason to lose the
+      // direction you were looking from.
+      //
+      // A plain interpolation is the short way round because deck normalises
+      // the bearing into -180..180, so there is never more than half a turn
+      // to undo.
+      ...(goingFlat ? { bearing: 0 } : {}),
       transitionDuration: TILT_TRANSITION_MS,
-      // The object form rather than ["pitch"], which would also mark the pitch
-      // "required" and assert on a view state that has not got one yet.
+      // The object form rather than ["pitch"], which would also mark those
+      // props "required" and assert on a view state that has not got them yet.
       transitionInterpolator: new LinearInterpolator({
-        transitionProps: { compare: ["pitch"] },
+        transitionProps: { compare: goingFlat ? ["pitch", "bearing"] : ["pitch"] },
       }),
     } as ViewState);
   };

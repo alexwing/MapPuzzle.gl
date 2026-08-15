@@ -196,6 +196,10 @@ function FlagQuiz(): JSX.Element {
     setFails([]);
     setCorrects([]);
     setFoundsIds([]);
+    // A new quiz has no question in the air yet, and the effect that asks the
+    // first one relies on this to tell "not started" from "already going".
+    setPieceSelected(-1);
+    setPieceSelectedData({} as PieceProps);
     setWinner(false);
 
     setLang(langAux);
@@ -348,12 +352,18 @@ function FlagQuiz(): JSX.Element {
    * @returns The index of the randomly selected piece in the pieces array.
    */
   const getRandomPieceNotFounds = (pieces: PieceProps[]): number => {
-    const length = pieces.length - founds.length;
-    const randomPiece = Math.floor(Math.random() * length);
-
     const piecesNotFounds = pieces.filter(
       (piece: PieceProps) => !founds.includes(piece.properties.cartodb_id)
     );
+    // Nothing left to ask about. -1 rather than a guess: the callers can see it.
+    if (piecesNotFounds.length === 0) return -1;
+
+    // Drawn from the list actually being indexed. It used to be drawn from
+    // pieces.length - founds.length, which is the same number only while every
+    // found id is still in pieces — and loadPiecesByLang empties the list and
+    // refills it from a promise, so there are moments when it is not. Picking
+    // past the end handed undefined to the line below and took the app down.
+    const randomPiece = Math.floor(Math.random() * piecesNotFounds.length);
 
     //find position in pices array from piecesNotFounds ramdomPiece
     const pieceSelectedAux = pieces.findIndex(
@@ -438,6 +448,12 @@ function FlagQuiz(): JSX.Element {
     }
     // get random piece not found
     const randomPiece = getRandomPieceNotFounds(pieces);
+    // No question to ask yet. The pieces arrive from one request and their
+    // translated names from another, and the second empties the list before it
+    // refills it, so there are moments when there is nothing to choose from.
+    // Whoever emptied it will set it again, and the effect below will call
+    // back here.
+    if (randomPiece < 0) return;
     const pieceSelectedAux = pieces[randomPiece];
     setPieceSelectedData(pieceSelectedAux);
     setPieceColour(randomPiece, SELECTED_COLOR);
@@ -495,12 +511,15 @@ function FlagQuiz(): JSX.Element {
     return false;
   };
 
+  // The first question, once there is something to ask about. Waiting on the
+  // pieces as well as on loading is what makes that true: the two arrive from
+  // separate requests, and the list is emptied in between.
   useEffect(() => {
-    if (!loading) {
+    if (!loading && pieces.length > 0 && pieceSelected === -1) {
       //set first found piece
       nextPiece();
     }
-  }, [loading]);
+  }, [loading, pieces]);
 
   /**
    * Generates an array of questions for the quiz, including the correct piece and random pieces.
