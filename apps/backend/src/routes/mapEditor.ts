@@ -14,6 +14,7 @@ import sharp from "sharp";
 import ViewState from "../models/viewState";
 import { ASSETS_DIR, customFlagsDir, ensureDir, flagsDir, ogDir, siteLogoPath, sitemapPaths } from "../config/paths";
 import { buildCard } from "../lib/ogImage";
+import { adjacency, areaOf, centreComputed, centreFromCurated } from "../lib/pieceGeometry";
 import { startProgress } from "../lib/progress";
 
 // eslint-disable-next-line new-cap
@@ -454,6 +455,117 @@ mapEditor.get("/generateOgImages", async (_req, res) => {
       (failures.length > 0 ? `, ${failures.length} failed` : ""),
     failures,
     counts: { written, failed: failures.length },
+  });
+});
+
+/**
+ * Works out, for every piece of every puzzle, where its centre is, how big it
+ * is and what it touches.
+ *
+ * The maps carry geometry, a name and a colour, and the games being planned
+ * need all three of these — a game of pointing at a region needs its centre, a
+ * game of comparing sizes needs its area, and a game of naming neighbours needs
+ * to know who they are. All derivable, so derived once, here.
+ *
+ * The tables are created if they are not there: this connection has no
+ * synchronise and the project has no migrations, and two tables written by one
+ * job did not seem worth introducing either.
+ */
+mapEditor.get("/enrichPieces", async (_req, res) => {
+  const progress = startProgress(res);
+  const db = connection!;
+
+  await db.query(`CREATE TABLE IF NOT EXISTS piece_geo (
+    id INTEGER NOT NULL,
+    cartodb_id INTEGER NOT NULL,
+    lat REAL NOT NULL,
+    lon REAL NOT NULL,
+    centre_source TEXT NOT NULL,
+    area_m2 REAL NOT NULL,
+    PRIMARY KEY (id, cartodb_id)
+  )`);
+  await db.query(`CREATE TABLE IF NOT EXISTS piece_edges (
+    id INTEGER NOT NULL,
+    cartodb_id_a INTEGER NOT NULL,
+    cartodb_id_b INTEGER NOT NULL,
+    PRIMARY KEY (id, cartodb_id_a, cartodb_id_b)
+  )`);
+
+  const puzzles = await db.getRepository(Puzzles).find();
+  const centroids = await db.getRepository(CustomCentroids).find();
+  const curated = new Map<string, { left: number; top: number }>();
+  for (const row of centroids) {
+    // (-50, -50) is the default the editor hands out, not a decision anybody
+    // made, so it does not count as curated.
+    if (Number(row.left) === -50 && Number(row.top) === -50) continue;
+    curated.set(`${row.id}:${row.cartodb_id}`, { left: Number(row.left), top: Number(row.top) });
+  }
+
+  let pieces = 0;
+  let fromCurated = 0;
+  let edges = 0;
+  const failures: string[] = [];
+  let done = 0;
+
+  for (const puzzle of puzzles) {
+    done++;
+    progress.step(done, puzzles.length, String(puzzle.name));
+    try {
+      const file = path.join(ASSETS_DIR, String(puzzle.data));
+      if (!fs.existsSync(file)) {
+        failures.push(`${puzzle.name}: no geojson at ${puzzle.data}`);
+        continue;
+      }
+      const geojson = JSON.parse(fs.readFileSync(file, "utf8"));
+      const features = (geojson.features ?? [])
+        .map((f: any) => ({
+          cartodbId: Number(f?.properties?.cartodb_id),
+          geometry: f?.geometry,
+        }))
+        .filter((f: any) => Number.isFinite(f.cartodbId) && f.geometry);
+
+      await db.query("DELETE FROM piece_geo WHERE id = ?", [puzzle.id]);
+      await db.query("DELETE FROM piece_edges WHERE id = ?", [puzzle.id]);
+
+      for (const feature of features) {
+        const hand = curated.get(`${puzzle.id}:${feature.cartodbId}`);
+        const point =
+          (hand && centreFromCurated(feature.geometry, hand.left, hand.top)) ||
+          centreComputed(feature.geometry);
+        if (!point) {
+          failures.push(`${puzzle.name} piece ${feature.cartodbId}: no centre`);
+          continue;
+        }
+        const source = hand && centreFromCurated(feature.geometry, hand.left, hand.top)
+          ? "curated"
+          : "computed";
+        if (source === "curated") fromCurated++;
+        await db.query(
+          "INSERT INTO piece_geo (id, cartodb_id, lat, lon, centre_source, area_m2) VALUES (?, ?, ?, ?, ?, ?)",
+          [puzzle.id, feature.cartodbId, point[1], point[0], source, areaOf(feature.geometry)]
+        );
+        pieces++;
+      }
+
+      for (const [a, b] of adjacency(features)) {
+        await db.query(
+          "INSERT INTO piece_edges (id, cartodb_id_a, cartodb_id_b) VALUES (?, ?, ?)",
+          [puzzle.id, a, b]
+        );
+        edges++;
+      }
+    } catch (err) {
+      failures.push(`${puzzle.name}: ${(err as Error).message}`);
+    }
+  }
+
+  progress.finish({
+    success: failures.length === 0,
+    msg:
+      `${pieces} pieces measured, ${fromCurated} centred by hand, ${edges} borders found` +
+      (failures.length > 0 ? `, ${failures.length} problems` : ""),
+    failures,
+    counts: { pieces, fromCurated, edges, failed: failures.length },
   });
 });
 

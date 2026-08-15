@@ -89,6 +89,19 @@ function App(): JSX.Element {
       .catch((e) => setNotice(`Could not build the share cards: ${String(e)}`));
   };
 
+  /**
+   * Measures every piece of every puzzle: where its centre is, how big it is
+   * and what it borders. Nothing reads it yet; the games being planned do.
+   */
+  const enrichPieces = () => {
+    setNotice("Measuring pieces…");
+    BackMapEditorService.enrichPieces((p) =>
+      setNotice(`Measuring pieces… ${p.done} of ${p.total} — ${p.label}`)
+    )
+      .then((res) => setNotice(res?.msg ?? "Pieces measured"))
+      .catch((e) => setNotice(`Could not measure the pieces: ${String(e)}`));
+  };
+
   const loadPuzzles = () => {
     PuzzleService.getPuzzles()
       .then((list) => {
@@ -177,6 +190,9 @@ function App(): JSX.Element {
             </Button>
             <Button size="sm" variant="outline-light" onClick={generateOgImages}>
               Build share cards
+            </Button>
+            <Button size="sm" variant="outline-light" onClick={enrichPieces}>
+              Measure pieces
             </Button>
           </ButtonGroup>
 

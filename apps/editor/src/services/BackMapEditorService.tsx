@@ -41,6 +41,22 @@ export class BackMapEditorService {
     return readProgress(response, onProgress);
   }
 
+  /**
+   * Works out each piece's centre, area and neighbours. Minutes of work over
+   * 2,371 pieces, so it reports progress like the content jobs.
+   */
+  public static async enrichPieces(
+    onProgress?: (p: JobProgress) => void
+  ): Promise<any> {
+    const response = await fetch(ConfigService.backendUrl + "/mapEditor/enrichPieces", {
+      method: "GET",
+    }).catch((err) => {
+      console.log(err);
+      return Promise.reject("Error enriching pieces");
+    });
+    return readProgress(response, onProgress);
+  }
+
   //get all countries 
   public static async getCountries(): Promise<any> {
     const response = await fetch(ConfigService.backendUrl + "/mapEditor/getCountries", {
