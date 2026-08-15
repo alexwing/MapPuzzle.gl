@@ -25,6 +25,10 @@ interface MenuTopProps {
   onResetGame: () => void;
   onFullScreen: () => void;
   onRefocus: () => void;
+  onToggleTilt: () => void;
+  /** False on a screen too small to be worth turning the map on. */
+  canTilt: boolean;
+  tilted: boolean;
   onLangChange: (lang: string) => void;
   puzzleSelected: number;
 }
@@ -35,6 +39,9 @@ function MenuTop({
   onResetGame,
   onFullScreen,
   onRefocus,
+  onToggleTilt,
+  canTilt,
+  tilted,
   onLangChange,
   puzzleSelected,
 }: MenuTopProps): JSX.Element {
@@ -150,6 +157,9 @@ function MenuTop({
             ></LangSelector>
             <PuzzleOptions
               onRefocus={onRefocus}
+              onToggleTilt={onToggleTilt}
+              canTilt={canTilt}
+              tilted={tilted}
               onFullScreen={onFullScreen}
               handleInfo={handleShowInfo}
               handleShow={handleShow}

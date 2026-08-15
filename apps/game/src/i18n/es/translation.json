@@ -10,6 +10,10 @@
     "about": "Acerca de",
     "refocus": "Refocalizar",
     "fullscreen": "Pantalla Completa",
+
+    "tilt": "Inclinar Mapa",
+
+    "flat": "Aplanar Mapa",
     "editor": "Editor",
     "surrenderTitle": "¿Te rindes?",
     "surrenderMessage": "Haz click en sí, si quieres empezar un nuevo juego"

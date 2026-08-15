@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import "./styles/MapPuzzle.css";
@@ -12,6 +12,8 @@ import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
 import { Jsondb, getWiki, copyViewState, getLang, getTranslation, languageFromLocation, puzzleFromLocation, puzzlePath } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
+import { useCanRotate } from "./lib/hooks/useCanRotate";
+import { LinearInterpolator } from "@deck.gl/core";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
 import { Col, Row } from "react-bootstrap";
@@ -27,6 +29,15 @@ import type { CustomTranslations } from "@mappuzzle/shared";
 import type { Puzzles } from "@mappuzzle/shared";
 import { useTranslation } from "react-i18next";
 import Donate from "./components/Donate";
+
+/**
+ * How far over the map leans in its tilted view. The same 45° Google Maps uses,
+ * and about as far as it can go while a piece stays a shape you can recognise:
+ * the dragged silhouette keeps 63% of its height there, against 50% at 60°.
+ */
+const TILTED_PITCH = 45;
+/** Long enough to read as a movement, short enough not to be a wait. */
+const TILT_TRANSITION_MS = 600;
 
 function MapPuzzle(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
@@ -51,9 +62,29 @@ function MapPuzzle(): JSX.Element {
   const [showWikiInfo, setShowWikiInfo] = useState(false);
   const [wikiInfoUrl, setWikiInfoUrl] = useState("");
   const [wikiInfoId, setWikiInfoId] = useState(-1);
+  /**
+   * Two view states, and they are not the same thing.
+   *
+   * `viewState` is what the app *asks* the map to do — the puzzle's framing on
+   * load, the refocus, the tilt toggle. It goes in as initialViewState, so it
+   * only ever changes when there is something to command.
+   *
+   * `liveView` is what the map *reports back*, every frame of every pan, zoom
+   * and animation. The cursor piece needs it to stay square with the map.
+   *
+   * They used to be one, and every reported frame went straight back in as
+   * initialViewState. deck tolerates that only while the echo still matches
+   * the frame it is playing; let one React commit land late — and a 600 ms
+   * animation is some thirty-six renders of this whole tree — and deck no
+   * longer recognises the value coming back, sees no transition props on it,
+   * and cancels. The map stops half-tilted and stays there, with no error.
+   */
   const [viewState, setViewState] = useState({} as ViewState);
+  const [liveView, setLiveView] = useState({} as ViewState);
   const [lang, setLang] = useState("");
   const { t, i18n } = useTranslation();
+  const canRotate = useCanRotate();
+  const tilted = (liveView?.pitch ?? 0) > 0;
 
   /*
   * Load the game on start
@@ -134,10 +165,7 @@ function MapPuzzle(): JSX.Element {
           puzzleData.view_state !== null &&
           puzzleData.view_state !== undefined
         ) {
-          const viewStateCopy: ViewState = copyViewState(
-            puzzleData.view_state,
-            viewState
-          );
+          const viewStateCopy: ViewState = copyViewState(puzzleData.view_state);
           const piecesAux: PieceProps[] = response.features;
           //set name to pieces from pieces.properties.name
           piecesAux.forEach((piece: PieceProps) => {
@@ -146,7 +174,7 @@ function MapPuzzle(): JSX.Element {
 
           setPuzzleSelectedData(puzzleData);
           setPuzzleSelected(puzzleId);
-          setViewState(viewStateCopy);
+          commandView(viewStateCopy);
           setData(response);
 
           loadPiecesByLang(puzzleId, piecesAux, langAux);
@@ -261,7 +289,7 @@ function MapPuzzle(): JSX.Element {
     }
   }, [founds]);
 
-  const onClickMapHandler = (info: PieceEvent) => {
+  const onClickMapHandler = useCallback((info: PieceEvent) => {
     if (info.object) {
       console.log("Selected piece: " + info.object.properties.cartodb_id);
       //if the piece is found and wiki is enabled in puzzle, show the wiki info on click
@@ -309,9 +337,9 @@ function MapPuzzle(): JSX.Element {
         );
       }
     }
-  };
+  }, [founds, fails, pieceSelected, pieceSelectedData, puzzleCustomWiki, puzzleSelected, puzzleSelectedData]);
 
-  const onHoverMapHandler = (info: PieceEvent) => {
+  const onHoverMapHandler = useCallback((info: PieceEvent) => {
     if (info.object) {
       if (founds.includes(info.object.properties.cartodb_id)) {
         setTooltipValue(info.object.properties.name);
@@ -321,11 +349,88 @@ function MapPuzzle(): JSX.Element {
     } else {
       setTooltipValue("");
     }
+  }, [founds]);
+
+  /**
+   * Every change to the view arrives here, whoever caused it, which makes it
+   * the one place worth guarding. Where the screen is too small to turn the
+   * map, the turn and the tilt are flattened on the way through and the
+   * flattened state is returned, which is the value deck adopts.
+   *
+   * The controller already refuses those gestures, but deck.gl 8.9.36 has no
+   * bearing constraint at all, so this is what actually holds it at north.
+   */
+  /**
+   * Commands the map somewhere, at once, and keeps the live copy in step.
+   *
+   * deck reports a view change when it moves the map itself; adopting an
+   * initialViewState it was handed is not one of those, so without this the
+   * live copy would still describe where the map used to be, and the dragged
+   * piece would go on leaning the way it leaned before the reset.
+   *
+   * Not for the tilt toggle: that one is animated, and deck reports every step
+   * of it, starting with the first one before setProps has even returned.
+   */
+  const commandView = (next: ViewState) => {
+    setViewState(next);
+    setLiveView(next);
   };
 
-  const onViewStateChangeHandler = (viewState: ViewStateEvent) => {
-    setViewState(viewState.viewState);
+  const onViewStateChangeHandler = useCallback((viewState: ViewStateEvent) => {
+    const next = canRotate
+      ? viewState.viewState
+      : { ...viewState.viewState, bearing: 0, pitch: 0 };
+    setLiveView(next);
+    return next;
+  }, [canRotate]);
+
+  /**
+   * Leaning the map over, and putting it back.
+   *
+   * Only the tilt: the turn is left where the player put it, since this is a
+   * tilt control and not a compass. Refocus is what puts north back up.
+   *
+   * Animated the way the flag quiz already animates its flights — transition
+   * props travel inside the view state — with a linear interpolator told to
+   * compare the pitch alone, so the map leans over without also drifting or
+   * zooming. Not FlyToInterpolator: that one always re-derives the position
+   * and the zoom, which is the opposite of what is wanted here.
+   *
+   * Built from the live view, not from the last thing commanded: the player
+   * has very likely panned since, and starting from a stale centre would drag
+   * the map back there as it leaned.
+   */
+  const onToggleTiltHandler = () => {
+    setViewState({
+      ...liveView,
+      pitch: tilted ? 0 : TILTED_PITCH,
+      transitionDuration: TILT_TRANSITION_MS,
+      // The object form rather than ["pitch"], which would also mark the pitch
+      // "required" and assert on a view state that has not got one yet.
+      transitionInterpolator: new LinearInterpolator({
+        transitionProps: { compare: ["pitch"] },
+      }),
+    } as ViewState);
   };
+
+  /**
+   * A window can be dragged narrow, and a tablet can be a phone by turning it
+   * sideways. Shutting the gestures off does not undo a tilt that is already
+   * there — deck only re-applies its constraints when the canvas height
+   * changes — so the map is laid flat here as the screen loses the right to
+   * hold it up.
+   *
+   * Without an animation, and not for want of trying: the locked controller
+   * carries maxPitch 0, and deck re-applies its constraints on every frame it
+   * builds, so a pitch tween under it reports 0 from the very first step. It
+   * snaps, and says so rather than pretending.
+   */
+  useEffect(() => {
+    if (canRotate) return;
+    if (!liveView?.zoom) return;
+    if (!liveView.bearing && !liveView.pitch) return;
+    commandView({ ...liveView, bearing: 0, pitch: 0 });
+  }, [canRotate, liveView]);
 
   const onSelectMapHandler = (val: number) => {
     if (val) {
@@ -357,10 +462,9 @@ function MapPuzzle(): JSX.Element {
       puzzleSelectedData.view_state !== undefined
     ) {
       const viewStateCopy: ViewState = copyViewState(
-        puzzleSelectedData.view_state,
-        viewState
+        puzzleSelectedData.view_state
       );
-      setViewState(viewStateCopy);
+      commandView(viewStateCopy);
     }
   };
 
@@ -479,6 +583,9 @@ function MapPuzzle(): JSX.Element {
               onResetGame={onResetGameHandler}
               onFullScreen={onToggle}
               onRefocus={onRefocusMapHandler}
+              onToggleTilt={onToggleTiltHandler}
+              canTilt={canRotate}
+              tilted={tilted}
               onLangChange={onLangChangeHandler}
               puzzleSelected={puzzleSelected}
             />
@@ -519,9 +626,9 @@ function MapPuzzle(): JSX.Element {
             </Container>
             <AnimatedCursor
               clickScale={0.95}
-              zoom={viewState?.zoom}
-              bearing={viewState?.bearing}
-              pitch={viewState?.pitch}
+              zoom={liveView?.zoom}
+              bearing={liveView?.bearing}
+              pitch={liveView?.pitch}
               selected={pieceSelectedData}
               centroid={pieceSelectedCentroid}
               tooltip={tooltipValue}

@@ -236,33 +236,25 @@ export function puzzleFromLocation(): { slug: string; isQuiz: boolean } | null {
 
 
 /**
- * Copies the view state from one object to another, preserving the bearing and pitch of the destination view state.
- * @param viewStateOrigin - The view state object to copy from.
- * @param viewStateDestination - The view state object to copy to.
- * @returns The updated view state object.
+ * The framing a puzzle starts from: where it sits, how close, and facing north
+ * and flat.
+ *
+ * It used to carry the previous bearing and pitch across, which meant that
+ * once you had turned the map, nothing put it back — not the refocus button,
+ * whose whole job is to restore the view, and not even opening a different
+ * puzzle, which arrived tilted from the last one. Both callers want the same
+ * thing: this framing, seen straight on.
+ *
+ * @param viewStateOrigin - the puzzle's own stored framing.
  */
-export function copyViewState(
-  viewStateOrigin: ViewState,
-  viewStateDestination: ViewState
-): ViewState {
-  if (!viewStateDestination) {
-    viewStateDestination = {
-      latitude: parseFloat(viewStateOrigin.latitude.toString()),
-      longitude: parseFloat(viewStateOrigin.longitude.toString()),
-      zoom: parseFloat(viewStateOrigin.zoom.toString()),
-      bearing: 0,
-      pitch: 0,
-    };
-  } else {
-    viewStateDestination = {
-      latitude: parseFloat(viewStateOrigin.latitude.toString()),
-      longitude: parseFloat(viewStateOrigin.longitude.toString()),
-      zoom: parseFloat(viewStateOrigin.zoom.toString()),
-      bearing: viewStateDestination.bearing,
-      pitch: viewStateDestination.pitch,
-    };
-  }
-  return viewStateDestination;
+export function copyViewState(viewStateOrigin: ViewState): ViewState {
+  return {
+    latitude: parseFloat(viewStateOrigin.latitude.toString()),
+    longitude: parseFloat(viewStateOrigin.longitude.toString()),
+    zoom: parseFloat(viewStateOrigin.zoom.toString()),
+    bearing: 0,
+    pitch: 0,
+  };
 }
 
 

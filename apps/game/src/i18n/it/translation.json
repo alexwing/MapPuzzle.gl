@@ -9,6 +9,10 @@
     "about": "Informazioni",
     "refocus": "Rifocalizza",
     "fullscreen": "Schermo intero",
+
+    "tilt": "Inclina mappa",
+
+    "flat": "Mappa piatta",
     "resetGame": "Riavvia il gioco",
     "editor": "Editor",
     "surrenderTitle": "Ti arrendi?",

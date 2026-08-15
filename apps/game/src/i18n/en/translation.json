@@ -9,6 +9,10 @@
     "about": "About",
     "refocus": "Refocus",
     "fullscreen": "Fullscreen",
+
+    "tilt": "Tilt Map",
+
+    "flat": "Flat Map",
     "resetGame": "Reset Game",
     "editor": "Editor",
     "surrenderTitle": "Do you surrender?",

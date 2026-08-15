@@ -104,16 +104,25 @@ function PuzzleOptions({
     },
   ];
 
+  /**
+   * Asked once, not inside the callback: a hook in there runs once per visible
+   * button, so the day a button becomes conditional the hook count changes
+   * between renders and React tears the app down with error #300. That is not
+   * hypothetical — it happened in the map game's copy of this file, which had
+   * the same shape.
+   */
+  const roomForTooltips = useMediaQuery({ minWidth: 992 });
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const overlay = useCallback((button: any) => {
     return (
-      useMediaQuery({ minWidth: 992 }) ? (
+      roomForTooltips ? (
         <Tooltip id={`tooltip-${button.id}`}>{button.tooltip}</Tooltip>
       ) : (
         <span></span>
       )
     ) as JSX.Element;
-  }, []); // Add dependencies here if any
+  }, [roomForTooltips]);
 
   return (
     <React.Fragment>

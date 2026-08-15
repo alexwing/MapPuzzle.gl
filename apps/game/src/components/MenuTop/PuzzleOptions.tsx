@@ -12,6 +12,10 @@ import { ConfigService } from "@mappuzzle/core";
 
 interface PuzzleOptionsProps {
   onRefocus: () => void;
+  onToggleTilt: () => void;
+  /** False on a screen too small to be worth turning the map on. */
+  canTilt: boolean;
+  tilted: boolean;
   onFullScreen: () => void;
   handleInfo: () => void;
   onShowWikiInfo: (val: boolean) => void;
@@ -20,6 +24,9 @@ interface PuzzleOptionsProps {
 
 function PuzzleOptions({
   onRefocus,
+  onToggleTilt,
+  canTilt,
+  tilted,
   onFullScreen,
   handleInfo,
   onShowWikiInfo,
@@ -50,6 +57,20 @@ function PuzzleOptions({
       label: t("topMenu.refocus"),
       labelClass: "d-lg-none",
       visible: true,
+    },
+    // Like the theme button below, the label names where the click takes you,
+    // not where you are: you read "Tilt Map" while the map is still flat.
+    { id: "tilt",
+      variant: "none",
+      onClickHandler: onToggleTilt,
+      tooltip: tilted ? t("topMenu.flat") : t("topMenu.tilt"),
+      icon: tilted ? Icon.Map : Icon.Badge3d,
+      iconSize: size,
+      iconColor: "",
+      iconClass: "me-2",
+      label: tilted ? t("topMenu.flat") : t("topMenu.tilt"),
+      labelClass: "d-lg-none",
+      visible: canTilt,
     },
     { id: "fullscreen",
       variant: "none",
@@ -113,12 +134,25 @@ function PuzzleOptions({
     },
   ];
 
+  /**
+   * Tooltips only where there is room to hover; narrower than this the label
+   * is already shown beside the icon.
+   *
+   * The query is asked here, once, and not inside the callback below. It used
+   * to be inside it, which made it a hook called once per visible button — so
+   * the moment one button became conditional, a render with the button and a
+   * render without it disagreed about how many hooks had run, and React tore
+   * the whole app down with error #300. It was harmless only while every
+   * button was always visible.
+   */
+  const roomForTooltips = useMediaQuery({ minWidth: 992 });
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const overlay = useCallback((button: any) => {
-    return (useMediaQuery({ minWidth: 992 }) ? (
+    return (roomForTooltips ? (
       <Tooltip id={`tooltip-${button.id}`}>{button.tooltip}</Tooltip>
     ) : <span></span>) as JSX.Element;
-  }, []); 
+  }, [roomForTooltips]);
 
   return (
     <React.Fragment>
