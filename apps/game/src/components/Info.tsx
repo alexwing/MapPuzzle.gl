@@ -8,7 +8,7 @@ import "../i18n/config";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 
-import { getLang, getTranslation, getSiteUrl } from "../lib/Utils";
+import { getTranslation, getSiteUrl } from "../lib/Utils";
 import { Check, Heart, ShieldShaded, Github } from "react-bootstrap-icons";
 import "./Info.css";
 import {
@@ -45,7 +45,7 @@ function Info({
   const [showIn, setShowIn] = useState(false);
   const [content, setContent] = useState([] as Puzzles[]);
   const [markdown, setMarkdown] = useState("");
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [showInPrivacy, setShowInPrivacy] = useState(false);
 
   useEffect(() => {
@@ -63,9 +63,13 @@ function Info({
     if (!showIn) {
       return;
     }
-    const lang = getLang() === "es" ? "ES" : "EN";
-    console.log("lang service", getLang());
-    console.log("lang", lang);
+    // The language on screen, not the one in the cookie. Since addresses
+    // carry a language — /es/map/... asks for Spanish whatever this browser
+    // last chose — the two can disagree, and they did: a Spanish page opened
+    // this dialog in English. i18n.language is what the interface is actually
+    // speaking. Only ES and EN of these documents exist; the other five
+    // languages fall back to English on purpose.
+    const lang = i18n.language === "es" ? "ES" : "EN";
     PuzzleService.getResource(`/doc/about${lang}.md`).then((response) => {
       setMarkdown(response);
     });

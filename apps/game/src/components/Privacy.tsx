@@ -7,7 +7,6 @@ import "../i18n/config";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 
-import { getLang } from "../lib/Utils";
 import { Check } from "react-bootstrap-icons";
 import { PuzzleService } from "@mappuzzle/core";
 
@@ -18,7 +17,7 @@ interface PrivacyProps {
 
 function Privacy({ showIn, setShowIn }: PrivacyProps): JSX.Element | null {
   const [markdown, setMarkdown] = useState("");
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   function handleClose() {
     setShowIn(false);
@@ -28,9 +27,13 @@ function Privacy({ showIn, setShowIn }: PrivacyProps): JSX.Element | null {
     if (!showIn) {
       return;
     }
-    const lang = getLang() === "es" ? "ES" : "EN";
-    console.log("lang service", getLang());
-    console.log("lang", lang);
+    // The language on screen, not the one in the cookie. Since addresses
+    // carry a language — /es/map/... asks for Spanish whatever this browser
+    // last chose — the two can disagree, and they did: a Spanish page opened
+    // this dialog in English. i18n.language is what the interface is actually
+    // speaking. Only ES and EN of these documents exist; the other five
+    // languages fall back to English on purpose.
+    const lang = i18n.language === "es" ? "ES" : "EN";
     PuzzleService.getResource(`/doc/privacy${lang}.md`).then((response) => {
       setMarkdown(response);
     });

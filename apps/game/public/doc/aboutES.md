@@ -39,6 +39,14 @@ Para su mejor integración en Windows recomiendo usar Microsoft Edge, aunque tam
 mapas con deck.gl sobre WebGL y se puede instalar como Aplicación Web Progresiva
 para jugar sin conexión.
 
+El mapa se puede girar e inclinar, y la pieza que arrastras lo acompaña. En plano
+eso es un giro y nada más. Inclinado, la pieza se proyecta sobre el suelo que hay
+bajo el puntero a través de la propia cámara del mapa, así que se escorza igual
+que el terreno que cubre: cambia de forma según por dónde la lleves, y eso
+convierte la vista inclinada en un juego distinto, no en el mismo mirado de lado.
+Se ofrece a partir del tamaño de una tableta; en un teléfono el control no está
+—no es que se oculte— y los gestos que girarían el mapa quedan anulados.
+
 Lo que se publica son solo ficheros estáticos más una pequeña pasarela PHP de
 solo lectura sobre un fichero SQLite, así que el juego funciona en un alojamiento
 corriente, sin Node.js en el servidor. Cada puzle tiene su propia página, escrita

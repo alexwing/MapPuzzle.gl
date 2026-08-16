@@ -37,6 +37,14 @@ For best integration in Windows I recommend using Microsoft Edge, although you c
 **MapPuzzle.xyz** is a React application built with Vite, drawing its maps with
 deck.gl over WebGL, and installable as a Progressive Web App for offline play.
 
+The map can be turned and tilted, and the piece being dragged goes with it. Flat,
+that is a rotation and nothing more. Tilted, the piece is instead projected onto
+the ground under the pointer through the map's own camera, so it is foreshortened
+exactly like the terrain it covers — which means it changes shape as it travels,
+and makes the tilted view a different game rather than the same one seen at an
+angle. It is offered from tablet size upwards: on a phone the control is absent
+rather than hidden, and the gestures that would turn the map are switched off.
+
 What is published is only static files plus a small read-only PHP gateway over a
 SQLite file, so the game runs on ordinary hosting with no Node.js on the server.
 Every puzzle has a page of its own, written at build time in each of the seven
