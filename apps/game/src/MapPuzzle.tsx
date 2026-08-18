@@ -8,6 +8,7 @@ import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store";
 
 import MenuTop from "./components/MenuTop/MenuTop";
 import DeckMap, { PlacementFeedback } from "./components/DeckMap";
+import MapControls from "./components/MapControls/MapControls";
 import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
 import { Jsondb, getWiki, copyViewState, getLang, getTranslation, languageFromLocation, puzzleFromLocation, puzzlePath } from "./lib/Utils";
@@ -431,20 +432,44 @@ function MapPuzzle(): JSX.Element {
     setViewState({
       ...liveView,
       pitch: goingFlat ? 0 : TILTED_PITCH,
-      // Coming back down also unwinds the turn, in the same movement: flat
-      // means north up, the way the puzzle was framed. Going the other way
-      // leaves the bearing alone — leaning over is no reason to lose the
-      // direction you were looking from.
-      //
-      // A plain interpolation is the short way round because deck normalises
-      // the bearing into -180..180, so there is never more than half a turn
-      // to undo.
-      ...(goingFlat ? { bearing: 0 } : {}),
       transitionDuration: TILT_TRANSITION_MS,
-      // The object form rather than ["pitch"], which would also mark those
-      // props "required" and assert on a view state that has not got them yet.
       transitionInterpolator: new LinearInterpolator({
-        transitionProps: { compare: goingFlat ? ["pitch", "bearing"] : ["pitch"] },
+        transitionProps: { compare: ["pitch"] },
+      }),
+    } as ViewState);
+  };
+
+  const onRotateLeftHandler = () => {
+    const currentBearing = liveView?.bearing || 0;
+    setViewState({
+      ...liveView,
+      bearing: currentBearing - 45,
+      transitionDuration: 300,
+      transitionInterpolator: new LinearInterpolator({
+        transitionProps: { compare: ["bearing"] },
+      }),
+    } as ViewState);
+  };
+
+  const onRotateRightHandler = () => {
+    const currentBearing = liveView?.bearing || 0;
+    setViewState({
+      ...liveView,
+      bearing: currentBearing + 45,
+      transitionDuration: 300,
+      transitionInterpolator: new LinearInterpolator({
+        transitionProps: { compare: ["bearing"] },
+      }),
+    } as ViewState);
+  };
+
+  const onResetBearingHandler = () => {
+    setViewState({
+      ...liveView,
+      bearing: 0,
+      transitionDuration: 350,
+      transitionInterpolator: new LinearInterpolator({
+        transitionProps: { compare: ["bearing"] },
       }),
     } as ViewState);
   };
@@ -615,15 +640,20 @@ function MapPuzzle(): JSX.Element {
               is3D={tilted}
               feedbackPiece={placementFeedback}
             />
+            <MapControls
+              bearing={liveView?.bearing || 0}
+              tilted={tilted}
+              onToggleTilt={onToggleTiltHandler}
+              onRotateLeft={onRotateLeftHandler}
+              onRotateRight={onRotateRightHandler}
+              onResetBearing={onResetBearingHandler}
+            />
             <MenuTop
               name="MapPuzzle.xyz"
               onSelectMap={onSelectMapHandler}
               onResetGame={onResetGameHandler}
               onFullScreen={onToggle}
               onRefocus={onRefocusMapHandler}
-              onToggleTilt={onToggleTiltHandler}
-              canTilt={canRotate}
-              tilted={tilted}
               onLangChange={onLangChangeHandler}
               puzzleSelected={puzzleSelected}
             />

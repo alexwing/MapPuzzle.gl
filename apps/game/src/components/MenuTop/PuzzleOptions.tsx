@@ -12,10 +12,6 @@ import { ConfigService } from "@mappuzzle/core";
 
 interface PuzzleOptionsProps {
   onRefocus: () => void;
-  onToggleTilt: () => void;
-  /** False on a screen too small to be worth turning the map on. */
-  canTilt: boolean;
-  tilted: boolean;
   onFullScreen: () => void;
   handleInfo: () => void;
   onShowWikiInfo: (val: boolean) => void;
@@ -24,9 +20,6 @@ interface PuzzleOptionsProps {
 
 function PuzzleOptions({
   onRefocus,
-  onToggleTilt,
-  canTilt,
-  tilted,
   onFullScreen,
   handleInfo,
   onShowWikiInfo,
@@ -57,20 +50,6 @@ function PuzzleOptions({
       label: t("topMenu.refocus"),
       labelClass: "d-lg-none",
       visible: true,
-    },
-    // Like the theme button below, the label names where the click takes you,
-    // not where you are: you read "Tilt Map" while the map is still flat.
-    { id: "tilt",
-      variant: "none",
-      onClickHandler: onToggleTilt,
-      tooltip: tilted ? t("topMenu.flat") : t("topMenu.tilt"),
-      icon: tilted ? Icon.Map : Icon.Badge3d,
-      iconSize: size,
-      iconColor: "",
-      iconClass: "me-2",
-      label: tilted ? t("topMenu.flat") : t("topMenu.tilt"),
-      labelClass: "d-lg-none",
-      visible: canTilt,
     },
     { id: "fullscreen",
       variant: "none",

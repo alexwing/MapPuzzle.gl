@@ -1,0 +1,255 @@
+/* Floating Map Controls in the bottom-right corner */
+.map-controls-container {
+  position: absolute;
+  right: 20px;
+  bottom: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+  pointer-events: auto;
+}
+
+/* Liquid Glass Circular Compass Control (Reduced blur & crisp transparency) */
+.compass-control {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden; /* Clips the left/right sector buttons into clean half-circle slices */
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(4px) saturate(160%);
+  -webkit-backdrop-filter: blur(4px) saturate(160%);
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12),
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease,
+              background-color 0.2s ease;
+}
+
+[data-bs-theme="dark"] .compass-control {
+  background: rgba(15, 23, 42, 0.45);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4),
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* No outer box-shadow glow on compass hover */
+.compass-control:hover {
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+[data-bs-theme="dark"] .compass-control:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Sector Buttons: Left & Right Half-Circle "Cheese Slices" that illuminate on hover */
+.compass-sector-btn {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.2s ease;
+}
+
+.compass-sector-btn.left {
+  left: 0;
+  justify-content: flex-start;
+  padding-left: 6px;
+  border-radius: 60px 0 0 60px;
+}
+
+.compass-sector-btn.right {
+  right: 0;
+  justify-content: flex-end;
+  padding-right: 6px;
+  border-radius: 0 60px 60px 0;
+}
+
+/* Cheese-slice illumination on hover */
+.compass-sector-btn:hover {
+  background: rgba(37, 99, 235, 0.18);
+}
+
+[data-bs-theme="dark"] .compass-sector-btn:hover {
+  background: rgba(59, 130, 246, 0.24);
+}
+
+.compass-sector-btn:active {
+  background: rgba(37, 99, 235, 0.32);
+}
+
+/* Arrow Icons with Glow effect on sector hover */
+.rotate-arrow-icon {
+  width: 15px;
+  height: 26px;
+  fill: var(--text-main, #1e293b);
+  opacity: 0.7;
+  transition: fill 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
+}
+
+[data-bs-theme="dark"] .rotate-arrow-icon {
+  fill: #f8fafc;
+}
+
+.compass-sector-btn:hover .rotate-arrow-icon {
+  opacity: 1;
+  fill: var(--accent-color, #2563eb);
+  filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.7));
+}
+
+[data-bs-theme="dark"] .compass-sector-btn:hover .rotate-arrow-icon {
+  fill: var(--accent-hover, #60a5fa);
+  filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.8));
+}
+
+/* Compass Needle (Rotates smoothly with map bearing) */
+.compass-dial {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.compass-needle {
+  width: 16px;
+  height: 42px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+/* Center Click Target to Reset North (0°) */
+.compass-center-btn {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 3;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.compass-center-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+[data-bs-theme="dark"] .compass-center-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Rounded Pill 3D / 2D Toggle Button (Clean Transparent Glass, Reduced Blur) */
+.tilt-toggle-btn {
+  border-radius: 9999px;
+  padding: 0.32rem 0.85rem;
+  min-width: 48px;
+  height: 30px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  color: var(--accent-color, #2563eb);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+  font-family: var(--font-family-body, sans-serif);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+[data-bs-theme="dark"] .tilt-toggle-btn {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* In 3D active state: remains clean transparent glass with slightly emphasized border */
+.tilt-toggle-btn.in-3d {
+  background: rgba(37, 99, 235, 0.14);
+  border-color: rgba(37, 99, 235, 0.5);
+  color: var(--accent-color, #2563eb);
+}
+
+[data-bs-theme="dark"] .tilt-toggle-btn.in-3d {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: rgba(59, 130, 246, 0.55);
+  color: #60a5fa;
+}
+
+/* Hover: solid glow highlight on user interaction */
+.tilt-toggle-btn:hover {
+  background: var(--accent-color, #2563eb);
+  border-color: var(--accent-color, #2563eb);
+  color: #ffffff;
+  box-shadow: 0 6px 18px var(--accent-glow, rgba(37, 99, 235, 0.35));
+  transform: translateY(-2px);
+}
+
+[data-bs-theme="dark"] .tilt-toggle-btn:hover {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
+  transform: translateY(-2px);
+}
+
+.tilt-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+/* Responsive adjustment for small screens / mobile */
+@media (max-width: 768px) {
+  .map-controls-container {
+    right: 14px;
+    bottom: 18px;
+    gap: 8px;
+  }
+
+  .compass-control {
+    width: 54px;
+    height: 54px;
+  }
+
+  .compass-needle {
+    width: 14px;
+    height: 36px;
+  }
+
+  .rotate-arrow-icon {
+    width: 13px;
+    height: 22px;
+  }
+
+  .tilt-toggle-btn {
+    padding: 0.28rem 0.75rem;
+    font-size: 0.75rem;
+    height: 27px;
+  }
+}

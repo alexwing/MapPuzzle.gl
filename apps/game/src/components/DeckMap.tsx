@@ -197,6 +197,12 @@ function DeckMap({
               depthMask: true,
             }
           : undefined,
+        transitions: {
+          getElevation: {
+            duration: 400,
+            enter: () => [0],
+          },
+        },
         updateTriggers: {
           getFillColor: [founds, is3D],
           getElevation: [founds],
