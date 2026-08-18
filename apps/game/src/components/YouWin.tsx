@@ -86,21 +86,21 @@ export default function YouWin({
               <Alert variant="success">
                 <Alert.Heading>{t("YouWin.founds")}</Alert.Heading>
                 <hr />
-                <p className="mb-0">{founds.length}</p>
+                <p className="mb-0 score-val">{founds.length}</p>
               </Alert>
             </Col>
             <Col xs={4} lg={4}>
               <Alert variant="warning">
                 <Alert.Heading>{t("YouWin.time")}</Alert.Heading>
                 <hr />
-                <p className="mb-0">{getTime(t)}</p>
+                <p className="mb-0 time-val">{getTime(t)}</p>
               </Alert>
             </Col>
             <Col xs={4} lg={4}>
               <Alert variant="danger">
                 <Alert.Heading>{t("YouWin.fails")}</Alert.Heading>
                 <hr />
-                <p className="mb-0">{fails}</p>
+                <p className="mb-0 score-val">{fails}</p>
               </Alert>
             </Col>
           </Row>
