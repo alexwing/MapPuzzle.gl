@@ -7,7 +7,7 @@ import "./styles/responsive.css";
 import { setCookie, getCookie, removeCookie } from "react-simple-cookie-store";
 
 import MenuTop from "./components/MenuTop/MenuTop";
-import DeckMap from "./components/DeckMap";
+import DeckMap, { PlacementFeedback } from "./components/DeckMap";
 import ToolsPanel from "./components/ToolsPanel";
 import YouWin from "./components/YouWin";
 import { Jsondb, getWiki, copyViewState, getLang, getTranslation, languageFromLocation, puzzleFromLocation, puzzlePath } from "./lib/Utils";
@@ -55,6 +55,7 @@ function MapPuzzle(): JSX.Element {
   const [pieces, setPieces] = useState([] as Array<PieceProps>);
   const [founds, setFounds] = useState([] as Array<number>);
   const [fails, setFails] = useState(0);
+  const [placementFeedback, setPlacementFeedback] = useState<PlacementFeedback | null>(null);
   const [loading, setLoading] = useState(true);
   const [height, setHeight] = useState(0);
   const [winner, setWinner] = useState(false);
@@ -291,8 +292,7 @@ function MapPuzzle(): JSX.Element {
 
   const onClickMapHandler = useCallback((info: PieceEvent) => {
     if (info.object) {
-      console.log("Selected piece: " + info.object.properties.cartodb_id);
-      //if the piece is found and wiki is enabled in puzzle, show the wiki info on click
+      // If the piece is found and wiki is enabled in puzzle, show the wiki info on click
       if (
         founds.includes(info.object.properties.cartodb_id) &&
         puzzleSelectedData.enableWiki
@@ -308,26 +308,48 @@ function MapPuzzle(): JSX.Element {
         return;
       }
     }
-    if (info && pieceSelected && pieceSelectedData?.properties?.cartodb_id) {
+
+    if (info && pieceSelected !== -1 && pieceSelectedData?.properties?.cartodb_id) {
+      const selectedId = pieceSelectedData.properties.cartodb_id;
+      const clickedId = info.object?.properties?.cartodb_id;
+
       if (
-        String(pieceSelectedData.properties.cartodb_id).trim() ===
-        String(info.object.properties.cartodb_id).trim()
+        clickedId !== undefined &&
+        String(selectedId).trim() === String(clickedId).trim()
       ) {
-        if (!founds.includes(pieceSelectedData.properties.cartodb_id)) {
-          const auxFounds = [
-            ...founds,
-            pieceSelectedData.properties.cartodb_id,
-          ];
+        // Correct piece dropped on the right location!
+        setPlacementFeedback({
+          id: selectedId,
+          status: "success",
+          timestamp: Date.now(),
+        });
+
+        if (!founds.includes(selectedId)) {
+          const auxFounds = [...founds, selectedId];
           setFounds(auxFounds);
-          setPieceSelected(-1);
-          setPieceSelectedData({} as PieceProps);
           setCookie(
             "founds" + puzzleSelected,
             auxFounds.join(),
             ConfigService.cookieDays
           );
         }
+
+        // Release piece selection smoothly
+        setPieceSelected(-1);
+        setPieceSelectedData({} as PieceProps);
+
+        setTimeout(() => {
+          setPlacementFeedback(null);
+        }, 800);
       } else {
+        // Incorrect piece placement!
+        const targetFeedbackId = clickedId !== undefined ? clickedId : selectedId;
+        setPlacementFeedback({
+          id: targetFeedbackId,
+          status: "fail",
+          timestamp: Date.now(),
+        });
+
         const auxFails = fails + 1;
         setFails(auxFails);
         setCookie(
@@ -335,6 +357,10 @@ function MapPuzzle(): JSX.Element {
           auxFails.toString(),
           ConfigService.cookieDays
         );
+
+        setTimeout(() => {
+          setPlacementFeedback(null);
+        }, 650);
       }
     }
   }, [founds, fails, pieceSelected, pieceSelectedData, puzzleCustomWiki, puzzleSelected, puzzleSelectedData]);
@@ -586,6 +612,8 @@ function MapPuzzle(): JSX.Element {
               viewState={viewState}
               founds={founds}
               data={data}
+              is3D={tilted}
+              feedbackPiece={placementFeedback}
             />
             <MenuTop
               name="MapPuzzle.xyz"
@@ -643,6 +671,7 @@ function MapPuzzle(): JSX.Element {
               selected={pieceSelectedData}
               centroid={pieceSelectedCentroid}
               tooltip={tooltipValue}
+              feedbackStatus={placementFeedback?.status ?? null}
             />
             <WikiInfo
               show={showWikiInfo}

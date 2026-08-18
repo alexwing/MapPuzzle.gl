@@ -44,6 +44,7 @@ interface CursorCoreProps {
   pitch: number;
   /** The map's live view, for laying the piece on the ground when tilted. */
   view: ViewState;
+  feedbackStatus?: "success" | "fail" | null;
 }
 
 function CursorCore({
@@ -55,6 +56,7 @@ function CursorCore({
   bearing = 0,
   pitch = 0,
   view,
+  feedbackStatus = null,
 }: CursorCoreProps): JSX.Element {
   const pieceCursorRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -305,9 +307,16 @@ function CursorCore({
     );
   }
 
+  const feedbackClass =
+    feedbackStatus === "fail"
+      ? " piece-error-shake"
+      : feedbackStatus === "success"
+      ? " piece-snap"
+      : "";
+
   return (
     <React.Fragment>
-      <div ref={pieceCursorRef} className="mousePiece">
+      <div ref={pieceCursorRef} className={`mousePiece${feedbackClass}`}>
         {PieceCursor}
       </div>
       {tooltip ? (

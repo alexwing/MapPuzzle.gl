@@ -73,7 +73,7 @@ todas partes a la vez.
 * **Cursores**: el puntero indica si una pieza se puede coger y si la estás
   sujetando.
 * **Bootstrap** por debajo, y https://icons.getbootstrap.com/ para los iconos.
-* **Colores**: las piezas conservan colores vivos y contrastados: son lo único
+* **Colores**: las  piezas conservan colores vivos y contrastados: son lo único
   que tiene que distinguirse de un vistazo sobre el mapa.
 
 ## Créditos

@@ -20,6 +20,7 @@ interface AnimatedCursorProps {
   bearing?: number;
   pitch?: number;
   view: ViewState;
+  feedbackStatus?: "success" | "fail" | null;
 }
 
 function AnimatedCursor({
@@ -31,6 +32,7 @@ function AnimatedCursor({
   bearing = 0,
   pitch = 0,
   view,
+  feedbackStatus = null,
 }: AnimatedCursorProps): JSX.Element | null {
   if (typeof navigator !== "undefined" && IsDevice?.any()) {
     return <React.Fragment></React.Fragment>;
@@ -45,6 +47,7 @@ function AnimatedCursor({
       pitch={pitch}
       view={view}
       tooltip={tooltip}
+      feedbackStatus={feedbackStatus}
     />
   );
 }
