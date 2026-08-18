@@ -1,48 +1,161 @@
+.modal-backdrop.show {
+  z-index: 1050 !important;
+}
+
+.youWin.modal {
+  z-index: 1055 !important;
+}
+
+.youWin .modal-dialog {
+  position: relative;
+  z-index: 1056;
+}
 
 .scorewin.row {
-  margin: 0px -16px;
+  margin: 0.5rem -0.5rem 1rem -0.5rem;
+  display: flex;
+  align-items: stretch;
 }
 
 .youWin .modal-body {
-  padding: 0 1rem;
+  padding: 0.5rem 1.5rem;
 }
+
 .youWin .modal-body p {
   margin-bottom: 0px;
 }
+
+.youWin .scorewin .col-4,
+.youWin .scorewin .col-lg-4 {
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  display: flex;
+}
+
+/* Liquid Glass Score Cards in Victory Modal (Equal height, no hover translation) */
 .youWin .scorewin .alert {
-  border-radius: 0px;
+  width: 100%;
+  height: 100%;
+  min-height: 95px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 14px;
   margin-bottom: 0px;
-  padding: 0.75rem 0rem;
+  padding: 0.85rem 0.5rem;
+  text-align: center;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid transparent;
 }
-.youWin .scorewin .alert-warning > .mb-0 {
-  font-size: 20px !important;
-  line-height: 40px;
-}
+
+/* Headings & Numbers */
 .youWin .scorewin .alert-heading.h4,
-.youWin .scorewin .mb-0 {
-  font-size: 25px !important;
-  font-weight: bolder;
+.youWin .scorewin .alert-heading {
+  font-family: var(--font-family-title, sans-serif);
+  font-size: 13.5px !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  line-height: 25px;
-  margin: 1.5em 0em !important;
+  line-height: 1.2;
+  margin: 0 !important;
+}
+
+.youWin .scorewin .mb-0 {
+  font-family: var(--font-family-title, sans-serif);
+  font-size: 24px !important;
+  font-weight: 800;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+  margin: 0 !important;
+}
+
+.youWin .scorewin .alert-warning > .mb-0 {
+  font-size: 20px !important;
 }
 
 .youWin .scorewin hr {
-  margin: 0px;
+  margin: 6px auto;
+  width: 55%;
+  opacity: 0.25;
 }
 
-.youWin .scorewin .col-lg-4 {
-  padding-right: 0px;
-  padding-left: 0px;
+/* Encontrados / Success */
+.youWin .scorewin .alert-success {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #059669 !important;
+  border-color: rgba(16, 185, 129, 0.28) !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
+[data-bs-theme="dark"] .youWin .scorewin .alert-success {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #34d399 !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Tiempo / Warning */
+.youWin .scorewin .alert-warning {
+  background: rgba(245, 158, 11, 0.12) !important;
+  color: #d97706 !important;
+  border-color: rgba(245, 158, 11, 0.28) !important;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+[data-bs-theme="dark"] .youWin .scorewin .alert-warning {
+  background: rgba(245, 158, 11, 0.18) !important;
+  color: #fbbf24 !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Errores / Danger */
+.youWin .scorewin .alert-danger {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #dc2626 !important;
+  border-color: rgba(239, 68, 68, 0.28) !important;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+[data-bs-theme="dark"] .youWin .scorewin .alert-danger {
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #f87171 !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Share Section */
 .youWin .share {
   text-align: center;
-  padding: 1.5em;
+  padding: 1rem 0;
 }
+
 .youWin .share h4 {
-  padding-bottom: 0.5em;
+  font-family: var(--font-family-title, sans-serif);
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding-bottom: 0.75rem;
+  color: var(--text-main);
+}
+
+.youWin .share button {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
+}
+
+.youWin .share button:hover {
+  transform: translateY(-3px) scale(1.05);
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+}
+
+.youWin .share button:active {
+  transform: scale(0.95);
 }
