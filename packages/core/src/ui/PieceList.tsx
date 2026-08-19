@@ -3,7 +3,7 @@ import Table from "react-bootstrap/Table";
 import { useKeyPress } from "../hooks/useKeyPress";
 import { className } from "../lib/pieces";
 import { setColor } from "../lib/colors";
-import { pieceSilhouette } from "../geometry/pieceSilhouette";
+import { pieceThumbnail } from "../geometry/pieceSilhouette";
 import type { PieceProps } from "@mappuzzle/shared";
 import { PuzzleService } from "../services/puzzleService";
 import "./PieceList.css";
@@ -123,7 +123,11 @@ export default function PieceList({
         <tbody>
           {pieces.map((c: PieceProps) => {
             if (founds.includes(c.properties.cartodb_id)) return null;
-            const silhouette = pieceSilhouette(c, PIECE_WIDTH_PX);
+            // The thumbnail, not the silhouette: a piece with distant islands is
+            // nearly all empty box at this size — France's mainland came out 4.7
+            // pixels across — so this frames the part worth looking at. Pieces
+            // that really are a scatter of islands are left whole.
+            const silhouette = pieceThumbnail(c, PIECE_WIDTH_PX);
             return (
               <tr
                 key={c.properties.cartodb_id}

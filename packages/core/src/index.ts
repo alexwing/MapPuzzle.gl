@@ -20,7 +20,7 @@ export {
 export { query } from "./db/dbFactory";
 export { securizeQuery, securizeTextParameter } from "./db/securize";
 
-export { pieceBox, pieceSilhouette } from "./geometry/pieceSilhouette";
+export { pieceBox, pieceSilhouette, pieceThumbnail } from "./geometry/pieceSilhouette";
 export type { Silhouette } from "./geometry/pieceSilhouette";
 
 export { useKeyPress } from "./hooks/useKeyPress";

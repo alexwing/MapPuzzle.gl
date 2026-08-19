@@ -51,6 +51,16 @@ interface CacheEntry {
   bounds?: Bounds;
   box?: string;
   polys: Map<number, string>;
+  /** The framed variant the piece list uses. See pieceThumbnail. */
+  framed?: Framing;
+  framedBox?: string;
+  framedPolys?: Map<number, string>;
+}
+
+/** The rings a thumbnail draws, and the box they are fitted into. */
+interface Framing {
+  bounds: Bounds;
+  rings: Ring[];
 }
 
 /**
@@ -319,6 +329,162 @@ export function pieceBox(piece: PieceProps): string {
     entry.box = formatBox(bounds);
   }
   return entry.box;
+}
+
+/**
+ * How far a speck may sit from what is already framed and still be counted as
+ * part of the cluster, as a share of the cluster's own size. Same 25% the share
+ * cards frame their maps with.
+ */
+const NEAR_MARGIN = 0.25;
+/**
+ * How much of a piece the main cluster has to hold before the rest is treated
+ * as outlying and left out of a thumbnail.
+ *
+ * The number decides which side of a line each piece falls on, so it was chosen
+ * by running every map through it rather than by taste. At 85%: France frames
+ * its mainland and leaves French Guiana and the Indian Ocean departments out,
+ * gaining 5.8x; the Netherlands 11x, New Zealand 7.8x, Portugal 1.8x — 68
+ * pieces in all gain more than a fifth. And the pieces that ARE a scatter of
+ * islands keep every one of them: Tuvalu, the Maldives, the Marshalls, the
+ * Balearics, the Canaries, and Malaysia, whose second lobe is Borneo. Those
+ * would have been ruined by a rule that just dropped whatever was far away.
+ *
+ * Area is measured in Mercator metres, not on the ground, on purpose: what
+ * matters is how much of the drawing would be thrown away, and the drawing is
+ * Mercator. It is also why the United States and Norway are left alone —
+ * latitude inflates Alaska and Svalbard until they are too much of the piece
+ * to cut.
+ */
+const MAIN_CLUSTER_COVERAGE = 0.85;
+
+/** Bounding box of one ring. */
+function boxOfRing(ring: Ring): Bounds {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const [x, y] of ring) {
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  }
+  return { minX, minY, maxX, maxY };
+}
+
+/** Twice the signed area, shoelace, unsigned — only ratios are used. */
+function ringArea(ring: Ring): number {
+  let sum = 0;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    sum += ring[j][0] * ring[i][1] - ring[i][0] * ring[j][1];
+  }
+  return Math.abs(sum / 2);
+}
+
+/**
+ * The rings worth drawing at thumbnail size, and the box to fit them in.
+ *
+ * A piece with distant islands is nearly all empty box: France's mainland is
+ * 4.7 pixels across in an 80x30 cell because French Guiana and Reunion are in
+ * the same bounding box. So the rings are clustered by proximity outwards from
+ * the largest one, and then one question decides everything — does that cluster
+ * hold nearly all of the piece? If it does, frame the cluster and leave the
+ * specks out. If it does not, the piece really is spread out, and it is shown
+ * whole, small as that may be.
+ *
+ * Whole rings are kept or dropped, never cut, so the frame is exactly the box
+ * of what it draws and nothing spills outside the viewBox.
+ */
+function framingOf(rings: Ring[]): Framing | undefined {
+  const bounds = boundsOf(rings);
+  if (!bounds) return undefined;
+  if (rings.length < 2) return { bounds, rings };
+
+  const boxes = rings.map(boxOfRing);
+  const areas = rings.map(ringArea);
+  const total = areas.reduce((a, b) => a + b, 0);
+
+  let seed = 0;
+  for (let i = 1; i < areas.length; i++) if (areas[i] > areas[seed]) seed = i;
+
+  const frame: Bounds = { ...boxes[seed] };
+  const taken = new Set<number>([seed]);
+  let held = areas[seed];
+
+  // Single linkage outwards, with the reach growing as the cluster does.
+  for (let pass = 0; pass < 8; pass++) {
+    const reachX = (frame.maxX - frame.minX) * NEAR_MARGIN;
+    const reachY = (frame.maxY - frame.minY) * NEAR_MARGIN;
+    let grew = false;
+    for (let i = 0; i < rings.length; i++) {
+      if (taken.has(i)) continue;
+      const b = boxes[i];
+      const near =
+        b.minX <= frame.maxX + reachX &&
+        b.maxX >= frame.minX - reachX &&
+        b.minY <= frame.maxY + reachY &&
+        b.maxY >= frame.minY - reachY;
+      if (!near) continue;
+      taken.add(i);
+      held += areas[i];
+      frame.minX = Math.min(frame.minX, b.minX);
+      frame.minY = Math.min(frame.minY, b.minY);
+      frame.maxX = Math.max(frame.maxX, b.maxX);
+      frame.maxY = Math.max(frame.maxY, b.maxY);
+      grew = true;
+    }
+    if (!grew) break;
+  }
+
+  if (total <= 0 || held / total < MAIN_CLUSTER_COVERAGE) {
+    return { bounds, rings };
+  }
+  return { bounds: frame, rings: rings.filter((_, i) => taken.has(i)) };
+}
+
+/**
+ * The piece as a thumbnail: the same silhouette, framed on the part of it worth
+ * looking at.
+ *
+ * For the piece list and nothing else. The drag cursor and the editor's centroid
+ * picker both need the true extent — the cursor because it is laid over the map
+ * at the map's own scale, the picker because the curated centroid offsets were
+ * measured against the full box — so they keep using pieceSilhouette.
+ */
+export function pieceThumbnail(
+  piece: PieceProps,
+  targetPx: number = MIN_TARGET_PX
+): Silhouette {
+  const entry = entryFor(piece);
+  if (!entry) return { poly: "", box: "" };
+
+  const bucket = bucketFor(targetPx);
+  entry.framedPolys = entry.framedPolys ?? new Map<number, string>();
+  const cached = entry.framedPolys.get(bucket);
+  if (cached !== undefined && entry.framedBox !== undefined) {
+    return { poly: cached, box: entry.framedBox };
+  }
+
+  const framing = entry.framed ?? framingOf(ringsOf(piece.geometry));
+  if (!framing) {
+    // Nothing to project: fall back to whatever a legacy map shipped with.
+    const poly = piece.properties?.poly ?? "";
+    entry.framedBox = piece.properties?.box ?? "";
+    entry.framedPolys.set(bucket, poly);
+    return { poly, box: entry.framedBox };
+  }
+  entry.framed = framing;
+  entry.framedBox = formatBox(framing.bounds);
+
+  const { bounds, rings } = framing;
+  const extent = Math.max(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY);
+  const tolerance = extent > 0 ? (TOLERANCE_PX * extent) / bucket : 0;
+  const poly =
+    buildPath(rings, bounds, tolerance) || buildPath(rings, bounds, 0);
+  entry.framedPolys.set(bucket, poly);
+
+  return { poly, box: entry.framedBox };
 }
 
 /**
