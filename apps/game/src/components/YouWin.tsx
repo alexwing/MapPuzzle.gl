@@ -10,6 +10,8 @@ import { useTranslation } from "react-i18next";
 import * as Icon from "react-bootstrap-icons";
 
 import { getSiteUrl, getTexTime, getTime, puzzlePath } from "../lib/Utils";
+import GameTime from "../lib/GameTime";
+import { trackWinGame, trackShareScore } from "../lib/Analytics";
 import "./YouWin.css";
 import {
   FacebookShareButton,
@@ -53,8 +55,14 @@ export default function YouWin({
   useEffect(() => {
     if (winner) {
       setShow(true);
+      trackWinGame({
+        puzzleName: name,
+        timeSeconds: GameTime.seconds,
+        fails,
+        founds: founds.length,
+      });
     }
-  }, [winner]);
+  }, [winner, name, fails, founds.length]);
 
   const url = getSiteUrl(puzzlePath(path));
   const quote = t("common.share.quote", {
@@ -65,6 +73,7 @@ export default function YouWin({
   });
   const hashtag = t("common.share.hashtag");
   const title = t("common.share.title");
+
   return !winner ? null : (
     <React.Fragment>
       <Modal
@@ -107,17 +116,39 @@ export default function YouWin({
           <Row>
             <Col lg={12} className="share">
               <h4>{t("YouWin.share")}</h4>
-              <EmailShareButton url={url} subject={title} body={quote} className="me-2">
+              <EmailShareButton
+                url={url}
+                subject={title}
+                body={quote}
+                className="me-2"
+                beforeOnClick={() => {
+                  trackShareScore({ network: "email", puzzleName: name });
+                  return Promise.resolve();
+                }}
+              >
                 <EmailIcon size={48} round={true} />
               </EmailShareButton>
-              <FacebookShareButton url={url} hashtag={hashtag} className="me-2">
+              <FacebookShareButton
+                url={url}
+                hashtag={hashtag}
+                className="me-2"
+                beforeOnClick={() => {
+                  trackShareScore({ network: "facebook", puzzleName: name });
+                  return Promise.resolve();
+                }}
+              >
                 <FacebookIcon size={48} round={true} />
               </FacebookShareButton>
               <TwitterShareButton
                 url={url}
                 title={quote}
                 hashtags={hashtag.split(",")}
-                className="me-2">
+                className="me-2"
+                beforeOnClick={() => {
+                  trackShareScore({ network: "twitter", puzzleName: name });
+                  return Promise.resolve();
+                }}
+              >
                 <TwitterIcon size={48} round={true} />
               </TwitterShareButton>
               <LinkedinShareButton
@@ -125,13 +156,34 @@ export default function YouWin({
                 title={title + " - " + name}
                 summary={quote}
                 source={title}
-                className="me-2">
+                className="me-2"
+                beforeOnClick={() => {
+                  trackShareScore({ network: "linkedin", puzzleName: name });
+                  return Promise.resolve();
+                }}
+              >
                 <LinkedinIcon size={48} round={true} />
               </LinkedinShareButton>
-              <WhatsappShareButton url={url} title={quote}  className="me-2">
+              <WhatsappShareButton
+                url={url}
+                title={quote}
+                className="me-2"
+                beforeOnClick={() => {
+                  trackShareScore({ network: "whatsapp", puzzleName: name });
+                  return Promise.resolve();
+                }}
+              >
                 <WhatsappIcon size={48} round={true} />
               </WhatsappShareButton>
-              <TelegramShareButton url={url} title={quote}  className="me-2">
+              <TelegramShareButton
+                url={url}
+                title={quote}
+                className="me-2"
+                beforeOnClick={() => {
+                  trackShareScore({ network: "telegram", puzzleName: name });
+                  return Promise.resolve();
+                }}
+              >
                 <TelegramIcon size={48} round={true} />
               </TelegramShareButton>
             </Col>

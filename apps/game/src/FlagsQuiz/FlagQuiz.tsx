@@ -35,6 +35,7 @@ import type { CustomWiki } from "@mappuzzle/shared";
 import WikiInfo from "../components/WikiInfo";
 import type { ViewState } from "@mappuzzle/shared";
 import Donate from "../components/Donate";
+import { trackStartGame, trackResetGame, trackSelectPuzzle } from "../lib/Analytics";
 
 function FlagQuiz(): JSX.Element {
   const [data, setData] = useState({} as GeoJSON.FeatureCollection);
@@ -121,6 +122,10 @@ function FlagQuiz(): JSX.Element {
   };
   const onSelectMapHandler = (val: number) => {
     if (val) {
+      trackSelectPuzzle({
+        puzzleId: val,
+        puzzleName: puzzleSelectedData?.name || String(val),
+      });
       setPuzzleSelected(val);
       setPieceSelectedData({} as PieceProps);
       setPieceSelected(-1);
@@ -131,6 +136,13 @@ function FlagQuiz(): JSX.Element {
 
   /* Reset the Game */
   const onResetGameHandler = () => {
+    trackResetGame({
+      puzzleId: puzzleSelected,
+      puzzleName: puzzleSelectedData?.name,
+      gameMode: "flag_quiz",
+      founds: corrects.length,
+      fails: fails.length,
+    });
     removeCookie("quizFounds" + puzzleSelected);
     removeCookie("quizFails" + puzzleSelected);
     removeCookie("quizSeconds" + puzzleSelected);
@@ -233,6 +245,13 @@ function FlagQuiz(): JSX.Element {
         //restore game status from coockie
         restoreCookies(puzzleId);
         setLoading(false);
+
+        trackStartGame({
+          puzzleId: puzzleData.id,
+          puzzleName: puzzleData.name,
+          gameMode: "flag_quiz",
+          lang: langAux,
+        });
       });
     });
   };

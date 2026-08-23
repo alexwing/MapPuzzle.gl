@@ -30,6 +30,7 @@ import type { CustomTranslations } from "@mappuzzle/shared";
 import type { Puzzles } from "@mappuzzle/shared";
 import { useTranslation } from "react-i18next";
 import Donate from "./components/Donate";
+import { trackStartGame, trackResetGame, trackToggle3D, trackSelectPuzzle } from "./lib/Analytics";
 
 /**
  * How far over the map leans in its tilted view. The same 45° Google Maps uses,
@@ -180,6 +181,13 @@ function MapPuzzle(): JSX.Element {
           setData(response);
 
           loadPiecesByLang(puzzleId, piecesAux, langAux);
+
+          trackStartGame({
+            puzzleId: puzzleData.id,
+            puzzleName: puzzleData.name,
+            gameMode: "map",
+            lang: langAux,
+          });
         }
       });
     });
@@ -429,6 +437,10 @@ function MapPuzzle(): JSX.Element {
    */
   const onToggleTiltHandler = () => {
     const goingFlat = tilted;
+    trackToggle3D({
+      is3d: !goingFlat,
+      puzzleName: puzzleSelectedData?.name,
+    });
     setViewState({
       ...liveView,
       pitch: goingFlat ? 0 : TILTED_PITCH,
@@ -495,6 +507,10 @@ function MapPuzzle(): JSX.Element {
 
   const onSelectMapHandler = (val: number) => {
     if (val) {
+      trackSelectPuzzle({
+        puzzleId: val,
+        puzzleName: puzzleSelectedData?.name || String(val),
+      });
       setPuzzleSelected(val);
       setPieceSelectedData({} as PieceProps);
       setPieceSelected(-1);
@@ -504,6 +520,13 @@ function MapPuzzle(): JSX.Element {
 
   /* Reset the Game */
   const onResetGameHandler = () => {
+    trackResetGame({
+      puzzleId: puzzleSelected,
+      puzzleName: puzzleSelectedData?.name,
+      gameMode: "map",
+      founds: founds.length,
+      fails,
+    });
     onRefocusMapHandler();
     removeCookie("founds" + puzzleSelected);
     removeCookie("fails" + puzzleSelected);
@@ -640,14 +663,20 @@ function MapPuzzle(): JSX.Element {
               is3D={tilted}
               feedbackPiece={placementFeedback}
             />
-            <MapControls
-              bearing={liveView?.bearing || 0}
-              tilted={tilted}
-              onToggleTilt={onToggleTiltHandler}
-              onRotateLeft={onRotateLeftHandler}
-              onRotateRight={onRotateRightHandler}
-              onResetBearing={onResetBearingHandler}
-            />
+            {/* Absent below tablet size rather than hidden: a tilted map
+                leaves a phone nothing to play on, and a control you cannot
+                usefully press should not be in the DOM to be found. The
+                gestures are shut off in DeckMap by the same answer. */}
+            {canRotate && (
+              <MapControls
+                bearing={liveView?.bearing || 0}
+                tilted={tilted}
+                onToggleTilt={onToggleTiltHandler}
+                onRotateLeft={onRotateLeftHandler}
+                onRotateRight={onRotateRightHandler}
+                onResetBearing={onResetBearingHandler}
+              />
+            )}
             <MenuTop
               name="MapPuzzle.xyz"
               onSelectMap={onSelectMapHandler}
