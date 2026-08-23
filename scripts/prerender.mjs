@@ -45,14 +45,15 @@ const puzzlePath = (slug, isQuiz) =>
  *
  * English keeps the phrasing it was indexed with. The rest use a separator
  * rather than an English-shaped noun pile, which does not survive translation.
- *
- * The copy below is mine and should be read by someone who speaks the language
- * before it is treated as final, particularly the Greek and the German.
  */
 const LANGS = [
   {
     code: "en",
     title: (name, kind) => `${name} ${kind} | MapPuzzle.xyz`,
+    homeTitle: "MapPuzzle.xyz — Interactive Geography Map Puzzles & Quizzes",
+    homeHeading: "MapPuzzle: Interactive Geography Puzzles",
+    homeDescription: "Explore the world through interactive map puzzles and flag quizzes. Reconstruct countries, provinces, and historical territories piece by piece in your browser. Free, educational, and no sign-up required.",
+    exploreHeading: "Explore Map Puzzles",
     map: "map puzzle",
     quiz: "flag quiz",
     describeMap: (name, n, sample) =>
@@ -65,6 +66,10 @@ const LANGS = [
   {
     code: "es",
     title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    homeTitle: "MapPuzzle.xyz — Puzles y mapas interactivos de geografía",
+    homeHeading: "MapPuzzle: Puzles y mapas interactivos",
+    homeDescription: "Aprende geografía jugando con puzles de mapas interactivos y desafíos de banderas. Recompón países, comunidades y territorios históricos pieza a pieza. Gratuito, educativo y sin registro.",
+    exploreHeading: "Explora los puzles de mapas",
     map: "puzle de mapa",
     quiz: "quiz de banderas",
     describeMap: (name, n, sample) =>
@@ -77,6 +82,10 @@ const LANGS = [
   {
     code: "fr",
     title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    homeTitle: "MapPuzzle.xyz — Puzzles cartographiques et géographie interactive",
+    homeHeading: "MapPuzzle : Puzzles de cartes interactives",
+    homeDescription: "Découvrez la géographie de manière ludique grâce à des puzzles de cartes interactifs et des quiz de drapeaux. Reconstituez pays, régions et territoires pièce par pièce. Gratuit et sans inscription.",
+    exploreHeading: "Explorer les puzzles de cartes",
     map: "puzzle de carte",
     quiz: "quiz de drapeaux",
     describeMap: (name, n, sample) =>
@@ -89,6 +98,10 @@ const LANGS = [
   {
     code: "pt",
     title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    homeTitle: "MapPuzzle.xyz — Puzzles e mapas interativos de geografia",
+    homeHeading: "MapPuzzle: Puzzles e mapas interativos",
+    homeDescription: "Aprenda geografia jogando com puzzles de mapas interativos e desafios de bandeiras. Recomponha países, estados e territórios peça por peça no navegador. Gratuito e sem registo.",
+    exploreHeading: "Explorar puzzles de mapas",
     map: "puzzle de mapa",
     quiz: "quiz de bandeiras",
     describeMap: (name, n, sample) =>
@@ -101,6 +114,10 @@ const LANGS = [
   {
     code: "de",
     title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    homeTitle: "MapPuzzle.xyz — Interaktive Geografie-Karten-Puzzles & Flaggen-Quiz",
+    homeHeading: "MapPuzzle: Interaktive Karten-Puzzles",
+    homeDescription: "Lerne Geografie spielerisch mit interaktiven Karten-Puzzles und Flaggen-Quizzen. Setze Länder, Bundesländer und historische Gebiete Stück für Stück im Browser zusammen. Kostenlos und ohne Registrierung.",
+    exploreHeading: "Karten-Puzzles entdecken",
     map: "Karten-Puzzle",
     quiz: "Flaggen-Quiz",
     describeMap: (name, n, sample) =>
@@ -113,6 +130,10 @@ const LANGS = [
   {
     code: "el",
     title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    homeTitle: "MapPuzzle.xyz — Διαδραστικά παζλ γεωγραφίας και κουίζ σημαιών",
+    homeHeading: "MapPuzzle: Διαδραστικά παζλ χαρτών",
+    homeDescription: "Μάθετε γεωγραφία παίζοντας διαδραστικά παζλ χαρτών και κουίζ σημαιών. Συναρμολογήστε χώρες, επαρχίες και ιστορικά εδάφη κομμάτι κομμάτι στον περιηγητή. Δωρεάν και χωρίς εγγραφή.",
+    exploreHeading: "Εξερευνήστε τα παζλ χαρτών",
     map: "παζλ χάρτη",
     quiz: "κουίζ σημαιών",
     describeMap: (name, n, sample) =>
@@ -125,6 +146,10 @@ const LANGS = [
   {
     code: "it",
     title: (name, kind) => `${name} — ${kind} | MapPuzzle.xyz`,
+    homeTitle: "MapPuzzle.xyz — Puzzle e quiz geografici interattivi",
+    homeHeading: "MapPuzzle: Puzzle di mappe interattive",
+    homeDescription: "Esplora la geografia giocando con puzzle di mappe interattive e quiz di bandiere. Ricomponi nazioni, regioni e territori pezzo per pezzo nel browser. Gratuito, educativo e senza registrazione.",
+    exploreHeading: "Esplora i puzzle di mappe",
     map: "puzzle di mappa",
     quiz: "quiz di bandiere",
     describeMap: (name, n, sample) =>
@@ -289,6 +314,69 @@ function page(template, puzzle, names, isQuiz, lang) {
   return html;
 }
 
+/**
+ * The home page in each language.
+ *
+ * Gives crawlers real text, headings, description and internal links to every
+ * puzzle so that home pages are never flagged as Soft 404.
+ */
+function homePage(template, puzzles, titlesByLang, lang) {
+  const url = SITE + localised("/", lang.code);
+  let html = template;
+
+  const meta = (kindOf, key, content) => {
+    const pattern = new RegExp(`<meta\\s+${kindOf}="${key}"[\\s\\S]*?>`, "i");
+    const tag = `<meta ${kindOf}="${key}" content="${escape(content)}" />`;
+    if (!pattern.test(html)) throw new Error(`index.html has no ${kindOf}="${key}" to replace`);
+    html = html.replace(pattern, tag);
+  };
+
+  html = html.replace(/<html lang="[^"]*"/i, `<html lang="${lang.code}"`);
+
+  const title_re = /<title>[\s\S]*?<\/title>/;
+  if (!title_re.test(html)) throw new Error("index.html has no <title> to replace");
+  html = html.replace(title_re, `<title>${escape(lang.homeTitle)}</title>`);
+
+  const alternates = LANGS.map(
+    (other) =>
+      `<link rel="alternate" hreflang="${other.code}" href="${SITE}${localised("/", other.code)}" />`
+  ).join("");
+  const canonical_re = /<link\s+rel="canonical"[\s\S]*?>/i;
+  if (!canonical_re.test(html)) throw new Error("index.html has no canonical link to replace");
+  html = html.replace(
+    canonical_re,
+    `<link rel="canonical" href="${url}" />` +
+      alternates +
+      `<link rel="alternate" hreflang="x-default" href="${SITE}/" />`
+  );
+
+  meta("name", "description", lang.homeDescription);
+  meta("property", "og:title", lang.homeTitle);
+  meta("property", "og:description", lang.homeDescription);
+  meta("property", "og:url", url);
+  meta("property", "og:locale", lang.code);
+  meta("name", "twitter:title", lang.homeTitle);
+  meta("name", "twitter:description", lang.homeDescription);
+
+  const puzzleLinks = puzzles
+    .map((p) => {
+      const localName = unquote(String(titlesByLang.get(lang.code)?.[p.id] ?? p.name));
+      const pPath = localised(puzzlePath(p.url, false), lang.code);
+      return `<li><a href="${pPath}">${escape(localName)}</a></li>`;
+    })
+    .join("");
+
+  const placeholder =
+    `<div id="root"><div class="prerendered-intro">` +
+    `<h1>${escape(lang.homeHeading)}</h1>` +
+    `<p>${escape(lang.homeDescription)}</p>` +
+    `<h2>${escape(lang.exploreHeading)}</h2><ul>${puzzleLinks}</ul>` +
+    `</div></div>`;
+  html = html.replace(/<div id="root">\s*<\/div>/, placeholder);
+
+  return html;
+}
+
 const dbPath = path.join(dataDir, "front.sqlite3.png");
 const templatePath = path.join(buildDir, "index.html");
 for (const [what, file] of [["build", templatePath], ["database", dbPath]]) {
@@ -354,25 +442,18 @@ for (const puzzle of puzzles) {
   }
 }
 
-/* The home page in each language, so a reader landing on /es/ stays in Spanish
-   instead of being handed English and a language menu. */
+/* The home page in each language (including root '/' for English), so every
+   entry point has real HTML content, meta tags, and puzzle links. */
 if (!checkOnly) {
   for (const lang of LANGS) {
-    if (lang.code === DEFAULT_LANG) continue;
-    const dir = path.join(buildDir, lang.code);
-    fs.mkdirSync(dir, { recursive: true });
-    let home = template.replace(/<html lang="[^"]*"/i, `<html lang="${lang.code}"`);
-    const alternates = LANGS.map(
-      (other) =>
-        `<link rel="alternate" hreflang="${other.code}" href="${SITE}${localised("/", other.code)}" />`
-    ).join("");
-    home = home.replace(
-      /<link\s+rel="canonical"[\s\S]*?>/i,
-      `<link rel="canonical" href="${SITE}/${lang.code}/" />` +
-        alternates +
-        `<link rel="alternate" hreflang="x-default" href="${SITE}/" />`
-    );
-    fs.writeFileSync(path.join(dir, "index.html"), home);
+    const homeHtml = homePage(template, puzzles, titlesByLang, lang);
+    if (lang.code === DEFAULT_LANG) {
+      fs.writeFileSync(path.join(buildDir, "index.html"), homeHtml);
+    } else {
+      const dir = path.join(buildDir, lang.code);
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, "index.html"), homeHtml);
+    }
   }
 }
 
