@@ -62,6 +62,8 @@ const LANGS = [
       `Guess the flag of every region in ${name}. ${n} flags to learn, including ${sample}. Free, no sign-up, playable in your browser.`,
     heading: (name, kind) => `${name} ${kind}`,
     regions: (n) => `The ${n} regions`,
+    switchToMap: (name) => `Play the ${name} map puzzle`,
+    switchToQuiz: (name) => `Play the ${name} flag quiz`,
   },
   {
     code: "es",
@@ -78,6 +80,8 @@ const LANGS = [
       `Adivina la bandera de cada región de ${name}. ${n} banderas que aprender, entre ellas ${sample}. Gratis, sin registro, para jugar en el navegador.`,
     heading: (name, kind) => `${name}: ${kind}`,
     regions: (n) => `Las ${n} regiones`,
+    switchToMap: (name) => `Jugar al puzle de mapa de ${name}`,
+    switchToQuiz: (name) => `Jugar al quiz de banderas de ${name}`,
   },
   {
     code: "fr",
@@ -89,11 +93,13 @@ const LANGS = [
     map: "puzzle de carte",
     quiz: "quiz de drapeaux",
     describeMap: (name, n, sample) =>
-      `Reconstituez ${name} pièce par pièce : ${n} régions à placer, dont ${sample}. Un puzzle de cartes gratuit, sans inscription, jouable dans le navigateur.`,
+      `Reconstituez ${name} pièce par pièce : ${n} régions à placer, dont ${sample}. Un puzzle de cartes gratuit, sans inscription, jouable dans le navegador.`,
     describeQuiz: (name, n, sample) =>
       `Devinez le drapeau de chaque région de ${name}. ${n} drapeaux à apprendre, dont ${sample}. Gratuit, sans inscription, jouable dans le navigateur.`,
     heading: (name, kind) => `${name} : ${kind}`,
     regions: (n) => `Les ${n} régions`,
+    switchToMap: (name) => `Jouer au puzzle de carte de ${name}`,
+    switchToQuiz: (name) => `Jouer au quiz de drapeaux de ${name}`,
   },
   {
     code: "pt",
@@ -110,6 +116,8 @@ const LANGS = [
       `Adivinhe a bandeira de cada região de ${name}. ${n} bandeiras para aprender, entre elas ${sample}. Grátis, sem registo, para jogar no navegador.`,
     heading: (name, kind) => `${name}: ${kind}`,
     regions: (n) => `As ${n} regiões`,
+    switchToMap: (name) => `Jogar o puzzle de mapa de ${name}`,
+    switchToQuiz: (name) => `Jogar o quiz de bandeiras de ${name}`,
   },
   {
     code: "de",
@@ -126,6 +134,8 @@ const LANGS = [
       `Errate die Flagge jeder Region in ${name}. ${n} Flaggen zum Lernen, darunter ${sample}. Kostenlos, ohne Anmeldung, im Browser spielbar.`,
     heading: (name, kind) => `${name}: ${kind}`,
     regions: (n) => `Die ${n} Regionen`,
+    switchToMap: (name) => `Karten-Puzzle von ${name} spielen`,
+    switchToQuiz: (name) => `Flaggen-Quiz von ${name} spielen`,
   },
   {
     code: "el",
@@ -142,6 +152,8 @@ const LANGS = [
       `Μάντεψε τη σημαία κάθε περιοχής: ${name}. ${n} σημαίες για μάθηση, όπως ${sample}. Δωρεάν, χωρίς εγγραφή, παίζεται στον περιηγητή.`,
     heading: (name, kind) => `${name}: ${kind}`,
     regions: (n) => `Οι ${n} περιοχές`,
+    switchToMap: (name) => `Παίξε το παζλ χάρτη: ${name}`,
+    switchToQuiz: (name) => `Παίξε το κουίζ σημαιών: ${name}`,
   },
   {
     code: "it",
@@ -150,7 +162,7 @@ const LANGS = [
     homeHeading: "MapPuzzle: Puzzle di mappe interattive",
     homeDescription: "Esplora la geografia giocando con puzzle di mappe interattive e quiz di bandiere. Ricomponi nazioni, regioni e territori pezzo per pezzo nel browser. Gratuito, educativo e senza registrazione.",
     exploreHeading: "Esplora i puzzle di mappe",
-    map: "puzzle di mappa",
+    map: "puzzle de mappa",
     quiz: "quiz di bandiere",
     describeMap: (name, n, sample) =>
       `Ricomponi ${name} pezzo per pezzo: ${n} regioni da posizionare, tra cui ${sample}. Un puzzle di mappe gratuito, senza registrazione, giocabile nel browser.`,
@@ -158,6 +170,8 @@ const LANGS = [
       `Indovina la bandiera di ogni regione di ${name}. ${n} bandiere da imparare, tra cui ${sample}. Gratis, senza registrazione, giocabile nel browser.`,
     heading: (name, kind) => `${name}: ${kind}`,
     regions: (n) => `Le ${n} regioni`,
+    switchToMap: (name) => `Gioca al puzzle di mappa di ${name}`,
+    switchToQuiz: (name) => `Gioca al quiz di bandiere di ${name}`,
   },
 ];
 
@@ -303,10 +317,18 @@ function page(template, puzzle, names, isQuiz, lang) {
   // Inside #root, so React clears it on mount: it is a loading state that says
   // what the page is, and it is what a crawler reads before running any script.
   const list = names.map((n) => `<li>${escape(n)}</li>`).join("");
+  const crossPath = localised(puzzlePath(puzzle.url, !isQuiz), lang.code);
+  const crossLink = isQuiz
+    ? `<p style="margin: 1.5rem 0"><a href="${crossPath}" style="display:inline-block;padding:0.45rem 1rem;border-radius:8px;background:rgba(26,115,232,0.1);color:#1a73e8;text-decoration:none;font-weight:600">🗺️ ${escape(lang.switchToMap(puzzle.name))}</a></p>`
+    : (puzzle.enableFlags
+      ? `<p style="margin: 1.5rem 0"><a href="${crossPath}" style="display:inline-block;padding:0.45rem 1rem;border-radius:8px;background:rgba(26,115,232,0.1);color:#1a73e8;text-decoration:none;font-weight:600">🚩 ${escape(lang.switchToQuiz(puzzle.name))}</a></p>`
+      : "");
+
   const placeholder =
     `<div id="root"><div class="prerendered-intro">` +
     `<h1>${escape(lang.heading(puzzle.name, kind))}</h1>` +
     `<p>${escape(description)}</p>` +
+    crossLink +
     (names.length ? `<h2>${escape(lang.regions(names.length))}</h2><ul>${list}</ul>` : "") +
     `</div></div>`;
   html = html.replace(/<div id="root">\s*<\/div>/, placeholder);

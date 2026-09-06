@@ -8,6 +8,7 @@ import "./styles/MapPuzzle.css";
 import "./styles/icons.css";
 import "./styles/responsive.css";
 import { puzzleFromLocation } from "./lib/Utils";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const MapPuzzle = lazy(() => import("./MapPuzzle"));
 const FlagQuiz = lazy(() => import("./FlagsQuiz/FlagQuiz"));
@@ -18,13 +19,15 @@ const App = () => {
   // Either address shape: /flag-quiz/<slug>/ or the older /?flagQuiz=<slug>.
   const isQuiz = puzzleFromLocation()?.isQuiz ?? false;
   return (
-    <ThemeProvider>
-      <Router>
-        <Suspense fallback={<div />}>
-          {isQuiz ? <FlagQuiz /> : <MapPuzzle />}
-        </Suspense>
-      </Router>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <Router>
+          <Suspense fallback={<div />}>
+            {isQuiz ? <FlagQuiz /> : <MapPuzzle />}
+          </Suspense>
+        </Router>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 };
 container.render(<App />);

@@ -14,6 +14,7 @@ import { calculateDistanceFromEcuador } from "../../lib/Utils";
 import { ConfigService } from "@mappuzzle/core";
 import FlagSelector from "./FlagSelector";
 import { siteAsset } from "@mappuzzle/core";
+import ErrorBoundary from "../../components/ErrorBoundary";
 
 interface PieceQuizProps {
   puzzleSelected: number;
@@ -190,11 +191,36 @@ function PieceQuiz({
           backgroundImage: `url(${backgroundImage})`,
         }}
       >
-        <Canvas shadows camera={{ position: [1.4, -1, 6.5], fov: 60 }}>
-
-          <ambientLight intensity={0.25} />
-          <FlagSelector flagImageUrl={getFlag(puzzleSelected, pieceSelectedData)}/>
-        </Canvas>
+        <ErrorBoundary
+          fallback={
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+                padding: "20px",
+              }}
+            >
+              <img
+                src={getFlag(puzzleSelected, pieceSelectedData)}
+                alt={pieceSelectedData?.properties?.name || "Flag"}
+                style={{
+                  maxHeight: "85%",
+                  maxWidth: "85%",
+                  objectFit: "contain",
+                  borderRadius: "4px",
+                  boxShadow: "0 6px 16px rgba(0,0,0,0.35)",
+                }}
+              />
+            </div>
+          }
+        >
+          <Canvas shadows camera={{ position: [1.4, -1, 6.5], fov: 60 }}>
+            <ambientLight intensity={0.25} />
+            <FlagSelector flagImageUrl={getFlag(puzzleSelected, pieceSelectedData)}/>
+          </Canvas>
+        </ErrorBoundary>
       </div>
       <div className="questions">{buttons}</div>
     </React.Fragment>
