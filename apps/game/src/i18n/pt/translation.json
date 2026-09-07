@@ -13,6 +13,8 @@
     "tilt": "Inclinar mapa",
 
     "flat": "Mapa plano",
+    "equalEarth": "Projeção Equal Earth",
+    "mercator": "Projeção de Mercator",
     "resetGame": "Reinicie o jogo",
     "editor": "Editor",
     "surrenderTitle": "Você se rende?",

@@ -13,6 +13,8 @@
     "tilt": "Tilt Map",
 
     "flat": "Flat Map",
+    "equalEarth": "Equal Earth projection",
+    "mercator": "Mercator projection",
     "resetGame": "Reset Game",
     "editor": "Editor",
     "surrenderTitle": "Do you surrender?",

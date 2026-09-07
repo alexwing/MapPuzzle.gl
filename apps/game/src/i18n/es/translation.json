@@ -14,6 +14,8 @@
     "tilt": "Inclinar Mapa",
 
     "flat": "Aplanar Mapa",
+    "equalEarth": "Proyección Equal Earth",
+    "mercator": "Proyección Mercator",
     "editor": "Editor",
     "surrenderTitle": "¿Te rindes?",
     "surrenderMessage": "Haz click en sí, si quieres empezar un nuevo juego"

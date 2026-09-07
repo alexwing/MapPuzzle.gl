@@ -13,6 +13,8 @@
     "tilt": "Incliner la carte",
 
     "flat": "Remettre à plat",
+    "equalEarth": "Projection Equal Earth",
+    "mercator": "Projection Mercator",
     "resetGame": "Redémarrer",
     "editor": "Éditeur",
     "surrenderTitle": "Abandonner?",

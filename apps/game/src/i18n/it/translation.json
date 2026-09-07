@@ -13,6 +13,8 @@
     "tilt": "Inclina mappa",
 
     "flat": "Mappa piatta",
+    "equalEarth": "Proiezione Equal Earth",
+    "mercator": "Proiezione di Mercatore",
     "resetGame": "Riavvia il gioco",
     "editor": "Editor",
     "surrenderTitle": "Ti arrendi?",

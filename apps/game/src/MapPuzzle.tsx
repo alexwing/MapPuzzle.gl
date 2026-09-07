@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import "./styles/MapPuzzle.css";
@@ -14,6 +14,15 @@ import YouWin from "./components/YouWin";
 import { Jsondb, getWiki, copyViewState, getLang, getTranslation, languageFromLocation, puzzleFromLocation, puzzlePath } from "./lib/Utils";
 import AnimatedCursor from "./lib/AnimatedCursor";
 import { useCanRotate } from "./lib/hooks/useCanRotate";
+import {
+  bendFeatureCollection,
+  bendView,
+  PieceCollection,
+  Projection,
+  PROJECTION_COOKIE,
+  projectionFromCookie,
+  unbendView,
+} from "./lib/equalEarth";
 import { LinearInterpolator } from "@deck.gl/core";
 import GameTime from "./lib/GameTime";
 import ReactFullscreeen from "react-easyfullscreen";
@@ -30,7 +39,7 @@ import type { CustomTranslations } from "@mappuzzle/shared";
 import type { Puzzles } from "@mappuzzle/shared";
 import { useTranslation } from "react-i18next";
 import Donate from "./components/Donate";
-import { trackStartGame, trackResetGame, trackToggle3D, trackSelectPuzzle } from "./lib/Analytics";
+import { trackStartGame, trackResetGame, trackToggle3D, trackToggleProjection, trackSelectPuzzle } from "./lib/Analytics";
 
 /**
  * How far over the map leans in its tilted view. The same 45° Google Maps uses,
@@ -42,7 +51,7 @@ const TILTED_PITCH = 45;
 const TILT_TRANSITION_MS = 600;
 
 function MapPuzzle(): JSX.Element {
-  const [data, setData] = useState({} as GeoJSON.FeatureCollection);
+  const [data, setData] = useState({} as PieceCollection);
   const [puzzleSelected, setPuzzleSelected] = useState(1);
   const [puzzleSelectedData, setPuzzleSelectedData] = useState({} as Puzzles);
   const [puzzleCustomCentroids, setPuzzleCustomCentroids] = useState(
@@ -88,6 +97,44 @@ function MapPuzzle(): JSX.Element {
   const { t, i18n } = useTranslation();
   const canRotate = useCanRotate();
   const tilted = (liveView?.pitch ?? 0) > 0;
+
+  /**
+   * Which projection the map is drawn in. Mercator is what it has always been;
+   * Equal Earth is the same puzzle over bent geometry (see lib/equalEarth),
+   * chosen by the player and kept in a cookie.
+   *
+   * The bending is derived, never stored: `data` and `pieces` stay the real
+   * map, and the bent copies are what the map, the list and the cursor are
+   * handed, so the three always agree on the shape of a piece.
+   */
+  const [projection, setProjection] = useState<Projection>(() =>
+    projectionFromCookie(getCookie(PROJECTION_COOKIE))
+  );
+  const viewData = useMemo(
+    () =>
+      projection === "equalEarth" && data?.features
+        ? bendFeatureCollection(data)
+        : data,
+    [data, projection]
+  );
+  const viewPieces = useMemo(() => {
+    if (viewData === data) return pieces;
+    const bent = new Map(
+      viewData.features.map(
+        (piece) => [piece.properties.cartodb_id, piece] as [number, PieceProps]
+      )
+    );
+    return pieces.map((piece) => bent.get(piece.properties.cartodb_id) ?? piece);
+  }, [pieces, data, viewData]);
+  /** The piece in hand, in the shape the map is drawn in. */
+  const cursorPiece = useMemo(() => {
+    if (viewData === data || !pieceSelectedData?.properties) return pieceSelectedData;
+    const id = pieceSelectedData.properties.cartodb_id;
+    return viewPieces.find((piece) => piece.properties.cartodb_id === id) ?? pieceSelectedData;
+  }, [pieceSelectedData, viewPieces, viewData, data]);
+  /** A puzzle's stored framing is over the real map; the bent map needs it bent too. */
+  const framed = (view: ViewState, target: Projection = projection): ViewState =>
+    target === "equalEarth" ? bendView(view) : view;
 
   /*
   * Load the game on start
@@ -177,7 +224,7 @@ function MapPuzzle(): JSX.Element {
 
           setPuzzleSelectedData(puzzleData);
           setPuzzleSelected(puzzleId);
-          commandView(viewStateCopy);
+          commandView(framed(viewStateCopy));
           setData(response);
 
           loadPiecesByLang(puzzleId, piecesAux, langAux);
@@ -487,6 +534,32 @@ function MapPuzzle(): JSX.Element {
   };
 
   /**
+   * Swaps the projection under the player.
+   *
+   * The map is rebuilt from the same features in the other shape, and the
+   * camera goes with it: the same place, at a zoom that keeps the region in
+   * the footprint it had, so nothing seems to jump away or crowd in. Off the
+   * edge of the world there is no place to carry over, and the puzzle's own
+   * framing is used instead.
+   */
+  const onToggleProjectionHandler = () => {
+    const next: Projection = projection === "equalEarth" ? "mercator" : "equalEarth";
+    setProjection(next);
+    setCookie(PROJECTION_COOKIE, next, ConfigService.cookieDays);
+    trackToggleProjection({ projection: next, puzzleName: puzzleSelectedData?.name });
+    const carried = !liveView?.zoom
+      ? null
+      : next === "equalEarth"
+      ? bendView(liveView)
+      : unbendView(liveView);
+    if (carried) {
+      commandView(carried);
+    } else if (puzzleSelectedData?.view_state) {
+      commandView(framed(copyViewState(puzzleSelectedData.view_state), next));
+    }
+  };
+
+  /**
    * A window can be dragged narrow, and a tablet can be a phone by turning it
    * sideways. Shutting the gestures off does not undo a tilt that is already
    * there — deck only re-applies its constraints when the canvas height
@@ -548,7 +621,7 @@ function MapPuzzle(): JSX.Element {
       const viewStateCopy: ViewState = copyViewState(
         puzzleSelectedData.view_state
       );
-      commandView(viewStateCopy);
+      commandView(framed(viewStateCopy));
     }
   };
 
@@ -659,7 +732,8 @@ function MapPuzzle(): JSX.Element {
               onViewStateChange={onViewStateChangeHandler}
               viewState={viewState}
               founds={founds}
-              data={data}
+              data={viewData}
+              projection={projection}
               is3D={tilted}
               feedbackPiece={placementFeedback}
             />
@@ -683,6 +757,8 @@ function MapPuzzle(): JSX.Element {
               onResetGame={onResetGameHandler}
               onFullScreen={onToggle}
               onRefocus={onRefocusMapHandler}
+              projection={projection}
+              onToggleProjection={onToggleProjectionHandler}
               onLangChange={onLangChangeHandler}
               puzzleSelected={puzzleSelected}
             />
@@ -705,7 +781,7 @@ function MapPuzzle(): JSX.Element {
                     onPieceSelected={onPieceSelectedHandler}
                     handleUp={onPieceUpHandler}
                     handleDown={onPieceDownHandler}
-                    pieces={pieces}
+                    pieces={viewPieces}
                     height={height}
                     founds={founds}
                     fails={fails}
@@ -727,7 +803,7 @@ function MapPuzzle(): JSX.Element {
               bearing={liveView?.bearing}
               pitch={liveView?.pitch}
               view={liveView}
-              selected={pieceSelectedData}
+              selected={cursorPiece}
               centroid={pieceSelectedCentroid}
               tooltip={tooltipValue}
               feedbackStatus={placementFeedback?.status ?? null}

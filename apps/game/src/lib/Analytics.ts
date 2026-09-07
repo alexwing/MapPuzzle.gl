@@ -123,3 +123,16 @@ export const trackSelectPuzzle = (options: {
     puzzle_name: options.puzzleName,
   });
 };
+
+/**
+ * Track the switch between the Mercator and Equal Earth projections
+ */
+export const trackToggleProjection = (options: {
+  projection: "mercator" | "equalEarth";
+  puzzleName?: string;
+}) => {
+  trackEvent("toggle_projection", {
+    projection: options.projection === "equalEarth" ? "equal_earth" : "mercator",
+    puzzle_name: options.puzzleName,
+  });
+};

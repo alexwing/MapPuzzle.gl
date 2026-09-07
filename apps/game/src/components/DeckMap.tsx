@@ -13,6 +13,8 @@ import {
 import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 import ThemeContext from "./ThemeProvider";
 import { useCanRotate } from "../lib/hooks/useCanRotate";
+import { useEqualEarthBackdrop } from "../lib/hooks/useEqualEarthBackdrop";
+import { equalEarthScenery, Projection } from "../lib/equalEarth";
 import Map, { ViewState } from "react-map-gl";
 
 export interface PlacementFeedback {
@@ -40,6 +42,38 @@ class SurfaceGradientExtension extends LayerExtension {
 
 const surfaceGradientExtension = new SurfaceGradientExtension();
 
+type Color = [number, number, number, number];
+
+/**
+ * What the Equal Earth view is drawn on.
+ *
+ * In Mercator the map sits on CARTO's tiles, and those cannot be bent — vector
+ * tiles are Mercator by construction — so in Equal Earth the scenery is drawn
+ * here instead: the outline of the planisphere filled as ocean, the world's
+ * land in a neutral tone so a country's puzzle keeps its neighbours, and a 30°
+ * graticule over it. Behind the outline the page shows the app's own
+ * background, which follows the theme on its own.
+ */
+const SCENERY: Record<
+  "light" | "dark",
+  { ocean: Color; land: Color; edge: Color; graticule: Color }
+> = {
+  light: {
+    ocean: [213, 227, 238, 255],
+    land: [246, 243, 236, 255],
+    edge: [71, 85, 105, 120],
+    graticule: [71, 85, 105, 40],
+  },
+  dark: {
+    ocean: [15, 26, 39, 255],
+    land: [28, 36, 49, 255],
+    edge: [148, 163, 184, 110],
+    graticule: [148, 163, 184, 36],
+  },
+};
+
+const PAGE_STYLE = { background: "var(--bg-app)" };
+
 interface DeckMapProps {
   onClickMap: (e: PieceEvent) => void;
   onHoverMap: (e: PieceEvent) => void;
@@ -50,6 +84,12 @@ interface DeckMapProps {
   data: any;
   is3D?: boolean;
   feedbackPiece?: PlacementFeedback | null;
+  /**
+   * Which projection `data` has been prepared for. Equal Earth data arrives
+   * already bent (see lib/equalEarth); what changes here is the ground under
+   * it, since the Mercator tiles cannot follow.
+   */
+  projection?: Projection;
 }
 
 function DeckMap({
@@ -61,6 +101,7 @@ function DeckMap({
   data,
   is3D = false,
   feedbackPiece = null,
+  projection = "mercator",
 }: DeckMapProps): JSX.Element | null {
   const { theme } = useContext(ThemeContext);
   const [currentViewState, setCurrentViewState] = React.useState<ViewState>(viewState);
@@ -86,6 +127,54 @@ function DeckMap({
       ? "https://basemaps.cartocdn.com/gl/voyager-nolabels-gl-style/style.json"
       : "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json";
   }, [theme]);
+
+  const equalEarth = projection === "equalEarth";
+  const backdrop = useEqualEarthBackdrop(equalEarth);
+
+  // The ground of the Equal Earth view, bottom to top: ocean inside the
+  // outline, the land once it has arrived, the graticule over both. None of it
+  // can be picked, so a click on the sea still misses, as it does now.
+  const scenery = useMemo(() => {
+    if (!equalEarth) return [];
+    const palette = SCENERY[theme === "dark" ? "dark" : "light"];
+    const { outline, graticule } = equalEarthScenery();
+    const ground = [
+      new GeoJsonLayer({
+        id: "equal-earth-outline",
+        data: outline,
+        stroked: true,
+        filled: true,
+        getFillColor: palette.ocean,
+        getLineColor: palette.edge,
+        lineWidthMinPixels: 1.5,
+        pickable: false,
+      }),
+    ];
+    if (backdrop) {
+      ground.push(
+        new GeoJsonLayer({
+          id: "equal-earth-land",
+          data: backdrop,
+          stroked: false,
+          filled: true,
+          getFillColor: palette.land,
+          pickable: false,
+        })
+      );
+    }
+    ground.push(
+      new GeoJsonLayer({
+        id: "equal-earth-graticule",
+        data: graticule,
+        stroked: true,
+        filled: false,
+        getLineColor: palette.graticule,
+        lineWidthMinPixels: 1,
+        pickable: false,
+      })
+    );
+    return ground;
+  }, [equalEarth, theme, backdrop]);
 
   // Lighting calibrated for maximum 2D color fidelity with subtle south-wall depth
   const lightingEffect = useMemo(() => {
@@ -213,6 +302,8 @@ function DeckMap({
     ];
   }, [data, founds, is3D, feedbackPiece, currentViewState?.zoom, currentViewState?.latitude, material, onClickMap, onHoverMap]);
 
+  const allLayers = useMemo(() => [...scenery, ...layers], [scenery, layers]);
+
   const canRotate = useCanRotate();
   const controller = useMemo(
     () =>
@@ -246,11 +337,14 @@ function DeckMap({
         initialViewState={viewState}
         onViewStateChange={handleViewStateChange}
         controller={controller}
-        layers={layers}
+        layers={allLayers}
         effects={effects}
         getCursor={getCursor}
+        style={equalEarth ? PAGE_STYLE : undefined}
       >
-        <Map mapStyle={mapStyle} />
+        {/* The tiles are Mercator and cannot follow the bent geometry, so in
+            Equal Earth the ground is the scenery above and no base map. */}
+        {!equalEarth && <Map mapStyle={mapStyle} />}
       </DeckGL>
     </React.Fragment>
   );

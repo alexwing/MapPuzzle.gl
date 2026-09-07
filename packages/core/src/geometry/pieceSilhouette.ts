@@ -64,18 +64,22 @@ interface Framing {
 }
 
 /**
- * Keyed on the `properties` object so entries die with the map they belong to,
- * and so pieces from different puzzles can never collide on `cartodb_id`.
+ * Keyed on the `geometry` object so entries die with the map they belong to,
+ * and so pieces from different puzzles can never collide on `cartodb_id`. The
+ * geometry and not the properties because a map shown in another projection
+ * is the same properties over bent geometry, and the two must not share a
+ * silhouette. Legacy pieces that ship no geometry fall back to their
+ * properties, which is where their pre-generated silhouette lives anyway.
  */
 const cache = new WeakMap<object, CacheEntry>();
 
 /**
- * Undefined for a piece with no `properties` to key on — the drag cursor starts
- * out with an empty piece, and it re-renders on every mouse move, so this path
- * has to stay cheap and never throw.
+ * Undefined for a piece with nothing to key on — the drag cursor starts out
+ * with an empty piece, and it re-renders on every mouse move, so this path has
+ * to stay cheap and never throw.
  */
 function entryFor(piece: PieceProps): CacheEntry | undefined {
-  const key: unknown = piece?.properties;
+  const key: unknown = piece?.geometry ?? piece?.properties;
   if (key === null || typeof key !== "object") return undefined;
   let entry = cache.get(key as object);
   if (!entry) {

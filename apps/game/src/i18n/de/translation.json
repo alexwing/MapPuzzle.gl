@@ -13,6 +13,8 @@
     "tilt": "Karte neigen",
 
     "flat": "Flache Ansicht",
+    "equalEarth": "Equal-Earth-Projektion",
+    "mercator": "Mercator-Projektion",
     "resetGame": "Spiel zurücksetzen",
     "editor": "Editor",
     "surrenderTitle": "Gibst du auf?",

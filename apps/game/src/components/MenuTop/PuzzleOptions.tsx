@@ -9,10 +9,13 @@ import { OverlayTrigger } from "react-bootstrap";
 import { useMediaQuery } from 'react-responsive';
 import { setCookie } from "react-simple-cookie-store";
 import { ConfigService } from "@mappuzzle/core";
+import type { Projection } from "../../lib/equalEarth";
 
 interface PuzzleOptionsProps {
   onRefocus: () => void;
   onFullScreen: () => void;
+  projection: Projection;
+  onToggleProjection: () => void;
   handleInfo: () => void;
   onShowWikiInfo: (val: boolean) => void;
   handleShow: () => void;
@@ -21,6 +24,8 @@ interface PuzzleOptionsProps {
 function PuzzleOptions({
   onRefocus,
   onFullScreen,
+  projection,
+  onToggleProjection,
   handleInfo,
   onShowWikiInfo,
   handleShow,
@@ -60,6 +65,19 @@ function PuzzleOptions({
       iconColor: "",
       iconClass: "me-2",
       label: t("topMenu.fullscreen"),
+      labelClass: "d-lg-none",
+      visible: true,
+    },
+    // Like the theme button, it shows the projection pressing it gives you.
+    { id: "projection",
+      variant: "none",
+      onClickHandler: onToggleProjection,
+      tooltip: projection === "equalEarth" ? t("topMenu.mercator") : t("topMenu.equalEarth"),
+      icon: projection === "equalEarth" ? Icon.Map : Icon.GlobeAmericas,
+      iconSize: size,
+      iconColor: "",
+      iconClass: "me-2",
+      label: projection === "equalEarth" ? t("topMenu.mercator") : t("topMenu.equalEarth"),
       labelClass: "d-lg-none",
       visible: true,
     },

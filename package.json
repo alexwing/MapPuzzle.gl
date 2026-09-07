@@ -60,7 +60,8 @@
     "smoke": "node scripts/smoke.mjs",
     "publish-db": "node scripts/publish-db.mjs",
     "deploy": "node scripts/deploy.mjs",
-    "deploy:app": "node scripts/deploy.mjs --only=app"
+    "deploy:app": "node scripts/deploy.mjs --only=app",
+    "world-backdrop": "node scripts/build-world-backdrop.mjs"
   },
   "browserslist": {
     "production": [

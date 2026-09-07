@@ -18,6 +18,7 @@ import WikiInfo from "../WikiInfo";
 import { FlagFill, CollectionPlay } from "react-bootstrap-icons";
 import ThemeContext from "../../components/ThemeProvider";
 import { siteAsset } from "@mappuzzle/core";
+import type { Projection } from "../../lib/equalEarth";
 
 interface MenuTopProps {
   name: string;
@@ -25,6 +26,8 @@ interface MenuTopProps {
   onResetGame: () => void;
   onFullScreen: () => void;
   onRefocus: () => void;
+  projection: Projection;
+  onToggleProjection: () => void;
   onLangChange: (lang: string) => void;
   puzzleSelected: number;
 }
@@ -35,6 +38,8 @@ function MenuTop({
   onResetGame,
   onFullScreen,
   onRefocus,
+  projection,
+  onToggleProjection,
   onLangChange,
   puzzleSelected,
 }: MenuTopProps): JSX.Element {
@@ -151,6 +156,8 @@ function MenuTop({
             <PuzzleOptions
               onRefocus={onRefocus}
               onFullScreen={onFullScreen}
+              projection={projection}
+              onToggleProjection={onToggleProjection}
               handleInfo={handleShowInfo}
               handleShow={handleShow}
               onShowWikiInfo={onShowWikiInfoHandler(true)}
