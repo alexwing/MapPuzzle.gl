@@ -13,8 +13,13 @@ import {
 import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 import ThemeContext from "./ThemeProvider";
 import { useCanRotate } from "../lib/hooks/useCanRotate";
-import { BackdropFeature, useEqualEarthBackdrop } from "../lib/hooks/useEqualEarthBackdrop";
-import { equalEarthScenery, Projection } from "../lib/equalEarth";
+import {
+  BackdropCollection,
+  BackdropFeature,
+  useEqualEarthBackdrop,
+} from "../lib/hooks/useEqualEarthBackdrop";
+import { bend, equalEarthScenery, Projection } from "../lib/equalEarth";
+import { bbox as boundingBox, booleanPointInPolygon } from "@turf/turf";
 import Map, { ViewState } from "react-map-gl";
 
 export interface PlacementFeedback {
@@ -51,31 +56,64 @@ type Color = [number, number, number, number];
  * tiles are Mercator by construction — so in Equal Earth the scenery is drawn
  * here instead: the outline of the planisphere filled as ocean, the world's
  * land in a neutral tone so a country's puzzle keeps its neighbours, its lakes
- * in the water's tone and its main rivers a shade deeper, and a 30° graticule
- * over it all. Behind the outline the page shows the app's own background,
- * which follows the theme on its own.
+ * and main rivers in the water's tone, and a 30° graticule over it all. Behind
+ * the outline the page shows the app's own background, which follows the theme
+ * on its own.
  */
 const SCENERY: Record<
   "light" | "dark",
-  { ocean: Color; land: Color; river: Color; edge: Color; graticule: Color }
+  { ocean: Color; land: Color; edge: Color; graticule: Color }
 > = {
   light: {
     ocean: [213, 227, 238, 255],
     land: [246, 243, 236, 255],
-    river: [150, 181, 209, 255],
     edge: [71, 85, 105, 120],
     graticule: [71, 85, 105, 40],
   },
   dark: {
     ocean: [15, 26, 39, 255],
     land: [28, 36, 49, 255],
-    river: [52, 78, 108, 255],
     edge: [148, 163, 184, 110],
     graticule: [148, 163, 184, 36],
   },
 };
 
 const PAGE_STYLE = { background: "var(--bg-app)" };
+
+/**
+ * The backdrop's countries that the puzzle does not draw itself.
+ *
+ * The backdrop is coarse, a few kilometres of tolerance, and the puzzle is
+ * not, so where both describe the same coast the difference shows the moment
+ * the map is zoomed in: slivers of sea on the land and of land on the sea. So
+ * a country of the backdrop whose interior point falls inside a piece is left
+ * out, and that land is painted by the puzzle from its own outlines instead
+ * (see the puzzle-land layer). What remains is the neighbours, where there is
+ * no exact line to disagree with. Both sides are in the same, bent, space.
+ */
+function landOutside(land: BackdropCollection, pieces: PieceProps[]): BackdropCollection {
+  if (!pieces.length) return land;
+  const areas = pieces.map((piece) => {
+    const geometry = piece.geometry as unknown as GeoJSON.MultiPolygon;
+    return { geometry, box: boundingBox(geometry) };
+  });
+  const drawnByPuzzle = ([x, y]: [number, number]) =>
+    areas.some(
+      ({ geometry, box }) =>
+        x >= box[0] &&
+        x <= box[2] &&
+        y >= box[1] &&
+        y <= box[3] &&
+        booleanPointInPolygon([x, y], geometry)
+    );
+  return {
+    type: "FeatureCollection",
+    features: land.features.filter((country) => {
+      const point = country.properties.p;
+      return !point || !drawnByPuzzle(bend(point[0], point[1]));
+    }),
+  };
+}
 
 interface DeckMapProps {
   onClickMap: (e: PieceEvent) => void;
@@ -133,6 +171,10 @@ function DeckMap({
 
   const equalEarth = projection === "equalEarth";
   const backdrop = useEqualEarthBackdrop(equalEarth);
+  const land = useMemo(
+    () => (backdrop ? landOutside(backdrop.land, data?.features ?? []) : null),
+    [backdrop, data]
+  );
 
   // The ground of the Equal Earth view, bottom to top: ocean inside the
   // outline, the land and its water once they have arrived, the graticule over
@@ -154,25 +196,40 @@ function DeckMap({
         pickable: false,
       }),
     ];
-    if (backdrop) {
+    if (backdrop && land) {
       ground.push(
         new GeoJsonLayer({
           id: "equal-earth-land",
-          data: backdrop.land,
+          data: land,
           stroked: false,
           filled: true,
           getFillColor: palette.land,
           pickable: false,
         }),
-        // Lakes filled like the sea; rivers as hairlines a shade deeper, so a
-        // single pixel of them still reads as water on the land.
+        // The puzzle's own land, from its own outlines, so its coasts are as
+        // exact as its borders. The hairline of land around each piece covers
+        // the gap a coarse neighbour can leave along a shared border; at the
+        // coast it hides under the border line drawn over it.
+        new GeoJsonLayer({
+          id: "equal-earth-puzzle-land",
+          data: data,
+          stroked: true,
+          filled: true,
+          getFillColor: palette.land,
+          getLineColor: palette.land,
+          lineWidthMinPixels: 2,
+          pickable: false,
+        }),
+        // Lakes and rivers alike in the water's tone. On the land a river is
+        // then a hairline that is barely there, which is the point: it is
+        // scenery, and the puzzle's own lines are what has to read.
         new GeoJsonLayer({
           id: "equal-earth-water",
           data: backdrop.water,
           stroked: false,
           filled: true,
           getFillColor: palette.ocean,
-          getLineColor: palette.river,
+          getLineColor: palette.ocean,
           lineWidthUnits: "pixels",
           getLineWidth: (feature: BackdropFeature) => feature.properties?.w ?? 1,
           pickable: false,
@@ -191,7 +248,7 @@ function DeckMap({
       })
     );
     return ground;
-  }, [equalEarth, theme, backdrop]);
+  }, [equalEarth, theme, backdrop, land, data]);
 
   // Lighting calibrated for maximum 2D color fidelity with subtle south-wall depth
   const lightingEffect = useMemo(() => {

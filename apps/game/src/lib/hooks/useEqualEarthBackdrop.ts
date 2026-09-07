@@ -10,6 +10,12 @@ export interface BackdropProperties {
   kind: "land" | "lake" | "river";
   /** Rivers only: how wide to draw them, in pixels. */
   w?: number;
+  /**
+   * Land only: a point inside the country, as longitude and latitude, for
+   * telling whether a puzzle already covers it. Not bent with the geometry,
+   * since properties are left alone; whoever tests it bends it first.
+   */
+  p?: [number, number];
 }
 
 type BackdropGeometry =
@@ -20,7 +26,10 @@ type BackdropGeometry =
 
 export type BackdropFeature = GeoJSON.Feature<BackdropGeometry, BackdropProperties>;
 
-type BackdropCollection = GeoJSON.FeatureCollection<BackdropGeometry, BackdropProperties>;
+export type BackdropCollection = GeoJSON.FeatureCollection<
+  BackdropGeometry,
+  BackdropProperties
+>;
 
 /** The backdrop split the way it is drawn: the land underneath, the water on it. */
 export interface Backdrop {
