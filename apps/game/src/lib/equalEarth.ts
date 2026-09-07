@@ -1,6 +1,6 @@
 import type { ViewState } from "react-map-gl";
 import type { PieceProps } from "@mappuzzle/shared";
-import { pieceBounds } from "@mappuzzle/core";
+import { pieceBounds, unwrapLongitudes } from "@mappuzzle/core";
 
 /**
  * Equal Earth on a Web Mercator renderer.
@@ -158,6 +158,96 @@ export function bendFeatureCollection<C extends { features: Bendable[] }>(
       },
     })),
   } as C;
+}
+
+/** A fresh copy, so unwrapping and bending never touch the real map. */
+function copyCoordinates(coordinates: Coordinates): Coordinates {
+  return isPosition(coordinates)
+    ? [coordinates[0], coordinates[1]]
+    : coordinates.map(copyCoordinates);
+}
+
+function bendInPlace(coordinates: Coordinates): void {
+  if (isPosition(coordinates)) {
+    const [longitude, latitude] = bend(coordinates[0], coordinates[1]);
+    coordinates[0] = longitude;
+    coordinates[1] = latitude;
+    return;
+  }
+  for (const inner of coordinates) bendInPlace(inner);
+}
+
+/** Every ring of positions in a geometry, by reference, whatever the nesting. */
+function ringsIn(coordinates: Coordinates, rings: number[][][]): void {
+  if (isPosition(coordinates)) return;
+  const first = coordinates[0];
+  if (!Array.isArray(first)) return;
+  if (isPosition(first)) {
+    rings.push(coordinates as number[][]);
+    return;
+  }
+  for (const inner of coordinates) ringsIn(inner, rings);
+}
+
+/** The bent puzzle, in the two shapes the game needs it in. */
+export interface BentPuzzle<C> {
+  /**
+   * For the map: torn at the antimeridian, the way the projection cuts the
+   * world. Mercator wraps around and Equal Earth has an edge, so Chukotka
+   * belongs on the far left of the planisphere — which is where bending each
+   * vertex where it stands puts it.
+   */
+  map: C;
+  /**
+   * For the piece list and the drag cursor: every piece in one body, wherever
+   * it stands. A silhouette torn in two is a smear the width of the world —
+   * Fiji's box measured 6579 km across instead of 326 — so these are bent from
+   * longitudes unwrapped first. pieceSilhouette does the same unwrapping for
+   * Mercator, but it has to happen before the bending: the shift is a turn of
+   * the Earth, and only Mercator lays a turn out as a constant width.
+   */
+  pieces: C;
+}
+
+/**
+ * The puzzle bent into Equal Earth, twice over where its two uses disagree.
+ *
+ * Only the pieces that straddle the antimeridian need both — Russia, the
+ * United States, New Zealand, Fiji — and they are the only ones that get a
+ * second copy. Every other piece is one object in both collections, so the
+ * silhouettes cached against it are shared too.
+ */
+export function bendPuzzle<C extends { features: Bendable[] }>(
+  collection: C
+): BentPuzzle<C> {
+  const map: Bendable[] = [];
+  const pieces: Bendable[] = [];
+
+  for (const feature of collection.features) {
+    const whole = copyCoordinates(feature.geometry.coordinates);
+    const rings: number[][][] = [];
+    ringsIn(whole, rings);
+    const straddles = unwrapLongitudes(rings);
+    bendInPlace(whole);
+    const wholePiece = {
+      ...feature,
+      geometry: { ...feature.geometry, coordinates: whole },
+    };
+    pieces.push(wholePiece);
+
+    if (!straddles) {
+      map.push(wholePiece);
+      continue;
+    }
+    const torn = copyCoordinates(feature.geometry.coordinates);
+    bendInPlace(torn);
+    map.push({ ...feature, geometry: { ...feature.geometry, coordinates: torn } });
+  }
+
+  return {
+    map: { ...collection, features: map } as C,
+    pieces: { ...collection, features: pieces } as C,
+  };
 }
 
 /**

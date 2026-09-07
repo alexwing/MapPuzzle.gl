@@ -25,6 +25,7 @@ export {
   pieceBox,
   pieceSilhouette,
   pieceThumbnail,
+  unwrapLongitudes,
 } from "./geometry/pieceSilhouette";
 export type { Bounds, Silhouette } from "./geometry/pieceSilhouette";
 

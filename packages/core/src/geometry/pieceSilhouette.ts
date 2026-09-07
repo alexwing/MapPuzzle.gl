@@ -137,10 +137,16 @@ function collectRings(geometry: PieceProps["geometry"]): Ring[] {
  *
  * Two passes: first each ring is made continuous with itself, then every ring
  * is brought within half a turn of the largest one. Mutates the copies made by
- * collectRings.
+ * collectRings, and says whether it moved anything — which is the same as
+ * asking whether the piece straddles the antimeridian at all.
+ *
+ * Exported because a piece drawn in another projection has to be unwrapped
+ * here, in longitude and latitude, before it is projected: the shift is a turn
+ * of the Earth, and only Mercator lays a turn out as a constant width.
  */
-function unwrapLongitudes(rings: Ring[]): void {
-  if (rings.length === 0) return;
+export function unwrapLongitudes(rings: number[][][]): boolean {
+  if (rings.length === 0) return false;
+  let moved = false;
 
   const centers: number[] = [];
   let reference = 0;
@@ -154,7 +160,10 @@ function unwrapLongitudes(rings: Ring[]): void {
       const step = ring[i][0] - ring[i - 1][0] - offset;
       if (step > 180) offset += 360;
       else if (step < -180) offset -= 360;
-      ring[i][0] -= offset;
+      if (offset !== 0) {
+        ring[i][0] -= offset;
+        moved = true;
+      }
       sum += ring[i][0];
     }
     centers[r] = sum / ring.length;
@@ -167,11 +176,14 @@ function unwrapLongitudes(rings: Ring[]): void {
   for (let r = 0; r < rings.length; r++) {
     const shift = Math.round((centers[r] - reference) / 360) * 360;
     if (shift === 0) continue;
+    moved = true;
     const ring = rings[r];
     for (let i = 0; i < ring.length; i++) {
       ring[i][0] -= shift;
     }
   }
+
+  return moved;
 }
 
 /** Projects [lon, lat] rings to EPSG:3857 metres, in place. */

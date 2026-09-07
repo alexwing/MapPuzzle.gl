@@ -15,8 +15,8 @@ import { Jsondb, getWiki, copyViewState, getLang, getTranslation, languageFromLo
 import AnimatedCursor from "./lib/AnimatedCursor";
 import { useCanRotate } from "./lib/hooks/useCanRotate";
 import {
-  bendFeatureCollection,
   bendGrab,
+  bendPuzzle,
   bendView,
   PieceCollection,
   Projection,
@@ -118,28 +118,29 @@ function MapPuzzle(): JSX.Element {
   const [projection, setProjection] = useState<Projection>(() =>
     projectionFromCookie(getCookie(PROJECTION_COOKIE))
   );
-  const viewData = useMemo(
+  const bent = useMemo(
     () =>
-      projection === "equalEarth" && data?.features
-        ? bendFeatureCollection(data)
-        : data,
+      projection === "equalEarth" && data?.features ? bendPuzzle(data) : null,
     [data, projection]
   );
+  /** What the map draws: torn at the antimeridian, as the projection cuts it. */
+  const viewData = bent ? bent.map : data;
+  /** What the list and the cursor draw: every piece whole. */
   const viewPieces = useMemo(() => {
-    if (viewData === data) return pieces;
-    const bent = new Map(
-      viewData.features.map(
+    if (!bent) return pieces;
+    const whole = new Map(
+      bent.pieces.features.map(
         (piece) => [piece.properties.cartodb_id, piece] as [number, PieceProps]
       )
     );
-    return pieces.map((piece) => bent.get(piece.properties.cartodb_id) ?? piece);
-  }, [pieces, data, viewData]);
+    return pieces.map((piece) => whole.get(piece.properties.cartodb_id) ?? piece);
+  }, [pieces, bent]);
   /** The piece in hand, in the shape the map is drawn in. */
   const cursorPiece = useMemo(() => {
-    if (viewData === data || !pieceSelectedData?.properties) return pieceSelectedData;
+    if (!bent || !pieceSelectedData?.properties) return pieceSelectedData;
     const id = pieceSelectedData.properties.cartodb_id;
     return viewPieces.find((piece) => piece.properties.cartodb_id === id) ?? pieceSelectedData;
-  }, [pieceSelectedData, viewPieces, viewData, data]);
+  }, [pieceSelectedData, viewPieces, bent]);
   /**
    * Where the piece in hand hangs from the pointer: what the editor stored for
    * it, or the default, carried over to the shape the map is drawn in. Bending
