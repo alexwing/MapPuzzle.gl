@@ -1,9 +1,15 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
+import { GlobeAmericas, Map as MapIcon } from "react-bootstrap-icons";
+import type { Projection } from "../../lib/equalEarth";
 import "./MapControls.css";
 
 interface MapControlsProps {
   bearing: number;
   tilted: boolean;
+  /** Which projection the map is drawn in; the button offers the other one. */
+  projection: Projection;
+  onToggleProjection: () => void;
   onToggleTilt: () => void;
   onRotateLeft: () => void;
   onRotateRight: () => void;
@@ -13,11 +19,17 @@ interface MapControlsProps {
 const MapControls: React.FC<MapControlsProps> = ({
   bearing,
   tilted,
+  projection,
+  onToggleProjection,
   onToggleTilt,
   onRotateLeft,
   onRotateRight,
   onResetBearing,
 }) => {
+  const { t } = useTranslation();
+  const equalEarth = projection === "equalEarth";
+  // Like the 3D pill, the button names what pressing it gives you.
+  const projectionLabel = t(equalEarth ? "topMenu.mercator" : "topMenu.equalEarth");
   return (
     <div className="map-controls-container" aria-label="Map Controls">
       {/* Circular Compass Control with Left/Right sector buttons and center reset */}
@@ -86,16 +98,28 @@ const MapControls: React.FC<MapControlsProps> = ({
         />
       </div>
 
-      {/* 3D / 2D Pill Toggle Button (Always transparent in resting state, pill style) */}
-      <button
-        type="button"
-        className={`tilt-toggle-btn ${tilted ? "in-3d" : "in-2d"}`}
-        onClick={onToggleTilt}
-        title={tilted ? "Cambiar a vista 2D" : "Cambiar a vista 3D"}
-        aria-label={tilted ? "Switch to 2D view" : "Switch to 3D view"}
-      >
-        {tilted ? "2D" : "3D"}
-      </button>
+      {/* Pill toggles, side by side: the projection to the left of the tilt.
+          Both are transparent glass at rest and name what pressing them gives. */}
+      <div className="map-controls-row">
+        <button
+          type="button"
+          className={`map-pill-btn projection-toggle-btn ${equalEarth ? "is-active" : ""}`}
+          onClick={onToggleProjection}
+          title={projectionLabel}
+          aria-label={projectionLabel}
+        >
+          {equalEarth ? <MapIcon size={15} /> : <GlobeAmericas size={15} />}
+        </button>
+        <button
+          type="button"
+          className={`map-pill-btn tilt-toggle-btn ${tilted ? "is-active" : ""}`}
+          onClick={onToggleTilt}
+          title={tilted ? "Cambiar a vista 2D" : "Cambiar a vista 3D"}
+          aria-label={tilted ? "Switch to 2D view" : "Switch to 3D view"}
+        >
+          {tilted ? "2D" : "3D"}
+        </button>
+      </div>
     </div>
   );
 };

@@ -740,11 +740,15 @@ function MapPuzzle(): JSX.Element {
             {/* Absent below tablet size rather than hidden: a tilted map
                 leaves a phone nothing to play on, and a control you cannot
                 usefully press should not be in the DOM to be found. The
-                gestures are shut off in DeckMap by the same answer. */}
+                gestures are shut off in DeckMap by the same answer. The
+                projection toggle lives in the same box, so a phone plays
+                in Mercator. */}
             {canRotate && (
               <MapControls
                 bearing={liveView?.bearing || 0}
                 tilted={tilted}
+                projection={projection}
+                onToggleProjection={onToggleProjectionHandler}
                 onToggleTilt={onToggleTiltHandler}
                 onRotateLeft={onRotateLeftHandler}
                 onRotateRight={onRotateRightHandler}
@@ -757,8 +761,6 @@ function MapPuzzle(): JSX.Element {
               onResetGame={onResetGameHandler}
               onFullScreen={onToggle}
               onRefocus={onRefocusMapHandler}
-              projection={projection}
-              onToggleProjection={onToggleProjectionHandler}
               onLangChange={onLangChangeHandler}
               puzzleSelected={puzzleSelected}
             />
