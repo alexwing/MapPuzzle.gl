@@ -63,7 +63,7 @@ function ToolsPanel({
             <img src={siteAsset(flag)} alt="" />
           </div>
         )}
-        <div className={`mapName ${flag ? "has-flag" : ""}`}>{titleText}</div>
+        <h1 className={`mapName ${flag ? "has-flag" : ""}`}>{titleText}</h1>
         {showTimer}
       </div>
     );

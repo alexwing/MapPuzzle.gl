@@ -258,3 +258,22 @@
     left: 180%;
   }
 }
+
+.quiz-puzzle-title {
+  font-family: var(--font-family-title, 'Outfit', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0.35rem 0 0.65rem 0;
+  color: var(--text-main);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  letter-spacing: -0.01em;
+}
+
+@media (max-width: 768px) {
+  .quiz-puzzle-title {
+    font-size: 1.05rem;
+    margin: 0.2rem 0 0.4rem 0;
+  }
+}
+

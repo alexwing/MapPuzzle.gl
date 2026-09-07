@@ -18,6 +18,7 @@ import ErrorBoundary from "../../components/ErrorBoundary";
 
 interface PieceQuizProps {
   puzzleSelected: number;
+  puzzleName?: string;
   pieceSelected: number;
   pieceSelectedData: PieceProps;
   questions: PieceProps[];
@@ -34,6 +35,7 @@ interface PieceQuizProps {
 
 function PieceQuiz({
   puzzleSelected,
+  puzzleName,
   pieceSelected,
   pieceSelectedData,
   questions,
@@ -163,6 +165,7 @@ function PieceQuiz({
   return (
     <React.Fragment>
       <div>
+        {puzzleName && <h1 className="quiz-puzzle-title">{puzzleName}</h1>}
         <Row className="score">
           <Col xs={4} lg={4}>
             <Alert variant="success">

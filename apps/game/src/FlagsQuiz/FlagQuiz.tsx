@@ -568,6 +568,12 @@ function FlagQuiz(): JSX.Element {
     setQuestions([...shuffle(questionsAux)]);
   };
 
+  const currentPuzzleName =
+    getTranslation("puzzles", String(puzzleSelected), puzzleSelectedData?.name) ||
+    puzzleSelectedData?.name ||
+    "";
+  const mapPath = puzzlePath(puzzleSelectedData?.url, false, languageFromLocation() ?? undefined);
+
   return (
     <React.Fragment>
       <ReactFullscreeen>
@@ -587,10 +593,16 @@ function FlagQuiz(): JSX.Element {
               title={t("common.loading")}
             />
             <div className="quiz-container">
+              <div className="visually-hidden">
+                <h1>{currentPuzzleName}: {t("topMenu.flagsQuiz", "Flags Quiz")}</h1>
+                <p>{t("common.quizDescription", "Guess the flag of every region")}</p>
+                <a href={mapPath}>{t("common.playMap", "Play Map Puzzle")}</a>
+              </div>
               {!winner && !loading && (
                 <div className="piece-quiz">
                   <PieceQuiz
                     puzzleSelected={puzzleSelected}
+                    puzzleName={currentPuzzleName}
                     pieceSelected={pieceSelected}
                     pieceSelectedData={pieceSelectedData}
                     questions={questions}

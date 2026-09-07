@@ -8,7 +8,7 @@ export class ConfigService {
   public static backendUrl:string = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
   public static database:string = import.meta.env.VITE_DATABASE || "puzzles.sqlite3.png";
   public static defaultLang:string = import.meta.env.VITE_DEFAULT_LANG || "en";
-  public static langs:string[] = import.meta.env.VITE_LANGS?.split(",") || ["en","es","fr"];
+  public static langs:string[] = import.meta.env.VITE_LANGS?.split(",") || ["en","es","fr","pt","de","el","it"];
   public static flagQuizBackgrounds = 20;
   public static flagQuizQuestions = 6;
   public static flagQuizTransitionsTime = 1500;
