@@ -737,24 +737,23 @@ function MapPuzzle(): JSX.Element {
               is3D={tilted}
               feedbackPiece={placementFeedback}
             />
-            {/* Absent below tablet size rather than hidden: a tilted map
-                leaves a phone nothing to play on, and a control you cannot
-                usefully press should not be in the DOM to be found. The
-                gestures are shut off in DeckMap by the same answer. The
-                projection toggle lives in the same box, so a phone plays
-                in Mercator. */}
-            {canRotate && (
-              <MapControls
-                bearing={liveView?.bearing || 0}
-                tilted={tilted}
-                projection={projection}
-                onToggleProjection={onToggleProjectionHandler}
-                onToggleTilt={onToggleTiltHandler}
-                onRotateLeft={onRotateLeftHandler}
-                onRotateRight={onRotateRightHandler}
-                onResetBearing={onResetBearingHandler}
-              />
-            )}
+            {/* The compass and the 3D half of the pill are absent below tablet
+                size rather than hidden: a tilted map leaves a phone nothing to
+                play on, and a control you cannot usefully press should not be
+                in the DOM to be found. The gestures are shut off in DeckMap by
+                the same answer. The projection half stays, so a phone can play
+                in Equal Earth too. */}
+            <MapControls
+              rotatable={canRotate}
+              bearing={liveView?.bearing || 0}
+              tilted={tilted}
+              projection={projection}
+              onToggleProjection={onToggleProjectionHandler}
+              onToggleTilt={onToggleTiltHandler}
+              onRotateLeft={onRotateLeftHandler}
+              onRotateRight={onRotateRightHandler}
+              onResetBearing={onResetBearingHandler}
+            />
             <MenuTop
               name="MapPuzzle.xyz"
               onSelectMap={onSelectMapHandler}

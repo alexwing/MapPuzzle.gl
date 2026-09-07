@@ -6,9 +6,9 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  /* Hung off the right edge, so a second pill grows leftwards and the compass
-     and the 3D pill stay where they were. */
-  align-items: flex-end;
+  /* Centred, so the seam of the two-half pill below falls under the middle
+     of the compass. */
+  align-items: center;
   gap: 10px;
   user-select: none;
   pointer-events: auto;
@@ -160,18 +160,38 @@
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
-/* Rounded pill toggles, projection and 3D / 2D (Clean Transparent Glass, Reduced Blur) */
-.map-pill-btn {
-  border-radius: 9999px;
-  padding: 0.32rem 0.85rem;
-  min-width: 48px;
+/* One pill for the two view toggles: the projection half on the left, the
+   3D / 2D half on the right, each in its own colour. The halves are equal, so
+   the seam between them falls under the centre of the compass above. Clean
+   transparent glass at rest, like the compass. */
+.map-pill {
+  display: inline-flex;
   height: 30px;
+  border-radius: 9999px;
+  overflow: hidden;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  background: rgba(37, 99, 235, 0.08);
-  border: 1px solid rgba(37, 99, 235, 0.28);
-  color: var(--accent-color, #2563eb);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+
+[data-bs-theme="dark"] .map-pill {
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Each half carries its hue as RGB components, so the tint at rest, the
+   active state and the hover all derive from the one number. Blue, the app's
+   accent, is the default and belongs to the 3D half. */
+.map-pill-half {
+  --half-rgb: 37, 99, 235;
+  --half-text: var(--accent-color, #2563eb);
+  width: 48px;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: rgba(var(--half-rgb), 0.1);
+  color: var(--half-text);
   font-family: var(--font-family-body, sans-serif);
   font-size: 0.82rem;
   font-weight: 700;
@@ -181,49 +201,55 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.25s ease;
   outline: none;
 }
 
-[data-bs-theme="dark"] .map-pill-btn {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  color: #60a5fa;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+/* The projection half is the green one: it is about the Earth. */
+.map-pill-half.projection {
+  --half-rgb: 13, 148, 136;
+  --half-text: #0f766e;
 }
 
-/* Active state (tilted, or Equal Earth): clean transparent glass with a slightly emphasized border */
-.map-pill-btn.is-active {
-  background: rgba(37, 99, 235, 0.14);
-  border-color: rgba(37, 99, 235, 0.5);
-  color: var(--accent-color, #2563eb);
+[data-bs-theme="dark"] .map-pill-half {
+  --half-rgb: 59, 130, 246;
+  --half-text: #60a5fa;
 }
 
-[data-bs-theme="dark"] .map-pill-btn.is-active {
-  background: rgba(59, 130, 246, 0.16);
-  border-color: rgba(59, 130, 246, 0.55);
-  color: #60a5fa;
+[data-bs-theme="dark"] .map-pill-half.projection {
+  --half-rgb: 45, 212, 191;
+  --half-text: #2dd4bf;
 }
 
-/* Hover: solid glow highlight on user interaction */
-.map-pill-btn:hover {
-  background: var(--accent-color, #2563eb);
-  border-color: var(--accent-color, #2563eb);
+/* The seam between the halves. */
+.map-pill-half + .map-pill-half {
+  border-left: 1px solid rgba(15, 23, 42, 0.18);
+}
+
+[data-bs-theme="dark"] .map-pill-half + .map-pill-half {
+  border-left-color: rgba(255, 255, 255, 0.22);
+}
+
+/* Active (tilted, or Equal Earth): the same tint, deeper. */
+.map-pill-half.is-active {
+  background: rgba(var(--half-rgb), 0.24);
+}
+
+/* Hover: the half fills with its own colour. */
+.map-pill-half:hover {
+  background: rgb(var(--half-rgb));
   color: #ffffff;
-  box-shadow: 0 6px 18px var(--accent-glow, rgba(37, 99, 235, 0.35));
-  transform: translateY(-2px);
 }
 
-[data-bs-theme="dark"] .map-pill-btn:hover {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: #ffffff;
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
-  transform: translateY(-2px);
+.map-pill-half:active {
+  filter: brightness(0.92);
 }
 
-.map-pill-btn:active {
-  transform: scale(0.95);
+/* An icon rather than a word: it shows the projection pressing it gives you. */
+.map-pill-half svg {
+  width: 15px;
+  height: 15px;
 }
 
 /* Responsive adjustment for small screens / mobile */
@@ -249,22 +275,12 @@
     height: 22px;
   }
 
-  .map-pill-btn {
-    padding: 0.28rem 0.75rem;
-    font-size: 0.75rem;
+  .map-pill {
     height: 27px;
   }
-}
 
-/* The two pills under the compass, the projection to the left of the tilt. */
-.map-controls-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* An icon rather than a word: it shows the projection pressing it gives you. */
-.projection-toggle-btn svg {
-  width: 15px;
-  height: 15px;
+  .map-pill-half {
+    width: 44px;
+    font-size: 0.75rem;
+  }
 }
