@@ -13,7 +13,7 @@ import {
 import { PieceEvent, PieceProps, ViewStateEvent } from "../models/Interfaces";
 import ThemeContext from "./ThemeProvider";
 import { useCanRotate } from "../lib/hooks/useCanRotate";
-import { useEqualEarthBackdrop } from "../lib/hooks/useEqualEarthBackdrop";
+import { BackdropFeature, useEqualEarthBackdrop } from "../lib/hooks/useEqualEarthBackdrop";
 import { equalEarthScenery, Projection } from "../lib/equalEarth";
 import Map, { ViewState } from "react-map-gl";
 
@@ -50,23 +50,26 @@ type Color = [number, number, number, number];
  * In Mercator the map sits on CARTO's tiles, and those cannot be bent — vector
  * tiles are Mercator by construction — so in Equal Earth the scenery is drawn
  * here instead: the outline of the planisphere filled as ocean, the world's
- * land in a neutral tone so a country's puzzle keeps its neighbours, and a 30°
- * graticule over it. Behind the outline the page shows the app's own
- * background, which follows the theme on its own.
+ * land in a neutral tone so a country's puzzle keeps its neighbours, its lakes
+ * in the water's tone and its main rivers a shade deeper, and a 30° graticule
+ * over it all. Behind the outline the page shows the app's own background,
+ * which follows the theme on its own.
  */
 const SCENERY: Record<
   "light" | "dark",
-  { ocean: Color; land: Color; edge: Color; graticule: Color }
+  { ocean: Color; land: Color; river: Color; edge: Color; graticule: Color }
 > = {
   light: {
     ocean: [213, 227, 238, 255],
     land: [246, 243, 236, 255],
+    river: [150, 181, 209, 255],
     edge: [71, 85, 105, 120],
     graticule: [71, 85, 105, 40],
   },
   dark: {
     ocean: [15, 26, 39, 255],
     land: [28, 36, 49, 255],
+    river: [52, 78, 108, 255],
     edge: [148, 163, 184, 110],
     graticule: [148, 163, 184, 36],
   },
@@ -132,8 +135,9 @@ function DeckMap({
   const backdrop = useEqualEarthBackdrop(equalEarth);
 
   // The ground of the Equal Earth view, bottom to top: ocean inside the
-  // outline, the land once it has arrived, the graticule over both. None of it
-  // can be picked, so a click on the sea still misses, as it does now.
+  // outline, the land and its water once they have arrived, the graticule over
+  // all of it. None of it can be picked, so a click on the sea still misses,
+  // as it does now.
   const scenery = useMemo(() => {
     if (!equalEarth) return [];
     const palette = SCENERY[theme === "dark" ? "dark" : "light"];
@@ -154,10 +158,23 @@ function DeckMap({
       ground.push(
         new GeoJsonLayer({
           id: "equal-earth-land",
-          data: backdrop,
+          data: backdrop.land,
           stroked: false,
           filled: true,
           getFillColor: palette.land,
+          pickable: false,
+        }),
+        // Lakes filled like the sea; rivers as hairlines a shade deeper, so a
+        // single pixel of them still reads as water on the land.
+        new GeoJsonLayer({
+          id: "equal-earth-water",
+          data: backdrop.water,
+          stroked: false,
+          filled: true,
+          getFillColor: palette.ocean,
+          getLineColor: palette.river,
+          lineWidthUnits: "pixels",
+          getLineWidth: (feature: BackdropFeature) => feature.properties?.w ?? 1,
           pickable: false,
         })
       );
