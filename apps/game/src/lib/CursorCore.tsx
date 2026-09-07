@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useCallback, useRef } from "react";
-import type { CustomCentroids } from "@mappuzzle/shared";
 import { PieceProps } from "../models/Interfaces";
 import { useEventListener } from "./hooks/useEventListener";
 import { pieceBox, pieceSilhouette } from "@mappuzzle/core";
@@ -35,7 +34,11 @@ const METRES_PER_PIXEL_AT_ZOOM_0 = (2 * Math.PI * 6378137) / 512;
 interface CursorCoreProps {
   clickScale: number;
   selected: PieceProps;
-  centroid: CustomCentroids;
+  /**
+   * Where the pointer holds the piece: the editor's percentages, resolved by
+   * the caller and already answering to the projection the piece is drawn in.
+   */
+  grab: { left: number; top: number };
   tooltip: string;
   zoom: number;
   /** Map bearing in degrees, clockwise. */
@@ -50,7 +53,7 @@ interface CursorCoreProps {
 function CursorCore({
   clickScale = 0.7,
   selected,
-  centroid,
+  grab,
   tooltip = "",
   zoom = 2,
   bearing = 0,
@@ -264,8 +267,8 @@ function CursorCore({
     const scale = Math.pow(2, zoom);
     const sizeX = (parseInt(box.split(" ")[2]) * scale) / METRES_PER_PIXEL_AT_ZOOM_0;
     const sizeY = (parseInt(box.split(" ")[3]) * scale) / METRES_PER_PIXEL_AT_ZOOM_0;
-    const leftPct = centroid.id ? centroid.left : -50;
-    const topPct = centroid.id ? centroid.top : -50;
+    const leftPct = grab.left;
+    const topPct = grab.top;
 
     // Where the pointer holds the piece, in the piece's own pixels.
     //

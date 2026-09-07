@@ -27,7 +27,7 @@ export interface Silhouette {
 }
 
 /** Bounding box in EPSG:3857 metres. */
-interface Bounds {
+export interface Bounds {
   minX: number;
   minY: number;
   maxX: number;
@@ -313,6 +313,22 @@ function formatBox(bounds: Bounds): string {
   return `0 0 ${Math.round(bounds.maxX - bounds.minX)} ${Math.round(
     bounds.maxY - bounds.minY
   )}`;
+}
+
+/**
+ * Where the piece sits, in the metres its `viewBox` is measured in.
+ *
+ * pieceBox gives the size; this gives the corner it is measured from as well,
+ * which is what a caller needs to turn a point on the piece back into a place
+ * on the Earth. Undefined for a piece with no geometry to bound.
+ */
+export function pieceBounds(piece: PieceProps): Bounds | undefined {
+  const entry = entryFor(piece);
+  if (!entry) return undefined;
+  if (entry.bounds === undefined) {
+    entry.bounds = boundsOf(ringsOf(piece.geometry));
+  }
+  return entry.bounds;
 }
 
 /**

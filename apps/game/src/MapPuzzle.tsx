@@ -16,6 +16,7 @@ import AnimatedCursor from "./lib/AnimatedCursor";
 import { useCanRotate } from "./lib/hooks/useCanRotate";
 import {
   bendFeatureCollection,
+  bendGrab,
   bendView,
   PieceCollection,
   Projection,
@@ -49,6 +50,13 @@ import { trackStartGame, trackResetGame, trackToggle3D, trackToggleProjection, t
 const TILTED_PITCH = 45;
 /** Long enough to read as a movement, short enough not to be a wait. */
 const TILT_TRANSITION_MS = 600;
+/**
+ * Where a piece hangs from the pointer when the editor never said. Half the
+ * piece's width along both axes — which is not its middle, since a percentage
+ * resolves against the width on both, but it is what the game has always done
+ * and what the editor's picker starts from.
+ */
+const DEFAULT_GRAB = { left: -50, top: -50 };
 
 function MapPuzzle(): JSX.Element {
   const [data, setData] = useState({} as PieceCollection);
@@ -132,6 +140,21 @@ function MapPuzzle(): JSX.Element {
     const id = pieceSelectedData.properties.cartodb_id;
     return viewPieces.find((piece) => piece.properties.cartodb_id === id) ?? pieceSelectedData;
   }, [pieceSelectedData, viewPieces, viewData, data]);
+  /**
+   * Where the piece in hand hangs from the pointer: what the editor stored for
+   * it, or the default, carried over to the shape the map is drawn in. Bending
+   * changes a piece's proportions, and the stored percentages are shares of its
+   * width, so left alone they would hold Canada two of its own heights up.
+   */
+  const cursorGrab = useMemo(() => {
+    const stored = pieceSelectedCentroid?.id
+      ? { left: pieceSelectedCentroid.left, top: pieceSelectedCentroid.top }
+      : DEFAULT_GRAB;
+    return cursorPiece === pieceSelectedData || !pieceSelectedData?.properties
+      ? stored
+      : bendGrab(stored, pieceSelectedData, cursorPiece);
+  }, [pieceSelectedCentroid, pieceSelectedData, cursorPiece]);
+
   /** A puzzle's stored framing is over the real map; the bent map needs it bent too. */
   const framed = (view: ViewState, target: Projection = projection): ViewState =>
     target === "equalEarth" ? bendView(view) : view;
@@ -805,7 +828,7 @@ function MapPuzzle(): JSX.Element {
               pitch={liveView?.pitch}
               view={liveView}
               selected={cursorPiece}
-              centroid={pieceSelectedCentroid}
+              grab={cursorGrab}
               tooltip={tooltipValue}
               feedbackStatus={placementFeedback?.status ?? null}
             />

@@ -1,5 +1,6 @@
 import type { ViewState } from "react-map-gl";
 import type { PieceProps } from "@mappuzzle/shared";
+import { pieceBounds } from "@mappuzzle/core";
 
 /**
  * Equal Earth on a Web Mercator renderer.
@@ -56,6 +57,8 @@ const RADIANS = Math.PI / 180;
 const NEWTON_TOLERANCE = 1e-12;
 /** Where Web Mercator gives up, and where deck clamps the camera. */
 const MAX_LATITUDE = 85.051129;
+/** EPSG:3857's radius: the metres a piece's box is measured in. */
+const EARTH_RADIUS = 6378137;
 
 /** The polynomial's contribution to x, for a parametric latitude. */
 function stretch(theta2: number, theta6: number): number {
@@ -155,6 +158,60 @@ export function bendFeatureCollection<C extends { features: Bendable[] }>(
       },
     })),
   } as C;
+}
+
+/**
+ * Where the pointer holds a piece: the offset from the piece's top-left corner
+ * to the grab point, as the editor stores it. Negative, since it is applied as
+ * a margin that pulls the drawing up and to the left — and, a CSS quirk the
+ * editor's picker was calibrated against and CursorCore reproduces, both
+ * numbers are percentages of the piece's WIDTH.
+ */
+export interface GrabPoint {
+  left: number;
+  top: number;
+}
+
+/**
+ * The same grab point over the bent piece.
+ *
+ * The percentages name a place on the piece — where the editor decided it
+ * should hang from — but they name it as a share of the piece's width, and
+ * bending changes a piece's proportions. Canada is taller than it is wide in
+ * Mercator and twice as wide as it is tall in Equal Earth, so its stored -94%
+ * went from holding the piece 72% of the way down it to 196%: the whole
+ * country floated above the pointer, about two of its own heights up.
+ *
+ * So the percentages are read back into the place they mean. The point is
+ * taken off the piece's Mercator box, unprojected, bent, and measured against
+ * the bent box, and the piece then hangs from the same corner of Canada
+ * whichever projection is on. A piece with no geometry to bound keeps what it
+ * was given.
+ */
+export function bendGrab(
+  grab: GrabPoint,
+  piece: PieceProps,
+  bentPiece: PieceProps
+): GrabPoint {
+  const flat = pieceBounds(piece);
+  const bent = pieceBounds(bentPiece);
+  if (!flat || !bent) return grab;
+
+  const width = flat.maxX - flat.minX;
+  const longitude =
+    (flat.minX - (grab.left / 100) * width) / (EARTH_RADIUS * RADIANS);
+  const latitude = clampLatitude(
+    mercatorPhi((flat.maxY + (grab.top / 100) * width) / EARTH_RADIUS) / RADIANS
+  );
+
+  const [bentLongitude, bentLatitude] = bend(longitude, latitude);
+  const bentWidth = bent.maxX - bent.minX;
+  const left =
+    ((bent.minX - bentLongitude * RADIANS * EARTH_RADIUS) / bentWidth) * 100;
+  const top =
+    ((mercatorY(bentLatitude * RADIANS) * EARTH_RADIUS - bent.maxY) / bentWidth) * 100;
+
+  return Number.isFinite(left) && Number.isFinite(top) ? { left, top } : grab;
 }
 
 /**

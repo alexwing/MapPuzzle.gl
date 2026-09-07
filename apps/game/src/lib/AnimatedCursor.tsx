@@ -2,7 +2,6 @@ import React from "react";
 import IsDevice from "./helpers/isDevice";
 import CursorCore from "./CursorCore";
 import { PieceProps } from "../models/Interfaces";
-import type { CustomCentroids } from "@mappuzzle/shared";
 import type { ViewState } from "react-map-gl";
 
 /**
@@ -14,7 +13,8 @@ import type { ViewState } from "react-map-gl";
 interface AnimatedCursorProps {
   clickScale: number;
   selected: PieceProps;
-  centroid: CustomCentroids;
+  /** Where the pointer holds the piece, in percentages of its width. */
+  grab: { left: number; top: number };
   tooltip: string;
   zoom: number;
   bearing?: number;
@@ -26,7 +26,7 @@ interface AnimatedCursorProps {
 function AnimatedCursor({
   clickScale = 0.7,
   selected,
-  centroid,
+  grab,
   tooltip = "",
   zoom = 2,
   bearing = 0,
@@ -41,7 +41,7 @@ function AnimatedCursor({
     <CursorCore
       clickScale={clickScale}
       selected={selected}
-      centroid={centroid}
+      grab={grab}
       zoom={zoom}
       bearing={bearing}
       pitch={pitch}
