@@ -80,3 +80,13 @@
   color: #fff;
   border-color: #fff;
 }
+
+/* En móvil el botón de donar va abajo a la izquierda: el aviso se pone justo encima de él */
+@media screen and (max-width: 992px) {
+  .cross-card {
+    top: auto;
+    right: auto;
+    left: 10px;
+    bottom: 52px;
+  }
+}
