@@ -1,0 +1,50 @@
+/* Aviso discreto de Centurion: esquina superior derecha, bajo el botón de donar */
+.cross-card {
+  position: absolute;
+  right: 18px;
+  top: 96px;
+  z-index: 1000;
+}
+
+.cross-card > a {
+  display: block;
+  line-height: 0;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgba(10, 15, 26, 0.9);
+  border: 1px solid rgba(226, 184, 74, 0.45);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  transition: border-color 0.2s;
+}
+
+.cross-card > a:hover {
+  border-color: #e2b84a;
+}
+
+.cross-card img {
+  width: 40px;
+  height: 40px;
+  border-radius: 9px;
+  display: block;
+}
+
+.cross-card-close {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: #0a0f1a;
+  color: #c9d1dc;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cross-card-close:hover {
+  color: #fff;
+  border-color: #fff;
+}

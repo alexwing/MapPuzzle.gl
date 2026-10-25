@@ -30,6 +30,7 @@ import type { CustomTranslations } from "@mappuzzle/shared";
 import type { Puzzles } from "@mappuzzle/shared";
 import { useTranslation } from "react-i18next";
 import Donate from "./components/Donate";
+import CrossCard from "./components/CrossCard";
 import { trackStartGame, trackResetGame, trackToggle3D, trackSelectPuzzle } from "./lib/Analytics";
 
 /**
@@ -745,6 +746,7 @@ function MapPuzzle(): JSX.Element {
               puzzleSelected={puzzleSelected}
             />
             <Donate/>
+            <CrossCard />
           </div>
         )}
       </ReactFullscreeen>
