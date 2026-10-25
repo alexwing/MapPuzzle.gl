@@ -15,7 +15,7 @@ import {
   mapResultToPuzzle,
   mapResultToPuzzleSearchResults,
 } from "../db/modelMappers";
-import { securizeTextParameter } from "../db/securize";
+import { escapeSqlText, securizeTextParameter } from "../db/securize";
 import type { CustomTranslations } from "@mappuzzle/shared";
 import { ConfigService } from "./configService";
 
@@ -43,7 +43,7 @@ export class PuzzleService {
   //get a puzzle by url
   public static getPuzzleIdByUrl(url: string): Promise<number> {
     return query(
-      `SELECT p.id  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id WHERE p.url = '${url}'`
+      `SELECT p.id  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id WHERE p.url = '${escapeSqlText(url)}'`
     )
       .then((result: QueryExecResult[]) => {
         let id = 1;
@@ -63,7 +63,7 @@ export class PuzzleService {
   //get a puzzle by id
   public static getPuzzle(id: number): Promise<Puzzles> {
     return query(
-      `SELECT p.*, vs.latitude, vs.longitude, vs.zoom  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id WHERE p.id = ${id}`
+      `SELECT p.*, vs.latitude, vs.longitude, vs.zoom  FROM puzzles p INNER JOIN view_state vs ON p.id = vs.id WHERE p.id = ${Number(id)}`
     )
       .then((result: QueryExecResult[]) => {
         if (result.length > 0) {
@@ -78,7 +78,7 @@ export class PuzzleService {
   }
   //get a puzzle wiki by id
   public static getPuzzleWiki(id: number): Promise<string> {
-    return query(`SELECT p.wiki FROM puzzles p WHERE p.id = ${id}`)
+    return query(`SELECT p.wiki FROM puzzles p WHERE p.id = ${Number(id)}`)
       .then((result: QueryExecResult[]) => {
         if (result.length > 0) {
           return result[0].values[0][0]
@@ -121,10 +121,10 @@ export class PuzzleService {
   ): Promise<PuzzleSearchResults[]> {
     let where = "";
     if (regioncode !== 0) {
-      where = ` and c.regioncode = '${regioncode}'`;
+      where = ` and c.regioncode = '${Number(regioncode)}'`;
     }
     if (subregioncode !== 0) {
-      where = ` and c.subregioncode = '${subregioncode}'`;
+      where = ` and c.subregioncode = '${Number(subregioncode)}'`;
     }
     if (searchName !== "" && searchName.length > 2) {
       where = ` and p.name like '%${securizeTextParameter(searchName)}%'`;
@@ -198,7 +198,7 @@ export class PuzzleService {
   ): Promise<CustomTranslations[]> {
     try {
       const result = await query(
-        `SELECT * FROM custom_translations WHERE id = ${id} AND lang in ('${lang}','${ConfigService.defaultLang}')`
+        `SELECT * FROM custom_translations WHERE id = ${Number(id)} AND lang in ('${escapeSqlText(lang)}','${ConfigService.defaultLang}')`
       );
       const customTranslations: CustomTranslations[] = [];
       result.forEach((row) => {
@@ -215,7 +215,7 @@ export class PuzzleService {
   public static async getLangIsRtl(lang: string): Promise<boolean> {
     try {
       const result = await query(
-        `SELECT rtl FROM languages WHERE lang = "${lang}"`
+        `SELECT rtl FROM languages WHERE lang = '${escapeSqlText(lang)}'`
       );
       let rtl = false;
       result.forEach((row) => {
@@ -232,7 +232,7 @@ export class PuzzleService {
 
   public static getLanguagesByPuzzle(id: number): Promise<Languages[]> {
     return query(
-      `SELECT DISTINCT l.* from custom_translations ct INNER JOIN languages l ON l.lang = ct.lang WHERE ct.id = ${id} AND l.active = 1 ORDER BY l.langname`
+      `SELECT DISTINCT l.* from custom_translations ct INNER JOIN languages l ON l.lang = ct.lang WHERE ct.id = ${Number(id)} AND l.active = 1 ORDER BY l.langname`
     )
       .then((result: QueryExecResult[]) => {
         const languages: Languages[] = [];
@@ -251,7 +251,7 @@ export class PuzzleService {
 
   //get custom centroids by puzzle id
   public static getCustomCentroids(id: number): Promise<CustomCentroids[]> {
-    return query(`SELECT * FROM custom_centroids WHERE id = ${id}`)
+    return query(`SELECT * FROM custom_centroids WHERE id = ${Number(id)}`)
       .then((result: QueryExecResult[]) => {
         const centroids: CustomCentroids[] = [];
         result.forEach((row) => {
@@ -279,7 +279,7 @@ export class PuzzleService {
     };
     try {
       const result = await query(
-        `SELECT * FROM custom_centroids WHERE id = ${id} AND cartodb_id = ${cartodb_id}`
+        `SELECT * FROM custom_centroids WHERE id = ${Number(id)} AND cartodb_id = ${Number(cartodb_id)}`
       );
       if (result.length > 0) {
         result.forEach((row) => {
@@ -298,7 +298,7 @@ export class PuzzleService {
   //get custom wikis by puzzle id
   public static async getCustomWikis(id: number): Promise<CustomWiki[]> {
     try {
-      const result = await query(`SELECT * FROM custom_wiki WHERE id = ${id}`);
+      const result = await query(`SELECT * FROM custom_wiki WHERE id = ${Number(id)}`);
       const wikis: CustomWiki[] = [];
       result.forEach((row) => {
         row.values.forEach((value) => {
@@ -323,7 +323,7 @@ export class PuzzleService {
     };
     try {
       const result = await query(
-        `SELECT * FROM custom_wiki WHERE id = ${id} AND cartodb_id = ${cartodb_id}`
+        `SELECT * FROM custom_wiki WHERE id = ${Number(id)} AND cartodb_id = ${Number(cartodb_id)}`
       );
 
       if (result.length > 0) {

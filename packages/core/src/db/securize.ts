@@ -25,3 +25,12 @@ export function securizeTextParameter(text: string): string {
   text = text.replace(/[';]/g, "");
   return text;
 }
+
+/**
+ * Escapes a value for use inside a single-quoted SQL string literal
+ * (SQLite doubles the quote). Numeric ids don't need this: they go through
+ * Number() where they are interpolated.
+ */
+export function escapeSqlText(text: string): string {
+  return String(text).replace(/'/g, "''");
+}
