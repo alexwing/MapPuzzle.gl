@@ -1,43 +1,75 @@
-/* Aviso discreto de Centurion: esquina superior derecha, bajo el botón de donar */
+/* Aviso de Centurion: píldora bajo el botón de donar, con sus mismos colores y tamaño de letra */
 .cross-card {
   position: absolute;
   right: 18px;
   top: 96px;
   z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.cross-card > a {
+.cross-card-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.3rem 0.8rem 0.3rem 0.35rem;
+  border-radius: 9999px;
+  font-family: var(--font-family-body);
+  text-decoration: none;
+  color: #e2b84a;
+  background: rgba(226, 184, 74, 0.08);
+  border: 1px solid rgba(226, 184, 74, 0.35);
+  box-shadow: 0 4px 12px rgba(226, 184, 74, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s ease;
+}
+
+.cross-card-link:hover {
+  color: #0a0f1a;
+  background: #e2b84a;
+  box-shadow: 0 6px 18px rgba(226, 184, 74, 0.35);
+  transform: translateY(-2px);
+}
+
+.cross-card-link img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
   display: block;
-  line-height: 0;
-  padding: 4px;
-  border-radius: 12px;
-  background: rgba(10, 15, 26, 0.9);
-  border: 1px solid rgba(226, 184, 74, 0.45);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
-  transition: border-color 0.2s;
+  flex-shrink: 0;
 }
 
-.cross-card > a:hover {
-  border-color: #e2b84a;
+.cross-card-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  text-align: left;
 }
 
-.cross-card img {
-  width: 40px;
-  height: 40px;
-  border-radius: 9px;
-  display: block;
+.cross-card-text small {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+.cross-card-text b {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .cross-card-close {
-  position: absolute;
-  top: -7px;
-  right: -7px;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
   padding: 0;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  background: #0a0f1a;
+  background: rgba(10, 15, 26, 0.9);
   color: #c9d1dc;
   font-size: 14px;
   line-height: 1;

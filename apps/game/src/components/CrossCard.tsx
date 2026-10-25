@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { siteAsset } from "@mappuzzle/core";
 import "./CrossCard.css";
 
-/* Aviso discreto de Centurion en la esquina superior derecha. Se puede cerrar y, una vez
-   cerrado, no vuelve a salir (se recuerda en este navegador). No interviene en el tablero. */
+/* Aviso de Centurion bajo el botón de donar, con el mismo aspecto de píldora. Se puede cerrar y,
+   una vez cerrado, no vuelve a salir (se recuerda en este navegador). No interviene en el tablero. */
 const DISMISS_KEY = "mappuzzle_cross_dismissed";
 
 function CrossCard(): JSX.Element | null {
@@ -33,12 +33,18 @@ function CrossCard(): JSX.Element | null {
   return (
     <div className="cross-card">
       <a
+        className="cross-card-link"
         href="https://centurion.mappuzzle.xyz/"
         target="_blank"
         rel="noopener noreferrer"
         title={`${t("info.centurion")} Centurion: Vincere Mare Nostrum`}
       >
-        <img src={siteAsset("centurion-192.png")} alt="Centurion" width={40} height={40} />
+        <img src={siteAsset("centurion-192.png")} alt="" width={26} height={26} />
+        <span className="cross-card-text">
+          <small>{t("info.otherGame")}</small>
+          <b>Centurion</b>
+          <small>{t("info.centurionSub")}</small>
+        </span>
       </a>
       <button
         type="button"
