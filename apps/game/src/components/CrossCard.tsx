@@ -3,8 +3,9 @@ import { useTranslation } from "react-i18next";
 import { siteAsset } from "@mappuzzle/core";
 import "./CrossCard.css";
 
-/* Aviso de Centurion bajo el botón de donar, con el mismo aspecto de píldora. Se puede cerrar y,
-   una vez cerrado, no vuelve a salir (se recuerda en este navegador). No interviene en el tablero. */
+/* Aviso de Centurion en forma de píldora, a la izquierda del botón de donar y a su misma altura.
+   Se puede cerrar y, una vez cerrado, no vuelve a salir (se recuerda en este navegador).
+   No interviene en el tablero. */
 const DISMISS_KEY = "mappuzzle_cross_dismissed";
 
 function CrossCard(): JSX.Element | null {
@@ -41,7 +42,6 @@ function CrossCard(): JSX.Element | null {
       >
         <img src={siteAsset("centurion-192.png")} alt="" width={26} height={26} />
         <span className="cross-card-text">
-          <small>{t("info.otherGame")}</small>
           <b>Centurion</b>
           <small>{t("info.centurionSub")}</small>
         </span>

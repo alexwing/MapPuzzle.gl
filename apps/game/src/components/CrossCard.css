@@ -1,36 +1,37 @@
-/* Aviso de Centurion: píldora bajo el botón de donar, con sus mismos colores y tamaño de letra */
+/* Aviso de Centurion: píldora a la izquierda del botón de donar, con su misma altura (35 px).
+   El botón de donar va en top 57 y right 18, con 109 px de ancho: el aviso se apoya a 8 px de él. */
 .cross-card {
   position: absolute;
-  right: 18px;
-  top: 96px;
+  right: 135px;
+  top: 57px;
   z-index: 1000;
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.cross-card-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0.3rem 0.8rem 0.3rem 0.35rem;
+  height: 35px;
+  box-sizing: border-box;
+  padding-right: 4px;
   border-radius: 9999px;
-  font-family: var(--font-family-body);
-  text-decoration: none;
   color: #e2b84a;
   background: rgba(226, 184, 74, 0.08);
   border: 1px solid rgba(226, 184, 74, 0.35);
   box-shadow: 0 4px 12px rgba(226, 184, 74, 0.12);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: all 0.25s ease;
+  transition: border-color 0.25s ease;
 }
 
-.cross-card-link:hover {
-  color: #0a0f1a;
-  background: #e2b84a;
-  box-shadow: 0 6px 18px rgba(226, 184, 74, 0.35);
-  transform: translateY(-2px);
+.cross-card:hover {
+  border-color: #e2b84a;
+}
+
+.cross-card-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0 0.5rem 0 0.3rem;
+  color: inherit;
+  text-decoration: none;
 }
 
 .cross-card-link img {
@@ -44,15 +45,9 @@
 .cross-card-text {
   display: flex;
   flex-direction: column;
-  line-height: 1.15;
+  line-height: 1.1;
   text-align: left;
-}
-
-.cross-card-text small {
-  font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  opacity: 0.85;
+  font-family: var(--font-family-body);
 }
 
 .cross-card-text b {
@@ -62,31 +57,36 @@
   letter-spacing: 0.06em;
 }
 
+.cross-card-text small {
+  font-size: 0.66rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
 .cross-card-close {
   width: 22px;
   height: 22px;
   flex-shrink: 0;
   padding: 0;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(10, 15, 26, 0.9);
-  color: #c9d1dc;
-  font-size: 14px;
+  border: 1px solid rgba(226, 184, 74, 0.45);
+  background: transparent;
+  color: inherit;
+  font-size: 15px;
   line-height: 1;
   cursor: pointer;
 }
 
 .cross-card-close:hover {
-  color: #fff;
-  border-color: #fff;
+  background: rgba(226, 184, 74, 0.2);
 }
 
-/* En móvil el botón de donar va abajo a la izquierda: el aviso se pone justo encima de él */
+/* En móvil el botón de donar va abajo a la izquierda: el aviso se pone en su misma fila, a la derecha */
 @media screen and (max-width: 992px) {
   .cross-card {
     top: auto;
     right: auto;
-    left: 10px;
-    bottom: 52px;
+    left: 127px;
+    bottom: 10px;
   }
 }
