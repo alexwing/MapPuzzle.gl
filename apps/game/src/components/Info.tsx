@@ -154,6 +154,16 @@ function Info({
                   aaranda.es
                 </a>
               </p>
+              <p>
+                {t("info.centurion")}&nbsp;
+                <a
+                  href="https://centurion.mappuzzle.xyz/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Centurion: Vincere Mare Nostrum
+                </a>
+              </p>
             </Col>
           </Row>
           <Row>
