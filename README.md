@@ -33,17 +33,20 @@ You can play the game in the following link: [MapPuzzle.xyz](https://mappuzzle.x
 ## Code Description
 
 **MapPuzzle.xyz** is a React application built with Vite, drawing its maps with
-deck.gl. The published site is nothing but static files plus a small read-only
-PHP gateway over a SQLite file: there is no Node.js on the server. The map
-editor and its Node backend run locally only, to author the content that gets
-uploaded.
+deck.gl. The published site is static files plus a small read-only gateway over
+a SQLite file. That gateway exists twice: the original PHP script, for hosting
+with no Node.js, and `apps/gateway`, a dependency-free Node replacement for a VPS
+running PM2 and NGINX. The map editor and its Node backend run locally only, to
+author the content that gets uploaded.
 
 - **React 18** for the interface, **Vite 6** for the build and dev server, with
   offline support through `vite-plugin-pwa`.
 - **deck.gl** renders the map and its pieces over WebGL.
 - **SQLite** holds the puzzles, the Wikipedia links, the flags and the 73k name
-  translations. In production it is read-only, reached through the PHP gateway
-  in `apps/game/public/backendPHP/`; locally the Node backend answers instead.
+  translations. In production it is read-only, reached through a gateway:
+  `apps/game/public/backendPHP/` (PHP) or `apps/gateway` (Node, same request and
+  response, so the client does not change); locally the Node backend answers
+  instead.
   The client never opens the database itself: it used to, through sql.js over
   range requests, which cost 1.3 MB of WebAssembly and a worker on every visit.
 - **Express + TypeORM** is the editor's backend. It writes the database, imports
@@ -62,6 +65,7 @@ built through their own Vite configs from the root.
 | `apps/game` | MapPuzzle and FlagsQuiz. The only thing deployed. |
 | `apps/editor` | The map editor, a separate client. |
 | `apps/backend` | Express + TypeORM. Authoring only, never published. |
+| `apps/gateway` | Read-only SQL gateway in Node, the replacement for `backendPHP`. Own `package.json`, no dependencies, with PM2 and NGINX examples. |
 | `packages/core` | Code both clients share: services, geometry, UI pieces. |
 | `packages/shared` | Type declarations only, the contract between the two sides. |
 | `data/` | What the editor produces: maps, flags, sitemap and the SQLite file. |
@@ -91,6 +95,7 @@ Thirteen, and each one is a job someone actually does.
 | --- | --- |
 | `dev` | The game against the local Node backend. Needs `backend` running. |
 | `dev-php-backend` | The game against a PHP backend on port 8888, to try changes to the gateway itself. |
+| `cd apps/gateway && npm start` | The Node gateway on port 3100 over `data/front.sqlite3.png`. `npm test` runs its tests. Details and VPS deployment in [apps/gateway/README.md](apps/gateway/README.md). |
 | `editor` | The map editor, on port 3001. Always needs the Node backend. |
 | `backend` | Express + TypeORM on port 5000. |
 
@@ -107,7 +112,7 @@ Thirteen, and each one is a job someone actually does.
 | Script | What it does |
 | --- | --- |
 | `build` | The production build, then the prerender step. What gets deployed. |
-| `preview` | Serves that build on port 3000. The port is fixed on purpose: the production PHP gateway only accepts that origin, so any other one fails CORS and the game loads without data. |
+| `preview` | Serves that build on port 3000. The port is fixed on purpose: the production gateway, PHP or Node, only accepts that origin, so any other one fails CORS and the game loads without data. |
 | `publish-db` | Copies the authoring database over the published one, showing both digests first. `--check` fails instead of writing. |
 | `deploy` | Uploads over FTP, comparing the generated content by size and sending only what differs. |
 | `deploy:app` | The same, skipping that comparison — the app shell only, which is the usual case after a code change. |
