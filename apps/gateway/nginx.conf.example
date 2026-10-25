@@ -1,0 +1,27 @@
+# Dentro del server { } de mappuzzle.xyz (y game.mappuzzle.xyz si aplica).
+# El cliente hace POST a https://mappuzzle.xyz/backendPHP/  ->  no hay que tocar el frontend.
+
+# gzip para las respuestas JSON (el PHP lo hacía con zlib.output_compression)
+gzip on;
+gzip_types application/json;
+gzip_min_length 1024;
+
+location = /backendPHP/ {
+    proxy_pass http://127.0.0.1:3100/;   # la barra final reescribe a "/"
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Connection "";
+
+    client_max_body_size 16k;
+    proxy_read_timeout 15s;
+
+    # CORS lo gestiona Node (lista de orígenes + Vary: Origin); no añadir cabeceras aquí.
+}
+
+# Opcional: cualquier resto del PHP antiguo
+location ^~ /backendPHP/index.php { return 404; }
+# Opcional (solo si ningún cliente descarga el SQLite directamente; no lo he comprobado):
+# location = /front.sqlite3.png { return 404; }

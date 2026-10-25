@@ -1,0 +1,12 @@
+{
+  "name": "@mappuzzle/gateway",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Read-only SQL gateway over front.sqlite3.png (replaces backendPHP/index.php)",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test"
+  }
+}
