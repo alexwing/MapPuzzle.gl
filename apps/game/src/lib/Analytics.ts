@@ -1,17 +1,88 @@
 /**
- * Google Analytics 4 (GA4) Event Tracking Service
- * Sends structured custom events to Google Analytics.
+ * Analytics Event Tracking Service (GA4 + MapPuzzle Analytics)
+ * Sends structured custom events to Google Analytics and the self-hosted collector.
  */
 
 declare global {
   interface Window {
     gtag?: (...args: any[]) => void;
     dataLayer?: any[];
+    mpAnalytics?: {
+      track: (name: string, props?: Record<string, unknown>) => void;
+      pageview: (url?: string) => void;
+    };
+  }
+}
+
+const SELF_ENDPOINT = "https://panel.mappuzzle.xyz/m/api/e";
+const SELF_SITE = "mappuzzle";
+const RE_SELF_EVENT = /^[a-z][a-z0-9_]{1,39}$/;
+const RE_SELF_KEY = /^[a-z][a-z0-9_]{0,39}$/;
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+function cleanSelfProps(params: Record<string, any> = {}): Record<string, string | number> | undefined {
+  const out: Record<string, string | number> = {};
+  let count = 0;
+  for (const k of Object.keys(params)) {
+    if (count >= 20 || !RE_SELF_KEY.test(k)) continue;
+    const v = params[k];
+    if (typeof v === "number" && Number.isFinite(v)) {
+      out[k] = v;
+      count++;
+    } else if (typeof v === "boolean") {
+      out[k] = v ? 1 : 0;
+      count++;
+    } else if (typeof v === "string") {
+      const trimmed = v.trim();
+      if (trimmed) {
+        out[k] = trimmed.slice(0, 80);
+        count++;
+      }
+    }
+  }
+  return count > 0 ? out : undefined;
+}
+
+function sendSelfEvent(eventName: string, params: Record<string, any> = {}) {
+  if (typeof window === "undefined" || !RE_SELF_EVENT.test(eventName)) return;
+  const loc = window.location;
+  if (!loc || (loc.protocol !== "http:" && loc.protocol !== "https:") || LOCAL_HOSTS.has(loc.hostname)) {
+    return;
+  }
+  try {
+    const props = cleanSelfProps(params);
+    if (typeof window.mpAnalytics?.track === "function") {
+      window.mpAnalytics.track(eventName, props);
+      return;
+    }
+    const lang = (navigator.language || "").slice(0, 2).toLowerCase() || undefined;
+    const body = JSON.stringify({
+      s: SELF_SITE,
+      t: "ev",
+      h: loc.host,
+      u: loc.pathname || "/",
+      n: eventName,
+      ...(props ? { p: props } : {}),
+      ...(lang ? { l: lang } : {}),
+    });
+    if (typeof navigator !== "undefined" && typeof navigator.sendBeacon === "function" && navigator.sendBeacon(SELF_ENDPOINT, body)) {
+      return;
+    }
+    if (typeof fetch === "function") {
+      fetch(SELF_ENDPOINT, {
+        method: "POST",
+        keepalive: true,
+        headers: { "Content-Type": "text/plain" },
+        body,
+      }).catch(() => {});
+    }
+  } catch {
+    // Analytics must never interrupt gameplay.
   }
 }
 
 /**
- * Generic GA4 event dispatcher with safety checks
+ * Generic analytics event dispatcher with safety checks (GA4 + MapPuzzle Analytics)
  */
 export const trackEvent = (eventName: string, params: Record<string, any> = {}) => {
   if (typeof window !== "undefined" && typeof window.gtag === "function") {
@@ -21,6 +92,7 @@ export const trackEvent = (eventName: string, params: Record<string, any> = {}) 
       console.warn("GA4 event error:", e);
     }
   }
+  sendSelfEvent(eventName, params);
 };
 
 /**
