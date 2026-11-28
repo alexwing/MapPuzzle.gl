@@ -1,12 +1,10 @@
 /**
- * Analytics Event Tracking Service (GA4 + MapPuzzle Analytics)
- * Sends structured custom events to Google Analytics and the self-hosted collector.
+ * Analytics Event Tracking Service (MapPuzzle Analytics)
+ * Sends structured custom events to the self-hosted cookieless collector.
  */
 
 declare global {
   interface Window {
-    gtag?: (...args: any[]) => void;
-    dataLayer?: any[];
     mpAnalytics?: {
       track: (name: string, props?: Record<string, unknown>) => void;
       pageview: (url?: string) => void;
@@ -82,16 +80,9 @@ function sendSelfEvent(eventName: string, params: Record<string, any> = {}) {
 }
 
 /**
- * Generic analytics event dispatcher with safety checks (GA4 + MapPuzzle Analytics)
+ * Generic analytics event dispatcher with safety checks (MapPuzzle Analytics)
  */
 export const trackEvent = (eventName: string, params: Record<string, any> = {}) => {
-  if (typeof window !== "undefined" && typeof window.gtag === "function") {
-    try {
-      window.gtag("event", eventName, params);
-    } catch (e) {
-      console.warn("GA4 event error:", e);
-    }
-  }
   sendSelfEvent(eventName, params);
 };
 

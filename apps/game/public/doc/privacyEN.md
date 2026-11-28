@@ -6,11 +6,11 @@ MapPuzzle is an educational application that allows users to learn about geograp
 
 At MapPuzzle, we take the privacy of our users very seriously. This privacy policy aims to provide transparency about how we handle user data in our application.
 
-- **Data Collection:** MapPuzzle does not collect or request any type of personal information from users. We do not collect names, email addresses, phone numbers, or any other information that could personally identify a user.
+- **Data Collection & Analytics:** MapPuzzle does not collect or request any personal information (names, email addresses, phone numbers, etc.). To understand how the game is used and improve it, it uses **MapPuzzle Analytics** (`panel.mappuzzle.xyz`), a self-hosted analytics service in the European Union that operates completely **without cookies**. It never stores IP addresses on disk (the IP is used only ephemerally in memory to estimate the approximate country and derive a daily anonymous session hash with a rotating key deleted every 48 hours).
 
-- **Data Usage:** The data used in MapPuzzle is exclusively for improving the user experience in the game. This data includes game progress, completed puzzle pieces, user preferences, and other data related to user interaction with the application, which will only be stored locally on the user's device.
+- **Data Usage:** Aggregate counts are used solely to improve the educational experience. Game progress, completed puzzle pieces, and display preferences are stored strictly locally on the user's device.
 
-- **Data Sharing:** At MapPuzzle, we do not share any type of user data with third parties. All server data is read-only and is not shared with advertisers, business partners, or any other external entities.
+- **Data Sharing:** At MapPuzzle, we do not share or transfer user data with any third parties, advertisers, or external analytics providers.
 
 - **Data Security:** We take comprehensive measures to protect our users' data. We use industry-standard security protocols to ensure the integrity and confidentiality of the collected information.
 

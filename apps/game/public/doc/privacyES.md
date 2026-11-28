@@ -6,11 +6,11 @@ MapPuzzle es una aplicación educativa que permite a los usuarios aprender sobre
 
 En MapPuzzle, nos tomamos muy en serio la privacidad de nuestros usuarios. Esta política de privacidad tiene como objetivo proporcionar transparencia sobre cómo tratamos los datos de usuario en nuestra aplicación.
 
-- **Recopilación de Datos:** MapPuzzle no recopila ni solicita ningún tipo de información personal de los usuarios. No recopilamos nombres, direcciones de correo electrónico, números de teléfono ni ninguna otra información que pueda identificar personalmente a un usuario.
+- **Recopilación de Datos y Medición:** MapPuzzle no recopila ni solicita ningún tipo de información personal de los usuarios (ni nombres, correos electrónicos o teléfonos). Para mejorar el juego, utiliza **MapPuzzle Analytics** (`panel.mappuzzle.xyz`), un sistema propio autoalojado en la Unión Europea que contabiliza visitas y partidas de forma totalmente anónima y **sin cookies**. No almacena direcciones IP en disco (la IP se usa solo de forma efímera en memoria para estimar el país aproximado y generar un identificador diario temporal cuya clave rota y se borra cada 48 horas).
 
-- **Uso de Datos:** Los datos que se utilizan en MapPuzzle son exclusivamente para mejorar la experiencia del usuario en el juego. Estos datos incluyen el progreso del juego, las piezas de rompecabezas completadas, las preferencias de usuario y otros datos relacionados con la interacción del usuario con la aplicación, que solo se almacenarán localmente en el dispositivo del usuario.
+- **Uso de Datos:** Los datos agregados se utilizan exclusivamente para conocer qué mapas y modos de juego gustan más. El progreso de cada puzle, los tiempos y las preferencias visuales se guardan localmente en el dispositivo del usuario.
 
-- **Compartir Datos:** En MapPuzzle, no compartimos ningún tipo de datos de usuario con terceros. Todos los datos del servidor son de solo lectura y no se comparten con anunciantes, socios comerciales ni ninguna otra entidad externa.
+- **Compartir Datos:** En MapPuzzle, no compartimos ni transferimos ningún tipo de dato con terceros, anunciantes ni plataformas externas de análisis.
 
 - **Seguridad de Datos:** Tomamos medidas exhaustivas para proteger los datos de nuestros usuarios. Utilizamos protocolos de seguridad estándar de la industria para garantizar la integridad y confidencialidad de la información recopilada.
 
